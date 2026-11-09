@@ -94,9 +94,10 @@
   document.getElementById('glance').open = !matchMedia('(max-width: 719.98px)').matches;
 
   const zoom = lightbox();
-  await renderDoc();
+  const md = await renderDoc();
   ready();
   done();
+  if (md) PFDocEdit.attach({ id, docFile: p.doc, md, docElement: document.getElementById('doc') });   // 로컬 편집 서버(edit-server.py)가 있을 때만 [편집 모드] (assets/doc-edit.js)
 
   // ───────────────────────────────────────────────────────────────
   async function renderDoc() {
@@ -246,6 +247,7 @@
     const pres = [...doc.querySelectorAll('pre')].filter((x) => !x.closest('.mmd-src'));
     pres.forEach((pre) => { fade(pre); pre.addEventListener('scroll', () => fade(pre), { passive: true }); });
     addEventListener('resize', () => pres.forEach(fade));
+    return md;                                                         // 편집 모드가 블록의 md 줄 범위를 찾을 때 씀
   }
 
   function classifyMdLink(a, isRelative, decode) {
