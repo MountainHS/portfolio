@@ -17,22 +17,45 @@
     {
       "name": "Unity",
       "evidence": [
-        { "text": "`Physics2D.OverlapPointAll`과 레이어로 클릭한 방·함선·승무원 판별", "project": "3-mini-ftl" }
+        {
+          "text": "`Physics2D.OverlapPointAll`과 레이어로 클릭한 방·함선·승무원 판별",
+          "project": "3-mini-ftl"
+        },
+        {
+          "text": "UniTask `PlayerLoopTiming`으로 네트워크 반영·송신 시점을 프레임 안에 고정",
+          "project": "4-wgo"
+        }
       ]
     },
     {
       "name": "C#",
       "evidence": [
-        { "text": "`CrewStatus` 상태와 `switch`로 승무원의 이동·수리·보조 작업 실행", "project": "3-mini-ftl" }
+        {
+          "text": "`CrewStatus` 상태와 `switch`로 승무원의 이동·수리·보조 작업 실행",
+          "project": "3-mini-ftl"
+        },
+        {
+          "text": "`Interlocked`·`SemaphoreSlim`·`Channel`로 .NET WebSocket 중계 서버 구현",
+          "project": "4-wgo"
+        }
       ]
     },
     {
       "name": "디자인 패턴",
       "evidence": [
-        { "text": "`ITargeting` 주입으로 적 조준 규칙을 무기 발사 코드와 분리", "project": "3-mini-ftl" },
-        { "text": "싱글톤 `SingletonBase<T>`에 `DefaultExecutionOrder`로 초기화 순서 지정", "project": "3-mini-ftl" }
+        {
+          "text": "`ITargeting` 주입으로 적 조준 규칙을 무기 발사 코드와 분리",
+          "project": "3-mini-ftl"
+        },
+        {
+          "text": "싱글톤 `SingletonBase<T>`에 `DefaultExecutionOrder`로 초기화 순서 지정",
+          "project": "3-mini-ftl"
+        }
       ]
     }
   ],
-  "projects": ["3-mini-ftl"]
+  "projects": [
+    "3-mini-ftl",
+    "4-wgo"
+  ]
 }
