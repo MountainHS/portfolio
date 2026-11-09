@@ -11,7 +11,7 @@
 - 한 줄 정체성: 구조를 설명할 줄 아는 유니티 클라이언트 개발자
 - 이메일: hsgood01@gmail.com
 - GitHub: https://github.com/MountainHS
-- 기타 링크: 블로그 https://your-blog.example.com
+- 기타 링크:
 
 ## 자기소개
 
