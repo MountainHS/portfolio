@@ -791,7 +791,7 @@
         "points": [
           {
             "label": "Repair",
-            "text": "Damaged 또는 Broked 시설에서 Room.RepairFacility를 호출한다.",
+            "text": "Damaged 또는 Broked 시설에서 시설 보조를 해제하고(AssistFacility(false)) Room.RepairFacility를 호출한다.",
             "verbatim": true
           },
           {
