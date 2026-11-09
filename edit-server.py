@@ -121,7 +121,8 @@ def main():
     """포트를 정해 127.0.0.1에서 서버를 엽니다. Ctrl+C로 끕니다."""
     port = int(sys.argv[1]) if len(sys.argv) > 1 else DEFAULT_PORT
     server = ThreadingHTTPServer(("127.0.0.1", port), EditHandler)
-    print(f"미리보기 + 편집 서버: http://localhost:{port}  (상세 문서 오른쪽 아래 [편집 모드])  끄기: Ctrl+C")
+    # localhost로 열면 브라우저가 IPv6(::1)를 먼저 찾아, 같은 포트의 다른 서버(python -m http.server 등)로 갈 수 있음 → 127.0.0.1 주소로 안내
+    print(f"미리보기 + 편집 서버: http://127.0.0.1:{port}  (상세 문서 오른쪽 아래 [편집 모드])  끄기: Ctrl+C")
     server.serve_forever()
 
 
