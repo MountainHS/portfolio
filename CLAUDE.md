@@ -105,9 +105,12 @@ flowchart LR
 
 `fetch()`로 데이터를 읽으므로 파일 더블클릭(`file://`)으로는 열리지 않습니다. 로컬 서버로 엽니다.
 
-- `python -m http.server 4600` (Windows에서 `python`이 없으면 `py -m http.server 4600`) → http://localhost:4600
+- `python edit-server.py` (Windows에서 `python`이 없으면 `py edit-server.py`) → http://127.0.0.1:4600 — 로컬 미리보기는 늘 이 서버입니다(정적 파일 + 상세 문서 편집 모드). `python -m http.server`로 열면 편집 모드가 꺼집니다
 - JetBrains IDE(Rider·WebStorm): `index.html` 우클릭 → **Open in → Browser** (내장 서버)
 - Claude 데스크톱 앱: `.claude/launch.json`의 `portfolio` 구성으로 미리보기
+- **상세 문서 편집 모드**: `python edit-server.py`(포트 4600, launch.json의 `portfolio`)를 띄우고 http://127.0.0.1:4600 으로 열면 상세 문서(`doc.html`) 오른쪽 아래에 [✎ 편집 모드]가 생깁니다.
+  블록(문단·제목·목록·표·코드)을 누르면 그 줄의 md 원문 입력창이 열리고, [저장]하면 `edit-server.py`가 `src/<폴더>/` 기술 문서의 그 줄만 바꿔 씁니다(줄바꿈 방식 유지).
+  주소가 localhost가 아니거나 `/__edit/ping`이 없으면(GitHub Pages·`http.server`) 켜지지 않습니다. 발표 덱·포트폴리오 문서 내용은 고친 뒤 `/portfolio-build`를 다시 실행해야 맞춰집니다.
 - 발표 덱 아래 띠의 빨간 숫자(미리보기 배치 점검)를 물으면 데이터를 다시 만들지 않고, 그 덱(`project.html?p=<id>`)에서
   `await PFScene.whenReady()` 뒤 `PFScene.report().audit`을 읽어 `.claude/skills/portfolio-build/SKILL.md` §7-1처럼 장면마다 1건으로
   묶어 알려 줍니다. 브라우저 도구가 없으면 headless Chrome으로

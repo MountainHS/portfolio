@@ -1,0 +1,22 @@
+/* 상세 문서 편집 모드(assets/doc-edit.js) — 로컬 편집 서버(edit-server.py)가 있을 때만 쓰임. 인쇄에는 나오지 않음 */
+
+/* 오른쪽 아래 [편집 모드] 버튼(빠른 이동 버튼 위) */
+.pf-edit-toggle { position: fixed; right: 16px; bottom: 76px; z-index: 50; padding: 8px 14px; border-radius: 999px;
+  border: 1px solid var(--accent-line, #999); background: var(--paper, #fff); color: inherit; font: inherit; font-size: 13.5px; font-weight: 700; cursor: pointer; }
+.pf-editing .pf-edit-toggle { background: var(--accent-fill, #333); border-color: var(--accent-fill, #333); color: #fff; }
+
+/* 편집 모드에서 고칠 수 있는 블록 */
+.pf-editing .pf-editable { cursor: text; outline: 1px dashed transparent; outline-offset: 4px; border-radius: 2px; }
+.pf-editing .pf-editable:hover { outline-color: var(--accent, #36c); background: color-mix(in srgb, var(--accent, #36c) 6%, transparent); }
+.pf-edit-hidden { display: none !important; }
+
+/* 블록 자리에 열리는 md 원문 입력창 */
+.pf-edit-form { margin: 12px 0; padding: 12px; border: 1px solid var(--accent, #36c); border-radius: 8px; background: var(--paper, #fff); }
+.pf-edit-head { margin: 0 0 6px; font-size: 12.5px; font-weight: 700; color: var(--muted, #666); }
+.pf-edit-form textarea { box-sizing: border-box; width: 100%; padding: 8px; font: 13.5px/1.6 'D2Coding', Consolas, monospace; resize: vertical; tab-size: 4; }
+.pf-edit-error { margin: 6px 0 0; min-height: 1em; font-size: 13px; color: #c0392b; }
+.pf-edit-actions { display: flex; gap: 8px; margin-top: 8px; }
+
+@media print {
+  .pf-edit-toggle, .pf-edit-form { display: none !important; }
+}

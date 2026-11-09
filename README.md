@@ -243,10 +243,10 @@ git rm -r -q src/00-example-crafting src/0-Tidy-Mommy src/1-action-platformer sr
 `data/`와 기술 문서를 불러와 그리는 방식이라 **파일 더블클릭으로는 열리지 않습니다.** 아래 중 하나로 여세요.
 
 ```bash
-python -m http.server 4600
+python edit-server.py
 ```
 
-→ http://localhost:4600 (Windows에서 `python`이 없으면 `py -m http.server 4600`)
+→ http://127.0.0.1:4600 (Windows에서 `python`이 없으면 `py edit-server.py`). 상세 문서에서 글을 바로 고치는 편집 모드가 함께 켜집니다
 
 - JetBrains IDE(Rider·WebStorm): `index.html` 우클릭 → **Open in → Browser**
 - Claude 데스크톱 앱: 미리보기에서 `portfolio` 구성을 고르거나, Claude에게 "미리보기 띄워줘"

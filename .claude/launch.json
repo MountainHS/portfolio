@@ -4,7 +4,7 @@
     {
       "name": "portfolio",
       "runtimeExecutable": "python",
-      "runtimeArgs": ["-m", "http.server", "4600"],
+      "runtimeArgs": ["edit-server.py", "4600"],
       "port": 4600
     }
   ]
