@@ -13,3 +13,4 @@ Thumbs.db
 
 # Python 실행 캐시 (스킬의 점검 스크립트를 돌리면 생김)
 __pycache__/
+report.zip
