@@ -35,7 +35,7 @@ disable-model-invocation: true
 
 ## 2. 확인과 보고
 
-1. 로컬 서버(`python -m http.server 4600`, 없으면 `py -m ...`)로 `http://localhost:4600/custom/`을 열어
+1. 로컬 서버(`python edit-server.py`, 없으면 `py edit-server.py`)로 `http://127.0.0.1:4600/custom/`을 열어
    콘솔 오류·깨진 이미지를 확인합니다 (브라우저 도구가 있으면 스크린샷까지).
 2. 사용자에게 알립니다:
    - 주소와 어떤 디자인 결정을 했는지 3줄

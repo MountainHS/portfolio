@@ -227,7 +227,7 @@ argument-hint: "[프로젝트 폴더 이름 (생략하면 전체)]"
 
 ## 7. 미리보기와 마무리 보고
 
-1. 로컬 서버를 백그라운드로 띄웁니다: `python -m http.server 4600` (실패하면 `py -m http.server 4600`).
+1. 로컬 서버를 백그라운드로 띄웁니다: `python edit-server.py` (실패하면 `py edit-server.py`). 로컬 미리보기는 늘 이 서버입니다(상세 문서 편집 모드 포함, `CLAUDE.md` 「미리보기」).
    이미 떠 있으면 재사용. 브라우저 도구가 있으면 세 페이지를 열어 콘솔 오류·깨진 이미지가 없는지 확인합니다.
    브라우저 도구가 없으면 `CLAUDE.md` 「미리보기」의 headless Chrome 방법(`?pf-audit=1`)으로 같은 `report()` JSON을 읽고 `ready`가 `yes`인지 확인합니다.
 

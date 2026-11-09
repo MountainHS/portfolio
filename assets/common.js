@@ -152,8 +152,8 @@ const PF = (() => {
   // ── 안내 문구(옛 렌더러와 같은 글) ──
   const FILE_HELP = `<p>이 페이지는 <code>data/</code>와 기술 문서를 불러와 그리기 때문에, 파일을 더블클릭해서는 열리지 않습니다.</p>
       <ol>
-        <li>레포 폴더에서 터미널을 열고 아래 명령을 실행한 뒤 <b>http://localhost:4600</b> 접속
-          <pre>python -m http.server 4600</pre>(Windows에서 안 되면 <code>py -m http.server 4600</code>)</li>
+        <li>레포 폴더에서 터미널을 열고 아래 명령을 실행한 뒤 <b>http://127.0.0.1:4600</b> 접속
+          <pre>python edit-server.py</pre>(Windows에서 안 되면 <code>py edit-server.py</code>)</li>
         <li>또는 JetBrains IDE(Rider·WebStorm)에서 <code>index.html</code> 우클릭 → <b>Open in → Browser</b></li>
         <li>또는 Claude Code에게 "미리보기 띄워줘"라고 요청</li>
       </ol>`;

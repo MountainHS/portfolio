@@ -55,7 +55,7 @@ argument-hint: "[되돌리기 | 덧붙일 요청 — 예: 강조색은 내 색 �
 ## 4. 확인 — 세 페이지를 열어 봄
 
 1. 미리보기: `http://localhost:4600`이 이미 열려 있으면 그대로 씁니다(새로 띄우지 않음). 없으면 Claude 데스크톱 앱은 `.claude/launch.json`의 `portfolio` 구성,
-   그 밖에는 백그라운드로 `python -m http.server 4600`(없으면 `py -m …`).
+   그 밖에는 백그라운드로 `python edit-server.py`(없으면 `py edit-server.py`).
    브라우저가 예전 `theme.css`를 기억하고 있을 수 있으므로 **처음 한 번** `await fetch('theme/theme.css', {cache: 'reload'})` 뒤 새로고침합니다(파일을 다시 고쳤을 때도 한 번).
    - 브라우저 화면이 숨겨져 있으면 폭이 0으로 재어집니다 → 화면 크기를 1440×900으로 지정한 뒤 잽니다(끝나면 되돌림).
      스크린샷이 시간 초과·잘림으로 안 되면 headless Chrome으로 찍습니다: `chrome --headless=new --hide-scrollbars --window-size=1440,900 --virtual-time-budget=20000 --screenshot=<파일.png> <주소>`.
