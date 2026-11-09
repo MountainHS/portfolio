@@ -6,11 +6,11 @@
 
 ## 기본 정보
 
-- 이름: 홍길동
-- 영문 이름: Gildong Hong
+- 이름: 홍산
+- 영문 이름: San Hong
 - 한 줄 정체성: 구조를 설명할 줄 아는 유니티 클라이언트 개발자
-- 이메일: you@example.com
-- GitHub: https://github.com/your-id
+- 이메일: hsgood01@gmail.com
+- GitHub: https://github.com/MountainHS
 - 기타 링크: 블로그 https://your-blog.example.com
 
 ## 자기소개
