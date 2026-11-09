@@ -17,3 +17,6 @@ report.zip
 
 # 예전 기술 문서 원천 자료 (로컬 전용 — 학번·기획서 PDF·zip·재료집이 있어 공개 레포에 올리지 않음)
 tech-doc-source-old/
+
+# 프로젝트별 report (로컬 전용 — 루트 report.md는 요약판)
+report/
