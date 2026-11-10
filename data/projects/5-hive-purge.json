@@ -4,7 +4,7 @@
   "doc": "기술문서.md",
   "title": "Hive Purge",
   "tagline": "쏟아지는 몬스터 물량을 헤쳐 나가는 1·3인칭 전환 PvE 호드 FPS — 몬스터 AI·웨이브 담당",
-  "cover": null,
+  "cover": "images/cover.png",
   "team": {
     "type": "team",
     "size": "4인",
@@ -17,7 +17,7 @@
     },
     {
       "label": "기간",
-      "value": "2026.10.15 — 11.03 (11.05까지의 정리 작업 포함)"
+      "value": "2026.10.15 — 11.03"
     },
     {
       "label": "인원",
@@ -61,7 +61,12 @@
       "how": "피격 모션은 Animator의 Hit 레이어(Additive)에 겹쳐 재생하고, 저체력은 `MaterialPropertyBlock`으로 덮는다. 시체는 `Alive → Lying → Sinking → Gone` 단계로 진행한다.",
       "why": "피격마다 경직을 넣으면 거대한 몬스터도 한 번에 경직되어 몰입감을 해칠 수 있어서, 누적 피해 임계값을 넘었을 때만 경직되게 했다.",
       "section": "3.4 피격 ~ 시체: 상시 체력바 없이 상태를 읽게 하기",
-      "image": null
+      "image": {
+        "src": "images/hit-feedback-low-hp-and-blood.png",
+        "w": 540,
+        "h": 369,
+        "caption": "저체력 — 붉은 기와 피"
+      }
     },
     {
       "title": "표 데이터로 웨이브 소환과 몬스터 풀",
@@ -69,7 +74,12 @@
       "how": "`MonsterWaveDirector`가 라운드 시간을 진행하며 스테이지를 시작하고, 시작 직전 풀에 몬스터를 미리 만들어 둔다. 풀은 처음 만든 개체와 돌려받은 개체를 스택 두 개로 나눈다.",
       "why": "처음 켜지는 개체는 Awake·OnEnable로 조립되고, 돌려받은 개체는 Awake가 다시 돌지 않아 Respawn()으로 직접 되돌려야 하기 때문이다.",
       "section": "3.5 웨이브와 풀",
-      "image": null
+      "image": {
+        "src": "images/spawn.png",
+        "w": 363,
+        "h": 191,
+        "caption": "스테이지에서 소환된 몬스터 무리"
+      }
     }
   ],
   "troubleshooting": [
@@ -101,7 +111,44 @@
       "section": "5.2-3 소환이 끝났다고 라운드가 끝나 특수 웨이브가 빠짐"
     }
   ],
-  "screenshots": [],
+  "screenshots": [
+    {
+      "src": "images/attack-phase-active.png",
+      "w": 630,
+      "h": 623,
+      "caption": "공격(Active)"
+    },
+    {
+      "src": "images/attack-phase-telegraph.png",
+      "w": 235,
+      "h": 192,
+      "caption": "예고(Windup)"
+    },
+    {
+      "src": "images/hit-feedback-flash-0451.png",
+      "w": 469,
+      "h": 532,
+      "caption": "약점 명중 Flash"
+    },
+    {
+      "src": "images/corpse.png",
+      "w": 447,
+      "h": 184,
+      "caption": "누운 시체(Lying)"
+    },
+    {
+      "src": "images/elite-aura.png",
+      "w": 212,
+      "h": 161,
+      "caption": "EliteAura를 덧그린 외형"
+    },
+    {
+      "src": "images/poison-zone.png",
+      "w": 1360,
+      "h": 676,
+      "caption": "독 장판"
+    }
+  ],
   "retro": {
     "section": "5. 결과 및 배운 점",
     "achieved": [
@@ -195,6 +242,19 @@
           }
         ],
         "visuals": [
+          {
+            "kind": "image",
+            "src": "images/cover.png",
+            "w": 2236,
+            "h": 1231,
+            "caption": {
+              "text": "Hive Purge 플레이 장면",
+              "verbatim": true
+            },
+            "sectionPath": [
+              "Hive Purge 기술 문서"
+            ]
+          },
           {
             "kind": "table",
             "n": 1,
@@ -391,6 +451,54 @@
         ]
       },
       {
+        "key": "attack-shots",
+        "chapter": "core",
+        "layout": "screens",
+        "tab": "결과",
+        "title": {
+          "text": "3.2 공격 사이클 — 화면",
+          "verbatim": false
+        },
+        "lead": null,
+        "sectionPath": [
+          "3. 핵심 기능",
+          "3.2 공격 사이클: `MonsterAttack.Tick`"
+        ],
+        "points": [],
+        "visuals": [
+          {
+            "kind": "image",
+            "src": "images/before-attack-moving.png",
+            "w": 240,
+            "h": 208,
+            "caption": {
+              "text": "공격 전 — 플레이어에게 다가가는 중",
+              "verbatim": true
+            }
+          },
+          {
+            "kind": "image",
+            "src": "images/attack-phase-telegraph.png",
+            "w": 235,
+            "h": 192,
+            "caption": {
+              "text": "예고(Windup)",
+              "verbatim": true
+            }
+          },
+          {
+            "kind": "image",
+            "src": "images/attack-phase-active.png",
+            "w": 630,
+            "h": 623,
+            "caption": {
+              "text": "공격(Active)",
+              "verbatim": true
+            }
+          }
+        ]
+      },
+      {
         "key": "factory",
         "chapter": "core",
         "layout": "code",
@@ -440,6 +548,54 @@
         ]
       },
       {
+        "key": "hit-shots",
+        "chapter": "core",
+        "layout": "screens",
+        "tab": "결과",
+        "title": {
+          "text": "3.4 피격 ~ 시체 — 화면",
+          "verbatim": false
+        },
+        "lead": null,
+        "sectionPath": [
+          "3. 핵심 기능",
+          "3.4 피격 ~ 시체: 상시 체력바 없이 상태를 읽게 하기"
+        ],
+        "points": [],
+        "visuals": [
+          {
+            "kind": "image",
+            "src": "images/hit-feedback-normal-hp.png",
+            "w": 428,
+            "h": 335,
+            "caption": {
+              "text": "평소 체력",
+              "verbatim": true
+            }
+          },
+          {
+            "kind": "image",
+            "src": "images/hit-feedback-low-hp-and-blood.png",
+            "w": 540,
+            "h": 369,
+            "caption": {
+              "text": "저체력 — 붉은 기와 피",
+              "verbatim": true
+            }
+          },
+          {
+            "kind": "image",
+            "src": "images/hit-feedback-flash-0451.png",
+            "w": 469,
+            "h": 532,
+            "caption": {
+              "text": "약점 명중 Flash",
+              "verbatim": true
+            }
+          }
+        ]
+      },
+      {
         "key": "wave-data",
         "chapter": "core",
         "layout": "full",
@@ -459,6 +615,16 @@
             "kind": "table",
             "n": 1,
             "fp": "표|한 행에 들어 있는 것"
+          },
+          {
+            "kind": "image",
+            "src": "images/spawn.png",
+            "w": 363,
+            "h": 191,
+            "caption": {
+              "text": "스테이지에서 소환된 몬스터 무리",
+              "verbatim": true
+            }
           }
         ]
       },
@@ -492,6 +658,54 @@
               2,
               21
             ]
+          }
+        ]
+      },
+      {
+        "key": "shader",
+        "chapter": "core",
+        "layout": "screens",
+        "tab": "결과",
+        "title": {
+          "text": "3.6 사이드: 셰이더 (AI 작성)",
+          "verbatim": true
+        },
+        "lead": null,
+        "sectionPath": [
+          "3. 핵심 기능",
+          "3.6 사이드: 셰이더 (AI 작성)"
+        ],
+        "points": [],
+        "visuals": [
+          {
+            "kind": "image",
+            "src": "images/elite-aura-for-comparison.png",
+            "w": 392,
+            "h": 363,
+            "caption": {
+              "text": "EliteAura 없는 외형",
+              "verbatim": true
+            }
+          },
+          {
+            "kind": "image",
+            "src": "images/elite-aura.png",
+            "w": 212,
+            "h": 161,
+            "caption": {
+              "text": "EliteAura를 덧그린 외형",
+              "verbatim": true
+            }
+          },
+          {
+            "kind": "image",
+            "src": "images/poison-zone.png",
+            "w": 1360,
+            "h": 676,
+            "caption": {
+              "text": "독 장판",
+              "verbatim": true
+            }
           }
         ]
       },
@@ -663,7 +877,22 @@
             "verbatim": true
           }
         ],
-        "visuals": []
+        "visuals": [
+          {
+            "kind": "image",
+            "src": "images/corpse.png",
+            "w": 447,
+            "h": 184,
+            "caption": {
+              "text": "누운 시체(Lying)",
+              "verbatim": true
+            },
+            "sectionPath": [
+              "3. 핵심 기능",
+              "3.4 피격 ~ 시체: 상시 체력바 없이 상태를 읽게 하기"
+            ]
+          }
+        ]
       },
       {
         "key": "ts-leap",
