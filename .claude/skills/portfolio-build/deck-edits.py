@@ -717,8 +717,7 @@ def load_edits(pid, rep):
     if not isinstance(e, dict) or e.get('schemaVersion') != VERSION:
         rep.add('필수', 'src/%s/%s의 schemaVersion이 %s가 아닙니다(%r) → 반영하지 않았습니다' % (pid, EDITS, VERSION, e.get('schemaVersion') if isinstance(e, dict) else e))
         return None, True
-    if e.get('portfolio') not in (None, {}, []):
-        rep.add('참고', 'portfolio(포트폴리오 문서 고치기)는 아직 지원하지 않아 무시했습니다')
+    # portfolio(포트폴리오 문서에서 고친 글)는 이 스크립트가 아니라 portfolio-edits.py apply가 data에 반영합니다(이 포크 전용)
     return e, False
 
 

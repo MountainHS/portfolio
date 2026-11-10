@@ -171,6 +171,10 @@ argument-hint: "[프로젝트 폴더 이름 (생략하면 전체)]"
   ("`/portfolio-edit <폴더> <장면>`으로 다시 고치거나 되돌리세요").
   `python`·`py`가 모두 없으면 이 단계를 건너뛰고(data를 손으로 고치지 않음), 고치기 파일이 있는 프로젝트마다 리포트 **권장**에 "고친 장면이 반영되지 않았습니다 —
   Python 3.8 이상을 설치(python.org, 설치 화면의 'Add python.exe to PATH' 선택)한 뒤 `/portfolio-build`를 다시 실행하세요"라고 적습니다.
+- **포트폴리오 문서 고친 글 반영(이 포크 전용, 장면 고치기 반영 바로 다음)**: `python .claude/skills/portfolio-build/portfolio-edits.py apply --all`을 실행합니다.
+  포트폴리오 문서 편집 모드(`assets/portfolio-edit.js`)에서 사용자가 고친 글 중 `src/<id>/deck-edits.json`의 `"portfolio"` 목록에 남은 것(Claude가 줄인 글·태그 등)을
+  `data/projects/<id>.json`·`data/portfolio.json`의 같은 칸에 다시 덮습니다. 사용자가 직접 쓴 글이라 "확인해 주세요"에 넣지 않고, 출력의 `[권장]`(자리를 잃은 줄)·`[참고]`(빌드 글이 바뀌었는데 덮음)만
+  리포트의 그 프로젝트 `## 프로젝트별 점검`에 같은 등급으로 옮깁니다. `"portfolio"` 목록은 빌드가 쓰지도 고치지도 않습니다.
 
 ## 6. 점검 리포트 → `report.md`
 

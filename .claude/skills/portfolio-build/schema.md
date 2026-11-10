@@ -258,7 +258,7 @@
 | `pin[].from`·`hide[].from` | 닻: 원래 빌드 장면의 `key`·`sectionPath`·시각 자료 서명. `deck-edits.py pin`·`hide`가 채우며 **손대지 않습니다**. 다시 빌드로 key가 바뀌어도 같은 절(제목 그대로)·같은 그림의 장면을 찾아 다시 붙이는 데 씀. 절 제목이 바뀌면 다시 붙지 않습니다(고아) |
 | `pin[].group`·`hide[].group` | 묶음: 나누기(`pin --as`)·합치기(`hide --into`)로 함께 생긴 항목. `undo`는 같은 묶음을 함께 지움. 스크립트가 채우며 손대지 않습니다 |
 | `hide[]` | 숨길 장면. `{ "key", "from" }` 또는 key 글자 |
-| `portfolio` | 포트폴리오 문서 고치기 자리(2차, 지금은 `null`). 식별자는 `highlights[].section` |
+| `portfolio` | 포트폴리오 문서에서 고친 글(이 포크 전용, 없으면 `null`). 편집 서버(`edit-server.py` → `portfolio-edits.py`)가 쓰고, 빌드 마지막에 `portfolio-edits.py apply --all`이 data에 덮습니다. 줄마다 `{ "field", 자리 이름, "value", "from" }` — `field`: `title`·`tagline`·`team.role`·`intent`·`tags`·`meta`(+`label`)·`highlight.title`/`highlight.what`/`highlight.caption`(+`section` = `highlights[].section`)·`skill.evidence`(+`skill`·`n`). `from` = 처음 고칠 때 빌드 글. 형식과 저장 위치 규칙은 `portfolio-edits.py` 머리말 |
 
 - **글 조각**은 둘뿐입니다: `verbatim: true`(그 절 원문 또는 절 경로의 제목에 같은 글자가 있음 — 스크립트가 검사) · `verbatim: false`(Claude가 줄임 → 리포트 "확인해 주세요").
   원문에 없는 새 문장·수치는 넣지 않습니다(수강생이 직접 쓰고 싶은 문장은 기술 문서에 먼저 쓰고 다시 빌드).

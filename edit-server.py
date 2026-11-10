@@ -1,4 +1,4 @@
-"""포트폴리오 미리보기 + 상세 문서 편집 저장 서버 (로컬 전용)
+"""포트폴리오 미리보기 + 상세 문서·포트폴리오 문서 편집 저장 서버 (로컬 전용)
 
 `python -m http.server 4600` 대신 이렇게 실행합니다.
     python edit-server.py          → http://localhost:4600
@@ -7,9 +7,12 @@
 - 정적 파일은 http.server와 똑같이 보냅니다(미리보기 세 페이지 그대로).
 - GET  /__edit/ping : 편집 서버가 떠 있다는 신호. assets/doc-edit.js가 이 응답을 받을 때만 상세 문서에 [편집 모드] 버튼을 보입니다.
 - POST /__edit/save : src/ 아래 기술 문서 md의 줄 범위 하나를 새 글로 바꿔 씁니다.
+- POST /__edit/portfolio : 포트폴리오 문서(index.html)의 글 한 칸을 소스(profile.md·기술 문서·deck-edits.json)와 data/에 씁니다.
+  어디에 쓸지는 .claude/skills/portfolio-build/portfolio-edits.py가 정합니다(assets/portfolio-edit.js가 부름).
 127.0.0.1에만 열어 같은 PC에서만 저장할 수 있습니다. GitHub Pages에는 이 서버가 없으므로 편집 버튼이 나오지 않습니다.
 """
 import codecs
+import importlib.util
 import json
 import re
 import sys
@@ -18,6 +21,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
 SRC = ROOT / "src"
+PORTFOLIO_EDITS_SCRIPT = ROOT / ".claude" / "skills" / "portfolio-build" / "portfolio-edits.py"
 DEFAULT_PORT = 4600
 
 
@@ -80,8 +84,16 @@ def replace_lines(md_path, start_line, end_line, expected_text, new_text):
     md_path.write_bytes(result)
 
 
+def load_portfolio_edits():
+    """포트폴리오 문서 고치기 모듈(portfolio-edits.py)을 읽습니다. 빌드 스킬과 같은 파일을 써서 저장 규칙이 한 곳에만 있게 합니다."""
+    spec = importlib.util.spec_from_file_location("portfolio_edits", str(PORTFOLIO_EDITS_SCRIPT))
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
 class EditHandler(SimpleHTTPRequestHandler):
-    """정적 파일 + /__edit/ping · /__edit/save 두 주소만 더한 http.server 처리기입니다."""
+    """정적 파일 + /__edit/ping · /__edit/save · /__edit/portfolio 주소만 더한 http.server 처리기입니다."""
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, directory=str(ROOT), **kwargs)
@@ -93,11 +105,14 @@ class EditHandler(SimpleHTTPRequestHandler):
         super().do_GET()
 
     def do_POST(self):
+        length = int(self.headers.get("Content-Length", 0))
+        request = json.loads(self.rfile.read(length).decode("utf-8"))
+        if self.path == "/__edit/portfolio":
+            self.save_portfolio_field(request)
+            return
         if self.path != "/__edit/save":
             self.send_json(404, {"ok": False, "error": "없는 주소입니다."})
             return
-        length = int(self.headers.get("Content-Length", 0))
-        request = json.loads(self.rfile.read(length).decode("utf-8"))
         try:
             md_path = resolve_md_path(request["path"])
             replace_lines(md_path, int(request["start"]), int(request["end"]), request["expected"], request["text"])
@@ -106,6 +121,18 @@ class EditHandler(SimpleHTTPRequestHandler):
             return
         print(f"[edit] 저장: {request['path']} {request['start']}~{request['end']}줄")
         self.send_json(200, {"ok": True})
+
+    def save_portfolio_field(self, request):
+        """포트폴리오 문서의 글 한 칸 저장(또는 dryRun이면 저장 위치만 묻기). 규칙은 portfolio-edits.py의 save."""
+        portfolio_edits = load_portfolio_edits()                  # 요청마다 다시 읽음 → 규칙을 고쳐도 서버를 다시 켜지 않아도 됨
+        try:
+            answer = portfolio_edits.save(request)
+        except portfolio_edits.EditError as error:
+            self.send_json(error.status, {"ok": False, "error": str(error)})
+            return
+        if request.get("dryRun") != True:
+            print(f"[edit] 포트폴리오 저장: {request.get('field')} → {answer['where']}")
+        self.send_json(200, answer)
 
     def send_json(self, status, body):
         """JSON 응답 하나를 보냅니다(ping·save 공용)."""
@@ -122,7 +149,7 @@ def main():
     port = int(sys.argv[1]) if len(sys.argv) > 1 else DEFAULT_PORT
     server = ThreadingHTTPServer(("127.0.0.1", port), EditHandler)
     # localhost로 열면 브라우저가 IPv6(::1)를 먼저 찾아, 같은 포트의 다른 서버(python -m http.server 등)로 갈 수 있음 → 127.0.0.1 주소로 안내
-    print(f"미리보기 + 편집 서버: http://127.0.0.1:{port}  (상세 문서 오른쪽 아래 [편집 모드])  끄기: Ctrl+C")
+    print(f"미리보기 + 편집 서버: http://127.0.0.1:{port}  (포트폴리오 문서·상세 문서 오른쪽 아래 [편집 모드])  끄기: Ctrl+C")
     server.serve_forever()
 
 
