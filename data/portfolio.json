@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-09",
+  "generatedAt": "2026-11-10",
   "profile": {
     "name": "홍산",
     "nameEn": "San Hong",
@@ -24,6 +24,10 @@
         {
           "text": "UniTask `PlayerLoopTiming`으로 네트워크 반영·송신 시점을 프레임 안에 고정",
           "project": "4-wgo"
+        },
+        {
+          "text": "공용 Base Animator + 몬스터별 Override Controller로 클립만 교체",
+          "project": "5-hive-purge"
         }
       ]
     },
@@ -37,6 +41,10 @@
         {
           "text": "`Interlocked`·`SemaphoreSlim`·`Channel`로 .NET WebSocket 중계 서버 구현",
           "project": "4-wgo"
+        },
+        {
+          "text": "추상 클래스 `MonsterAttack`으로 Windup → Active → Recover 공격 사이클 고정",
+          "project": "5-hive-purge"
         }
       ]
     },
@@ -50,12 +58,17 @@
         {
           "text": "싱글톤 `SingletonBase<T>`에 `DefaultExecutionOrder`로 초기화 순서 지정",
           "project": "3-mini-ftl"
+        },
+        {
+          "text": "템플릿 메서드로 공격 6종의 순서를 고정하고 팩토리로 역할별 공격 생성",
+          "project": "5-hive-purge"
         }
       ]
     }
   ],
   "projects": [
     "3-mini-ftl",
-    "4-wgo"
+    "4-wgo",
+    "5-hive-purge"
   ]
 }

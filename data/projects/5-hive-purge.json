@@ -1,0 +1,771 @@
+{
+  "schemaVersion": 2,
+  "id": "5-hive-purge",
+  "doc": "기술문서.md",
+  "title": "Hive Purge",
+  "tagline": "쏟아지는 몬스터 물량을 헤쳐 나가는 1·3인칭 전환 PvE 호드 FPS — 몬스터 AI·웨이브 담당",
+  "cover": null,
+  "team": {
+    "type": "team",
+    "size": "4인",
+    "role": "몬스터 전반 — 상태 머신·공격 6종, 피격·약점·시체, 웨이브·스폰·풀, 몬스터 이동, 밸런스 관리"
+  },
+  "meta": [
+    {
+      "label": "장르",
+      "value": "1인칭과 3인칭을 오가는 PvE 호드(horde) FPS"
+    },
+    {
+      "label": "기간",
+      "value": "2026.10.15 — 11.03 (11.05까지의 정리 작업 포함)"
+    },
+    {
+      "label": "인원",
+      "value": "4 (팀 프로젝트)"
+    },
+    {
+      "label": "환경",
+      "value": "Unity 6000.3.15f1 (URP 17.3.0, AI Navigation 2.0.12) · Rider, Claude Code"
+    }
+  ],
+  "tags": [
+    "Unity 6.3",
+    "C#",
+    "URP",
+    "NavMesh",
+    "상태 머신",
+    "템플릿 메서드",
+    "Override Controller"
+  ],
+  "links": {
+    "github": "https://github.com/KooHoo-Dev/3rd_3D_1-3D-Project-team_even",
+    "video": "",
+    "extra": []
+  },
+  "intent": {
+    "text": "게임에서 플레이어에게 주고 싶은 경험은 압도적인 물량을 헤쳐 나가는 경험이었다.",
+    "verbatim": true
+  },
+  "highlights": [
+    {
+      "title": "공통 상태 머신 위에서 공격 갈아 끼우기",
+      "what": "모든 몬스터가 같은 상태 5개를 쓰고, 몬스터 역할(Role) 하나에 공격 클래스 하나가 대응한다.",
+      "how": "추상 클래스 `MonsterAttack`이 예고 → 공격 → 회복 순서를 고정하고, 6종 공격이 단계 내용만 채운다. `MonsterAttackFactory`가 역할에 맞는 공격을 만든다.",
+      "why": "몬스터 공격 명세가 1차 빌드 뒤에 바뀔 가능성이 높았다. 처음의 인터페이스 + 추상 클래스 구조는 테스트용 일회용 추상화라 읽기 힘들어, 공통 사이클이 필요한 추상 클래스 하나로 정리했다.",
+      "section": "3.3 공격 갈아 끼우기: `MonsterAttackFactory.CreateAttack`",
+      "image": null
+    },
+    {
+      "title": "상시 체력바 없이 몬스터 상태 읽게 하기",
+      "what": "피격 방향 모션, 저체력 붉은 기, 누적 피해 경직, 약점 명중 Flash, 시체 단계로 몬스터 상태를 보여 준다.",
+      "how": "피격 모션은 Animator의 Hit 레이어(Additive)에 겹쳐 재생하고, 저체력은 `MaterialPropertyBlock`으로 덮는다. 시체는 `Alive → Lying → Sinking → Gone` 단계로 진행한다.",
+      "why": "피격마다 경직을 넣으면 거대한 몬스터도 한 번에 경직되어 몰입감을 해칠 수 있어서, 누적 피해 임계값을 넘었을 때만 경직되게 했다.",
+      "section": "3.4 피격 ~ 시체: 상시 체력바 없이 상태를 읽게 하기",
+      "image": null
+    },
+    {
+      "title": "표 데이터로 웨이브 소환과 몬스터 풀",
+      "what": "TSV 표 4개로 라운드마다 몬스터를 시간대별로 소환하고, 죽은 몬스터를 풀로 돌려받아 다시 쓴다.",
+      "how": "`MonsterWaveDirector`가 라운드 시간을 진행하며 스테이지를 시작하고, 시작 직전 풀에 몬스터를 미리 만들어 둔다. 풀은 처음 만든 개체와 돌려받은 개체를 스택 두 개로 나눈다.",
+      "why": "처음 켜지는 개체는 Awake·OnEnable로 조립되고, 돌려받은 개체는 Awake가 다시 돌지 않아 Respawn()으로 직접 되돌려야 하기 때문이다.",
+      "section": "3.5 웨이브와 풀",
+      "image": null
+    }
+  ],
+  "troubleshooting": [
+    {
+      "title": "슬러그 시체가 바닥을 뚫고, 사망 애니메이션 도중 사라짐",
+      "problem": "슬러그 몬스터가 죽으면 바닥을 뚫고 떨어지고, 일부 몬스터는 사망 애니메이션이 끝나기 전에 사라졌다.",
+      "cause": "시체 처리가 루트의 콜라이더만 몸통으로 잡았는데 슬러그는 몸통 콜라이더가 자식에 있었고, 회수는 사망 후 2초 고정이라 사망 클립보다 짧았다.",
+      "solution": "시체 단계를 `Alive → Lying → Sinking → Gone`으로 나누고 `Gone`이 되면 회수했다. 처치 피드백을 위해 구르는 물리는 유지하고 가라앉기 전에 회전만 줄였다.",
+      "result": "시체가 누웠다가 가라앉은 뒤 풀로 돌아간다.",
+      "lesson": "",
+      "section": "5.2-1 슬러그 시체가 바닥을 뚫고, 사망 애니메이션 도중 사라짐"
+    },
+    {
+      "title": "도약 몬스터가 다른 몬스터 때문에 착지하지 못함",
+      "problem": "도약 착지 지점에 다른 몬스터가 있으면, 그 몬스터가 비킬 때까지 공격 상태 전이가 제대로 되지 않았다.",
+      "cause": "도약은 착지 공간을 물리 검사로 확인하는데, 도약 몬스터가 Default 레이어에 있었고 검사 마스크에도 Default가 들어 있어 다른 몬스터의 몸을 장애물로 봤다.",
+      "solution": "마스크에서 Default를 빼니 맵 기둥·벽까지 빠져서, 도약 몬스터를 Monster 레이어로 옮기고 마스크를 원래대로 되돌렸다.",
+      "result": "다른 몬스터는 장애물·바닥으로 보지 않으면서, 맵 구조물은 다시 장애물로 본다.",
+      "lesson": "",
+      "section": "5.2-2 도약 몬스터가 다른 몬스터 때문에 착지하지 못함"
+    },
+    {
+      "title": "소환이 끝났다고 라운드가 끝나 특수 웨이브가 빠짐",
+      "problem": "웨이브 디렉터가 일찍 끝나서 마지막 특수 웨이브(마감 전 전멸 보너스)가 빠졌다.",
+      "cause": "",
+      "solution": "\"소환 일정이 끝남\"과 \"살아 있는 적이 다 죽음\"을 나누고, 스테이지마다 보너스를 판정하게 했다.",
+      "result": "",
+      "lesson": "보너스 웨이브를 만나는 사람이 없었다. 오히려 쓸데없는 웨이브 설계였던 것 같다.",
+      "section": "5.2-3 소환이 끝났다고 라운드가 끝나 특수 웨이브가 빠짐"
+    }
+  ],
+  "screenshots": [],
+  "retro": {
+    "section": "5. 결과 및 배운 점",
+    "achieved": [
+      "모든 몬스터가 같은 상태 머신 위에서 공격 6종을 쓰고, 몬스터 프리팹 6종(강화형 변형 포함)이 같은 구조로 조립된다.",
+      "처음 하는 플레이어에게는 기존 물량도 꽤 도전적이었다. 시간이 지날수록 스테이지 1의 패턴이 심화되는 느낌을 줄 수 있었다."
+    ],
+    "regrets": [
+      "`MonsterMovement`에 군중 제어·자체 추적·정책 이동이 다 들어 있고, `CrowdController`는 토큰·슬롯 방식이 섞여 있다.",
+      "`AssembleStateMachine`이 리스폰마다 이미 연결된 컴포넌트를 `GetComponent`로 다시 찾는다.",
+      "라운드 → 스테이지 → 웨이브 → 스포너 4계층이 다른 팀원에게 한눈에 읽히지 않았고, 수치 조절이 힘들었다.",
+      "몬스터 수에 따른 프레임 시간을 Profiler로 잰 적이 없다."
+    ],
+    "plans": [
+      "`MonsterMovement`의 군중 제어·자체 추적·정책 이동을 나누고, `CrowdController`의 토큰·슬롯 방식을 하나의 규칙으로 정리한다.",
+      "`AssembleStateMachine`에서 처음 초기화와 리스폰 때 다시 연결할 것만 나눈다.",
+      "3단(라운드 → 웨이브 → 스포너)으로 줄이되, 시간이 지날수록 웨이브 기믹이 강화되는 특성을 표현할 방법을 찾는다.",
+      "Profiler로 현재 버전 부하를 먼저 재고, 개선안과 비교한다."
+    ]
+  },
+  "deck": {
+    "chapters": [
+      {
+        "key": "overview",
+        "title": "개요 · 팀 · 역할",
+        "sectionPath": [
+          "1. 개요 · 팀 · 역할"
+        ]
+      },
+      {
+        "key": "structure",
+        "title": "시스템 구조",
+        "sectionPath": [
+          "2. 시스템 구조"
+        ]
+      },
+      {
+        "key": "core",
+        "title": "핵심 기능",
+        "sectionPath": [
+          "3. 핵심 기능"
+        ]
+      },
+      {
+        "key": "choices",
+        "title": "고민과 선택",
+        "sectionPath": [
+          "4. 고민과 선택"
+        ]
+      },
+      {
+        "key": "result",
+        "title": "결과 및 배운 점",
+        "sectionPath": [
+          "5. 결과 및 배운 점"
+        ]
+      }
+    ],
+    "slides": [
+      {
+        "key": "intro",
+        "chapter": "overview",
+        "layout": "visual",
+        "tab": "개요",
+        "title": {
+          "text": "1.1 프로젝트 소개",
+          "verbatim": true
+        },
+        "lead": {
+          "text": "플레이어가 라운드마다 몰려오는 몬스터 무리를 버티고, 얻은 재화로 강화해 3라운드 보스를 쓰러뜨리는 PvE 호드 FPS",
+          "verbatim": true
+        },
+        "sectionPath": [
+          "1. 개요 · 팀 · 역할",
+          "1.1 프로젝트 소개"
+        ],
+        "points": [
+          {
+            "label": "",
+            "text": "플레이어는 한 라운드 동안 몬스터를 죽이며 재화를 얻고 생존한다.",
+            "verbatim": true
+          },
+          {
+            "label": "",
+            "text": "라운드가 끝나면 얻은 재화로 업그레이드를 사고 무기를 골라 다음 라운드를 준비한다.",
+            "verbatim": true
+          },
+          {
+            "label": "",
+            "text": "3라운드 보스를 처치할 때까지 이 흐름을 반복한다.",
+            "verbatim": true
+          }
+        ],
+        "visuals": [
+          {
+            "kind": "table",
+            "n": 1,
+            "fp": "레퍼런스|가져온 점"
+          }
+        ]
+      },
+      {
+        "key": "why",
+        "chapter": "overview",
+        "layout": "overview",
+        "tab": "개요",
+        "title": {
+          "text": "1.2 왜 만들었나",
+          "verbatim": true
+        },
+        "lead": {
+          "text": "게임에서 플레이어에게 주고 싶은 경험은 압도적인 물량을 헤쳐 나가는 경험이었다.",
+          "verbatim": true
+        },
+        "sectionPath": [
+          "1. 개요 · 팀 · 역할",
+          "1.2 왜 만들었나"
+        ],
+        "points": [
+          {
+            "label": "공통 상태 머신 위에서 공격만 갈아 끼우기",
+            "text": "상태 5개(Idle·Chase·Attack·Stunned·Dead)는 모든 몬스터가 같이 쓰고, 공격 6종(근접·도약·돌진·독 포격·급강하·자폭)은 같은 \"예고 → 공격 → 회복\" 순서를 따른다.",
+            "verbatim": true
+          },
+          {
+            "label": "공용 Animator 하나 + 몬스터별 Override Controller",
+            "text": "상태·전이는 공용 Base Controller 한 곳에서만 고치고, 새 몬스터는 클립만 끼운다.",
+            "verbatim": true
+          }
+        ],
+        "visuals": []
+      },
+      {
+        "key": "role",
+        "chapter": "overview",
+        "layout": "full",
+        "tab": "개요",
+        "title": {
+          "text": "1.3 팀과 내 역할",
+          "verbatim": true
+        },
+        "lead": null,
+        "sectionPath": [
+          "1. 개요 · 팀 · 역할",
+          "1.3 팀과 내 역할"
+        ],
+        "points": [],
+        "visuals": [
+          {
+            "kind": "table",
+            "n": 1,
+            "fp": "구분|내용"
+          }
+        ]
+      },
+      {
+        "key": "arch",
+        "chapter": "structure",
+        "layout": "visual",
+        "tab": "구조",
+        "title": {
+          "text": "2.1 구성요소와 책임",
+          "verbatim": true
+        },
+        "lead": {
+          "text": "이 그림에서 볼 것은 몬스터 한 마리 안의 모든 모듈이 MonsterController 하나를 통해 조립되고 움직인다는 점이다.",
+          "verbatim": true
+        },
+        "sectionPath": [
+          "2. 시스템 구조",
+          "2.1 구성요소와 책임"
+        ],
+        "points": [],
+        "visuals": [
+          {
+            "kind": "mermaid",
+            "n": 1,
+            "fp": "flowchart LR"
+          }
+        ]
+      },
+      {
+        "key": "classes",
+        "chapter": "structure",
+        "layout": "full",
+        "tab": "구조",
+        "title": {
+          "text": "2.1 구성요소와 책임 — 클래스 책임",
+          "verbatim": false
+        },
+        "lead": null,
+        "sectionPath": [
+          "2. 시스템 구조",
+          "2.1 구성요소와 책임"
+        ],
+        "points": [],
+        "visuals": [
+          {
+            "kind": "table",
+            "n": 1,
+            "fp": "클래스|맡은 일"
+          }
+        ]
+      },
+      {
+        "key": "frame",
+        "chapter": "structure",
+        "layout": "visual",
+        "tab": "흐름",
+        "title": {
+          "text": "2.3 한 프레임의 흐름",
+          "verbatim": true
+        },
+        "lead": null,
+        "sectionPath": [
+          "2. 시스템 구조",
+          "2.3 한 프레임의 흐름"
+        ],
+        "points": [],
+        "visuals": [
+          {
+            "kind": "mermaid",
+            "n": 1,
+            "fp": "sequenceDiagram"
+          }
+        ]
+      },
+      {
+        "key": "update",
+        "chapter": "core",
+        "layout": "code",
+        "tab": "구현",
+        "title": {
+          "text": "3.1 매 프레임 진입점: `MonsterController.Update`",
+          "verbatim": true
+        },
+        "lead": {
+          "text": "죽었으면 시체만 진행하고, 살아 있으면 대상 확보 → 공격 튜닝 → 피격 슬로우 종료 → 상태 판단 → 이동 애니메이션 순서로 돈다.",
+          "verbatim": true
+        },
+        "sectionPath": [
+          "3. 핵심 기능",
+          "3.1 매 프레임 진입점: `MonsterController.Update`"
+        ],
+        "points": [],
+        "visuals": [
+          {
+            "kind": "code",
+            "n": 1,
+            "fp": "// code/MonsterController.cs:281-295"
+          }
+        ]
+      },
+      {
+        "key": "attack-cycle",
+        "chapter": "core",
+        "layout": "code",
+        "tab": "구현",
+        "title": {
+          "text": "3.2 공격 사이클: `MonsterAttack.Tick`",
+          "verbatim": true
+        },
+        "lead": {
+          "text": "모든 공격은 같은 순서(예고 Windup → 공격 Active → 회복 Recover)를 따른다.",
+          "verbatim": true
+        },
+        "sectionPath": [
+          "3. 핵심 기능",
+          "3.2 공격 사이클: `MonsterAttack.Tick`"
+        ],
+        "points": [
+          {
+            "label": "",
+            "text": "쿨다운은 회복이 끝난 뒤 기다리는 시간이다.",
+            "verbatim": true
+          }
+        ],
+        "visuals": [
+          {
+            "kind": "code",
+            "n": 1,
+            "fp": "// code/MonsterAttack.cs:197-228",
+            "lines": [
+              2,
+              21
+            ]
+          }
+        ]
+      },
+      {
+        "key": "factory",
+        "chapter": "core",
+        "layout": "code",
+        "tab": "구현",
+        "title": {
+          "text": "3.3 공격 갈아 끼우기: `MonsterAttackFactory.CreateAttack`",
+          "verbatim": true
+        },
+        "lead": {
+          "text": "새 공격 방식은 공격 클래스 1개와 case 1줄로 추가한다.",
+          "verbatim": true
+        },
+        "sectionPath": [
+          "3. 핵심 기능",
+          "3.3 공격 갈아 끼우기: `MonsterAttackFactory.CreateAttack`"
+        ],
+        "points": [],
+        "visuals": [
+          {
+            "kind": "code",
+            "n": 1,
+            "fp": "// code/MonsterAttackFactory.cs:27-42"
+          }
+        ]
+      },
+      {
+        "key": "feedback",
+        "chapter": "core",
+        "layout": "full",
+        "tab": "구현",
+        "title": {
+          "text": "3.4 피격 ~ 시체: 상시 체력바 없이 상태를 읽게 하기",
+          "verbatim": true
+        },
+        "lead": null,
+        "sectionPath": [
+          "3. 핵심 기능",
+          "3.4 피격 ~ 시체: 상시 체력바 없이 상태를 읽게 하기"
+        ],
+        "points": [],
+        "visuals": [
+          {
+            "kind": "table",
+            "n": 1,
+            "fp": "표현|어떻게|코드"
+          }
+        ]
+      },
+      {
+        "key": "wave-data",
+        "chapter": "core",
+        "layout": "full",
+        "tab": "구현",
+        "title": {
+          "text": "3.5 웨이브와 풀 — 표 4개",
+          "verbatim": false
+        },
+        "lead": null,
+        "sectionPath": [
+          "3. 핵심 기능",
+          "3.5 웨이브와 풀"
+        ],
+        "points": [],
+        "visuals": [
+          {
+            "kind": "table",
+            "n": 1,
+            "fp": "표|한 행에 들어 있는 것"
+          }
+        ]
+      },
+      {
+        "key": "pool",
+        "chapter": "core",
+        "layout": "code",
+        "tab": "구현",
+        "title": {
+          "text": "3.5 웨이브와 풀 — 풀",
+          "verbatim": false
+        },
+        "lead": null,
+        "sectionPath": [
+          "3. 핵심 기능",
+          "3.5 웨이브와 풀"
+        ],
+        "points": [
+          {
+            "label": "",
+            "text": "돌려받은 개체는 꺼진 채로 위치를 옮긴 뒤 켠다.",
+            "verbatim": true
+          }
+        ],
+        "visuals": [
+          {
+            "kind": "code",
+            "n": 3,
+            "fp": "// code/MonsterPool.cs:180-205",
+            "lines": [
+              2,
+              21
+            ]
+          }
+        ]
+      },
+      {
+        "key": "abstraction",
+        "chapter": "choices",
+        "layout": "full",
+        "tab": "선택",
+        "title": {
+          "text": "4.1 공격 구조: 인터페이스 + 추상 클래스에서 추상 클래스로",
+          "verbatim": true
+        },
+        "lead": {
+          "text": "인터페이스는 구현이 2개 이상이거나 백로그에 확장 예정이 있을 때만 만든다.",
+          "verbatim": true
+        },
+        "sectionPath": [
+          "4. 고민과 선택",
+          "4.1 공격 구조: 인터페이스 + 추상 클래스에서 추상 클래스로"
+        ],
+        "points": [],
+        "visuals": [
+          {
+            "kind": "table",
+            "n": 1,
+            "fp": "|처음|정리 후 (지금)"
+          }
+        ]
+      },
+      {
+        "key": "range",
+        "chapter": "choices",
+        "layout": "full",
+        "tab": "선택",
+        "title": {
+          "text": "4.2 공격 사거리: 진입·유지·판정 거리를 나누기",
+          "verbatim": true
+        },
+        "lead": {
+          "text": "근접 몬스터가 사거리 앞에서 서서히 느려지고, 공격해도 플레이어가 너무 쉽게 피했다.",
+          "verbatim": true
+        },
+        "sectionPath": [
+          "4. 고민과 선택",
+          "4.2 공격 사거리: 진입·유지·판정 거리를 나누기"
+        ],
+        "points": [],
+        "visuals": [
+          {
+            "kind": "table",
+            "n": 1,
+            "fp": "방법|결과"
+          }
+        ]
+      },
+      {
+        "key": "animator",
+        "chapter": "choices",
+        "layout": "full",
+        "tab": "선택",
+        "title": {
+          "text": "4.3 애니메이션: 코드 강제 전환 대신 Animator 상태 전이",
+          "verbatim": true
+        },
+        "lead": null,
+        "sectionPath": [
+          "4. 고민과 선택",
+          "4.3 애니메이션: 코드 강제 전환 대신 Animator 상태 전이"
+        ],
+        "points": [],
+        "visuals": [
+          {
+            "kind": "table",
+            "n": 1,
+            "fp": "방법|장점|단점"
+          }
+        ]
+      },
+      {
+        "key": "ai",
+        "chapter": "choices",
+        "layout": "full",
+        "tab": "선택",
+        "title": {
+          "text": "4.4 AI 도구를 어떻게 썼나",
+          "verbatim": true
+        },
+        "lead": null,
+        "sectionPath": [
+          "4. 고민과 선택",
+          "4.4 AI 도구를 어떻게 썼나"
+        ],
+        "points": [],
+        "visuals": [
+          {
+            "kind": "table",
+            "n": 1,
+            "fp": "맡긴 것|내가 정한 것"
+          }
+        ]
+      },
+      {
+        "key": "result",
+        "chapter": "result",
+        "layout": "overview",
+        "tab": "결과",
+        "title": {
+          "text": "5.1 결과",
+          "verbatim": true
+        },
+        "lead": null,
+        "sectionPath": [
+          "5. 결과 및 배운 점",
+          "5.1 결과"
+        ],
+        "points": [
+          {
+            "label": "",
+            "text": "모든 몬스터가 같은 상태 머신 위에서 공격 6종을 쓰고, 몬스터 프리팹 6종(강화형 변형 포함)이 같은 구조로 조립된다.",
+            "verbatim": true
+          },
+          {
+            "label": "",
+            "text": "처음 하는 플레이어에게는 기존 물량도 꽤 도전적이었다.",
+            "verbatim": true
+          },
+          {
+            "label": "아쉬운 점",
+            "text": "몬스터 수에 따른 프레임 시간·GC를 Profiler로 잰 기록이 없다.",
+            "verbatim": true
+          }
+        ],
+        "visuals": []
+      },
+      {
+        "key": "ts-corpse",
+        "chapter": "result",
+        "layout": "problem",
+        "tab": "문제 해결",
+        "title": {
+          "text": "5.2-1 슬러그 시체가 바닥을 뚫고, 사망 애니메이션 도중 사라짐",
+          "verbatim": true
+        },
+        "lead": null,
+        "sectionPath": [
+          "5. 결과 및 배운 점",
+          "5.2 문제 해결 경험",
+          "5.2-1 슬러그 시체가 바닥을 뚫고, 사망 애니메이션 도중 사라짐"
+        ],
+        "points": [
+          {
+            "label": "문제",
+            "text": "슬러그 몬스터가 죽으면 바닥을 뚫고 떨어지고, 일부 몬스터는 사망 애니메이션이 끝나기 전에 사라졌다.",
+            "verbatim": true
+          },
+          {
+            "label": "원인",
+            "text": "슬러그는 몸통 콜라이더가 자식에 있어 시체 전환 때 콜라이더 없이 중력만 받았다. 회수는 사망 후 2초 고정이었는데 사망 클립이 그보다 길었다.",
+            "verbatim": true
+          },
+          {
+            "label": "해결",
+            "text": "시체 단계를 Alive → Lying → Sinking → Gone으로 나누고, 고정 시간 대신 Gone이 되면 회수하게 했다.",
+            "verbatim": true
+          },
+          {
+            "label": "결과",
+            "text": "시체가 누웠다가 가라앉은 뒤 풀로 돌아간다.",
+            "verbatim": true
+          }
+        ],
+        "visuals": []
+      },
+      {
+        "key": "ts-leap",
+        "chapter": "result",
+        "layout": "problem",
+        "tab": "문제 해결",
+        "title": {
+          "text": "5.2-2 도약 몬스터가 다른 몬스터 때문에 착지하지 못함",
+          "verbatim": true
+        },
+        "lead": null,
+        "sectionPath": [
+          "5. 결과 및 배운 점",
+          "5.2 문제 해결 경험",
+          "5.2-2 도약 몬스터가 다른 몬스터 때문에 착지하지 못함"
+        ],
+        "points": [
+          {
+            "label": "문제",
+            "text": "도약 착지 지점에 다른 몬스터가 있으면, 그 몬스터가 비킬 때까지 공격 상태 전이가 제대로 되지 않았다.",
+            "verbatim": true
+          },
+          {
+            "label": "원인",
+            "text": "도약 몬스터가 Default 레이어에 있었고 검사 마스크에도 Default가 들어 있어 다른 몬스터의 몸을 장애물로 봤다.",
+            "verbatim": true
+          },
+          {
+            "label": "해결",
+            "text": "도약 몬스터를 Monster 레이어로 옮기고 마스크를 원래대로 되돌렸다.",
+            "verbatim": true
+          },
+          {
+            "label": "결과",
+            "text": "다른 몬스터는 장애물·바닥으로 보지 않으면서, 맵 구조물은 다시 장애물로 본다.",
+            "verbatim": true
+          }
+        ],
+        "visuals": []
+      },
+      {
+        "key": "ts-bonus",
+        "chapter": "result",
+        "layout": "problem",
+        "tab": "문제 해결",
+        "title": {
+          "text": "5.2-3 소환이 끝났다고 라운드가 끝나 특수 웨이브가 빠짐",
+          "verbatim": true
+        },
+        "lead": null,
+        "sectionPath": [
+          "5. 결과 및 배운 점",
+          "5.2 문제 해결 경험",
+          "5.2-3 소환이 끝났다고 라운드가 끝나 특수 웨이브가 빠짐"
+        ],
+        "points": [
+          {
+            "label": "문제",
+            "text": "웨이브 디렉터가 일찍 끝나서 마지막 특수 웨이브(마감 전 전멸 보너스)가 빠졌다.",
+            "verbatim": true
+          },
+          {
+            "label": "발견",
+            "text": "웨이브 조기 종료 조건 코드를 리뷰하다가 발견했다.",
+            "verbatim": true
+          },
+          {
+            "label": "해결",
+            "text": "\"소환 일정이 끝남\"과 \"살아 있는 적이 다 죽음\"을 나누고, 스테이지마다 보너스를 판정하게 했다",
+            "verbatim": true
+          },
+          {
+            "label": "돌아보면",
+            "text": "오히려 쓸데없는 웨이브 설계였던 것 같다.",
+            "verbatim": true
+          }
+        ],
+        "visuals": []
+      },
+      {
+        "key": "debt",
+        "chapter": "result",
+        "layout": "full",
+        "tab": "결과",
+        "title": {
+          "text": "5.3 아쉬운 점 (기술 부채)",
+          "verbatim": true
+        },
+        "lead": null,
+        "sectionPath": [
+          "5. 결과 및 배운 점",
+          "5.3 아쉬운 점 (기술 부채)"
+        ],
+        "points": [],
+        "visuals": [
+          {
+            "kind": "table",
+            "n": 1,
+            "fp": "부채|내용"
+          }
+        ]
+      }
+    ]
+  }
+}
