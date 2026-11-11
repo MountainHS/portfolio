@@ -1,0 +1,6 @@
+{
+  "name": "portfolio-panel",
+  "version": "0.1.0",
+  "description": "포트폴리오 명령 패널: 버튼으로 /portfolio-* 스킬을 실행하거나 입력창에 채웁니다",
+  "types": "./types/index.d.ts"
+}
