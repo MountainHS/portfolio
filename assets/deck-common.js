@@ -189,7 +189,7 @@
   }
 
   // ── 참고 지표(결정 G8): 빨간 배지·audit에 넣지 않고 report().info.notes에만. {id, type, value, detail} — 장면 번호는 report()가 채움 ──
-  //   type: low-fill(채움률 60% 미만) · tiny-diagram(다이어그램 실효 글자 10px 미만) · long-code(20줄 넘어 나뉨) · many-scenes(30장 초과) · auto-mode · font-floor
+  //   type: low-fill(채움률 60% 미만) · tiny-diagram(다이어그램 실효 글자 10px 미만) · long-code(20줄 넘어 나뉨) · many-scenes(40장 초과) · auto-mode · font-floor
   function note(id, type, value, detail = '') {
     const info = window.PFScene.info || (window.PFScene.info = {});
     (info.notes || (info.notes = [])).push({ id, type, value, detail });

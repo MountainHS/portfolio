@@ -83,7 +83,7 @@
 | 이슈 해결 사례 | 문제 원인 → 해결 방식 → 결과·회고 순서로 | `troubleshooting`(발표 덱 옛 주소 `ts-n`·자동 구성용 0~3개) · 발표 덱은 문제 해결 장면 |
 
 > `highlights` 2~4개는 **포트폴리오 문서 기능 소개용**, `screenshots` 6장 · `troubleshooting` 0~3개는 **예전 데이터 자동 구성·발표 덱 옛 주소용** 상한입니다.
-> 발표 덱은 상한 대신 **장면 수 15~30장**(넘으면 리포트 참고)을 봅니다. 필드 규칙은 `.claude/skills/portfolio-build/schema.md`.
+> 발표 덱은 상한 대신 **장면 수 30~40장 권장**(40장 넘으면 리포트 참고, 빼지 않음)을 봅니다. 필드 규칙은 `.claude/skills/portfolio-build/schema.md`.
 
 ### 구현 콘텐츠 한 항목 (`highlights[]`)
 
@@ -132,7 +132,7 @@
 | 기술 문서 | 이슈 해결 사례가 1개 이상, 원인→해결→결과 순서다 (결과 = 해결 뒤 달라진 점) | 권장 |
 | 발표 덱 | 장면의 그림·코드·표 참조가 원문 **정확히 1곳**으로 풀린다 — 빨간 띠 `visual-missing`(0곳) · `visual-ambiguous`(2곳 이상) · `visual-changed`(원문이 바뀜) · `key-invalid` 0건 | 필수 |
 | 발표 덱 | 장면 안 내용이 잘리지 않는다 — 잘림 띠 `clipped` 0건 | 필수 |
-| 발표 덱 | 장면 수 15~30장 · 채움률 60% 이상 · 다이어그램 실효 글자 10px 이상 (참고 지표 `many-scenes` · `low-fill` · `tiny-diagram`, 기준 ②·③) | 참고 |
+| 발표 덱 | 장면 수 30~40장 권장 · 채움률 60% 이상 · 다이어그램 실효 글자 10px 이상 (참고 지표 `many-scenes` · `low-fill` · `tiny-diagram`, 기준 ②·③) | 참고 |
 | 공통 | 적혀 있는 URL·이미지 경로가 실제로 동작한다 (대소문자 포함) | 필수 |
 
 > 발표 덱 행은 미리보기에서 `PFScene.report()`로 봅니다 — `audit`(빨간 띠, 배포·PDF에도 보임)과 `info.notes`(참고 지표, 배지 없음).

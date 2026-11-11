@@ -329,7 +329,7 @@
     const all = [cover, toc, ...chapterScenes, ...retro, end];
     PF.noteFill(all, { fill: !auto });                                  // 예전 데이터 자동 구성은 채움률 참고를 내지 않음(다시 빌드 안내 1건만)
     if (auto) PF.note('cover', 'auto-mode', 1, '예전 데이터로 자동 구성(다시 빌드하면 발표 덱)');
-    else if (all.length > 30) PF.note('cover', 'many-scenes', all.length, `장면 ${all.length}장(권장 15~30장)`);
+    else if (all.length > 40) PF.note('cover', 'many-scenes', all.length, `장면 ${all.length}장(권장 30~40장)`);
     Object.assign(info.summary, { scenes: all.length, chapters: model.length, slides: model.reduce((a, c) => a + c.slides.length, 0), mode: info.mode });
     mark('summary');
     remapHash(p, all, model);
@@ -368,6 +368,7 @@
   const band = (s, auto) => { if (auto) s.querySelector('.pf-foot > span').insertAdjacentHTML('beforeend', '<span class="pf-autoband" data-pf-ui="note">예전 데이터로 자동 구성</span>'); return s; };
 
   // 장 표지: 장면이 적으면(4개 이하) 넉넉한 변형 — 목차 크기 목록 + 장면마다 키워드 한 줄(결정 I7). 안 들어가면 보통 → 촘촘
+  // → 두 단(이 포크: 장면 수 제한을 없애 한 장에 장면이 많을 때, 목록을 위→아래 두 줄기로 나누고 목록 쪽을 넓힘)
   const ROOMY_MAX = 4;
   // 장면의 키워드(deck.slides[].keywords, 문자열 배열)를 장 표지 한 줄로 이음. 배열이 아니거나 비면 ''
   const keywordLine = (sl) => (Array.isArray(sl.keywords) ? sl.keywords.filter(Boolean).join(' · ') : '');
@@ -375,15 +376,16 @@
     const make = (mode) => {
       const s = PF.scene({ id: chId, tpl: 'CH', kind: 'bare', cls: mode === 'compact' ? 'compact' : '', foot, sec: c.title, group: c.title, stitle: c.title });
       const roomy = mode === 'roomy';
+      const cols = mode === 'cols';
       const list = slides.map((x, i) => item(String(i + 1), txt(x.sl.title) || c.title, PF.tab(x.sl.tab), x.scenes[0].id, roomy ? keywordLine(x.sl) : '')).join('');
       PF.body(s).innerHTML = `<div class="toprow"><span class="pf-eyebrow long">${esc(ptitle)}</span><span class="rl">${esc(PF.t('deck.ch-count', { n: slides.length }))}</span></div>
-        <div class="ch-mid"><div><p class="ch-no">${esc(PF.t('en.chapter'))} ${String(ci + 1).padStart(2, '0')}</p><h2 class="ch-t">${esc(c.title)}</h2>${DOT}</div>
-        <div class="ch-list t-P2${mode === 'normal' ? '' : ' ' + mode}"><ol class="toc-list${roomy ? '' : ' sub'}">${list}</ol></div></div>`;
+        <div class="ch-mid${cols ? ' wide' : ''}"><div><p class="ch-no">${esc(PF.t('en.chapter'))} ${String(ci + 1).padStart(2, '0')}</p><h2 class="ch-t">${esc(c.title)}</h2>${DOT}</div>
+        <div class="ch-list t-P2${mode === 'normal' ? '' : cols ? ' compact cols' : ' ' + mode}"><ol class="toc-list${roomy ? '' : ' sub'}"${cols ? ` style="grid-template-rows: repeat(${Math.ceil(slides.length / 2)}, auto)"` : ''}>${list}</ol></div></div>`;
       return band(s, auto);
     };
-    const modes = slides.length <= ROOMY_MAX ? ['roomy', 'normal', 'compact'] : ['normal', 'compact'];
+    const modes = slides.length <= ROOMY_MAX ? ['roomy', 'normal', 'compact'] : ['normal', 'compact', 'cols'];
     for (const m of modes) { const s = make(m); if (PF.fitsM(s)) return s; }
-    return PF.shrinkOrClip(make('compact'), PFScene.refUrl(chId), info.overflow);
+    return PF.shrinkOrClip(make(modes[modes.length - 1]), PFScene.refUrl(chId), info.overflow);
   }
 
   function tocScene(p, foot, items, retro, auto) {

@@ -693,8 +693,8 @@ def apply_edits(data, edits, doc, rep):
     if applied or removed:
         rep.add('참고', '고친 장면 %d개 · 숨긴 장면 %d개를 반영했습니다' % (len(applied), len(removed)))
     n0, n1 = scene_count(chapters, base, data), scene_count(chapters, S, data)
-    if n1 > 30 and n1 > n0:
-        rep.add('참고', '장면이 약 %d장이 됩니다(권장 15~30장, 고치기 전 약 %d장). 코드가 길면 더 늘 수 있습니다' % (n1, n0))
+    if n1 > 40 and n1 > n0:
+        rep.add('참고', '장면이 약 %d장이 됩니다(권장 30~40장, 고치기 전 약 %d장). 코드가 길면 더 늘 수 있습니다' % (n1, n0))
     return S, base
 
 

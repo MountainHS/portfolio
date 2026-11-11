@@ -53,3 +53,8 @@
   - `project.html`: `<link rel="stylesheet" href="assets/deck-theme.css" />` 바로 다음 CSS 3줄(`assets/doc-edit.css`·`assets/portfolio-edit.css`·`assets/deck-edit.css`), `<script src="assets/project-deck.js"></script>` 바로 다음 스크립트 2줄(`assets/doc-edit.js`·`assets/deck-edit.js`, 이 순서)
   - `assets/project-deck.js`: `fitSlide` 바로 위의 `markForDeckEdit` 함수(장면에 `data-pf-slide`, 원문 블록 그림에 `data-pf-visual`)와, `fitSlide`의 `build` 안 `PF.body(s).innerHTML = …` 다음 줄 `markForDeckEdit(s, sl, vis);`
   - 남는 것(이 포크에만 있는 파일): `assets/deck-edit.js`·`assets/deck-edit.css`·`assets/doc-edit.js`(덱이 `PFDocEdit.mapBlocksToLines`를 빌려 씀)·`assets/doc-edit.css`·`assets/portfolio-edit.css`·`edit-server.py`(`/__edit/deck`)·`portfolio-edits.py`(`save_deck_text`·`apply_deck_text`).
+
+## 발표 덱 장면 수 (이 포크 전용)
+
+- 발표 덱은 **30~40장 권장**이고, 필요하면 넘겨도 됩니다. `/portfolio-build`는 장면 수를 맞추려고 장면(두 번째 코드·보조 표·겹치는 화면)을 **빼지 않습니다.** 40장을 넘을 때만 리포트에 [참고]로 장면 수를 알리고, 줄일지는 사용자가 `/portfolio-edit`로 정합니다.
+- `/portfolio-update`가 템플릿 원본으로 덮으면 다시 고칠 곳(원본은 15~30장·30장 초과 시 빼기): `.claude/skills/portfolio-build/SKILL.md` §6 분량·§7 `many-scenes` 행, `schema.md` 「분량」, `deck-edits.py`의 `n1 > 40` 안내, `.claude/skills/portfolio-edit/SKILL.md`의 "40장 넘으면 알림", `assets/project-deck.js`의 `all.length > 40` `many-scenes` 알림, `assets/deck-common.js` 주석, `format/01-portfolio.md`·`format/02-tech-document.md`·`README.md`의 숫자.

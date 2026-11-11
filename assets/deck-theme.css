@@ -289,6 +289,8 @@ table.md-table img { max-height: 120px; max-width: 100%; height: auto; }   /* wi
 .ch-t { margin-top: 10px !important; font-size: 50px; font-weight: 800; line-height: 1.15; letter-spacing: -.03em; color: var(--ink); }
 .t-CH .dotrule { margin-top: 22px; max-width: 360px; }
 .ch-list .toc-list a { cursor: pointer; }
+.ch-mid.wide { grid-template-columns: minmax(0, 3fr) minmax(0, 8fr); gap: 40px; }   /* 두 단 장 표지: 목록 쪽을 넓힘 */
+.ch-list.cols .toc-list { grid-auto-flow: column; column-gap: 28px; }   /* 위→아래로 채운 뒤 다음 줄기 */
 /* 장면이 적은 장 표지(넉넉한 변형, 결정 I7): 목차 크기 목록 + 장면마다 도입 한두 줄 */
 .ch-list.roomy .toc-list a { align-items: flex-start; padding: 16px 0; }
 .ch-list.roomy .toc-list .pg { padding-top: 8px; }
