@@ -156,48 +156,12 @@
   },
   "deck": {
     "chapters": [
-      {
-        "key": "overview",
-        "title": "개요 · 팀 · 역할",
-        "sectionPath": [
-          "1. 개요 · 팀 · 역할"
-        ]
-      },
-      {
-        "key": "part",
-        "title": "담당 파트 개요",
-        "sectionPath": [
-          "2. 담당 파트 개요"
-        ]
-      },
-      {
-        "key": "structure",
-        "title": "시스템 구조",
-        "sectionPath": [
-          "3. 시스템 구조"
-        ]
-      },
-      {
-        "key": "features",
-        "title": "핵심 기능",
-        "sectionPath": [
-          "4. 핵심 기능"
-        ]
-      },
-      {
-        "key": "decisions",
-        "title": "고민과 선택",
-        "sectionPath": [
-          "5. 고민과 선택"
-        ]
-      },
-      {
-        "key": "results",
-        "title": "결과 및 배운 점",
-        "sectionPath": [
-          "6. 결과 및 배운 점"
-        ]
-      }
+      {"key": "overview", "title": "개요 · 팀 · 역할", "sectionPath": ["1. 개요 · 팀 · 역할"]},
+      {"key": "part", "title": "담당 파트 개요", "sectionPath": ["2. 담당 파트 개요"]},
+      {"key": "structure", "title": "시스템 구조", "sectionPath": ["3. 시스템 구조"]},
+      {"key": "features", "title": "핵심 기능", "sectionPath": ["4. 핵심 기능"]},
+      {"key": "decisions", "title": "고민과 선택", "sectionPath": ["5. 고민과 선택"]},
+      {"key": "results", "title": "결과 및 배운 점", "sectionPath": ["6. 결과 및 배운 점"]}
     ],
     "slides": [
       {
@@ -205,39 +169,14 @@
         "chapter": "overview",
         "layout": "overview",
         "tab": "개요",
-        "title": {
-          "text": "1.1 프로젝트 소개",
-          "verbatim": true
-        },
-        "lead": {
-          "text": "플레이어들이 서로의 몸을 붙잡아 바닷속 자원을 모으고, 그 자원으로 다리를 지어 육지까지 가는 2D 협동 물리 생존 게임",
-          "verbatim": true
-        },
-        "keywords": [
-          "4인 협동",
-          "물리 생존",
-          "다리 건설"
-        ],
-        "sectionPath": [
-          "1. 개요 · 팀 · 역할",
-          "1.1 프로젝트 소개"
-        ],
+        "title": {"text": "1.1 프로젝트 소개", "verbatim": true},
+        "lead": {"text": "플레이어들이 서로의 몸을 붙잡아 바닷속 자원을 모으고, 그 자원으로 다리를 지어 육지까지 가는 2D 협동 물리 생존 게임", "verbatim": true},
+        "keywords": ["4인 협동", "물리 생존", "다리 건설"],
+        "sectionPath": ["1. 개요 · 팀 · 역할", "1.1 프로젝트 소개"],
         "points": [
-          {
-            "label": "",
-            "text": "방 코드를 입력해 최대 4명이 한 방에 들어간다.",
-            "verbatim": true
-          },
-          {
-            "label": "",
-            "text": "조작은 WASD로 팔 방향, 마우스 좌·우 클릭으로 왼손·오른손 잡기다.",
-            "verbatim": true
-          },
-          {
-            "label": "",
-            "text": "승리는 다리를 끝까지 짓고 모두 목표 지점에 도착하는 것, 패배는 모든 플레이어의 스태미나가 바닥나 무력화되는 것이다.",
-            "verbatim": true
-          }
+          {"label": "", "text": "방 코드를 입력해 최대 4명이 한 방에 들어간다.", "verbatim": true},
+          {"label": "", "text": "조작은 WASD로 팔 방향, 마우스 좌·우 클릭으로 왼손·오른손 잡기다.", "verbatim": true},
+          {"label": "", "text": "승리는 다리를 끝까지 짓고 모두 목표 지점에 도착하는 것, 패배는 모든 플레이어의 스태미나가 바닥나 무력화되는 것이다.", "verbatim": true}
         ],
         "visuals": [
           {
@@ -245,13 +184,8 @@
             "src": "images/cover.png",
             "w": 1345,
             "h": 1038,
-            "caption": {
-              "text": "We Got One 시연 장면",
-              "verbatim": true
-            },
-            "sectionPath": [
-              "We Got One 기술 문서"
-            ]
+            "caption": {"text": "We Got One 시연 장면", "verbatim": true},
+            "sectionPath": ["We Got One 기술 문서"]
           }
         ]
       },
@@ -260,22 +194,10 @@
         "chapter": "overview",
         "layout": "visual",
         "tab": "개요",
-        "title": {
-          "text": "1.1 프로젝트 소개 — 담당 범위",
-          "verbatim": false
-        },
-        "lead": {
-          "text": "제가 이 프로젝트에서 맡은 부분은 다음과 같습니다.",
-          "verbatim": true
-        },
-        "keywords": [
-          "네트워크 동기화",
-          "다리 건설 조건"
-        ],
-        "sectionPath": [
-          "1. 개요 · 팀 · 역할",
-          "1.1 프로젝트 소개"
-        ],
+        "title": {"text": "1.1 프로젝트 소개 — 담당 범위", "verbatim": false},
+        "lead": {"text": "제가 이 프로젝트에서 맡은 부분은 다음과 같습니다.", "verbatim": true},
+        "keywords": ["네트워크 동기화", "다리 건설 조건"],
+        "sectionPath": ["1. 개요 · 팀 · 역할", "1.1 프로젝트 소개"],
         "points": [
           {
             "label": "",
@@ -294,10 +216,7 @@
             "src": "images/core-loop.png",
             "w": 1280,
             "h": 720,
-            "caption": {
-              "text": "핵심 루프와 승패 조건",
-              "verbatim": true
-            }
+            "caption": {"text": "핵심 루프와 승패 조건", "verbatim": true}
           }
         ]
       },
@@ -306,19 +225,10 @@
         "chapter": "overview",
         "layout": "overview",
         "tab": "개요",
-        "title": {
-          "text": "1.2 왜 만들었나",
-          "verbatim": true
-        },
+        "title": {"text": "1.2 왜 만들었나", "verbatim": true},
         "lead": null,
-        "keywords": [
-          "네트워크 멀티플레이",
-          "협동 게임"
-        ],
-        "sectionPath": [
-          "1. 개요 · 팀 · 역할",
-          "1.2 왜 만들었나"
-        ],
+        "keywords": ["네트워크 멀티플레이", "협동 게임"],
+        "sectionPath": ["1. 개요 · 팀 · 역할", "1.2 왜 만들었나"],
         "points": [
           {
             "label": "개인 프로젝트로는 하기 어려운 네트워크 멀티플레이에 도전하기",
@@ -338,64 +248,26 @@
         "chapter": "overview",
         "layout": "full",
         "tab": "개요",
-        "title": {
-          "text": "1.3 팀과 내 역할",
-          "verbatim": true
-        },
+        "title": {"text": "1.3 팀과 내 역할", "verbatim": true},
         "lead": null,
-        "keywords": [
-          "팀원",
-          "맡은 일",
-          "팀장·PM"
-        ],
-        "sectionPath": [
-          "1. 개요 · 팀 · 역할",
-          "1.3 팀과 내 역할"
-        ],
+        "keywords": ["팀원", "맡은 일", "팀장·PM"],
+        "sectionPath": ["1. 개요 · 팀 · 역할", "1.3 팀과 내 역할"],
         "points": [],
-        "visuals": [
-          {
-            "kind": "table",
-            "n": 1,
-            "fp": "팀원|맡은 일|네트워크 동기화에서 맡은 기능"
-          }
-        ]
+        "visuals": [{"kind": "table", "n": 1, "fp": "팀원|맡은 일|네트워크 동기화에서 맡은 기능"}]
       },
       {
         "key": "work-range",
         "chapter": "part",
         "layout": "overview",
         "tab": "개요",
-        "title": {
-          "text": "2.1 주요 담당 작업 및 개발 범위",
-          "verbatim": true
-        },
+        "title": {"text": "2.1 주요 담당 작업 및 개발 범위", "verbatim": true},
         "lead": null,
-        "keywords": [
-          "네트워크 구조 개편",
-          "연동 가이드",
-          "TSV 데이터"
-        ],
-        "sectionPath": [
-          "2. 담당 파트 개요",
-          "2.1 주요 담당 작업 및 개발 범위"
-        ],
+        "keywords": ["네트워크 구조 개편", "연동 가이드", "TSV 데이터"],
+        "sectionPath": ["2. 담당 파트 개요", "2.1 주요 담당 작업 및 개발 범위"],
         "points": [
-          {
-            "label": "",
-            "text": "네트워크 구조 개편: 호스트 권한형 구조에 맞춰 서버의 메시지 처리 방식을 입력 중계와 스냅샷 중계로 변경했다.",
-            "verbatim": true
-          },
-          {
-            "label": "",
-            "text": "네트워크 연동 및 디버깅: 팀원들의 기능을 서버에 통합하고, 연동 가이드와 동기화 상태 확인용 디버그 도구를 제작했다.",
-            "verbatim": true
-          },
-          {
-            "label": "",
-            "text": "다리 건설 시스템 개편: 건설 조건에 물고기를 추가하고, 다리 15칸의 건설 비용을 TSV 데이터로 관리하도록 변경했다",
-            "verbatim": true
-          }
+          {"label": "", "text": "네트워크 구조 개편: 호스트 권한형 구조에 맞춰 서버의 메시지 처리 방식을 입력 중계와 스냅샷 중계로 변경했다.", "verbatim": true},
+          {"label": "", "text": "네트워크 연동 및 디버깅: 팀원들의 기능을 서버에 통합하고, 연동 가이드와 동기화 상태 확인용 디버그 도구를 제작했다.", "verbatim": true},
+          {"label": "", "text": "다리 건설 시스템 개편: 건설 조건에 물고기를 추가하고, 다리 15칸의 건설 비용을 TSV 데이터로 관리하도록 변경했다", "verbatim": true}
         ],
         "visuals": []
       },
@@ -404,41 +276,15 @@
         "chapter": "part",
         "layout": "overview",
         "tab": "개요",
-        "title": {
-          "text": "2.2 담당 파트 1: 호스트 권한형 입력 중계 서버",
-          "verbatim": false
-        },
+        "title": {"text": "2.2 담당 파트 1: 호스트 권한형 입력 중계 서버", "verbatim": false},
         "lead": null,
-        "keywords": [
-          "입력 중계",
-          "호스트 권한형",
-          "디버그 도구"
-        ],
-        "sectionPath": [
-          "2. 담당 파트 개요",
-          "2.2 담당 파트 1: 호스트 권한형 입력 중계 서버와 동기화 뼈대"
-        ],
+        "keywords": ["입력 중계", "호스트 권한형", "디버그 도구"],
+        "sectionPath": ["2. 담당 파트 개요", "2.2 담당 파트 1: 호스트 권한형 입력 중계 서버와 동기화 뼈대"],
         "points": [
-          {
-            "label": "",
-            "text": "게스트는 위치를 보내지 않고 입력만 보낸다. 서버는 게스트 입력을 모아 일정 주기로 호스트에게 보낸다.",
-            "verbatim": true
-          },
-          {
-            "label": "",
-            "text": "호스트가 모든 물리를 계산한 결과를 모아서 보내면, 서버가 게스트들에게 전달한다.",
-            "verbatim": true
-          },
-          {
-            "label": "",
-            "text": "방 수명 규칙: 처음 들어온 사람이 호스트, 4명 초과 입장 거부, 호스트가 나가면 방 전체 종료.",
-            "verbatim": true
-          },
-          {
-            "label": "",
-            "text": "동기화 상태를 화면에서 바로 보는 네트워크 디버그 도구를 만들었다.",
-            "verbatim": true
-          }
+          {"label": "", "text": "게스트는 위치를 보내지 않고 입력만 보낸다. 서버는 게스트 입력을 모아 일정 주기로 호스트에게 보낸다.", "verbatim": true},
+          {"label": "", "text": "호스트가 모든 물리를 계산한 결과를 모아서 보내면, 서버가 게스트들에게 전달한다.", "verbatim": true},
+          {"label": "", "text": "방 수명 규칙: 처음 들어온 사람이 호스트, 4명 초과 입장 거부, 호스트가 나가면 방 전체 종료.", "verbatim": true},
+          {"label": "", "text": "동기화 상태를 화면에서 바로 보는 네트워크 디버그 도구를 만들었다.", "verbatim": true}
         ],
         "visuals": []
       },
@@ -447,36 +293,14 @@
         "chapter": "part",
         "layout": "overview",
         "tab": "개요",
-        "title": {
-          "text": "2.3 담당 파트 2: 다리 건설 조건 개편",
-          "verbatim": true
-        },
+        "title": {"text": "2.3 담당 파트 2: 다리 건설 조건 개편", "verbatim": true},
         "lead": null,
-        "keywords": [
-          "물고기 재료",
-          "TSV 조건",
-          "요구 점수"
-        ],
-        "sectionPath": [
-          "2. 담당 파트 개요",
-          "2.3 담당 파트 2: 다리 건설 조건 개편"
-        ],
+        "keywords": ["물고기 재료", "TSV 조건", "요구 점수"],
+        "sectionPath": ["2. 담당 파트 개요", "2.3 담당 파트 2: 다리 건설 조건 개편"],
         "points": [
-          {
-            "label": "",
-            "text": "기존에는 나무만 소비하여 다리를 건설할 수 있었으나, 물고기도 건설 재료로 사용할 수 있도록 확장했다.",
-            "verbatim": true
-          },
-          {
-            "label": "",
-            "text": "다리 15칸의 건설 조건을 별도의 TSV 파일에서 관리하도록 변경했다.",
-            "verbatim": true
-          },
-          {
-            "label": "",
-            "text": "다리를 건설하려면 필수 아이템을 확보하고, 요구 점수 조건까지 충족해야 다음 칸으로 넘어갈 수 있도록 했다.",
-            "verbatim": true
-          },
+          {"label": "", "text": "기존에는 나무만 소비하여 다리를 건설할 수 있었으나, 물고기도 건설 재료로 사용할 수 있도록 확장했다.", "verbatim": true},
+          {"label": "", "text": "다리 15칸의 건설 조건을 별도의 TSV 파일에서 관리하도록 변경했다.", "verbatim": true},
+          {"label": "", "text": "다리를 건설하려면 필수 아이템을 확보하고, 요구 점수 조건까지 충족해야 다음 칸으로 넘어갈 수 있도록 했다.", "verbatim": true},
           {
             "label": "",
             "text": "이를 통해 플레이어가 필요한 물고기를 직접 찾아 낚시하는 경험과 새로운 물고기를 찾기 위해 수중 공간을 탐험하는 경험을 강화하고자 했다.",
@@ -490,51 +314,51 @@
         "chapter": "structure",
         "layout": "full",
         "tab": "구조",
-        "title": {
-          "text": "3.1 구성요소와 책임",
-          "verbatim": true
-        },
+        "title": {"text": "3.1 구성요소와 책임", "verbatim": true},
         "lead": null,
-        "keywords": [
-          "RoomHub",
-          "RoomClient",
-          "ApplySnapshot"
-        ],
-        "sectionPath": [
-          "3. 시스템 구조",
-          "3.1 구성요소와 책임"
-        ],
+        "keywords": ["RoomHub", "RoomClient", "ApplySnapshot"],
+        "sectionPath": ["3. 시스템 구조", "3.1 구성요소와 책임"],
         "points": [],
-        "visuals": [
+        "visuals": [{"kind": "table", "n": 1, "fp": "구성요소|위치|책임 (그리고 하지 않는 일)"}]
+      },
+      {
+        "key": "structure-why",
+        "chapter": "structure",
+        "layout": "overview",
+        "tab": "구조",
+        "title": {"text": "3.2 왜 이렇게 나눴나", "verbatim": true},
+        "lead": null,
+        "keywords": ["RoomHub·Room 분리", "RoomClient 하나", "Update 직전"],
+        "sectionPath": ["3. 시스템 구조", "3.2 왜 이렇게 나눴나"],
+        "points": [
           {
-            "kind": "table",
-            "n": 1,
-            "fp": "구성요소|위치|책임 (그리고 하지 않는 일)"
+            "label": "",
+            "text": "방 생성·삭제를 담당하는 RoomHub와 방 내부의 메시지를 처리하는 Room의 역할을 분리했다. 기존 서버의 구조를 유지하면서 방 관리 기능은 거의 수정하지 않고 데이터 동기화 방식만 변경할 수 있었다.",
+            "verbatim": true
+          },
+          {
+            "label": "",
+            "text": "클라이언트에서 소켓을 아는 클래스는 RoomClient 하나다. 다른 매니저는 ApplySnapshot(값)만 받아서, 다리·인벤토리 기능을 고칠 때 연결·수신·송신 코드를 볼 필요가 없다.",
+            "verbatim": true
+          },
+          {
+            "label": "",
+            "text": "ApplySnapshot은 RoomClient의 수신 루프가 메인 스레드로 돌아온 뒤, Update 직전에 부른다. 그래서 매니저는 스레드나 프레임 순서를 신경 쓰지 않고 오브젝트를 바꿀 수 있다.",
+            "verbatim": true
           }
-        ]
+        ],
+        "visuals": [],
+        "edited": true
       },
       {
         "key": "flow",
         "chapter": "structure",
         "layout": "visual",
         "tab": "흐름",
-        "title": {
-          "text": "3.3 전체 통신 흐름",
-          "verbatim": true
-        },
-        "lead": {
-          "text": "핵심: 게스트는 입력만 보내고, 화면에 보이는 결과는 모두 호스트가 계산한 스냅샷이라는 점이다.",
-          "verbatim": true
-        },
-        "keywords": [
-          "입력만",
-          "스냅샷",
-          "초당 20회"
-        ],
-        "sectionPath": [
-          "3. 시스템 구조",
-          "3.3 전체 통신 흐름"
-        ],
+        "title": {"text": "3.3 전체 통신 흐름", "verbatim": true},
+        "lead": {"text": "핵심: 게스트는 입력만 보내고, 화면에 보이는 결과는 모두 호스트가 계산한 스냅샷이라는 점이다.", "verbatim": true},
+        "keywords": ["입력만", "스냅샷", "초당 20회"],
+        "sectionPath": ["3. 시스템 구조", "3.3 전체 통신 흐름"],
         "points": [
           {
             "label": "",
@@ -542,196 +366,145 @@
             "verbatim": true
           }
         ],
-        "visuals": [
-          {
-            "kind": "mermaid",
-            "n": 1,
-            "fp": "flowchart LR"
-          }
-        ]
+        "visuals": [{"kind": "mermaid", "n": 1, "fp": "flowchart LR"}]
       },
       {
         "key": "sequence",
         "chapter": "structure",
         "layout": "visual",
         "tab": "흐름",
-        "title": {
-          "text": "3.4 게스트 입력 1회가 게스트 화면에 반영되기까지",
-          "verbatim": true
-        },
+        "title": {"text": "3.4 게스트 입력 1회가 게스트 화면에 반영되기까지", "verbatim": true},
         "lead": null,
-        "keywords": [
-          "inputGroup",
-          "snapshot",
-          "ApplySnapshot"
-        ],
-        "sectionPath": [
-          "3. 시스템 구조",
-          "3.4 게스트 입력 1회가 게스트 화면에 반영되기까지"
-        ],
+        "keywords": ["inputGroup", "snapshot", "ApplySnapshot"],
+        "sectionPath": ["3. 시스템 구조", "3.4 게스트 입력 1회가 게스트 화면에 반영되기까지"],
         "points": [],
-        "visuals": [
-          {
-            "kind": "mermaid",
-            "n": 1,
-            "fp": "sequenceDiagram"
-          }
-        ]
+        "visuals": [{"kind": "mermaid", "n": 1, "fp": "sequenceDiagram"}]
+      },
+      {
+        "key": "roomclient-api",
+        "chapter": "structure",
+        "layout": "visual",
+        "tab": "구조",
+        "title": {"text": "4.0 사용법: RoomClient API와 팀원용 연동 가이드", "verbatim": true},
+        "lead": {"text": "새 기능을 동기화하는 순서는 세 단계다. 이 순서를 팀원용 연동 가이드로 정리해 공유했다.", "verbatim": true},
+        "keywords": ["RoomClient API", "연동 가이드", "세 단계"],
+        "sectionPath": ["4. 핵심 기능", "4.0 사용법: RoomClient API와 팀원용 연동 가이드"],
+        "points": [
+          {"label": "", "text": "Protocol의 SnapshotMessage에 필드를 추가한다.", "verbatim": true},
+          {"label": "", "text": "호스트 쪽 SendSnapshotOrInputMessage에서 그 필드를 채운다.", "verbatim": true},
+          {"label": "", "text": "게스트 쪽 OnSnapshot에서 그 값을 반영한다.", "verbatim": true},
+          {"label": "", "text": "첫 메시지는 반드시 hello이고, 이후 input(게스트) 또는 snapshot(호스트)만 처리한다.", "verbatim": true}
+        ],
+        "visuals": [{"kind": "table", "n": 1, "fp": "호출|하는 일"}],
+        "edited": true
       },
       {
         "key": "input-relay",
         "chapter": "features",
         "layout": "code",
         "tab": "구현",
-        "title": {
-          "text": "4.1 게스트 입력 모아서 호스트에게 보내기",
-          "verbatim": true
-        },
+        "title": {"text": "4.1 게스트 입력 모아서 호스트에게 보내기", "verbatim": true},
         "lead": null,
-        "keywords": [
-          "LastInput",
-          "Interlocked"
-        ],
-        "sectionPath": [
-          "4. 핵심 기능",
-          "4.1 게스트 입력 모아서 호스트에게 보내기"
-        ],
+        "keywords": ["LastInput", "Interlocked"],
+        "sectionPath": ["4. 핵심 기능", "4.1 게스트 입력 모아서 호스트에게 보내기"],
         "points": [
-          {
-            "label": "",
-            "text": "게스트 입력이 올 때마다 그 멤버의 LastInput을 최신 값으로 덮어쓴다. 쌓지 않는다.",
-            "verbatim": true
-          },
-          {
-            "label": "",
-            "text": "RoomHub 타이머가 틱마다 모든 방의 SendGuestInputsToHostAsync를 동시에 부른다.",
-            "verbatim": true
-          },
-          {
-            "label": "",
-            "text": "방은 게스트마다 LastInput을 \"꺼내면서 비우고\", 입력이 하나라도 있으면 묶어서 호스트에게 보낸다.",
-            "verbatim": true
-          }
+          {"label": "", "text": "게스트 입력이 올 때마다 그 멤버의 LastInput을 최신 값으로 덮어쓴다. 쌓지 않는다.", "verbatim": true},
+          {"label": "", "text": "RoomHub 타이머가 틱마다 모든 방의 SendGuestInputsToHostAsync를 동시에 부른다.", "verbatim": true},
+          {"label": "", "text": "방은 게스트마다 LastInput을 \"꺼내면서 비우고\", 입력이 하나라도 있으면 묶어서 호스트에게 보낸다.", "verbatim": true}
         ],
-        "visuals": [
-          {
-            "kind": "code",
-            "n": 1,
-            "lines": [
-              1,
-              20
-            ],
-            "fp": "public async Task SendGuestInputsToHostAsync()"
-          }
-        ]
+        "visuals": [{"kind": "code", "n": 1, "lines": [1, 20], "fp": "public async Task SendGuestInputsToHostAsync()"}]
       },
       {
         "key": "snapshot-channel",
         "chapter": "features",
         "layout": "code",
         "tab": "구현",
-        "title": {
-          "text": "4.2 멤버별 \"최신 스냅샷 1개\" 채널",
-          "verbatim": true
-        },
+        "title": {"text": "4.2 멤버별 \"최신 스냅샷 1개\" 채널", "verbatim": true},
         "lead": null,
-        "keywords": [
-          "최신 스냅샷",
-          "DropOldest",
-          "송신 루프"
-        ],
-        "sectionPath": [
-          "4. 핵심 기능",
-          "4.2 멤버별 \"최신 스냅샷 1개\" 채널"
-        ],
+        "keywords": ["최신 스냅샷", "DropOldest", "송신 루프"],
+        "sectionPath": ["4. 핵심 기능", "4.2 멤버별 \"최신 스냅샷 1개\" 채널"],
         "points": [
+          {"label": "", "text": "호스트 스냅샷이 오면 서버는 직접 보내지 않고, 호스트를 뺀 멤버마다 있는 채널에 넣기만 한다.", "verbatim": true},
+          {"label": "", "text": "채널 크기는 1이고, 꽉 차면 오래된 것을 버린다. 느린 멤버에게는 밀린 스냅샷이 쌓이지 않고 가장 최신 것만 간다.", "verbatim": true}
+        ],
+        "visuals": [{"kind": "code", "n": 1, "lines": [1, 20], "fp": "// Member 안: 멤버마다 크기 1짜리 채널"}],
+        "edited": true
+      },
+      {
+        "key": "snapshot-send-loop",
+        "chapter": "features",
+        "layout": "code",
+        "tab": "구현",
+        "title": {"text": "4.2 멤버별 \"최신 스냅샷 1개\" 채널 — 송신 루프", "verbatim": false},
+        "lead": null,
+        "keywords": ["송신 루프", "BroadcastNowAsync"],
+        "sectionPath": ["4. 핵심 기능", "4.2 멤버별 \"최신 스냅샷 1개\" 채널"],
+        "points": [
+          {"label": "", "text": "멤버마다 송신 전담 루프가 하나씩 돌며 자기 채널에서 꺼내 보낸다.", "verbatim": true},
           {
             "label": "",
-            "text": "호스트 스냅샷이 오면 서버는 직접 보내지 않고, 호스트를 뺀 멤버마다 있는 채널에 넣기만 한다.",
+            "text": "join·leave처럼 한 번만 일어나고 놓치면 안 되는 메시지는 이 채널을 쓰지 않고 BroadcastNowAsync로 바로 보낸다. 크기 1 + 오래된 것 버림 채널에 넣으면 스냅샷에 밀려 버려질 수 있기 때문이다.",
             "verbatim": true
           },
+          {"label": "", "text": "이 구조는 프로젝트 이후 개선한 결과다.", "verbatim": true}
+        ],
+        "visuals": [{"kind": "code", "n": 1, "lines": [23, 38], "fp": "// Member 안: 멤버마다 크기 1짜리 채널"}],
+        "edited": true
+      },
+      {
+        "key": "room-lifecycle",
+        "chapter": "features",
+        "layout": "code",
+        "tab": "구현",
+        "title": {"text": "4.3 방 수명과 연결 예외 처리 — 방 입장과 인원 제한", "verbatim": false},
+        "lead": null,
+        "keywords": ["인원 제한", "호스트 결정", "호스트 승계"],
+        "sectionPath": ["4. 핵심 기능", "4.3 방 수명과 연결 예외 처리"],
+        "points": [
+          {"label": "", "text": "호스트 결정: 방이 비어 있을 때 들어온 사람이 호스트다.", "verbatim": true},
           {
             "label": "",
-            "text": "채널 크기는 1이고, 꽉 차면 오래된 것을 버린다. 느린 멤버에게는 밀린 스냅샷이 쌓이지 않고 가장 최신 것만 간다.",
+            "text": "호스트 퇴장: 호스트가 나가면 roomExpired = true와 취소 토큰으로 남은 멤버의 수신 대기를 모두 깨워 연결을 닫는다.",
             "verbatim": true
-          }
+          },
+          {"label": "", "text": "호스트 승계는 계획했지만 하지 않았다.", "verbatim": true},
+          {"label": "", "text": "일정이 짧았고, 네트워크를 최대한 단순하게 두고 인게임 핵심 루프의 완성도에 집중하고 싶었다.", "verbatim": true}
         ],
-        "visuals": [
-          {
-            "kind": "code",
-            "n": 1,
-            "lines": [
-              1,
-              20
-            ],
-            "fp": "// Member 안: 멤버마다 크기 1짜리 채널"
-          }
-        ]
+        "visuals": [{"kind": "code", "n": 1, "fp": "lock (gate) // (Why) 여러 접속이 동시에 같은 방 코드로 들어와도 인원 수를 정확히 세기 위"}],
+        "edited": true
       },
       {
         "key": "send-timeout",
         "chapter": "features",
         "layout": "code",
         "tab": "구현",
-        "title": {
-          "text": "4.3 방 수명과 연결 예외 처리",
-          "verbatim": true
-        },
+        "title": {"text": "4.3 방 수명과 연결 예외 처리 — 송신 타임아웃과 실패 표시", "verbatim": false},
         "lead": null,
-        "keywords": [
-          "인원 제한",
-          "9초 제한",
-          "송신 실패"
-        ],
-        "sectionPath": [
-          "4. 핵심 기능",
-          "4.3 방 수명과 연결 예외 처리"
-        ],
-        "points": [
-          {
-            "label": "",
-            "text": "호스트 퇴장: 호스트가 나가면 roomExpired = true와 취소 토큰으로 남은 멤버의 수신 대기를 모두 깨워 연결을 닫는다.",
-            "verbatim": true
-          },
-          {
-            "label": "",
-            "text": "소켓 연결 중 예외로 한쪽이 비정상 종료되면 반대편도 이상해질 수 있어, 송신 실패는 반드시 한 곳에서 처리하게 했다.",
-            "verbatim": true
-          }
-        ],
+        "keywords": ["9초 제한", "송신 실패"],
+        "sectionPath": ["4. 핵심 기능", "4.3 방 수명과 연결 예외 처리"],
+        "points": [{"label": "", "text": "소켓 연결 중 예외로 한쪽이 비정상 종료되면 반대편도 이상해질 수 있어, 송신 실패는 반드시 한 곳에서 처리하게 했다.", "verbatim": true}],
         "visuals": [
           {
             "kind": "code",
             "n": 2,
-            "lines": [
-              1,
-              20
-            ],
+            "lines": [1, 28],
             "fp": "private async Task SendRawAsync(Member member, string json)"
           }
-        ]
+        ],
+        "edited": true
       },
       {
         "key": "timing",
         "chapter": "features",
         "layout": "code",
         "tab": "구현",
-        "title": {
-          "text": "4.4 RoomClient: 받는 시점과 보내는 시점 고정",
-          "verbatim": true
-        },
+        "title": {"text": "4.4 RoomClient: 받는 시점과 보내는 시점 고정", "verbatim": true},
         "lead": {
           "text": "한 프레임 안에서 \"네트워크 값 반영 → 게임 로직 → 결과 송신\" 순서가 항상 같도록, 받기는 Update 직전, 보내기는 LastUpdate로 옮겼다.",
           "verbatim": true
         },
-        "keywords": [
-          "Update 직전",
-          "LastUpdate"
-        ],
-        "sectionPath": [
-          "4. 핵심 기능",
-          "4.4 RoomClient: 받는 시점과 보내는 시점 고정"
-        ],
+        "keywords": ["Update 직전", "LastUpdate"],
+        "sectionPath": ["4. 핵심 기능", "4.4 RoomClient: 받는 시점과 보내는 시점 고정"],
         "points": [
           {
             "label": "",
@@ -739,93 +512,44 @@
             "verbatim": true
           }
         ],
-        "visuals": [
-          {
-            "kind": "code",
-            "n": 1,
-            "fp": "// 수신 루프"
-          }
-        ]
+        "visuals": [{"kind": "code", "n": 1, "fp": "// 수신 루프"}]
       },
       {
         "key": "world-item-roles",
         "chapter": "features",
         "layout": "full",
         "tab": "구조",
-        "title": {
-          "text": "4.5 월드 아이템 동기화 — 책임 나누기",
-          "verbatim": false
-        },
-        "lead": {
-          "text": "게스트가 \"스냅샷 속 이 물고기가 내 화면의 어느 오브젝트인가\"를 알려면 호스트와 게스트가 같은 ID를 써야 했다.",
-          "verbatim": true
-        },
-        "keywords": [
-          "월드 아이템",
-          "책임 나누기"
-        ],
-        "sectionPath": [
-          "4. 핵심 기능",
-          "4.5 월드 아이템(물고기·나무) 동기화: WorldItemId"
-        ],
+        "title": {"text": "4.5 월드 아이템 동기화 — 책임 나누기", "verbatim": false},
+        "lead": {"text": "게스트가 \"스냅샷 속 이 물고기가 내 화면의 어느 오브젝트인가\"를 알려면 호스트와 게스트가 같은 ID를 써야 했다.", "verbatim": true},
+        "keywords": ["월드 아이템", "책임 나누기"],
+        "sectionPath": ["4. 핵심 기능", "4.5 월드 아이템(물고기·나무) 동기화: WorldItemId"],
         "points": [],
-        "visuals": [
-          {
-            "kind": "table",
-            "n": 1,
-            "fp": "클래스|책임"
-          }
-        ]
+        "visuals": [{"kind": "table", "n": 1, "fp": "클래스|책임"}]
       },
       {
         "key": "world-item-sync",
         "chapter": "features",
         "layout": "code",
         "tab": "구현",
-        "title": {
-          "text": "4.5 월드 아이템 동기화 — ID를 맞추는 규칙",
-          "verbatim": false
-        },
+        "title": {"text": "4.5 월드 아이템 동기화 — ID를 맞추는 규칙", "verbatim": false},
         "lead": null,
-        "keywords": [
-          "WorldItemId",
-          "고정 번호",
-          "오브젝트 풀"
-        ],
-        "sectionPath": [
-          "4. 핵심 기능",
-          "4.5 월드 아이템(물고기·나무) 동기화: WorldItemId"
-        ],
+        "keywords": ["WorldItemId", "고정 번호", "오브젝트 풀"],
+        "sectionPath": ["4. 핵심 기능", "4.5 월드 아이템(물고기·나무) 동기화: WorldItemId"],
         "points": [
           {
             "label": "",
             "text": "고정 나무: 호스트와 게스트 모두 Awake에서 \"Plank Group\"을 같은 순서로 재귀 순회해 0번부터 번호를 붙인다.",
             "verbatim": true
           },
-          {
-            "label": "",
-            "text": "물고기: 고정 번호 다음부터 호스트가 발급한다(RegisterNewDynamic).",
-            "verbatim": true
-          },
-          {
-            "label": "",
-            "text": "게스트는 처음 보는 번호를 받으면 풀에서 꺼내 그 번호 그대로 등록한다(RegisterDynamic).",
-            "verbatim": true
-          },
-          {
-            "label": "",
-            "text": "사라진 물고기: 이번 스냅샷에 없는 물고기는 호스트에서 사라진 것으로 보고 풀에 돌려준다.",
-            "verbatim": true
-          }
+          {"label": "", "text": "물고기: 고정 번호 다음부터 호스트가 발급한다(RegisterNewDynamic).", "verbatim": true},
+          {"label": "", "text": "게스트는 처음 보는 번호를 받으면 풀에서 꺼내 그 번호 그대로 등록한다(RegisterDynamic).", "verbatim": true},
+          {"label": "", "text": "사라진 물고기: 이번 스냅샷에 없는 물고기는 호스트에서 사라진 것으로 보고 풀에 돌려준다.", "verbatim": true}
         ],
         "visuals": [
           {
             "kind": "code",
             "n": 1,
-            "lines": [
-              4,
-              23
-            ],
+            "lines": [4, 23],
             "fp": "// WorldItemSnapshotSynchronizer.ApplyFishes — 게스트에서 RoomCli"
           }
         ]
@@ -835,20 +559,10 @@
         "chapter": "features",
         "layout": "visual",
         "tab": "구조",
-        "title": {
-          "text": "4.6 다리 건설 조건 개편 — 구조와 이유",
-          "verbatim": false
-        },
+        "title": {"text": "4.6 다리 건설 조건 개편 — 구조와 이유", "verbatim": false},
         "lead": null,
-        "keywords": [
-          "꼭 필요한 재료",
-          "필요 가치 합",
-          "최소 낭비"
-        ],
-        "sectionPath": [
-          "4. 핵심 기능",
-          "4.6 다리 건설 조건 개편과 비용 계산"
-        ],
+        "keywords": ["꼭 필요한 재료", "필요 가치 합", "최소 낭비"],
+        "sectionPath": ["4. 핵심 기능", "4.6 다리 건설 조건 개편과 비용 계산"],
         "points": [
           {
             "label": "",
@@ -861,58 +575,31 @@
             "verbatim": true
           }
         ],
-        "visuals": [
-          {
-            "kind": "mermaid",
-            "n": 1,
-            "fp": "classDiagram"
-          }
-        ]
+        "visuals": [{"kind": "mermaid", "n": 1, "fp": "classDiagram"}]
       },
       {
         "key": "bridge-build",
         "chapter": "features",
         "layout": "code",
         "tab": "구현",
-        "title": {
-          "text": "4.6 다리 건설 — 계획을 먼저 세우고 소비",
-          "verbatim": false
-        },
+        "title": {"text": "4.6 다리 건설 — 계획을 먼저 세우고 소비", "verbatim": false},
         "lead": null,
-        "keywords": [
-          "필수 자원",
-          "최소 필요 점수",
-          "추가 자원"
-        ],
-        "sectionPath": [
-          "4. 핵심 기능",
-          "4.6 다리 건설 조건 개편과 비용 계산"
-        ],
+        "keywords": ["필수 자원", "최소 필요 점수", "추가 자원"],
+        "sectionPath": ["4. 핵심 기능", "4.6 다리 건설 조건 개편과 비용 계산"],
         "points": [
-          {
-            "label": "필수 자원 확인",
-            "text": "나무 1개와 열대어 1마리가 있는지 확인한다. 둘 중 하나라도 부족하면 건설할 수 없다.",
-            "verbatim": true
-          },
+          {"label": "필수 자원 확인", "text": "나무 1개와 열대어 1마리가 있는지 확인한다. 둘 중 하나라도 부족하면 건설할 수 없다.", "verbatim": true},
           {
             "label": "추가 자원 선택",
             "text": "필수 자원을 제외한 나머지 물고기 중에서 필요한 점수를 충족할 조합을 찾는다. 이때 불필요하게 많은 점수를 소비하지 않도록 하고, 같은 점수라면 가치가 낮은 물고기를 우선 소비한다.",
             "verbatim": true
           },
-          {
-            "label": "",
-            "text": "즉, 필수 자원을 확보한 뒤 건설에 필요한 점수를 최대한 낭비 없이 충족하고, 나머지 자원은 플레이어가 보유하도록 한다.",
-            "verbatim": true
-          }
+          {"label": "", "text": "즉, 필수 자원을 확보한 뒤 건설에 필요한 점수를 최대한 낭비 없이 충족하고, 나머지 자원은 플레이어가 보유하도록 한다.", "verbatim": true}
         ],
         "visuals": [
           {
             "kind": "code",
             "n": 1,
-            "lines": [
-              3,
-              22
-            ],
+            "lines": [3, 22],
             "fp": "public void BridgeBuild() // 호스트에서만 불림 (Bridge.OnCollisionSt"
           }
         ]
@@ -922,49 +609,22 @@
         "chapter": "decisions",
         "layout": "full",
         "tab": "선택",
-        "title": {
-          "text": "5.1 동기화 모델: 무엇을 누가 계산할 것인가",
-          "verbatim": true
-        },
-        "lead": {
-          "text": "최종 결정: B. 호스트 권한형.",
-          "verbatim": true
-        },
-        "keywords": [
-          "후보 3개",
-          "호스트 권한형"
-        ],
-        "sectionPath": [
-          "5. 고민과 선택",
-          "5.1 동기화 모델: 무엇을 누가 계산할 것인가"
-        ],
+        "title": {"text": "5.1 동기화 모델: 무엇을 누가 계산할 것인가", "verbatim": true},
+        "lead": {"text": "최종 결정: B. 호스트 권한형.", "verbatim": true},
+        "keywords": ["후보 3개", "호스트 권한형"],
+        "sectionPath": ["5. 고민과 선택", "5.1 동기화 모델: 무엇을 누가 계산할 것인가"],
         "points": [],
-        "visuals": [
-          {
-            "kind": "table",
-            "n": 1,
-            "fp": "대안|장점|단점"
-          }
-        ]
+        "visuals": [{"kind": "table", "n": 1, "fp": "대안|장점|단점"}]
       },
       {
         "key": "no-prediction",
         "chapter": "decisions",
         "layout": "visual",
         "tab": "선택",
-        "title": {
-          "text": "5.1 클라이언트 예측을 뺀 이유",
-          "verbatim": false
-        },
+        "title": {"text": "5.1 클라이언트 예측을 뺀 이유", "verbatim": false},
         "lead": null,
-        "keywords": [
-          "보간",
-          "클라이언트 예측"
-        ],
-        "sectionPath": [
-          "5. 고민과 선택",
-          "5.1 동기화 모델: 무엇을 누가 계산할 것인가"
-        ],
+        "keywords": ["보간", "클라이언트 예측"],
+        "sectionPath": ["5. 고민과 선택", "5.1 동기화 모델: 무엇을 누가 계산할 것인가"],
         "points": [
           {
             "label": "",
@@ -983,10 +643,7 @@
             "src": "images/host-authority-result.png",
             "w": 1280,
             "h": 720,
-            "caption": {
-              "text": "2차 스프린트 결과 — 호스트 권한 구조 도입",
-              "verbatim": true
-            }
+            "caption": {"text": "2차 스프린트 결과 — 호스트 권한 구조 도입", "verbatim": true}
           }
         ]
       },
@@ -995,195 +652,101 @@
         "chapter": "decisions",
         "layout": "visual",
         "tab": "선택",
-        "title": {
-          "text": "5.2 스냅샷을 어떻게 보낼 것인가 — 3단계 변화",
-          "verbatim": true
-        },
+        "title": {"text": "5.2 스냅샷을 어떻게 보낼 것인가 — 3단계 변화", "verbatim": true},
         "lead": null,
-        "keywords": [
-          "병목",
-          "시스템 정지",
-          "3단계"
-        ],
-        "sectionPath": [
-          "5. 고민과 선택",
-          "5.2 스냅샷을 어떻게 보낼 것인가 — 3단계 변화"
-        ],
+        "keywords": ["병목", "시스템 정지", "3단계"],
+        "sectionPath": ["5. 고민과 선택", "5.2 스냅샷을 어떻게 보낼 것인가 — 3단계 변화"],
         "points": [
-          {
-            "label": "",
-            "text": "병목: 느린 게스트 하나 때문에 스냅샷 브로드캐스트 전체가 대기한다.",
-            "verbatim": true
-          },
-          {
-            "label": "",
-            "text": "시스템 정지: 호스트 수신 루프까지 멈추면서 방 전체 세션이 멈춘다.",
-            "verbatim": true
-          }
+          {"label": "", "text": "병목: 느린 게스트 하나 때문에 스냅샷 브로드캐스트 전체가 대기한다.", "verbatim": true},
+          {"label": "", "text": "시스템 정지: 호스트 수신 루프까지 멈추면서 방 전체 세션이 멈춘다.", "verbatim": true}
         ],
-        "visuals": [
-          {
-            "kind": "mermaid",
-            "n": 1,
-            "fp": "flowchart TD"
-          }
-        ]
+        "visuals": [{"kind": "mermaid", "n": 1, "fp": "flowchart TD"}]
       },
       {
         "key": "snapshot-compare",
         "chapter": "decisions",
         "layout": "full",
         "tab": "선택",
-        "title": {
-          "text": "5.2 스냅샷 송신 — 대안 비교",
-          "verbatim": false
-        },
-        "lead": {
-          "text": "최종 결정: C.",
-          "verbatim": true
-        },
-        "keywords": [
-          "대안 비교",
-          "스냅샷 송신"
-        ],
-        "sectionPath": [
-          "5. 고민과 선택",
-          "5.2 스냅샷을 어떻게 보낼 것인가 — 3단계 변화"
-        ],
+        "title": {"text": "5.2 스냅샷 송신 — 대안 비교", "verbatim": false},
+        "lead": {"text": "최종 결정: C.", "verbatim": true},
+        "keywords": ["대안 비교", "스냅샷 송신"],
+        "sectionPath": ["5. 고민과 선택", "5.2 스냅샷을 어떻게 보낼 것인가 — 3단계 변화"],
         "points": [],
-        "visuals": [
-          {
-            "kind": "table",
-            "n": 1,
-            "fp": "대안|장점|단점"
-          }
-        ]
+        "visuals": [{"kind": "table", "n": 1, "fp": "대안|장점|단점"}]
       },
       {
         "key": "state-event",
         "chapter": "decisions",
         "layout": "full",
         "tab": "선택",
-        "title": {
-          "text": "5.3 스냅샷 하나에 vs 이벤트 분리",
-          "verbatim": false
-        },
-        "lead": {
-          "text": "최종 결정: A로 구현했다.",
-          "verbatim": true
-        },
-        "keywords": [
-          "스냅샷 vs 이벤트"
-        ],
-        "sectionPath": [
-          "5. 고민과 선택",
-          "5.3 모든 상태를 스냅샷 하나에 vs 스냅샷 + 이벤트 분리"
-        ],
+        "title": {"text": "5.3 스냅샷 하나에 vs 이벤트 분리", "verbatim": false},
+        "lead": {"text": "최종 결정: A로 구현했다.", "verbatim": true},
+        "keywords": ["스냅샷 vs 이벤트"],
+        "sectionPath": ["5. 고민과 선택", "5.3 모든 상태를 스냅샷 하나에 vs 스냅샷 + 이벤트 분리"],
         "points": [],
-        "visuals": [
+        "visuals": [{"kind": "table", "n": 1, "fp": "대안|장점|단점"}]
+      },
+      {
+        "key": "snapshot-apply",
+        "chapter": "decisions",
+        "layout": "visual",
+        "tab": "선택",
+        "title": {"text": "5.4 스냅샷 반영 지점: RoomClient 한곳에서 vs 각 매니저가 직접", "verbatim": true},
+        "lead": {"text": "결과: 두 방식이 섞인 채로 끝났다.", "verbatim": true},
+        "keywords": ["반영 지점", "델리게이트"],
+        "sectionPath": ["5. 고민과 선택", "5.4 스냅샷 반영 지점: RoomClient 한곳에서 vs 각 매니저가 직접"],
+        "points": [
+          {"label": "", "text": "A로 모으는 리팩토링 작업을 올렸지만 프로젝트 안에 끝내지 못했다.", "verbatim": true},
           {
-            "kind": "table",
-            "n": 1,
-            "fp": "대안|장점|단점"
+            "label": "",
+            "text": "지금 다시 한다면 두 방식의 장점을 합쳐, 각 매니저가 처음에 RoomClient의 델리게이트를 구독하고 OnSnapshot에서는 Invoke만 하도록 바꾸겠다",
+            "verbatim": true
           }
-        ]
+        ],
+        "visuals": [{"kind": "table", "n": 1, "fp": "대안|장점|단점"}],
+        "edited": true
       },
       {
         "key": "host-guest",
         "chapter": "decisions",
         "layout": "full",
         "tab": "선택",
-        "title": {
-          "text": "5.5 호스트/게스트 코드 나누기 (협업 이슈)",
-          "verbatim": false
-        },
-        "lead": {
-          "text": "최종 결정: A.",
-          "verbatim": true
-        },
-        "keywords": [
-          "IsHost",
-          "연동 가이드",
-          "협업 이슈"
-        ],
-        "sectionPath": [
-          "5. 고민과 선택",
-          "5.5 호스트/게스트 코드를 어떻게 나눌 것인가 (협업 이슈)"
-        ],
+        "title": {"text": "5.5 호스트/게스트 코드 나누기 (협업 이슈)", "verbatim": false},
+        "lead": {"text": "최종 결정: A.", "verbatim": true},
+        "keywords": ["IsHost", "연동 가이드", "협업 이슈"],
+        "sectionPath": ["5. 고민과 선택", "5.5 호스트/게스트 코드를 어떻게 나눌 것인가 (협업 이슈)"],
         "points": [],
-        "visuals": [
-          {
-            "kind": "table",
-            "n": 1,
-            "fp": "대안|장점|단점"
-          }
-        ]
+        "visuals": [{"kind": "table", "n": 1, "fp": "대안|장점|단점"}]
       },
       {
         "key": "review",
         "chapter": "decisions",
         "layout": "full",
         "tab": "선택",
-        "title": {
-          "text": "5.6 PR 리뷰를 얼마나 엄격하게 할 것인가 (PM)",
-          "verbatim": true
-        },
-        "lead": {
-          "text": "최종 결정: B로 바꿨다.",
-          "verbatim": true
-        },
-        "keywords": [
-          "PR 리뷰",
-          "PM"
-        ],
-        "sectionPath": [
-          "5. 고민과 선택",
-          "5.6 PR 리뷰를 얼마나 엄격하게 할 것인가 (PM)"
-        ],
+        "title": {"text": "5.6 PR 리뷰를 얼마나 엄격하게 할 것인가 (PM)", "verbatim": true},
+        "lead": {"text": "최종 결정: B로 바꿨다.", "verbatim": true},
+        "keywords": ["PR 리뷰", "PM"],
+        "sectionPath": ["5. 고민과 선택", "5.6 PR 리뷰를 얼마나 엄격하게 할 것인가 (PM)"],
         "points": [],
-        "visuals": [
-          {
-            "kind": "table",
-            "n": 1,
-            "fp": "대안|장점|단점"
-          }
-        ]
+        "visuals": [{"kind": "table", "n": 1, "fp": "대안|장점|단점"}]
       },
       {
         "key": "result",
         "chapter": "results",
         "layout": "overview",
         "tab": "결과",
-        "title": {
-          "text": "6.1 결과",
-          "verbatim": true
-        },
+        "title": {"text": "6.1 결과", "verbatim": true},
         "lead": null,
-        "keywords": [
-          "4인 동기화",
-          "14명 테스트",
-          "Epic 17개"
-        ],
-        "sectionPath": [
-          "6. 결과 및 배운 점",
-          "6.1 결과"
-        ],
+        "keywords": ["4인 동기화", "14명 테스트", "Epic 17개"],
+        "sectionPath": ["6. 결과 및 배운 점", "6.1 결과"],
         "points": [
           {
             "label": "",
             "text": "4명까지 같은 방에서 호스트 1명이 계산한 물리·인벤토리·다리·승패를 게스트가 따라가는 구조로 최종 빌드와 발표 시연까지 마쳤다.",
             "verbatim": true
           },
-          {
-            "label": "",
-            "text": "실제 플레이어 14명이 동시에 플레이한 테스트에서 별 문제가 없었다.",
-            "verbatim": true
-          },
-          {
-            "label": "",
-            "text": "서버 Epic은 처음 계획 1개에서 17개로 늘었다. 네트워크 연동이 처음 예상보다 훨씬 큰 일이었다.",
-            "verbatim": true
-          }
+          {"label": "", "text": "실제 플레이어 14명이 동시에 플레이한 테스트에서 별 문제가 없었다.", "verbatim": true},
+          {"label": "", "text": "서버 Epic은 처음 계획 1개에서 17개로 늘었다. 네트워크 연동이 처음 예상보다 훨씬 큰 일이었다.", "verbatim": true}
         ],
         "visuals": []
       },
@@ -1192,26 +755,12 @@
         "chapter": "results",
         "layout": "problem",
         "tab": "문제 해결",
-        "title": {
-          "text": "6.2-1 게스트 입력이 가끔 사라짐 (서버)",
-          "verbatim": true
-        },
+        "title": {"text": "6.2-1 게스트 입력이 가끔 사라짐 (서버)", "verbatim": true},
         "lead": null,
-        "keywords": [
-          "입력 사라짐",
-          "Interlocked"
-        ],
-        "sectionPath": [
-          "6. 결과 및 배운 점",
-          "6.2 문제 해결 경험",
-          "6.2-1 게스트 입력이 가끔 사라짐 (서버)"
-        ],
+        "keywords": ["입력 사라짐", "Interlocked"],
+        "sectionPath": ["6. 결과 및 배운 점", "6.2 문제 해결 경험", "6.2-1 게스트 입력이 가끔 사라짐 (서버)"],
         "points": [
-          {
-            "label": "문제",
-            "text": "서버와 클라이언트가 게스트를 다르게 인식하는 버그로 드러났다.",
-            "verbatim": true
-          },
+          {"label": "문제", "text": "서버와 클라이언트가 게스트를 다르게 인식하는 버그로 드러났다.", "verbatim": true},
           {
             "label": "원인",
             "text": "입력을 읽어 묶음에 넣고 → await 송신 → 그 뒤에 모든 게스트의 LastInput을 null로 비웠다. 송신을 기다리는 사이 새로 들어온 입력도 같이 지워졌다.",
@@ -1222,11 +771,7 @@
             "text": "Interlocked.Exchange(ref member.LastInput, null)로 꺼내기와 비우기를 한 번에 한다(4.1).",
             "verbatim": true
           },
-          {
-            "label": "배운 점",
-            "text": "한 줄 단위 원자성은 Interlocked, 여러 줄 단위 원자성은 lock으로 구분해야 한다.",
-            "verbatim": true
-          }
+          {"label": "배운 점", "text": "한 줄 단위 원자성은 Interlocked, 여러 줄 단위 원자성은 lock으로 구분해야 한다.", "verbatim": true}
         ],
         "visuals": []
       },
@@ -1235,37 +780,576 @@
         "chapter": "results",
         "layout": "problem",
         "tab": "문제 해결",
-        "title": {
-          "text": "6.2-2 접속 직후 가끔 원인 모를 끊김 (서버)",
-          "verbatim": true
-        },
+        "title": {"text": "6.2-2 접속 직후 가끔 원인 모를 끊김 (서버)", "verbatim": true},
         "lead": null,
-        "keywords": [
-          "hello",
-          "타이머",
-          "race condition"
-        ],
-        "sectionPath": [
-          "6. 결과 및 배운 점",
-          "6.2 문제 해결 경험",
-          "6.2-2 접속 직후 가끔 원인 모를 끊김 (서버)"
-        ],
+        "keywords": ["hello", "타이머", "race condition"],
+        "sectionPath": ["6. 결과 및 배운 점", "6.2 문제 해결 경험", "6.2-2 접속 직후 가끔 원인 모를 끊김 (서버)"],
         "points": [
+          {"label": "문제", "text": "방에 처음 들어온 직후 가끔 이유 없이 연결이 끊겼다.", "verbatim": true},
           {
-            "label": "문제",
-            "text": "방에 처음 들어온 직후 가끔 이유 없이 연결이 끊겼다.",
+            "label": "원인",
+            "text": "입력 중계 타이머(RoomHub)와 접속 처리(hello)가 서로 다른 흐름으로 동시에 돈다. 호스트는 hello를 받은 뒤에야 정해지는데, 그 전에 타이머가 먼저 방에 들어가 호스트가 없는 상태로 송신을 시도했다.",
             "verbatim": true
           },
+          {
+            "label": "해결",
+            "text": "두 흐름의 순서를 강제로 맞추는 대신, 순서가 어긋나도 안전하게 만들었다. 멤버는 gate 안에서 호스트 여부가 정해진 뒤에야 멤버 목록에 들어가고, 타이머·입력 처리는 GetHost()가 null이면 그 틱·그 입력을 버린다.",
+            "verbatim": false
+          },
+          {
+            "label": "배운 점",
+            "text": "방 입장·퇴장, 공유 데이터 읽기·쓰기처럼 여러 흐름이 같은 자원을 만지는 곳은 race condition을 먼저 의심해야 한다.",
+            "verbatim": true
+          }
+        ],
+        "visuals": [],
+        "edited": true
+      },
+      {
+        "key": "ts-bridge-count",
+        "chapter": "results",
+        "layout": "problem",
+        "tab": "문제 해결",
+        "title": {"text": "6.2-4 다리 개수가 늦게 오르고 게스트와 어긋남 (클라이언트)", "verbatim": true},
+        "lead": null,
+        "keywords": ["다리 개수", "뷰 대신 데이터"],
+        "sectionPath": ["6. 결과 및 배운 점", "6.2 문제 해결 경험", "6.2-4 다리 개수가 늦게 오르고 게스트와 어긋남 (클라이언트)"],
+        "points": [
+          {
+            "label": "원인",
+            "text": "개수를 \"켜진 다리 오브젝트 수\"로 셌는데 다리는 연출 2초 뒤에 켜졌고, 게스트는 매 스냅샷마다 0번부터 다시 켰다.",
+            "verbatim": true
+          },
+          {"label": "해결", "text": "개수를 필드로 즉시 올리고, 게스트는 늘어난 칸만 켠다(4.6).", "verbatim": true},
+          {"label": "배운 점", "text": "인게임 오브젝트(뷰)로 개수를 추적하지 않고 자체 데이터로 증감해야 처리가 일관되고, 변경과 확장에도 쉽다.", "verbatim": true}
+        ],
+        "visuals": []
+      }
+    ],
+    "base": [
+      {
+        "key": "intro",
+        "chapter": "overview",
+        "layout": "overview",
+        "tab": "개요",
+        "title": {"text": "1.1 프로젝트 소개", "verbatim": true},
+        "lead": {"text": "플레이어들이 서로의 몸을 붙잡아 바닷속 자원을 모으고, 그 자원으로 다리를 지어 육지까지 가는 2D 협동 물리 생존 게임", "verbatim": true},
+        "keywords": ["4인 협동", "물리 생존", "다리 건설"],
+        "sectionPath": ["1. 개요 · 팀 · 역할", "1.1 프로젝트 소개"],
+        "points": [
+          {"label": "", "text": "방 코드를 입력해 최대 4명이 한 방에 들어간다.", "verbatim": true},
+          {"label": "", "text": "조작은 WASD로 팔 방향, 마우스 좌·우 클릭으로 왼손·오른손 잡기다.", "verbatim": true},
+          {"label": "", "text": "승리는 다리를 끝까지 짓고 모두 목표 지점에 도착하는 것, 패배는 모든 플레이어의 스태미나가 바닥나 무력화되는 것이다.", "verbatim": true}
+        ],
+        "visuals": [
+          {
+            "kind": "image",
+            "src": "images/cover.png",
+            "w": 1345,
+            "h": 1038,
+            "caption": {"text": "We Got One 시연 장면", "verbatim": true},
+            "sectionPath": ["We Got One 기술 문서"]
+          }
+        ]
+      },
+      {
+        "key": "scope",
+        "chapter": "overview",
+        "layout": "visual",
+        "tab": "개요",
+        "title": {"text": "1.1 프로젝트 소개 — 담당 범위", "verbatim": false},
+        "lead": {"text": "제가 이 프로젝트에서 맡은 부분은 다음과 같습니다.", "verbatim": true},
+        "keywords": ["네트워크 동기화", "다리 건설 조건"],
+        "sectionPath": ["1. 개요 · 팀 · 역할", "1.1 프로젝트 소개"],
+        "points": [
+          {
+            "label": "",
+            "text": "클라이언트·서버 네트워크 동기화의 뼈대 — 강사 제공 서버 뼈대를 호스트 권한형 입력 중계 서버로 바꾸고, 팀원들이 각자 기능을 네트워크에 붙일 수 있게 한 구조",
+            "verbatim": true
+          },
+          {
+            "label": "",
+            "text": "다리 건설 조건 개편 — 나무만 쓰던 다리 건설을 물고기까지 포함하는 조건으로 바꾸고, 다리마다의 조건을 TSV 표로 관리하게 한 작업",
+            "verbatim": true
+          }
+        ],
+        "visuals": [
+          {
+            "kind": "image",
+            "src": "images/core-loop.png",
+            "w": 1280,
+            "h": 720,
+            "caption": {"text": "핵심 루프와 승패 조건", "verbatim": true}
+          }
+        ]
+      },
+      {
+        "key": "why",
+        "chapter": "overview",
+        "layout": "overview",
+        "tab": "개요",
+        "title": {"text": "1.2 왜 만들었나", "verbatim": true},
+        "lead": null,
+        "keywords": ["네트워크 멀티플레이", "협동 게임"],
+        "sectionPath": ["1. 개요 · 팀 · 역할", "1.2 왜 만들었나"],
+        "points": [
+          {
+            "label": "개인 프로젝트로는 하기 어려운 네트워크 멀티플레이에 도전하기",
+            "text": "네트워크 게임은 서버를 직접 만들고, 여러 명이 동시에 접속해 테스트해야 문제가 드러난다. 혼자서는 이 테스트 환경을 만들기 어렵기 때문에, 팀 프로젝트일 때 도전할 가치가 크다고 판단했다.",
+            "verbatim": true
+          },
+          {
+            "label": "경쟁보다 협동 게임",
+            "text": "협동 게임은 \"모두가 같은 화면을 보고 함께 문제를 푼다\"는 경험이 핵심이라, 네트워크 동기화의 품질이 곧 게임의 재미가 된다.",
+            "verbatim": true
+          }
+        ],
+        "visuals": []
+      },
+      {
+        "key": "team",
+        "chapter": "overview",
+        "layout": "full",
+        "tab": "개요",
+        "title": {"text": "1.3 팀과 내 역할", "verbatim": true},
+        "lead": null,
+        "keywords": ["팀원", "맡은 일", "팀장·PM"],
+        "sectionPath": ["1. 개요 · 팀 · 역할", "1.3 팀과 내 역할"],
+        "points": [],
+        "visuals": [{"kind": "table", "n": 1, "fp": "팀원|맡은 일|네트워크 동기화에서 맡은 기능"}]
+      },
+      {
+        "key": "work-range",
+        "chapter": "part",
+        "layout": "overview",
+        "tab": "개요",
+        "title": {"text": "2.1 주요 담당 작업 및 개발 범위", "verbatim": true},
+        "lead": null,
+        "keywords": ["네트워크 구조 개편", "연동 가이드", "TSV 데이터"],
+        "sectionPath": ["2. 담당 파트 개요", "2.1 주요 담당 작업 및 개발 범위"],
+        "points": [
+          {"label": "", "text": "네트워크 구조 개편: 호스트 권한형 구조에 맞춰 서버의 메시지 처리 방식을 입력 중계와 스냅샷 중계로 변경했다.", "verbatim": true},
+          {"label": "", "text": "네트워크 연동 및 디버깅: 팀원들의 기능을 서버에 통합하고, 연동 가이드와 동기화 상태 확인용 디버그 도구를 제작했다.", "verbatim": true},
+          {"label": "", "text": "다리 건설 시스템 개편: 건설 조건에 물고기를 추가하고, 다리 15칸의 건설 비용을 TSV 데이터로 관리하도록 변경했다", "verbatim": true}
+        ],
+        "visuals": []
+      },
+      {
+        "key": "parts",
+        "chapter": "part",
+        "layout": "overview",
+        "tab": "개요",
+        "title": {"text": "2.2 담당 파트 1: 호스트 권한형 입력 중계 서버", "verbatim": false},
+        "lead": null,
+        "keywords": ["입력 중계", "호스트 권한형", "디버그 도구"],
+        "sectionPath": ["2. 담당 파트 개요", "2.2 담당 파트 1: 호스트 권한형 입력 중계 서버와 동기화 뼈대"],
+        "points": [
+          {"label": "", "text": "게스트는 위치를 보내지 않고 입력만 보낸다. 서버는 게스트 입력을 모아 일정 주기로 호스트에게 보낸다.", "verbatim": true},
+          {"label": "", "text": "호스트가 모든 물리를 계산한 결과를 모아서 보내면, 서버가 게스트들에게 전달한다.", "verbatim": true},
+          {"label": "", "text": "방 수명 규칙: 처음 들어온 사람이 호스트, 4명 초과 입장 거부, 호스트가 나가면 방 전체 종료.", "verbatim": true},
+          {"label": "", "text": "동기화 상태를 화면에서 바로 보는 네트워크 디버그 도구를 만들었다.", "verbatim": true}
+        ],
+        "visuals": []
+      },
+      {
+        "key": "bridge-part",
+        "chapter": "part",
+        "layout": "overview",
+        "tab": "개요",
+        "title": {"text": "2.3 담당 파트 2: 다리 건설 조건 개편", "verbatim": true},
+        "lead": null,
+        "keywords": ["물고기 재료", "TSV 조건", "요구 점수"],
+        "sectionPath": ["2. 담당 파트 개요", "2.3 담당 파트 2: 다리 건설 조건 개편"],
+        "points": [
+          {"label": "", "text": "기존에는 나무만 소비하여 다리를 건설할 수 있었으나, 물고기도 건설 재료로 사용할 수 있도록 확장했다.", "verbatim": true},
+          {"label": "", "text": "다리 15칸의 건설 조건을 별도의 TSV 파일에서 관리하도록 변경했다.", "verbatim": true},
+          {"label": "", "text": "다리를 건설하려면 필수 아이템을 확보하고, 요구 점수 조건까지 충족해야 다음 칸으로 넘어갈 수 있도록 했다.", "verbatim": true},
+          {
+            "label": "",
+            "text": "이를 통해 플레이어가 필요한 물고기를 직접 찾아 낚시하는 경험과 새로운 물고기를 찾기 위해 수중 공간을 탐험하는 경험을 강화하고자 했다.",
+            "verbatim": true
+          }
+        ],
+        "visuals": []
+      },
+      {
+        "key": "components",
+        "chapter": "structure",
+        "layout": "full",
+        "tab": "구조",
+        "title": {"text": "3.1 구성요소와 책임", "verbatim": true},
+        "lead": null,
+        "keywords": ["RoomHub", "RoomClient", "ApplySnapshot"],
+        "sectionPath": ["3. 시스템 구조", "3.1 구성요소와 책임"],
+        "points": [],
+        "visuals": [{"kind": "table", "n": 1, "fp": "구성요소|위치|책임 (그리고 하지 않는 일)"}]
+      },
+      {
+        "key": "flow",
+        "chapter": "structure",
+        "layout": "visual",
+        "tab": "흐름",
+        "title": {"text": "3.3 전체 통신 흐름", "verbatim": true},
+        "lead": {"text": "핵심: 게스트는 입력만 보내고, 화면에 보이는 결과는 모두 호스트가 계산한 스냅샷이라는 점이다.", "verbatim": true},
+        "keywords": ["입력만", "스냅샷", "초당 20회"],
+        "sectionPath": ["3. 시스템 구조", "3.3 전체 통신 흐름"],
+        "points": [
+          {
+            "label": "",
+            "text": "초당 횟수는 저장소의 설정값이다. 게스트·호스트 송신 sendPerSecond: 20, 서버 입력 전달 BroadcastPerSecond: 10.",
+            "verbatim": true
+          }
+        ],
+        "visuals": [{"kind": "mermaid", "n": 1, "fp": "flowchart LR"}]
+      },
+      {
+        "key": "sequence",
+        "chapter": "structure",
+        "layout": "visual",
+        "tab": "흐름",
+        "title": {"text": "3.4 게스트 입력 1회가 게스트 화면에 반영되기까지", "verbatim": true},
+        "lead": null,
+        "keywords": ["inputGroup", "snapshot", "ApplySnapshot"],
+        "sectionPath": ["3. 시스템 구조", "3.4 게스트 입력 1회가 게스트 화면에 반영되기까지"],
+        "points": [],
+        "visuals": [{"kind": "mermaid", "n": 1, "fp": "sequenceDiagram"}]
+      },
+      {
+        "key": "input-relay",
+        "chapter": "features",
+        "layout": "code",
+        "tab": "구현",
+        "title": {"text": "4.1 게스트 입력 모아서 호스트에게 보내기", "verbatim": true},
+        "lead": null,
+        "keywords": ["LastInput", "Interlocked"],
+        "sectionPath": ["4. 핵심 기능", "4.1 게스트 입력 모아서 호스트에게 보내기"],
+        "points": [
+          {"label": "", "text": "게스트 입력이 올 때마다 그 멤버의 LastInput을 최신 값으로 덮어쓴다. 쌓지 않는다.", "verbatim": true},
+          {"label": "", "text": "RoomHub 타이머가 틱마다 모든 방의 SendGuestInputsToHostAsync를 동시에 부른다.", "verbatim": true},
+          {"label": "", "text": "방은 게스트마다 LastInput을 \"꺼내면서 비우고\", 입력이 하나라도 있으면 묶어서 호스트에게 보낸다.", "verbatim": true}
+        ],
+        "visuals": [{"kind": "code", "n": 1, "lines": [1, 20], "fp": "public async Task SendGuestInputsToHostAsync()"}]
+      },
+      {
+        "key": "snapshot-channel",
+        "chapter": "features",
+        "layout": "code",
+        "tab": "구현",
+        "title": {"text": "4.2 멤버별 \"최신 스냅샷 1개\" 채널", "verbatim": true},
+        "lead": null,
+        "keywords": ["최신 스냅샷", "DropOldest", "송신 루프"],
+        "sectionPath": ["4. 핵심 기능", "4.2 멤버별 \"최신 스냅샷 1개\" 채널"],
+        "points": [
+          {"label": "", "text": "호스트 스냅샷이 오면 서버는 직접 보내지 않고, 호스트를 뺀 멤버마다 있는 채널에 넣기만 한다.", "verbatim": true},
+          {"label": "", "text": "채널 크기는 1이고, 꽉 차면 오래된 것을 버린다. 느린 멤버에게는 밀린 스냅샷이 쌓이지 않고 가장 최신 것만 간다.", "verbatim": true}
+        ],
+        "visuals": [{"kind": "code", "n": 1, "lines": [1, 20], "fp": "// Member 안: 멤버마다 크기 1짜리 채널"}]
+      },
+      {
+        "key": "send-timeout",
+        "chapter": "features",
+        "layout": "code",
+        "tab": "구현",
+        "title": {"text": "4.3 방 수명과 연결 예외 처리", "verbatim": true},
+        "lead": null,
+        "keywords": ["인원 제한", "9초 제한", "송신 실패"],
+        "sectionPath": ["4. 핵심 기능", "4.3 방 수명과 연결 예외 처리"],
+        "points": [
+          {
+            "label": "",
+            "text": "호스트 퇴장: 호스트가 나가면 roomExpired = true와 취소 토큰으로 남은 멤버의 수신 대기를 모두 깨워 연결을 닫는다.",
+            "verbatim": true
+          },
+          {"label": "", "text": "소켓 연결 중 예외로 한쪽이 비정상 종료되면 반대편도 이상해질 수 있어, 송신 실패는 반드시 한 곳에서 처리하게 했다.", "verbatim": true}
+        ],
+        "visuals": [
+          {
+            "kind": "code",
+            "n": 2,
+            "lines": [1, 20],
+            "fp": "private async Task SendRawAsync(Member member, string json)"
+          }
+        ]
+      },
+      {
+        "key": "timing",
+        "chapter": "features",
+        "layout": "code",
+        "tab": "구현",
+        "title": {"text": "4.4 RoomClient: 받는 시점과 보내는 시점 고정", "verbatim": true},
+        "lead": {
+          "text": "한 프레임 안에서 \"네트워크 값 반영 → 게임 로직 → 결과 송신\" 순서가 항상 같도록, 받기는 Update 직전, 보내기는 LastUpdate로 옮겼다.",
+          "verbatim": true
+        },
+        "keywords": ["Update 직전", "LastUpdate"],
+        "sectionPath": ["4. 핵심 기능", "4.4 RoomClient: 받는 시점과 보내는 시점 고정"],
+        "points": [
+          {
+            "label": "",
+            "text": "게스트 쪽 물리 끄기: 게스트 화면의 모든 플레이어 Rigidbody2D를 Kinematic으로 바꾸고, 내 것이 아닌 플레이어의 입력 컴포넌트를 끈다.",
+            "verbatim": true
+          }
+        ],
+        "visuals": [{"kind": "code", "n": 1, "fp": "// 수신 루프"}]
+      },
+      {
+        "key": "world-item-roles",
+        "chapter": "features",
+        "layout": "full",
+        "tab": "구조",
+        "title": {"text": "4.5 월드 아이템 동기화 — 책임 나누기", "verbatim": false},
+        "lead": {"text": "게스트가 \"스냅샷 속 이 물고기가 내 화면의 어느 오브젝트인가\"를 알려면 호스트와 게스트가 같은 ID를 써야 했다.", "verbatim": true},
+        "keywords": ["월드 아이템", "책임 나누기"],
+        "sectionPath": ["4. 핵심 기능", "4.5 월드 아이템(물고기·나무) 동기화: WorldItemId"],
+        "points": [],
+        "visuals": [{"kind": "table", "n": 1, "fp": "클래스|책임"}]
+      },
+      {
+        "key": "world-item-sync",
+        "chapter": "features",
+        "layout": "code",
+        "tab": "구현",
+        "title": {"text": "4.5 월드 아이템 동기화 — ID를 맞추는 규칙", "verbatim": false},
+        "lead": null,
+        "keywords": ["WorldItemId", "고정 번호", "오브젝트 풀"],
+        "sectionPath": ["4. 핵심 기능", "4.5 월드 아이템(물고기·나무) 동기화: WorldItemId"],
+        "points": [
+          {
+            "label": "",
+            "text": "고정 나무: 호스트와 게스트 모두 Awake에서 \"Plank Group\"을 같은 순서로 재귀 순회해 0번부터 번호를 붙인다.",
+            "verbatim": true
+          },
+          {"label": "", "text": "물고기: 고정 번호 다음부터 호스트가 발급한다(RegisterNewDynamic).", "verbatim": true},
+          {"label": "", "text": "게스트는 처음 보는 번호를 받으면 풀에서 꺼내 그 번호 그대로 등록한다(RegisterDynamic).", "verbatim": true},
+          {"label": "", "text": "사라진 물고기: 이번 스냅샷에 없는 물고기는 호스트에서 사라진 것으로 보고 풀에 돌려준다.", "verbatim": true}
+        ],
+        "visuals": [
+          {
+            "kind": "code",
+            "n": 1,
+            "lines": [4, 23],
+            "fp": "// WorldItemSnapshotSynchronizer.ApplyFishes — 게스트에서 RoomCli"
+          }
+        ]
+      },
+      {
+        "key": "bridge-classes",
+        "chapter": "features",
+        "layout": "visual",
+        "tab": "구조",
+        "title": {"text": "4.6 다리 건설 조건 개편 — 구조와 이유", "verbatim": false},
+        "lead": null,
+        "keywords": ["꼭 필요한 재료", "필요 가치 합", "최소 낭비"],
+        "sectionPath": ["4. 핵심 기능", "4.6 다리 건설 조건 개편과 비용 계산"],
+        "points": [
+          {
+            "label": "",
+            "text": "그래서 다리마다 꼭 필요한 재료(탐험 강제), 필요 가치 합(자유롭게 채우기), 최소 낭비(모은 자원을 아끼기) 세 규칙을 두었다. 셋 중 하나가 빠지면 이 문제를 풀기 어렵다고 판단했다.",
+            "verbatim": true
+          },
+          {
+            "label": "",
+            "text": "AI 도구는 내가 정한 명세대로 BridgeManager에서 쓸 가치 연산 모듈(BridgeBuildCostCalculator)을 만들고, TSV → DTO → Ref 데이터 파이프라인을 구축하는 데 썼다.",
+            "verbatim": true
+          }
+        ],
+        "visuals": [{"kind": "mermaid", "n": 1, "fp": "classDiagram"}]
+      },
+      {
+        "key": "bridge-build",
+        "chapter": "features",
+        "layout": "code",
+        "tab": "구현",
+        "title": {"text": "4.6 다리 건설 — 계획을 먼저 세우고 소비", "verbatim": false},
+        "lead": null,
+        "keywords": ["필수 자원", "최소 필요 점수", "추가 자원"],
+        "sectionPath": ["4. 핵심 기능", "4.6 다리 건설 조건 개편과 비용 계산"],
+        "points": [
+          {"label": "필수 자원 확인", "text": "나무 1개와 열대어 1마리가 있는지 확인한다. 둘 중 하나라도 부족하면 건설할 수 없다.", "verbatim": true},
+          {
+            "label": "추가 자원 선택",
+            "text": "필수 자원을 제외한 나머지 물고기 중에서 필요한 점수를 충족할 조합을 찾는다. 이때 불필요하게 많은 점수를 소비하지 않도록 하고, 같은 점수라면 가치가 낮은 물고기를 우선 소비한다.",
+            "verbatim": true
+          },
+          {"label": "", "text": "즉, 필수 자원을 확보한 뒤 건설에 필요한 점수를 최대한 낭비 없이 충족하고, 나머지 자원은 플레이어가 보유하도록 한다.", "verbatim": true}
+        ],
+        "visuals": [
+          {
+            "kind": "code",
+            "n": 1,
+            "lines": [3, 22],
+            "fp": "public void BridgeBuild() // 호스트에서만 불림 (Bridge.OnCollisionSt"
+          }
+        ]
+      },
+      {
+        "key": "sync-model",
+        "chapter": "decisions",
+        "layout": "full",
+        "tab": "선택",
+        "title": {"text": "5.1 동기화 모델: 무엇을 누가 계산할 것인가", "verbatim": true},
+        "lead": {"text": "최종 결정: B. 호스트 권한형.", "verbatim": true},
+        "keywords": ["후보 3개", "호스트 권한형"],
+        "sectionPath": ["5. 고민과 선택", "5.1 동기화 모델: 무엇을 누가 계산할 것인가"],
+        "points": [],
+        "visuals": [{"kind": "table", "n": 1, "fp": "대안|장점|단점"}]
+      },
+      {
+        "key": "no-prediction",
+        "chapter": "decisions",
+        "layout": "visual",
+        "tab": "선택",
+        "title": {"text": "5.1 클라이언트 예측을 뺀 이유", "verbatim": false},
+        "lead": null,
+        "keywords": ["보간", "클라이언트 예측"],
+        "sectionPath": ["5. 고민과 선택", "5.1 동기화 모델: 무엇을 누가 계산할 것인가"],
+        "points": [
+          {
+            "label": "",
+            "text": "다만 예측까지 한 번에 구현하지 않고, \"기본 호스트 기반 동기화 → 부자연스러우면 보간 추가 → 그래도 부자연스러우면 예측 추가\" 순서로 단계를 밟기로 했다.",
+            "verbatim": true
+          },
+          {
+            "label": "",
+            "text": "플레이어와 물체 모두 보간만 넣어도 생각보다 상당히 자연스러웠다. 그래서 클라이언트 예측은 중간에 덜어낸 방식으로 위치 동기화 작업을 마무리했다.",
+            "verbatim": true
+          }
+        ],
+        "visuals": [
+          {
+            "kind": "image",
+            "src": "images/host-authority-result.png",
+            "w": 1280,
+            "h": 720,
+            "caption": {"text": "2차 스프린트 결과 — 호스트 권한 구조 도입", "verbatim": true}
+          }
+        ]
+      },
+      {
+        "key": "snapshot-stages",
+        "chapter": "decisions",
+        "layout": "visual",
+        "tab": "선택",
+        "title": {"text": "5.2 스냅샷을 어떻게 보낼 것인가 — 3단계 변화", "verbatim": true},
+        "lead": null,
+        "keywords": ["병목", "시스템 정지", "3단계"],
+        "sectionPath": ["5. 고민과 선택", "5.2 스냅샷을 어떻게 보낼 것인가 — 3단계 변화"],
+        "points": [
+          {"label": "", "text": "병목: 느린 게스트 하나 때문에 스냅샷 브로드캐스트 전체가 대기한다.", "verbatim": true},
+          {"label": "", "text": "시스템 정지: 호스트 수신 루프까지 멈추면서 방 전체 세션이 멈춘다.", "verbatim": true}
+        ],
+        "visuals": [{"kind": "mermaid", "n": 1, "fp": "flowchart TD"}]
+      },
+      {
+        "key": "snapshot-compare",
+        "chapter": "decisions",
+        "layout": "full",
+        "tab": "선택",
+        "title": {"text": "5.2 스냅샷 송신 — 대안 비교", "verbatim": false},
+        "lead": {"text": "최종 결정: C.", "verbatim": true},
+        "keywords": ["대안 비교", "스냅샷 송신"],
+        "sectionPath": ["5. 고민과 선택", "5.2 스냅샷을 어떻게 보낼 것인가 — 3단계 변화"],
+        "points": [],
+        "visuals": [{"kind": "table", "n": 1, "fp": "대안|장점|단점"}]
+      },
+      {
+        "key": "state-event",
+        "chapter": "decisions",
+        "layout": "full",
+        "tab": "선택",
+        "title": {"text": "5.3 스냅샷 하나에 vs 이벤트 분리", "verbatim": false},
+        "lead": {"text": "최종 결정: A로 구현했다.", "verbatim": true},
+        "keywords": ["스냅샷 vs 이벤트"],
+        "sectionPath": ["5. 고민과 선택", "5.3 모든 상태를 스냅샷 하나에 vs 스냅샷 + 이벤트 분리"],
+        "points": [],
+        "visuals": [{"kind": "table", "n": 1, "fp": "대안|장점|단점"}]
+      },
+      {
+        "key": "host-guest",
+        "chapter": "decisions",
+        "layout": "full",
+        "tab": "선택",
+        "title": {"text": "5.5 호스트/게스트 코드 나누기 (협업 이슈)", "verbatim": false},
+        "lead": {"text": "최종 결정: A.", "verbatim": true},
+        "keywords": ["IsHost", "연동 가이드", "협업 이슈"],
+        "sectionPath": ["5. 고민과 선택", "5.5 호스트/게스트 코드를 어떻게 나눌 것인가 (협업 이슈)"],
+        "points": [],
+        "visuals": [{"kind": "table", "n": 1, "fp": "대안|장점|단점"}]
+      },
+      {
+        "key": "review",
+        "chapter": "decisions",
+        "layout": "full",
+        "tab": "선택",
+        "title": {"text": "5.6 PR 리뷰를 얼마나 엄격하게 할 것인가 (PM)", "verbatim": true},
+        "lead": {"text": "최종 결정: B로 바꿨다.", "verbatim": true},
+        "keywords": ["PR 리뷰", "PM"],
+        "sectionPath": ["5. 고민과 선택", "5.6 PR 리뷰를 얼마나 엄격하게 할 것인가 (PM)"],
+        "points": [],
+        "visuals": [{"kind": "table", "n": 1, "fp": "대안|장점|단점"}]
+      },
+      {
+        "key": "result",
+        "chapter": "results",
+        "layout": "overview",
+        "tab": "결과",
+        "title": {"text": "6.1 결과", "verbatim": true},
+        "lead": null,
+        "keywords": ["4인 동기화", "14명 테스트", "Epic 17개"],
+        "sectionPath": ["6. 결과 및 배운 점", "6.1 결과"],
+        "points": [
+          {
+            "label": "",
+            "text": "4명까지 같은 방에서 호스트 1명이 계산한 물리·인벤토리·다리·승패를 게스트가 따라가는 구조로 최종 빌드와 발표 시연까지 마쳤다.",
+            "verbatim": true
+          },
+          {"label": "", "text": "실제 플레이어 14명이 동시에 플레이한 테스트에서 별 문제가 없었다.", "verbatim": true},
+          {"label": "", "text": "서버 Epic은 처음 계획 1개에서 17개로 늘었다. 네트워크 연동이 처음 예상보다 훨씬 큰 일이었다.", "verbatim": true}
+        ],
+        "visuals": []
+      },
+      {
+        "key": "ts-input",
+        "chapter": "results",
+        "layout": "problem",
+        "tab": "문제 해결",
+        "title": {"text": "6.2-1 게스트 입력이 가끔 사라짐 (서버)", "verbatim": true},
+        "lead": null,
+        "keywords": ["입력 사라짐", "Interlocked"],
+        "sectionPath": ["6. 결과 및 배운 점", "6.2 문제 해결 경험", "6.2-1 게스트 입력이 가끔 사라짐 (서버)"],
+        "points": [
+          {"label": "문제", "text": "서버와 클라이언트가 게스트를 다르게 인식하는 버그로 드러났다.", "verbatim": true},
+          {
+            "label": "원인",
+            "text": "입력을 읽어 묶음에 넣고 → await 송신 → 그 뒤에 모든 게스트의 LastInput을 null로 비웠다. 송신을 기다리는 사이 새로 들어온 입력도 같이 지워졌다.",
+            "verbatim": true
+          },
+          {
+            "label": "해결",
+            "text": "Interlocked.Exchange(ref member.LastInput, null)로 꺼내기와 비우기를 한 번에 한다(4.1).",
+            "verbatim": true
+          },
+          {"label": "배운 점", "text": "한 줄 단위 원자성은 Interlocked, 여러 줄 단위 원자성은 lock으로 구분해야 한다.", "verbatim": true}
+        ],
+        "visuals": []
+      },
+      {
+        "key": "ts-hello",
+        "chapter": "results",
+        "layout": "problem",
+        "tab": "문제 해결",
+        "title": {"text": "6.2-2 접속 직후 가끔 원인 모를 끊김 (서버)", "verbatim": true},
+        "lead": null,
+        "keywords": ["hello", "타이머", "race condition"],
+        "sectionPath": ["6. 결과 및 배운 점", "6.2 문제 해결 경험", "6.2-2 접속 직후 가끔 원인 모를 끊김 (서버)"],
+        "points": [
+          {"label": "문제", "text": "방에 처음 들어온 직후 가끔 이유 없이 연결이 끊겼다.", "verbatim": true},
           {
             "label": "원인",
             "text": "호스트는 hello를 받은 뒤에야 정해지는데, 그 전에 타이머가 먼저 방에 들어가 호스트가 없는 상태로 송신을 시도했다.",
             "verbatim": true
           },
-          {
-            "label": "해결",
-            "text": "두 흐름의 순서를 강제로 맞추는 대신, 순서가 어긋나도 안전하게 만들었다.",
-            "verbatim": true
-          },
+          {"label": "해결", "text": "두 흐름의 순서를 강제로 맞추는 대신, 순서가 어긋나도 안전하게 만들었다.", "verbatim": true},
           {
             "label": "해결",
             "text": "타이머 쪽 SendGuestInputsToHostAsync와 입력 처리 HandleInputAsync는 둘 다 GetHost()가 null이면 그 틱·그 입력을 버린다.",
@@ -1279,39 +1363,22 @@
         "chapter": "results",
         "layout": "problem",
         "tab": "문제 해결",
-        "title": {
-          "text": "6.2-4 다리 개수가 늦게 오르고 게스트와 어긋남 (클라이언트)",
-          "verbatim": true
-        },
+        "title": {"text": "6.2-4 다리 개수가 늦게 오르고 게스트와 어긋남 (클라이언트)", "verbatim": true},
         "lead": null,
-        "keywords": [
-          "다리 개수",
-          "뷰 대신 데이터"
-        ],
-        "sectionPath": [
-          "6. 결과 및 배운 점",
-          "6.2 문제 해결 경험",
-          "6.2-4 다리 개수가 늦게 오르고 게스트와 어긋남 (클라이언트)"
-        ],
+        "keywords": ["다리 개수", "뷰 대신 데이터"],
+        "sectionPath": ["6. 결과 및 배운 점", "6.2 문제 해결 경험", "6.2-4 다리 개수가 늦게 오르고 게스트와 어긋남 (클라이언트)"],
         "points": [
           {
             "label": "원인",
             "text": "개수를 \"켜진 다리 오브젝트 수\"로 셌는데 다리는 연출 2초 뒤에 켜졌고, 게스트는 매 스냅샷마다 0번부터 다시 켰다.",
             "verbatim": true
           },
-          {
-            "label": "해결",
-            "text": "개수를 필드로 즉시 올리고, 게스트는 늘어난 칸만 켠다(4.6).",
-            "verbatim": true
-          },
-          {
-            "label": "배운 점",
-            "text": "인게임 오브젝트(뷰)로 개수를 추적하지 않고 자체 데이터로 증감해야 처리가 일관되고, 변경과 확장에도 쉽다.",
-            "verbatim": true
-          }
+          {"label": "해결", "text": "개수를 필드로 즉시 올리고, 게스트는 늘어난 칸만 켠다(4.6).", "verbatim": true},
+          {"label": "배운 점", "text": "인게임 오브젝트(뷰)로 개수를 추적하지 않고 자체 데이터로 증감해야 처리가 일관되고, 변경과 확장에도 쉽다.", "verbatim": true}
         ],
         "visuals": []
       }
-    ]
+    ],
+    "applied": "ed94e6232426b8a9"
   }
 }

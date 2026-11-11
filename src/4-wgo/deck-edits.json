@@ -1,0 +1,395 @@
+{
+  "schemaVersion": 1,
+  "pin": [
+    {
+      "key": "structure-why",
+      "after": "components",
+      "chapter": "structure",
+      "layout": "overview",
+      "tab": "구조",
+      "title": {
+        "text": "3.2 왜 이렇게 나눴나",
+        "verbatim": true
+      },
+      "lead": null,
+      "keywords": [
+        "RoomHub·Room 분리",
+        "RoomClient 하나",
+        "Update 직전"
+      ],
+      "sectionPath": [
+        "3. 시스템 구조",
+        "3.2 왜 이렇게 나눴나"
+      ],
+      "points": [
+        {
+          "label": "",
+          "text": "방 생성·삭제를 담당하는 RoomHub와 방 내부의 메시지를 처리하는 Room의 역할을 분리했다. 기존 서버의 구조를 유지하면서 방 관리 기능은 거의 수정하지 않고 데이터 동기화 방식만 변경할 수 있었다.",
+          "verbatim": true
+        },
+        {
+          "label": "",
+          "text": "클라이언트에서 소켓을 아는 클래스는 RoomClient 하나다. 다른 매니저는 ApplySnapshot(값)만 받아서, 다리·인벤토리 기능을 고칠 때 연결·수신·송신 코드를 볼 필요가 없다.",
+          "verbatim": true
+        },
+        {
+          "label": "",
+          "text": "ApplySnapshot은 RoomClient의 수신 루프가 메인 스레드로 돌아온 뒤, Update 직전에 부른다. 그래서 매니저는 스레드나 프레임 순서를 신경 쓰지 않고 오브젝트를 바꿀 수 있다.",
+          "verbatim": true
+        }
+      ],
+      "visuals": []
+    },
+    {
+      "key": "roomclient-api",
+      "after": "sequence",
+      "chapter": "structure",
+      "layout": "visual",
+      "tab": "구조",
+      "title": {
+        "text": "4.0 사용법: RoomClient API와 팀원용 연동 가이드",
+        "verbatim": true
+      },
+      "lead": {
+        "text": "새 기능을 동기화하는 순서는 세 단계다. 이 순서를 팀원용 연동 가이드로 정리해 공유했다.",
+        "verbatim": true
+      },
+      "keywords": [
+        "RoomClient API",
+        "연동 가이드",
+        "세 단계"
+      ],
+      "sectionPath": [
+        "4. 핵심 기능",
+        "4.0 사용법: RoomClient API와 팀원용 연동 가이드"
+      ],
+      "points": [
+        {
+          "label": "",
+          "text": "Protocol의 SnapshotMessage에 필드를 추가한다.",
+          "verbatim": true
+        },
+        {
+          "label": "",
+          "text": "호스트 쪽 SendSnapshotOrInputMessage에서 그 필드를 채운다.",
+          "verbatim": true
+        },
+        {
+          "label": "",
+          "text": "게스트 쪽 OnSnapshot에서 그 값을 반영한다.",
+          "verbatim": true
+        },
+        {
+          "label": "",
+          "text": "첫 메시지는 반드시 hello이고, 이후 input(게스트) 또는 snapshot(호스트)만 처리한다.",
+          "verbatim": true
+        }
+      ],
+      "visuals": [
+        {
+          "kind": "table",
+          "n": 1,
+          "fp": "호출|하는 일"
+        }
+      ]
+    },
+    {
+      "key": "snapshot-channel",
+      "chapter": "features",
+      "layout": "code",
+      "tab": "구현",
+      "title": {
+        "text": "4.2 멤버별 \"최신 스냅샷 1개\" 채널",
+        "verbatim": true
+      },
+      "lead": null,
+      "keywords": [
+        "최신 스냅샷",
+        "DropOldest",
+        "송신 루프"
+      ],
+      "sectionPath": [
+        "4. 핵심 기능",
+        "4.2 멤버별 \"최신 스냅샷 1개\" 채널"
+      ],
+      "points": [
+        {
+          "label": "",
+          "text": "호스트 스냅샷이 오면 서버는 직접 보내지 않고, 호스트를 뺀 멤버마다 있는 채널에 넣기만 한다.",
+          "verbatim": true
+        },
+        {
+          "label": "",
+          "text": "채널 크기는 1이고, 꽉 차면 오래된 것을 버린다. 느린 멤버에게는 밀린 스냅샷이 쌓이지 않고 가장 최신 것만 간다.",
+          "verbatim": true
+        }
+      ],
+      "visuals": [
+        {
+          "kind": "code",
+          "n": 1,
+          "lines": [
+            1,
+            20
+          ],
+          "fp": "// Member 안: 멤버마다 크기 1짜리 채널"
+        }
+      ],
+      "from": {
+        "key": "snapshot-channel",
+        "sectionPath": [
+          "4. 핵심 기능",
+          "4.2 멤버별 \"최신 스냅샷 1개\" 채널"
+        ],
+        "sig": [
+          "4.2 멤버별 \"최신 스냅샷 1개\" 채널|code|1|// Member 안: 멤버마다 크기 1짜리 채널"
+        ]
+      },
+      "group": "split-snapshot-send-loop"
+    },
+    {
+      "key": "snapshot-send-loop",
+      "chapter": "features",
+      "layout": "code",
+      "tab": "구현",
+      "title": {
+        "text": "4.2 멤버별 \"최신 스냅샷 1개\" 채널 — 송신 루프",
+        "verbatim": false
+      },
+      "lead": null,
+      "keywords": [
+        "송신 루프",
+        "BroadcastNowAsync"
+      ],
+      "sectionPath": [
+        "4. 핵심 기능",
+        "4.2 멤버별 \"최신 스냅샷 1개\" 채널"
+      ],
+      "points": [
+        {
+          "label": "",
+          "text": "멤버마다 송신 전담 루프가 하나씩 돌며 자기 채널에서 꺼내 보낸다.",
+          "verbatim": true
+        },
+        {
+          "label": "",
+          "text": "join·leave처럼 한 번만 일어나고 놓치면 안 되는 메시지는 이 채널을 쓰지 않고 BroadcastNowAsync로 바로 보낸다. 크기 1 + 오래된 것 버림 채널에 넣으면 스냅샷에 밀려 버려질 수 있기 때문이다.",
+          "verbatim": true
+        },
+        {
+          "label": "",
+          "text": "이 구조는 프로젝트 이후 개선한 결과다.",
+          "verbatim": true
+        }
+      ],
+      "visuals": [
+        {
+          "kind": "code",
+          "n": 1,
+          "lines": [
+            23,
+            38
+          ],
+          "fp": "// Member 안: 멤버마다 크기 1짜리 채널"
+        }
+      ],
+      "after": "snapshot-channel",
+      "group": "split-snapshot-send-loop"
+    },
+    {
+      "key": "send-timeout",
+      "chapter": "features",
+      "layout": "code",
+      "tab": "구현",
+      "title": {
+        "text": "4.3 방 수명과 연결 예외 처리 — 송신 타임아웃과 실패 표시",
+        "verbatim": false
+      },
+      "lead": null,
+      "keywords": [
+        "9초 제한",
+        "송신 실패"
+      ],
+      "sectionPath": [
+        "4. 핵심 기능",
+        "4.3 방 수명과 연결 예외 처리"
+      ],
+      "points": [
+        {
+          "label": "",
+          "text": "소켓 연결 중 예외로 한쪽이 비정상 종료되면 반대편도 이상해질 수 있어, 송신 실패는 반드시 한 곳에서 처리하게 했다.",
+          "verbatim": true
+        }
+      ],
+      "visuals": [
+        {
+          "kind": "code",
+          "n": 2,
+          "lines": [
+            1,
+            28
+          ],
+          "fp": "private async Task SendRawAsync(Member member, string json)"
+        }
+      ],
+      "from": {
+        "key": "send-timeout",
+        "sectionPath": [
+          "4. 핵심 기능",
+          "4.3 방 수명과 연결 예외 처리"
+        ],
+        "sig": [
+          "4.3 방 수명과 연결 예외 처리|code|2|private async Task SendRawAsync(Member member, string json)"
+        ]
+      },
+      "group": "split-room-lifecycle"
+    },
+    {
+      "key": "room-lifecycle",
+      "chapter": "features",
+      "layout": "code",
+      "tab": "구현",
+      "title": {
+        "text": "4.3 방 수명과 연결 예외 처리 — 방 입장과 인원 제한",
+        "verbatim": false
+      },
+      "lead": null,
+      "keywords": [
+        "인원 제한",
+        "호스트 결정",
+        "호스트 승계"
+      ],
+      "sectionPath": [
+        "4. 핵심 기능",
+        "4.3 방 수명과 연결 예외 처리"
+      ],
+      "points": [
+        {
+          "label": "",
+          "text": "호스트 결정: 방이 비어 있을 때 들어온 사람이 호스트다.",
+          "verbatim": true
+        },
+        {
+          "label": "",
+          "text": "호스트 퇴장: 호스트가 나가면 roomExpired = true와 취소 토큰으로 남은 멤버의 수신 대기를 모두 깨워 연결을 닫는다.",
+          "verbatim": true
+        },
+        {
+          "label": "",
+          "text": "호스트 승계는 계획했지만 하지 않았다.",
+          "verbatim": true
+        },
+        {
+          "label": "",
+          "text": "일정이 짧았고, 네트워크를 최대한 단순하게 두고 인게임 핵심 루프의 완성도에 집중하고 싶었다.",
+          "verbatim": true
+        }
+      ],
+      "visuals": [
+        {
+          "kind": "code",
+          "n": 1,
+          "fp": "lock (gate) // (Why) 여러 접속이 동시에 같은 방 코드로 들어와도 인원 수를 정확히 세기 위"
+        }
+      ],
+      "after": "snapshot-send-loop",
+      "group": "split-room-lifecycle"
+    },
+    {
+      "key": "snapshot-apply",
+      "after": "state-event",
+      "chapter": "decisions",
+      "layout": "visual",
+      "tab": "선택",
+      "title": {
+        "text": "5.4 스냅샷 반영 지점: RoomClient 한곳에서 vs 각 매니저가 직접",
+        "verbatim": true
+      },
+      "lead": {
+        "text": "결과: 두 방식이 섞인 채로 끝났다.",
+        "verbatim": true
+      },
+      "keywords": [
+        "반영 지점",
+        "델리게이트"
+      ],
+      "sectionPath": [
+        "5. 고민과 선택",
+        "5.4 스냅샷 반영 지점: RoomClient 한곳에서 vs 각 매니저가 직접"
+      ],
+      "points": [
+        {
+          "label": "",
+          "text": "A로 모으는 리팩토링 작업을 올렸지만 프로젝트 안에 끝내지 못했다.",
+          "verbatim": true
+        },
+        {
+          "label": "",
+          "text": "지금 다시 한다면 두 방식의 장점을 합쳐, 각 매니저가 처음에 RoomClient의 델리게이트를 구독하고 OnSnapshot에서는 Invoke만 하도록 바꾸겠다",
+          "verbatim": true
+        }
+      ],
+      "visuals": [
+        {
+          "kind": "table",
+          "n": 1,
+          "fp": "대안|장점|단점"
+        }
+      ]
+    },
+    {
+      "key": "ts-hello",
+      "chapter": "results",
+      "layout": "problem",
+      "tab": "문제 해결",
+      "title": {
+        "text": "6.2-2 접속 직후 가끔 원인 모를 끊김 (서버)",
+        "verbatim": true
+      },
+      "lead": null,
+      "keywords": [
+        "hello",
+        "타이머",
+        "race condition"
+      ],
+      "sectionPath": [
+        "6. 결과 및 배운 점",
+        "6.2 문제 해결 경험",
+        "6.2-2 접속 직후 가끔 원인 모를 끊김 (서버)"
+      ],
+      "points": [
+        {
+          "label": "문제",
+          "text": "방에 처음 들어온 직후 가끔 이유 없이 연결이 끊겼다.",
+          "verbatim": true
+        },
+        {
+          "label": "원인",
+          "text": "입력 중계 타이머(RoomHub)와 접속 처리(hello)가 서로 다른 흐름으로 동시에 돈다. 호스트는 hello를 받은 뒤에야 정해지는데, 그 전에 타이머가 먼저 방에 들어가 호스트가 없는 상태로 송신을 시도했다.",
+          "verbatim": true
+        },
+        {
+          "label": "해결",
+          "text": "두 흐름의 순서를 강제로 맞추는 대신, 순서가 어긋나도 안전하게 만들었다. 멤버는 gate 안에서 호스트 여부가 정해진 뒤에야 멤버 목록에 들어가고, 타이머·입력 처리는 GetHost()가 null이면 그 틱·그 입력을 버린다.",
+          "verbatim": false
+        },
+        {
+          "label": "배운 점",
+          "text": "방 입장·퇴장, 공유 데이터 읽기·쓰기처럼 여러 흐름이 같은 자원을 만지는 곳은 race condition을 먼저 의심해야 한다.",
+          "verbatim": true
+        }
+      ],
+      "visuals": [],
+      "from": {
+        "key": "ts-hello",
+        "sectionPath": [
+          "6. 결과 및 배운 점",
+          "6.2 문제 해결 경험",
+          "6.2-2 접속 직후 가끔 원인 모를 끊김 (서버)"
+        ],
+        "sig": []
+      }
+    }
+  ],
+  "hide": []
+}
