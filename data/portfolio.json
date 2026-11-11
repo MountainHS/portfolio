@@ -67,8 +67,8 @@
     }
   ],
   "projects": [
-    "3-mini-ftl",
     "4-wgo",
-    "5-hive-purge"
+    "5-hive-purge",
+    "3-mini-ftl"
   ]
 }
