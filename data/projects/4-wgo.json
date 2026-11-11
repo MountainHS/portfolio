@@ -114,26 +114,7 @@
       "section": "6.2-4 다리 개수가 늦게 오르고 게스트와 어긋남 (클라이언트)"
     }
   ],
-  "screenshots": [
-    {
-      "src": "images/core-loop.png",
-      "w": 1280,
-      "h": 720,
-      "caption": "핵심 루프와 승패 조건"
-    },
-    {
-      "src": "images/host-authority-result.png",
-      "w": 1280,
-      "h": 720,
-      "caption": "2차 스프린트 결과 — 호스트 권한 구조 도입"
-    },
-    {
-      "src": "images/sync-problems.png",
-      "w": 1280,
-      "h": 720,
-      "caption": "진행 중 문제 — 동기화 이슈와 서버 구조 문제"
-    }
-  ],
+  "screenshots": [],
   "retro": {
     "section": "6. 결과 및 배운 점",
     "achieved": [
@@ -175,8 +156,7 @@
         "sectionPath": ["1. 개요 · 팀 · 역할", "1.1 프로젝트 소개"],
         "points": [
           {"label": "", "text": "방 코드를 입력해 최대 4명이 한 방에 들어간다.", "verbatim": true},
-          {"label": "", "text": "조작은 WASD로 팔 방향, 마우스 좌·우 클릭으로 왼손·오른손 잡기다.", "verbatim": true},
-          {"label": "", "text": "승리는 다리를 끝까지 짓고 모두 목표 지점에 도착하는 것, 패배는 모든 플레이어의 스태미나가 바닥나 무력화되는 것이다.", "verbatim": true}
+          {"label": "", "text": "조작은 WASD로 팔 방향, 마우스 좌·우 클릭으로 왼손·오른손 잡기다.", "verbatim": true}
         ],
         "visuals": [
           {
@@ -210,15 +190,7 @@
             "verbatim": true
           }
         ],
-        "visuals": [
-          {
-            "kind": "image",
-            "src": "images/core-loop.png",
-            "w": 1280,
-            "h": 720,
-            "caption": {"text": "핵심 루프와 승패 조건", "verbatim": true}
-          }
-        ]
+        "visuals": [{"kind": "table", "n": 1, "fp": "구분|내용"}]
       },
       {
         "key": "why",
@@ -619,7 +591,7 @@
       {
         "key": "no-prediction",
         "chapter": "decisions",
-        "layout": "visual",
+        "layout": "overview",
         "tab": "선택",
         "title": {"text": "5.1 클라이언트 예측을 뺀 이유", "verbatim": false},
         "lead": null,
@@ -637,15 +609,7 @@
             "verbatim": true
           }
         ],
-        "visuals": [
-          {
-            "kind": "image",
-            "src": "images/host-authority-result.png",
-            "w": 1280,
-            "h": 720,
-            "caption": {"text": "2차 스프린트 결과 — 호스트 권한 구조 도입", "verbatim": true}
-          }
-        ]
+        "visuals": []
       },
       {
         "key": "snapshot-stages",
@@ -746,6 +710,11 @@
             "verbatim": true
           },
           {"label": "", "text": "실제 플레이어 14명이 동시에 플레이한 테스트에서 별 문제가 없었다.", "verbatim": true},
+          {
+            "label": "",
+            "text": "2차 스프린트에서 플레이어·물고기·자원 시스템 자체는 28일차에 예정대로 완성했지만, 이 기능들을 서버에 붙이는 통합은 예상보다 늦어져 31일차에 끝났다.",
+            "verbatim": true
+          },
           {"label": "", "text": "서버 Epic은 처음 계획 1개에서 17개로 늘었다. 네트워크 연동이 처음 예상보다 훨씬 큰 일이었다.", "verbatim": true}
         ],
         "visuals": []
@@ -838,8 +807,7 @@
         "sectionPath": ["1. 개요 · 팀 · 역할", "1.1 프로젝트 소개"],
         "points": [
           {"label": "", "text": "방 코드를 입력해 최대 4명이 한 방에 들어간다.", "verbatim": true},
-          {"label": "", "text": "조작은 WASD로 팔 방향, 마우스 좌·우 클릭으로 왼손·오른손 잡기다.", "verbatim": true},
-          {"label": "", "text": "승리는 다리를 끝까지 짓고 모두 목표 지점에 도착하는 것, 패배는 모든 플레이어의 스태미나가 바닥나 무력화되는 것이다.", "verbatim": true}
+          {"label": "", "text": "조작은 WASD로 팔 방향, 마우스 좌·우 클릭으로 왼손·오른손 잡기다.", "verbatim": true}
         ],
         "visuals": [
           {
@@ -873,15 +841,7 @@
             "verbatim": true
           }
         ],
-        "visuals": [
-          {
-            "kind": "image",
-            "src": "images/core-loop.png",
-            "w": 1280,
-            "h": 720,
-            "caption": {"text": "핵심 루프와 승패 조건", "verbatim": true}
-          }
-        ]
+        "visuals": [{"kind": "table", "n": 1, "fp": "구분|내용"}]
       },
       {
         "key": "why",
@@ -1197,7 +1157,7 @@
       {
         "key": "no-prediction",
         "chapter": "decisions",
-        "layout": "visual",
+        "layout": "overview",
         "tab": "선택",
         "title": {"text": "5.1 클라이언트 예측을 뺀 이유", "verbatim": false},
         "lead": null,
@@ -1215,15 +1175,7 @@
             "verbatim": true
           }
         ],
-        "visuals": [
-          {
-            "kind": "image",
-            "src": "images/host-authority-result.png",
-            "w": 1280,
-            "h": 720,
-            "caption": {"text": "2차 스프린트 결과 — 호스트 권한 구조 도입", "verbatim": true}
-          }
-        ]
+        "visuals": []
       },
       {
         "key": "snapshot-stages",
@@ -1304,6 +1256,11 @@
             "verbatim": true
           },
           {"label": "", "text": "실제 플레이어 14명이 동시에 플레이한 테스트에서 별 문제가 없었다.", "verbatim": true},
+          {
+            "label": "",
+            "text": "2차 스프린트에서 플레이어·물고기·자원 시스템 자체는 28일차에 예정대로 완성했지만, 이 기능들을 서버에 붙이는 통합은 예상보다 늦어져 31일차에 끝났다.",
+            "verbatim": true
+          },
           {"label": "", "text": "서버 Epic은 처음 계획 1개에서 17개로 늘었다. 네트워크 연동이 처음 예상보다 훨씬 큰 일이었다.", "verbatim": true}
         ],
         "visuals": []
@@ -1379,6 +1336,6 @@
         "visuals": []
       }
     ],
-    "applied": "ed94e6232426b8a9"
+    "applied": "75643f47c2b5cfd0"
   }
 }
