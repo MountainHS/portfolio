@@ -52,7 +52,7 @@
       "what": "모든 몬스터가 같은 상태 5개를 쓰고, 몬스터 역할(Role) 하나에 공격 클래스 하나가 대응한다.",
       "how": "추상 클래스 `MonsterAttack`이 예고 → 공격 → 회복 순서를 고정하고, 6종 공격이 단계 내용만 채운다. `MonsterAttackFactory`가 역할에 맞는 공격을 만든다.",
       "why": "몬스터 공격 명세가 1차 빌드 뒤에 바뀔 가능성이 높았다. 처음의 인터페이스 + 추상 클래스 구조는 테스트용 일회용 추상화라 읽기 힘들어, 공통 사이클이 필요한 추상 클래스 하나로 정리했다.",
-      "section": "3.3 공격 갈아 끼우기: `MonsterAttackFactory.CreateAttack`",
+      "section": "3.4 공격 갈아 끼우기: `MonsterAttackFactory.CreateAttack`",
       "image": null
     },
     {
@@ -60,7 +60,7 @@
       "what": "피격 방향 모션, 저체력 붉은 기, 누적 피해 경직, 약점 명중 Flash, 시체 단계로 몬스터 상태를 보여 준다.",
       "how": "피격 모션은 Animator의 Hit 레이어(Additive)에 겹쳐 재생하고, 저체력은 `MaterialPropertyBlock`으로 덮는다. 시체는 `Alive → Lying → Sinking → Gone` 단계로 진행한다.",
       "why": "피격마다 경직을 넣으면 거대한 몬스터도 한 번에 경직되어 몰입감을 해칠 수 있어서, 누적 피해 임계값을 넘었을 때만 경직되게 했다.",
-      "section": "3.4 피격 ~ 시체: 상시 체력바 없이 상태를 읽게 하기",
+      "section": "3.6 피격 ~ 시체: 상시 체력바 없이 상태를 읽게 하기",
       "image": {
         "src": "images/hit-feedback-low-hp-and-blood.png",
         "w": 540,
@@ -73,7 +73,7 @@
       "what": "TSV 표 4개로 라운드마다 몬스터를 시간대별로 소환하고, 죽은 몬스터를 풀로 돌려받아 다시 쓴다.",
       "how": "`MonsterWaveDirector`가 라운드 시간을 진행하며 스테이지를 시작하고, 시작 직전 풀에 몬스터를 미리 만들어 둔다. 풀은 처음 만든 개체와 돌려받은 개체를 스택 두 개로 나눈다.",
       "why": "처음 켜지는 개체는 Awake·OnEnable로 조립되고, 돌려받은 개체는 Awake가 다시 돌지 않아 Respawn()으로 직접 되돌려야 하기 때문이다.",
-      "section": "3.5 웨이브와 풀",
+      "section": "3.7 웨이브와 풀",
       "image": {
         "src": "images/spawn.png",
         "w": 363,
@@ -221,8 +221,8 @@
           "verbatim": true
         },
         "keywords": [
-          "라운드 생존",
-          "재화·강화",
+          "몬스터 무리",
+          "재화 강화",
           "3라운드 보스"
         ],
         "sectionPath": [
@@ -281,8 +281,8 @@
           "verbatim": true
         },
         "keywords": [
+          "압도적인 물량",
           "공통 상태 머신",
-          "공격 교체",
           "Override Controller"
         ],
         "sectionPath": [
@@ -314,9 +314,9 @@
         },
         "lead": null,
         "keywords": [
-          "몬스터 AI",
-          "웨이브·풀",
-          "애니메이션"
+          "몬스터 상태 머신",
+          "팀 공용 코어",
+          "외부 에셋"
         ],
         "sectionPath": [
           "1. 개요 · 팀 · 역할",
@@ -345,15 +345,21 @@
           "verbatim": true
         },
         "keywords": [
-          "웨이브·스폰",
-          "몬스터 풀",
-          "상태 머신"
+          "MonsterController",
+          "모듈 조립",
+          "책임 경계"
         ],
         "sectionPath": [
           "2. 시스템 구조",
           "2.1 구성요소와 책임"
         ],
-        "points": [],
+        "points": [
+          {
+            "label": "아쉬운 점 · 개선할 점",
+            "text": "`MonsterMovement`에는 군중 제어·자체 추적·정책 이동이 한 파일에 섞여 있고, `CrowdController`에는 토큰 방식과 슬롯 방식이 섞여 있어 책임 경계가 흐리다.",
+            "verbatim": true
+          }
+        ],
         "visuals": [
           {
             "kind": "mermaid",
@@ -373,9 +379,9 @@
         },
         "lead": null,
         "keywords": [
-          "클래스 책임",
-          "컨트롤러",
-          "공격"
+          "상태 머신",
+          "공격 사이클",
+          "팩토리"
         ],
         "sectionPath": [
           "2. 시스템 구조",
@@ -401,9 +407,9 @@
         },
         "lead": null,
         "keywords": [
-          "프레임 흐름",
-          "상태 전이",
-          "Animator"
+          "AcquireTarget",
+          "PhaseChanged",
+          "클립 재생"
         ],
         "sectionPath": [
           "2. 시스템 구조",
@@ -432,8 +438,9 @@
           "verbatim": true
         },
         "keywords": [
-          "Update",
-          "진입점"
+          "시체만 진행",
+          "상태 판단",
+          "공격 중 사망"
         ],
         "sectionPath": [
           "3. 핵심 기능",
@@ -449,12 +456,191 @@
         ]
       },
       {
+        "key": "state-machine",
+        "chapter": "core",
+        "layout": "visual",
+        "tab": "흐름",
+        "title": {
+          "text": "3.2 상태 머신: 상태 5개와 전이",
+          "verbatim": true
+        },
+        "lead": {
+          "text": "모든 몬스터는 같은 상태 5개(Idle·Chase·Attack·Stunned·Dead)를 쓴다.",
+          "verbatim": true
+        },
+        "keywords": [
+          "상태 5개",
+          "Enter·Tick·Exit",
+          "Attack 갈래"
+        ],
+        "sectionPath": [
+          "3. 핵심 기능",
+          "3.2 상태 머신: 상태 5개와 전이"
+        ],
+        "points": [
+          {
+            "label": "",
+            "text": "이 그림에서 볼 것은 Attack에서 나가는 길이 여러 갈래라는 점이다.",
+            "verbatim": true
+          }
+        ],
+        "visuals": [
+          {
+            "kind": "mermaid",
+            "n": 1,
+            "fp": "stateDiagram-v2"
+          }
+        ]
+      },
+      {
+        "key": "state-table",
+        "chapter": "core",
+        "layout": "full",
+        "tab": "구조",
+        "title": {
+          "text": "3.2 상태 머신 — 상태 5개",
+          "verbatim": false
+        },
+        "lead": null,
+        "keywords": [
+          "들어올 때",
+          "나가는 조건",
+          "공격 자리 예약"
+        ],
+        "sectionPath": [
+          "3. 핵심 기능",
+          "3.2 상태 머신: 상태 5개와 전이"
+        ],
+        "points": [],
+        "visuals": [
+          {
+            "kind": "table",
+            "n": 1,
+            "fp": "상태|들어올 때|머무는 동안 · 나가는 조건"
+          }
+        ]
+      },
+      {
+        "key": "after-attack",
+        "chapter": "core",
+        "layout": "full",
+        "tab": "선택",
+        "title": {
+          "text": "3.2 상태 머신 — 공격이 끝난 뒤 행선지",
+          "verbatim": false
+        },
+        "lead": {
+          "text": "1.1절에 적은 \"공격 쿨타임 동안 대기할지, 계속 플레이어를 추적할지\"를 이 값으로 몬스터마다 정한다.",
+          "verbatim": true
+        },
+        "keywords": [
+          "After",
+          "ChaseUntilReady",
+          "RestInIdle"
+        ],
+        "sectionPath": [
+          "3. 핵심 기능",
+          "3.2 상태 머신: 상태 5개와 전이"
+        ],
+        "points": [],
+        "visuals": [
+          {
+            "kind": "table",
+            "n": 2,
+            "fp": "After|쓰는 공격|공격 뒤 행동"
+          }
+        ]
+      },
+      {
+        "key": "attack-state",
+        "chapter": "core",
+        "layout": "code",
+        "tab": "구현",
+        "title": {
+          "text": "3.2 상태 머신 — AttackState",
+          "verbatim": false
+        },
+        "lead": {
+          "text": "상태 머신과 공격이 만나는 곳은 AttackState 하나다.",
+          "verbatim": true
+        },
+        "keywords": [
+          "AttackState",
+          "FinishAttackCycle",
+          "WallHit"
+        ],
+        "sectionPath": [
+          "3. 핵심 기능",
+          "3.2 상태 머신: 상태 5개와 전이"
+        ],
+        "points": [
+          {
+            "label": "",
+            "text": "돌진이 벽에 막혀 끝나면(WallHit) 행선지 대신 기절(Stunned)로 간다.",
+            "verbatim": true
+          }
+        ],
+        "visuals": [
+          {
+            "kind": "code",
+            "n": 1,
+            "fp": "// code/AttackState.cs:23-43, 51-77",
+            "lines": [
+              2,
+              21
+            ]
+          }
+        ]
+      },
+      {
+        "key": "change-state",
+        "chapter": "core",
+        "layout": "code",
+        "tab": "구현",
+        "title": {
+          "text": "3.2 상태 머신 — ChangeState",
+          "verbatim": false
+        },
+        "lead": {
+          "text": "상태를 바꿀 때는 모두 ChangeState 하나를 거친다.",
+          "verbatim": true
+        },
+        "keywords": [
+          "ChangeState",
+          "Exit → Enter",
+          "StateChanged"
+        ],
+        "sectionPath": [
+          "3. 핵심 기능",
+          "3.2 상태 머신: 상태 5개와 전이"
+        ],
+        "points": [
+          {
+            "label": "",
+            "text": "순서는 이전 상태 Exit → 새 상태 Enter → StateChanged 알림이다.",
+            "verbatim": true
+          },
+          {
+            "label": "",
+            "text": "Dead가 된 뒤의 변경은 무시한다.",
+            "verbatim": true
+          }
+        ],
+        "visuals": [
+          {
+            "kind": "code",
+            "n": 2,
+            "fp": "// code/MonsterStateMachine.cs:174-184"
+          }
+        ]
+      },
+      {
         "key": "attack-cycle",
         "chapter": "core",
         "layout": "code",
         "tab": "구현",
         "title": {
-          "text": "3.2 공격 사이클: `MonsterAttack.Tick`",
+          "text": "3.3 공격 사이클: `MonsterAttack.Tick`",
           "verbatim": true
         },
         "lead": {
@@ -462,14 +648,20 @@
           "verbatim": true
         },
         "keywords": [
-          "공격 사이클",
+          "템플릿 메서드",
+          "예고·공격·회복",
           "쿨다운"
         ],
         "sectionPath": [
           "3. 핵심 기능",
-          "3.2 공격 사이클: `MonsterAttack.Tick`"
+          "3.3 공격 사이클: `MonsterAttack.Tick`"
         ],
         "points": [
+          {
+            "label": "",
+            "text": "공격 클래스는 템플릿 메서드 형태로 되어 있다.",
+            "verbatim": true
+          },
           {
             "label": "",
             "text": "쿨다운은 회복이 끝난 뒤 기다리는 시간이다.",
@@ -482,9 +674,65 @@
             "n": 1,
             "fp": "// code/MonsterAttack.cs:197-228",
             "lines": [
-              2,
-              21
+              6,
+              29
             ]
+          }
+        ]
+      },
+      {
+        "key": "attack-hooks",
+        "chapter": "core",
+        "layout": "code",
+        "tab": "구현",
+        "title": {
+          "text": "3.3 공격 사이클 — 자식 클래스가 채우는 훅",
+          "verbatim": false
+        },
+        "lead": null,
+        "keywords": [
+          "훅 4개",
+          "OnActive",
+          "EndEarly"
+        ],
+        "sectionPath": [
+          "3. 핵심 기능",
+          "3.3 공격 사이클: `MonsterAttack.Tick`"
+        ],
+        "points": [],
+        "visuals": [
+          {
+            "kind": "code",
+            "n": 2,
+            "fp": "// code/MonsterAttack.cs:259-272"
+          }
+        ]
+      },
+      {
+        "key": "hook-table",
+        "chapter": "core",
+        "layout": "full",
+        "tab": "구현",
+        "title": {
+          "text": "3.3 공격 사이클 — 훅과 돌진의 예",
+          "verbatim": false
+        },
+        "lead": null,
+        "keywords": [
+          "OnWindup",
+          "OnActive",
+          "OnCancel"
+        ],
+        "sectionPath": [
+          "3. 핵심 기능",
+          "3.3 공격 사이클: `MonsterAttack.Tick`"
+        ],
+        "points": [],
+        "visuals": [
+          {
+            "kind": "table",
+            "n": 1,
+            "fp": "훅|언제 불리나|돌진(ChargeAttack)의 예"
           }
         ]
       },
@@ -494,16 +742,18 @@
         "layout": "screens",
         "tab": "결과",
         "title": {
-          "text": "3.2 공격 사이클 — 화면",
+          "text": "3.3 공격 사이클 — 화면",
           "verbatim": false
         },
         "lead": null,
         "keywords": [
-          "공격 화면"
+          "공격 전",
+          "예고(Windup)",
+          "공격(Active)"
         ],
         "sectionPath": [
           "3. 핵심 기능",
-          "3.2 공격 사이클: `MonsterAttack.Tick`"
+          "3.3 공격 사이클: `MonsterAttack.Tick`"
         ],
         "points": [],
         "visuals": [
@@ -545,7 +795,7 @@
         "layout": "code",
         "tab": "구현",
         "title": {
-          "text": "3.3 공격 갈아 끼우기: `MonsterAttackFactory.CreateAttack`",
+          "text": "3.4 공격 갈아 끼우기: `MonsterAttackFactory.CreateAttack`",
           "verbatim": true
         },
         "lead": {
@@ -553,12 +803,13 @@
           "verbatim": true
         },
         "keywords": [
-          "공격 팩토리",
-          "공격 6종"
+          "몬스터 역할",
+          "공격 6종",
+          "FindSettings"
         ],
         "sectionPath": [
           "3. 핵심 기능",
-          "3.3 공격 갈아 끼우기: `MonsterAttackFactory.CreateAttack`"
+          "3.4 공격 갈아 끼우기: `MonsterAttackFactory.CreateAttack`"
         ],
         "points": [],
         "visuals": [
@@ -570,23 +821,135 @@
         ]
       },
       {
+        "key": "animator-map",
+        "chapter": "core",
+        "layout": "full",
+        "tab": "구조",
+        "title": {
+          "text": "3.5 상태·공격 단계를 Animator에 잇기",
+          "verbatim": true
+        },
+        "lead": {
+          "text": "C# 상태 머신과 Animator 상태는 1:1이 아니다.",
+          "verbatim": true
+        },
+        "keywords": [
+          "Animator 파라미터",
+          "Any State",
+          "MonsterController"
+        ],
+        "sectionPath": [
+          "3. 핵심 기능",
+          "3.5 상태·공격 단계를 Animator에 잇기"
+        ],
+        "points": [],
+        "visuals": [
+          {
+            "kind": "table",
+            "n": 1,
+            "fp": "C# 쪽에서 일어난 일|넣는 Animator 파라미터|Animator 전이"
+          }
+        ]
+      },
+      {
+        "key": "animator-state",
+        "chapter": "core",
+        "layout": "code",
+        "tab": "구현",
+        "title": {
+          "text": "3.5 Animator에 잇기 — 상태 바뀜",
+          "verbatim": false
+        },
+        "lead": {
+          "text": "상태가 바뀌면 OnStateChanged, 공격 단계가 바뀌면 OnAttackPhaseChanged가 Animator 파라미터를 넣는다.",
+          "verbatim": true
+        },
+        "keywords": [
+          "OnStateChanged",
+          "IsStunned",
+          "Death"
+        ],
+        "sectionPath": [
+          "3. 핵심 기능",
+          "3.5 상태·공격 단계를 Animator에 잇기"
+        ],
+        "points": [],
+        "visuals": [
+          {
+            "kind": "code",
+            "n": 1,
+            "fp": "// code/MonsterController.cs:330-352, 364-372",
+            "lines": [
+              2,
+              24
+            ]
+          }
+        ]
+      },
+      {
+        "key": "animator-attack",
+        "chapter": "core",
+        "layout": "code",
+        "tab": "구현",
+        "title": {
+          "text": "3.5 Animator에 잇기 — 공격 단계",
+          "verbatim": false
+        },
+        "lead": {
+          "text": "공격 클립은 Attack 상태에 들어갈 때가 아니라 공격 Active 단계가 시작될 때 재생한다.",
+          "verbatim": true
+        },
+        "keywords": [
+          "OnAttackPhaseChanged",
+          "AttackSpeed",
+          "Active 단계"
+        ],
+        "sectionPath": [
+          "3. 핵심 기능",
+          "3.5 상태·공격 단계를 Animator에 잇기"
+        ],
+        "points": [
+          {
+            "label": "",
+            "text": "Chase 안의 멈춤·이동은 C# 상태를 늘리지 않고 IsMoving 하나로 Animator에서 나눈다.",
+            "verbatim": true
+          },
+          {
+            "label": "",
+            "text": "이동 자체가 공격인 돌진은 Attack 클립을 쓰지 않고, Move 클립을 돌진 속도에 맞춰 재생한다.",
+            "verbatim": true
+          }
+        ],
+        "visuals": [
+          {
+            "kind": "code",
+            "n": 1,
+            "fp": "// code/MonsterController.cs:330-352, 364-372",
+            "lines": [
+              26,
+              35
+            ]
+          }
+        ]
+      },
+      {
         "key": "feedback",
         "chapter": "core",
         "layout": "full",
         "tab": "구현",
         "title": {
-          "text": "3.4 피격 ~ 시체: 상시 체력바 없이 상태를 읽게 하기",
+          "text": "3.6 피격 ~ 시체: 상시 체력바 없이 상태를 읽게 하기",
           "verbatim": true
         },
         "lead": null,
         "keywords": [
-          "피격 반응",
-          "약점",
-          "시체"
+          "피격 방향 모션",
+          "누적 피해",
+          "약점 Flash"
         ],
         "sectionPath": [
           "3. 핵심 기능",
-          "3.4 피격 ~ 시체: 상시 체력바 없이 상태를 읽게 하기"
+          "3.6 피격 ~ 시체: 상시 체력바 없이 상태를 읽게 하기"
         ],
         "points": [],
         "visuals": [
@@ -603,16 +966,18 @@
         "layout": "screens",
         "tab": "결과",
         "title": {
-          "text": "3.4 피격 ~ 시체 — 화면",
+          "text": "3.6 피격 ~ 시체 — 화면",
           "verbatim": false
         },
         "lead": null,
         "keywords": [
-          "피격 화면"
+          "평소 체력",
+          "저체력",
+          "약점 명중"
         ],
         "sectionPath": [
           "3. 핵심 기능",
-          "3.4 피격 ~ 시체: 상시 체력바 없이 상태를 읽게 하기"
+          "3.6 피격 ~ 시체: 상시 체력바 없이 상태를 읽게 하기"
         ],
         "points": [],
         "visuals": [
@@ -654,19 +1019,26 @@
         "layout": "full",
         "tab": "구현",
         "title": {
-          "text": "3.5 웨이브와 풀 — 표 4개",
+          "text": "3.7 웨이브와 풀 — 표 4개",
           "verbatim": false
         },
         "lead": null,
         "keywords": [
-          "웨이브 표",
-          "데이터 테이블"
+          "표 4개",
+          "StartRound",
+          "4계층"
         ],
         "sectionPath": [
           "3. 핵심 기능",
-          "3.5 웨이브와 풀"
+          "3.7 웨이브와 풀"
         ],
-        "points": [],
+        "points": [
+          {
+            "label": "아쉬운 점 · 개선할 점",
+            "text": "라운드 → 스테이지 → 웨이브 → 스포너 4계층은 다른 팀원이 한눈에 읽기 어려웠고 수치 조절도 힘들었다.",
+            "verbatim": true
+          }
+        ],
         "visuals": [
           {
             "kind": "table",
@@ -691,17 +1063,18 @@
         "layout": "code",
         "tab": "구현",
         "title": {
-          "text": "3.5 웨이브와 풀 — 풀",
+          "text": "3.7 웨이브와 풀 — 풀",
           "verbatim": false
         },
         "lead": null,
         "keywords": [
-          "오브젝트 풀",
-          "재사용"
+          "스택 두 개",
+          "Respawn",
+          "꺼진 채로"
         ],
         "sectionPath": [
           "3. 핵심 기능",
-          "3.5 웨이브와 풀"
+          "3.7 웨이브와 풀"
         ],
         "points": [
           {
@@ -728,17 +1101,18 @@
         "layout": "screens",
         "tab": "결과",
         "title": {
-          "text": "3.6 사이드: 셰이더 (AI 작성)",
+          "text": "3.8 사이드: 셰이더 (AI 작성)",
           "verbatim": true
         },
         "lead": null,
         "keywords": [
-          "셰이더",
-          "AI 작성"
+          "HLSL 셰이더",
+          "EliteAura",
+          "TerrainDiscMesh"
         ],
         "sectionPath": [
           "3. 핵심 기능",
-          "3.6 사이드: 셰이더 (AI 작성)"
+          "3.8 사이드: 셰이더 (AI 작성)"
         ],
         "points": [],
         "visuals": [
@@ -789,7 +1163,8 @@
         },
         "keywords": [
           "추상 클래스",
-          "인터페이스 정리"
+          "인터페이스 기준",
+          "PlayMode"
         ],
         "sectionPath": [
           "4. 고민과 선택",
@@ -818,8 +1193,9 @@
           "verbatim": true
         },
         "keywords": [
-          "사거리 분리",
-          "NavMesh 감속"
+          "NavMesh 감속",
+          "HitRangeRatio",
+          "진입·유지·판정"
         ],
         "sectionPath": [
           "4. 고민과 선택",
@@ -845,8 +1221,9 @@
         },
         "lead": null,
         "keywords": [
-          "Animator 전이",
-          "Override"
+          "Base Controller",
+          "Override",
+          "Animator 창"
         ],
         "sectionPath": [
           "4. 고민과 선택",
@@ -872,8 +1249,9 @@
         },
         "lead": null,
         "keywords": [
-          "AI 활용",
-          "역할 분담"
+          "셰이더 5개",
+          "밸런스 기준선",
+          "웨이브 테마"
         ],
         "sectionPath": [
           "4. 고민과 선택",
@@ -901,7 +1279,7 @@
         "keywords": [
           "공격 6종",
           "프리팹 6종",
-          "아쉬운 점"
+          "Profiler"
         ],
         "sectionPath": [
           "5. 결과 및 배운 점",
@@ -937,8 +1315,9 @@
         },
         "lead": null,
         "keywords": [
+          "몸통 콜라이더",
           "시체 단계",
-          "콜라이더"
+          "구르는 물리"
         ],
         "sectionPath": [
           "5. 결과 및 배운 점",
@@ -979,7 +1358,7 @@
             },
             "sectionPath": [
               "3. 핵심 기능",
-              "3.4 피격 ~ 시체: 상시 체력바 없이 상태를 읽게 하기"
+              "3.6 피격 ~ 시체: 상시 체력바 없이 상태를 읽게 하기"
             ]
           }
         ]
@@ -995,8 +1374,9 @@
         },
         "lead": null,
         "keywords": [
-          "도약 착지",
-          "레이어 마스크"
+          "물리 검사",
+          "Default 레이어",
+          "Monster 레이어"
         ],
         "sectionPath": [
           "5. 결과 및 배운 점",
@@ -1038,8 +1418,9 @@
         },
         "lead": null,
         "keywords": [
-          "라운드 종료",
-          "특수 웨이브"
+          "조기 종료",
+          "전멸 보너스",
+          "코드 리뷰"
         ],
         "sectionPath": [
           "5. 결과 및 배운 점",
@@ -1081,7 +1462,9 @@
         },
         "lead": null,
         "keywords": [
-          "기술 부채"
+          "이동 코드",
+          "재조립 비용",
+          "웨이브 단계"
         ],
         "sectionPath": [
           "5. 결과 및 배운 점",
