@@ -312,7 +312,7 @@
         },
         "lead": null,
         "keywords": [
-          "네트워크 멀티",
+          "네트워크 멀티플레이",
           "협동 게임"
         ],
         "sectionPath": [
@@ -344,8 +344,8 @@
         },
         "lead": null,
         "keywords": [
-          "팀 4명",
-          "역할 분담",
+          "팀원",
+          "맡은 일",
           "팀장·PM"
         ],
         "sectionPath": [
@@ -372,9 +372,9 @@
         },
         "lead": null,
         "keywords": [
-          "네트워크 개편",
-          "연동·디버깅",
-          "다리 건설"
+          "네트워크 구조 개편",
+          "연동 가이드",
+          "TSV 데이터"
         ],
         "sectionPath": [
           "2. 담당 파트 개요",
@@ -496,8 +496,9 @@
         },
         "lead": null,
         "keywords": [
-          "구성요소",
-          "책임 분리"
+          "RoomHub",
+          "RoomClient",
+          "ApplySnapshot"
         ],
         "sectionPath": [
           "3. 시스템 구조",
@@ -526,8 +527,9 @@
           "verbatim": true
         },
         "keywords": [
-          "통신 흐름",
-          "입력·스냅샷"
+          "입력만",
+          "스냅샷",
+          "초당 20회"
         ],
         "sectionPath": [
           "3. 시스템 구조",
@@ -559,8 +561,9 @@
         },
         "lead": null,
         "keywords": [
-          "입력 1회",
-          "시퀀스"
+          "inputGroup",
+          "snapshot",
+          "ApplySnapshot"
         ],
         "sectionPath": [
           "3. 시스템 구조",
@@ -586,8 +589,8 @@
         },
         "lead": null,
         "keywords": [
-          "입력 묶음",
-          "LastInput"
+          "LastInput",
+          "Interlocked"
         ],
         "sectionPath": [
           "4. 핵심 기능",
@@ -634,7 +637,8 @@
         "lead": null,
         "keywords": [
           "최신 스냅샷",
-          "채널 크기 1"
+          "DropOldest",
+          "송신 루프"
         ],
         "sectionPath": [
           "4. 핵심 기능",
@@ -675,8 +679,9 @@
         },
         "lead": null,
         "keywords": [
-          "방 수명",
-          "예외 처리"
+          "인원 제한",
+          "9초 제한",
+          "송신 실패"
         ],
         "sectionPath": [
           "4. 핵심 기능",
@@ -720,8 +725,8 @@
           "verbatim": true
         },
         "keywords": [
-          "수신·송신 시점",
-          "프레임 순서"
+          "Update 직전",
+          "LastUpdate"
         ],
         "sectionPath": [
           "4. 핵심 기능",
@@ -784,7 +789,8 @@
         "lead": null,
         "keywords": [
           "WorldItemId",
-          "ID 규칙"
+          "고정 번호",
+          "오브젝트 풀"
         ],
         "sectionPath": [
           "4. 핵심 기능",
@@ -835,8 +841,9 @@
         },
         "lead": null,
         "keywords": [
-          "다리 조건",
-          "가치 연산"
+          "꼭 필요한 재료",
+          "필요 가치 합",
+          "최소 낭비"
         ],
         "sectionPath": [
           "4. 핵심 기능",
@@ -874,7 +881,8 @@
         "lead": null,
         "keywords": [
           "필수 자원",
-          "점수 조합"
+          "최소 필요 점수",
+          "추가 자원"
         ],
         "sectionPath": [
           "4. 핵심 기능",
@@ -923,8 +931,8 @@
           "verbatim": true
         },
         "keywords": [
-          "호스트 권한형",
-          "동기화 모델"
+          "후보 3개",
+          "호스트 권한형"
         ],
         "sectionPath": [
           "5. 고민과 선택",
@@ -951,7 +959,7 @@
         "lead": null,
         "keywords": [
           "보간",
-          "예측 제외"
+          "클라이언트 예측"
         ],
         "sectionPath": [
           "5. 고민과 선택",
@@ -993,8 +1001,9 @@
         },
         "lead": null,
         "keywords": [
-          "스냅샷 3단계",
-          "병목"
+          "병목",
+          "시스템 정지",
+          "3단계"
         ],
         "sectionPath": [
           "5. 고민과 선택",
@@ -1093,8 +1102,9 @@
           "verbatim": true
         },
         "keywords": [
-          "코드 나누기",
-          "협업"
+          "IsHost",
+          "연동 가이드",
+          "협업 이슈"
         ],
         "sectionPath": [
           "5. 고민과 선택",
@@ -1188,7 +1198,7 @@
         },
         "lead": null,
         "keywords": [
-          "입력 유실",
+          "입력 사라짐",
           "Interlocked"
         ],
         "sectionPath": [
@@ -1231,8 +1241,9 @@
         },
         "lead": null,
         "keywords": [
-          "접속 끊김",
-          "순서 경쟁"
+          "hello",
+          "타이머",
+          "race condition"
         ],
         "sectionPath": [
           "6. 결과 및 배운 점",
