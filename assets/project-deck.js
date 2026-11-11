@@ -352,17 +352,19 @@
   }
 
   // 목록 한 줄(같은 덱 안 이동 = 같은 탭). 쪽 번호(p.N)는 키트가 채움
-  //   ld = 장 표지 넉넉한 변형에서 그 장면의 도입(lead, 데이터의 글 조각 그대로)
+  //   ld = 장 표지 넉넉한 변형에서 그 장면의 키워드 한 줄(keywords를 ' · '로 이음. 없으면 빈칸 — lead로 되돌아가지 않음)
   const item = (n, t, d, ref, ld = '') => `<li><a href="#${esc(ref)}" data-pf-ref="${esc(ref)}"><span class="n">${esc(n)}</span><span class="tx"><span class="t">${inline(t)}</span>${d ? `<span class="d">${esc(d)}</span>` : ''}${ld ? `<span class="ld">${inline(ld)}</span>` : ''}</span><span class="pg"><span class="pf-n-screen">p.00</span><span class="pf-n-print"></span></span></a></li>`;
   const band = (s, auto) => { if (auto) s.querySelector('.pf-foot > span').insertAdjacentHTML('beforeend', '<span class="pf-autoband" data-pf-ui="note">예전 데이터로 자동 구성</span>'); return s; };
 
-  // 장 표지: 장면이 적으면(4개 이하) 넉넉한 변형 — 목차 크기 목록 + 장면마다 도입(결정 I7). 안 들어가면 보통 → 촘촘
+  // 장 표지: 장면이 적으면(4개 이하) 넉넉한 변형 — 목차 크기 목록 + 장면마다 키워드 한 줄(결정 I7). 안 들어가면 보통 → 촘촘
   const ROOMY_MAX = 4;
+  // 장면의 키워드(deck.slides[].keywords, 문자열 배열)를 장 표지 한 줄로 이음. 배열이 아니거나 비면 ''
+  const keywordLine = (sl) => (Array.isArray(sl.keywords) ? sl.keywords.filter(Boolean).join(' · ') : '');
   function chapterScene(c, ci, chId, slides, foot, auto, ptitle) {
     const make = (mode) => {
       const s = PF.scene({ id: chId, tpl: 'CH', kind: 'bare', cls: mode === 'compact' ? 'compact' : '', foot, sec: c.title, group: c.title, stitle: c.title });
       const roomy = mode === 'roomy';
-      const list = slides.map((x, i) => item(String(i + 1), txt(x.sl.title) || c.title, PF.tab(x.sl.tab), x.scenes[0].id, roomy ? txt(x.sl.lead) : '')).join('');
+      const list = slides.map((x, i) => item(String(i + 1), txt(x.sl.title) || c.title, PF.tab(x.sl.tab), x.scenes[0].id, roomy ? keywordLine(x.sl) : '')).join('');
       PF.body(s).innerHTML = `<div class="toprow"><span class="pf-eyebrow long">${esc(ptitle)}</span><span class="rl">${esc(PF.t('deck.ch-count', { n: slides.length }))}</span></div>
         <div class="ch-mid"><div><p class="ch-no">${esc(PF.t('en.chapter'))} ${String(ci + 1).padStart(2, '0')}</p><h2 class="ch-t">${esc(c.title)}</h2>${DOT}</div>
         <div class="ch-list t-P2${mode === 'normal' ? '' : ' ' + mode}"><ol class="toc-list${roomy ? '' : ' sub'}">${list}</ol></div></div>`;

@@ -42,7 +42,7 @@ KEY_RE = re.compile(r'^[a-z][a-z0-9-]{1,31}$')
 LAYOUTS = ('overview', 'visual', 'code', 'full', 'screens', 'problem')
 TABS = ('개요', '구조', '흐름', '구현', '선택', '문제 해결', '결과', '')
 KINDS = ('mermaid', 'code', 'table', 'image')
-SLIDE_FIELDS = ('key', 'chapter', 'layout', 'tab', 'title', 'lead', 'sectionPath', 'points', 'visuals')
+SLIDE_FIELDS = ('key', 'chapter', 'layout', 'tab', 'title', 'lead', 'keywords', 'sectionPath', 'points', 'visuals')
 KIND_KO = {'mermaid': '다이어그램', 'code': '코드', 'table': '표', 'image': '그림'}
 
 for _s in (sys.stdout, sys.stderr):                                # Claude가 읽는 파이프는 UTF-8로(한글 깨짐 방지)
@@ -422,6 +422,11 @@ def validate(p, chapters, doc):
         errs.append('title은 {"text", "verbatim"} 글 조각이어야 함(빈 글 안 됨)')
     if p.get('lead') is not None and not is_piece(p.get('lead')):
         errs.append('lead는 글 조각 또는 null이어야 함')
+    keywords = p.get('keywords') if p.get('keywords') is not None else []
+    is_keyword_list = isinstance(keywords, list) and len(keywords) <= 3
+    if is_keyword_list == False or all(isinstance(t, str) and t.strip() for t in keywords) == False:
+        errs.append('keywords는 짧은 낱말(문자열) 0~3개여야 함')
+        keywords = []
     sp = p.get('sectionPath')
     if not is_path(sp):
         errs.append('sectionPath는 제목 글자 배열이어야 함')
@@ -486,6 +491,8 @@ def validate(p, chapters, doc):
 
     piece(p.get('title'), '제목', body)
     piece(p.get('lead'), '도입', body)
+    if keywords:                                                   # 키워드는 Claude가 고른 낱말 → 늘 "확인해 주세요"
+        pieces.append(('키워드', ' · '.join(keywords)))
     for x in pts:
         piece(x, '요점(%s)' % x['label'] if x.get('label') else '요점', body)
     for i, v in enumerate(vis):
@@ -629,6 +636,7 @@ def apply_edits(data, edits, doc, rep):
         out = {f: copy.deepcopy(p[f]) for f in SLIDE_FIELDS if f in p}
         out.setdefault('tab', '')
         out.setdefault('lead', None)
+        out.setdefault('keywords', [])
         out.setdefault('points', [])
         out.setdefault('visuals', [])
         out['edited'] = True
@@ -900,7 +908,7 @@ def main():
             print('새 key "%s"를 쓸 수 없습니다(규칙 위반 또는 이미 있음)' % key)
             return 1
         p = {'key': key, 'after': after, 'chapter': ref.get('chapter'), 'layout': 'overview', 'tab': '',
-             'title': {'text': '', 'verbatim': True}, 'lead': None, 'sectionPath': [], 'points': [], 'visuals': []}
+             'title': {'text': '', 'verbatim': True}, 'lead': None, 'keywords': [], 'sectionPath': [], 'points': [], 'visuals': []}
         edits['pin'].append(p)
         save_edits(ep, edits)
         print('src/%s/%s의 pin[%d]에 빈 새 장면 "%s"를 넣었습니다. sectionPath·title·visuals·points를 채운 뒤 apply로 반영:' % (pid, EDITS, len(edits['pin']) - 1, key))

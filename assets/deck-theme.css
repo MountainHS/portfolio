@@ -292,7 +292,7 @@ table.md-table img { max-height: 120px; max-width: 100%; height: auto; }   /* wi
 /* 장면이 적은 장 표지(넉넉한 변형, 결정 I7): 목차 크기 목록 + 장면마다 도입 한두 줄 */
 .ch-list.roomy .toc-list a { align-items: flex-start; padding: 16px 0; }
 .ch-list.roomy .toc-list .pg { padding-top: 8px; }
-.ch-list.roomy .toc-list .ld { display: block; margin-top: 6px; font-size: 15px; line-height: 1.55; color: var(--ink); opacity: .82; }
+.ch-list.roomy .toc-list .ld { display: block; margin-top: 6px; font-size: 15px; line-height: 1.55; color: var(--ink); opacity: .82; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }   /* 키워드 한 줄 */
 
 /* ── 맺음(발표 덱) ── */
 .t-EN .pf-body { display: flex; flex-direction: column; }
