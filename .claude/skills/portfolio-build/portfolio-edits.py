@@ -14,8 +14,14 @@
   자리 이름(label·section·skill)은 다시 빌드해도 그대로인 값이라 번호가 바뀌어도 같은 칸을 찾습니다.
   value를 빌드 글(from)과 같게 고치면 그 줄은 지워집니다(= 되돌리기).
 
+발표 덱(project.html) 편집 모드의 장면 글(제목·도입·요점·키워드)도 여기서 씁니다(save_deck_text).
+  - 고친 글은 늘 src/<폴더>/deck-edits.json의 "deckText" 목록에 남기고, 기술 문서에 같은 글이 한 번만 있으면 그 줄도 고칩니다.
+  - "deckText" 목록 한 줄 = { "slide": 장면 key, "field": title · lead · point · keywords, "n": 요점 번호(point만, 1부터), "value", "from" }
+  - data에는 deck.slides와 deck.base(장면 고치기 전 빌드 장면, 있으면) 둘 다에 씁니다 → deck-edits.py apply가 base에서 장면을 다시 만들어도 남음.
+    다만 /portfolio-edit로 고정한(pin) 장면은 고치기 파일의 글로 다시 만들어지므로, deck-edits.py apply 뒤에는 늘 이 스크립트의 apply를 실행합니다.
+
 사용(레포 루트에서, Windows에서 python이 없으면 py):
-  python .claude/skills/portfolio-build/portfolio-edits.py apply <폴더>… | --all     고친 글을 data/에 반영
+  python .claude/skills/portfolio-build/portfolio-edits.py apply <폴더>… | --all     고친 글(포트폴리오 문서·발표 덱)을 data/에 반영
 Python 3.8 이상, 표준 라이브러리만.
 """
 import importlib.util
@@ -496,6 +502,218 @@ def describe_entry(entry):
 
 
 # ════════════════════════════════════════════════════════════════
+# 발표 덱 장면 글: 제목 · 도입 · 요점 · 키워드 → deck-edits.json "deckText" (+ 기술 문서 줄)
+# ════════════════════════════════════════════════════════════════
+
+DECK_TEXT_LIST = "deckText"
+DECK_TEXT_FIELDS = ("title", "lead", "point", "keywords")
+DECK_KEYWORDS_MAX = 3                                              # deck-edits.py 검사와 같은 개수 상한
+
+
+def save_deck_text(request):
+    """발표 덱 편집 모드의 장면 글 한 칸 저장(또는 저장 위치 묻기). edit-server.py의 /__edit/deck이 부릅니다.
+
+    request: { project, slide: 장면 key, field: title | lead | point | keywords, n: 요점 번호(point만, 1부터),
+               expected: 화면을 그릴 때의 값, value: 새 값(keywords는 글자 목록), deckOnly?, dryRun? }
+      deckOnly = true면 기술 문서에 같은 글이 있어도 deck-edits.json에만 저장, dryRun = true면 저장 위치만 알려 줌
+    반환: { ok, where: 저장 위치 설명, canChooseOverride: 기술 문서를 빼고 발표 덱에만 저장할 수 있는지 }
+    """
+    project_id = request["project"]
+    entry_key = deck_text_entry_key(request)
+    data_path = project_data_path(project_id)
+    current = deck_text_value(read_json(data_path), entry_key)
+    if current != request.get("expected"):
+        raise EditError(409, "data가 화면을 그린 뒤에 바뀌었습니다. 새로고침한 뒤 다시 고쳐 주세요.")
+
+    doc_line = choose_deck_doc_line(project_id, entry_key["field"], current, request.get("deckOnly") == True)
+    edits_where = f"src/{project_id}/{EDITS_FILE_NAME}"
+    if doc_line is None:
+        where = f"{edits_where} (발표 덱에만)"
+    else:
+        where = f"src/{project_id}/{project_doc_path(project_id).name} {doc_line}줄 (기술 문서) + {edits_where}"
+    answer = {"ok": True, "where": where, "canChooseOverride": doc_line is not None}
+    if request.get("dryRun") == True:
+        return answer
+
+    new_value = clean_deck_text_value(entry_key["field"], request.get("value"))
+    if new_value == current:
+        return answer
+    if doc_line is not None:
+        doc_path = project_doc_path(project_id)
+        old_line = read_lines(doc_path)[doc_line - 1]
+        replace_lines(doc_path, doc_line, doc_line, [old_line.replace(current, new_value, 1)])
+    write_deck_text_entry(ROOT / "src" / project_id / EDITS_FILE_NAME, entry_key, current, new_value)
+    write_deck_text_to_data(data_path, entry_key, new_value)
+    return answer
+
+
+def deck_text_entry_key(request):
+    """요청 → "deckText" 자리 이름 { slide, field, n? }. 장면 key는 다시 빌드해도 대개 그대로라 자리 이름으로 씁니다."""
+    field = request.get("field")
+    if field not in DECK_TEXT_FIELDS:
+        raise EditError(400, f"모르는 장면 글 칸입니다: {field}")
+    entry_key = {"slide": str(request.get("slide", "")), "field": field}
+    if field == "point":
+        entry_key["n"] = int(request["n"])
+    return entry_key
+
+
+def deck_text_value(data, entry_key):
+    """장면 글의 지금 값(deck.slides 쪽). 장면이나 칸이 없으면 404."""
+    slides_path, _ = deck_text_json_paths(data, entry_key)
+    if slides_path is None:
+        raise EditError(404, f"발표 덱에서 장면 '{entry_key['slide']}'의 {entry_key['field']} 칸을 찾지 못했습니다. 새로고침해 주세요.")
+    return value_at(data, slides_path)
+
+
+def deck_text_json_paths(data, entry_key):
+    """장면 글 자리 → (deck.slides 안 JSON 경로, deck.base 안 JSON 경로). 없으면 그 쪽이 None.
+
+    base(장면 고치기 전 빌드 장면)에도 쓰는 이유: deck-edits.py apply가 base에서 장면을 다시 만들므로, base에 없으면 /portfolio-edit 뒤 고친 글이 사라짐.
+    """
+    deck = data.get("deck") if isinstance(data.get("deck"), dict) else {}
+    found = {"slides": None, "base": None}
+    for list_name in found:
+        for index, slide in enumerate(deck.get(list_name) or []):
+            if slide.get("key") != entry_key["slide"]:
+                continue
+            path_in_slide = slide_text_path(slide, entry_key)
+            if path_in_slide is not None:
+                found[list_name] = ["deck", list_name, index] + path_in_slide
+            break
+    return found["slides"], found["base"]
+
+
+def slide_text_path(slide, entry_key):
+    """장면 하나 안에서 글 칸의 JSON 경로. 글은 { text, verbatim } 글 조각 또는 글자(schema.md 「글 조각」). 빈 칸(화면에 안 나옴)이면 None."""
+    field = entry_key["field"]
+    if field == "keywords":
+        return ["keywords"] if isinstance(slide.get("keywords"), list) else None
+    if field == "point":
+        points = slide.get("points") or []
+        number = entry_key["n"]
+        is_known_point = 1 <= number <= len(points) and isinstance(points[number - 1], dict)
+        return ["points", number - 1, "text"] if is_known_point else None
+    piece = slide.get(field)
+    if isinstance(piece, dict) and isinstance(piece.get("text"), str) and piece["text"] != "":
+        return [field, "text"]
+    if isinstance(piece, str) and piece != "":
+        return [field]
+    return None
+
+
+def choose_deck_doc_line(project_id, field, current, deck_only):
+    """장면 글을 기술 문서에도 쓸 줄 번호. 키워드·발표 덱에만 저장·문서에 정확히 한 번 없는 글(제목 줄·코드 블록 제외)이면 None."""
+    is_doc_candidate = field != "keywords" and deck_only == False
+    if is_doc_candidate == False:
+        return None
+    return find_doc_line(project_doc_path(project_id), current)
+
+
+def clean_deck_text_value(field, value):
+    """새 값을 칸 모양에 맞춥니다. 키워드는 빈 칸을 뺀 낱말 0~3개, 나머지는 빈 글이 아닌 한 줄 글자."""
+    if field == "keywords":
+        keywords = [str(word).strip() for word in value if str(word).strip() != ""]
+        if len(keywords) > DECK_KEYWORDS_MAX:
+            raise EditError(400, f"키워드는 {DECK_KEYWORDS_MAX}개까지입니다.")
+        return keywords
+    text = str(value).replace("\r\n", "\n").strip()
+    if text == "":
+        raise EditError(400, "빈 글은 저장할 수 없습니다. 장면을 숨기려면 /portfolio-edit를 쓰세요.")
+    if "\n" in text:
+        raise EditError(400, "이 칸은 한 줄 글입니다. 줄바꿈을 빼고 다시 저장해 주세요.")
+    return text
+
+
+def write_deck_text_entry(edits_path, entry_key, current, new_value):
+    """deck-edits.json의 "deckText" 목록에 고친 글을 넣습니다. 같은 자리 줄이 있으면 값만 바꾸고, 빌드 글(from)로 되돌렸으면 그 줄을 지웁니다."""
+    edits = read_json(edits_path) if edits_path.exists() else {"schemaVersion": 1, "pin": [], "hide": []}
+    entries = edits.get(DECK_TEXT_LIST) if isinstance(edits.get(DECK_TEXT_LIST), list) else []
+    entry = find_entry(entries, entry_key)
+    if entry is None:
+        entry = dict(entry_key, value=new_value, **{"from": current})
+        entries.append(entry)
+    else:
+        entry["value"] = new_value
+    if entry["value"] == entry["from"]:
+        entries.remove(entry)
+    edits[DECK_TEXT_LIST] = entries if entries != [] else None
+    write_text(edits_path, deck_edits_module().dump(edits) + "\n")
+
+
+def write_deck_text_to_data(data_path, entry_key, new_value):
+    """data의 deck.slides·deck.base 두 곳에 새 글을 쓰고, 장면 고치기 표시(deck.applied)를 새 장면 목록에 맞춥니다.
+
+    글 조각의 verbatim(원문 그대로)은 false로 바꿉니다. 사용자가 고친 글은 원문 그 절에 그대로 있다고 장담할 수 없고,
+    true로 남기면 나중에 /portfolio-edit로 그 장면을 고정할 때 deck-edits.py 검사("원문 그 절에 그대로 없음")에 걸립니다.
+    """
+    slides_path, base_path = deck_text_json_paths(read_json(data_path), entry_key)
+    for json_path in (slides_path, base_path):
+        if json_path is None:
+            continue
+        if value_at(read_json(data_path), json_path) != new_value:
+            write_data_value(data_path, json_path, new_value)
+        mark_not_verbatim(data_path, json_path)
+    refresh_applied_digest(data_path)
+
+
+def mark_not_verbatim(data_path, text_path):
+    """text_path가 글 조각의 text(…, "text")이고 그 조각이 verbatim: true면 false로 바꿉니다. 키워드·글자 칸은 그대로."""
+    is_piece_text = text_path[-1] == "text"
+    if is_piece_text == False:
+        return
+    verbatim_path = text_path[:-1] + ["verbatim"]
+    piece = value_at(read_json(data_path), text_path[:-1])
+    if piece.get("verbatim") == True:
+        write_data_value(data_path, verbatim_path, False)
+
+
+def refresh_applied_digest(data_path):
+    """deck.applied(= deck-edits.py가 마지막으로 만든 장면 목록의 해시)를 지금 deck.slides에 맞춥니다.
+
+    맞추지 않으면 다음 deck-edits.py apply가 "slides를 누가 손으로 고쳤다"고 보고 고친 장면까지 빌드 장면(base)으로 삼습니다.
+    """
+    deck = read_json(data_path).get("deck") or {}
+    if "applied" not in deck:
+        return
+    new_digest = deck_edits_module().digest(deck.get("slides") or [])
+    if deck["applied"] != new_digest:
+        write_data_value(data_path, ["deck", "applied"], new_digest)
+
+
+def apply_deck_text(project_id):
+    """한 프로젝트의 "deckText" 목록을 data/projects/<폴더>.json의 발표 덱에 덮습니다(멱등). deck-edits.py apply 뒤에 실행합니다.
+
+    반환: 보고 줄 목록([참고]·[권장]).
+    """
+    edits_path = ROOT / "src" / project_id / EDITS_FILE_NAME
+    entries = read_json(edits_path).get(DECK_TEXT_LIST) if edits_path.exists() else None
+    if isinstance(entries, list) == False:
+        return []
+    data_path = project_data_path(project_id)
+    messages = []
+    for entry in entries:
+        place = f"장면 {entry.get('slide')} {entry.get('field')}{' ' + str(entry.get('n')) if entry.get('n') else ''}"
+        slides_path, base_path = deck_text_json_paths(read_json(data_path), entry)
+        if slides_path is None:
+            messages.append(f"[권장] 발표 덱 고친 글({place})의 장면을 찾지 못했습니다(다시 빌드로 장면 key가 바뀌었거나 숨김) → 반영하지 않았습니다. "
+                            f"편집 모드에서 다시 고치거나 src/{project_id}/{EDITS_FILE_NAME}의 그 줄을 지우세요")
+            continue
+        data = read_json(data_path)
+        current = value_at(data, slides_path)
+        is_slides_done = current == entry["value"]
+        is_base_done = base_path is None or value_at(data, base_path) == entry["value"]
+        if is_slides_done and is_base_done:
+            continue
+        write_deck_text_to_data(data_path, entry, entry["value"])
+        if current != entry.get("from"):
+            messages.append(f"[참고] {place}: 빌드가 새 글({current})을 만들었지만 고친 글로 덮었습니다. 빌드 글을 쓰려면 src/{project_id}/{EDITS_FILE_NAME}의 그 줄을 지우세요")
+        else:
+            messages.append(f"[참고] {place}: 고친 글을 반영했습니다")
+    return messages
+
+
+# ════════════════════════════════════════════════════════════════
 # 작은 도구
 # ════════════════════════════════════════════════════════════════
 
@@ -553,7 +771,7 @@ def write_text(path, text, has_bom=False):
 
 
 def deck_edits_module():
-    """deck-edits.json을 /portfolio-edit와 같은 줄 모양으로 쓰려고 deck-edits.py의 dump를 빌려 씁니다."""
+    """deck-edits.json을 /portfolio-edit와 같은 줄 모양으로 쓰려고(dump), 장면 목록 해시를 같은 방식으로 재려고(digest) deck-edits.py를 빌려 씁니다."""
     spec = importlib.util.spec_from_file_location("deck_edits", str(Path(__file__).resolve().parent / "deck-edits.py"))
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
@@ -561,7 +779,7 @@ def deck_edits_module():
 
 
 def main():
-    """`apply <폴더>… | --all`: 프로젝트마다 고친 글을 data/에 반영하고 보고 줄을 찍습니다."""
+    """`apply <폴더>… | --all`: 프로젝트마다 고친 글(포트폴리오 문서 → 발표 덱 순)을 data/에 반영하고 보고 줄을 찍습니다."""
     arguments = sys.argv[1:]
     if arguments[:1] != ["apply"] or len(arguments) < 2:
         print(__doc__)
@@ -570,10 +788,10 @@ def main():
     if project_ids == ["--all"]:
         project_ids = sorted(path.stem for path in (ROOT / "data" / "projects").glob("*.json"))
     for project_id in project_ids:
-        messages = apply_project(project_id)
+        messages = apply_project(project_id) + apply_deck_text(project_id)
         if messages == []:
             continue
-        print(f"── {project_id} (포트폴리오 문서 고친 글) ──")
+        print(f"── {project_id} (포트폴리오 문서·발표 덱 고친 글) ──")
         for message in messages:
             print("  " + message)
 

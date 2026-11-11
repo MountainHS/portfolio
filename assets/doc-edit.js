@@ -258,5 +258,6 @@
     window.scrollTo(0, saved.scrollY);
   }
 
-  window.PFDocEdit = { attach };
+  // mapBlocksToLines는 발표 덱 편집 모드(assets/deck-edit.js)도 씀: 덱의 표·그림·코드가 md 몇 줄인지 같은 방법으로 잼
+  window.PFDocEdit = { attach, mapBlocksToLines };
 })();

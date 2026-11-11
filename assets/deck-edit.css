@@ -1,0 +1,16 @@
+/* 발표 덱 편집 모드(assets/deck-edit.js, 이 포크 전용) — 로컬 편집 서버(edit-server.py)가 있을 때만 쓰임. 인쇄·PPTX에는 나오지 않음
+   [편집 모드] 버튼·입력창 기본 모양은 assets/doc-edit.css, 떠 있는 입력창은 assets/portfolio-edit.css. 여기는 덱에만 있는 것 */
+
+/* 버튼·입력창을 아래 띠(HUD, 높이 --pf-hud-h, z-index 1000) 위에 */
+.pf-edit-toggle { bottom: calc(var(--pf-hud-h, 44px) + 12px); z-index: 1100; }
+.pf-edit-panel { bottom: calc(var(--pf-hud-h, 44px) + 12px); z-index: 1100; max-height: 60vh; overflow: auto; }
+
+/* 덱에서 고칠 수 있는 글·그림: 장면 제목·도입·요점 카드·원문 블록(표·그림·코드·다이어그램)·장 표지 키워드 줄 */
+.pf-editing .pf-scene[data-pf-slide] :is(.pf-title, .pf-lead, .ncard, .fstep, .fe-card > p, figure.vbox[data-pf-visual]),
+.pf-editing .ch-list .ld { cursor: text; outline: 1px dashed transparent; outline-offset: 3px; border-radius: 2px; }
+.pf-editing .pf-scene[data-pf-slide] :is(.pf-title, .pf-lead, .ncard, .fstep, .fe-card > p, figure.vbox[data-pf-visual]):hover,
+.pf-editing .ch-list .ld:hover { outline-color: var(--accent, #36c); background: color-mix(in srgb, var(--accent, #36c) 6%, transparent); }
+
+@media print {
+  .pf-edit-toggle, .pf-edit-panel { display: none !important; }
+}
