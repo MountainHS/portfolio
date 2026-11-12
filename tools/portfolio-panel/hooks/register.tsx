@@ -33,7 +33,7 @@ const BUTTONS: PanelButton[] = [
   { stage: '재료', label: 'PPTX 발표 자료 가져오기 ✋', kind: 'fill', text: 'portfolio-intake', withProject: false },
   { stage: '쓰기', label: '가이드 기준 점검', kind: 'run', text: 'portfolio-check', withProject: true },
   { stage: '만들기', label: '데이터 다시 만들기', kind: 'run', text: 'portfolio-build', withProject: true },
-  { stage: '만들기', label: '미리보기 띄우기', kind: 'say', text: '미리보기 띄워줘', withProject: false },
+  { stage: '만들기', label: '미리보기 띄우기', kind: 'run', text: 'local-preview', withProject: true },
   { stage: '다듬기', label: '발표 덱 장면 바꾸기', kind: 'fill', text: 'portfolio-edit', withProject: true },
   { stage: '다듬기', label: '다른 사이트 느낌(테마)', kind: 'fill', text: 'portfolio-theme', withProject: false },
   { stage: '다듬기', label: '다른 사이트 배치 따라 하기', kind: 'fill', text: 'portfolio-layout', withProject: false },

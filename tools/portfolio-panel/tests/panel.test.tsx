@@ -48,9 +48,13 @@ test('버튼 세 종류가 각각 run·fill·say로 넘어간다', async ($, on)
   await ui.press({ key: 'button:발표 덱 장면 바꾸기' })
   await ui.press({ key: 'button:GitHub 레포에서 재료 모으기 ✋' })
   await ui.press({ key: 'button:미리보기 띄우기' })
+  await ui.press({ key: 'button:충돌 해결 도와줘' })
 
-  expect(runs).toEqual([{ command: 'portfolio-check', args: '4-wgo' }])
+  expect(runs).toEqual([
+    { command: 'portfolio-check', args: '4-wgo' },
+    { command: 'local-preview', args: '4-wgo' },
+  ])
   expect(fills).toEqual(['/portfolio-edit 4-wgo ', '/portfolio-intake '])
-  expect(says).toEqual(['미리보기 띄워줘'])
+  expect(says).toEqual(['충돌 해결 도와줘'])
   await ui.unmount()
 })
