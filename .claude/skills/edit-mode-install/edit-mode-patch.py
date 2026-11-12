@@ -30,7 +30,7 @@ class Step:
         self.exact = exact
 
 
-# ── 넣을 줄 (MountainHS/portfolio-test main의 파일 그대로. 들여쓰기는 기준 줄을 따르므로 여기서는 기준 줄에 대한 상대 들여쓰기만) ──
+# ── 넣을 줄 (MountainHS/portfolio main의 파일 그대로. 들여쓰기는 기준 줄을 따르므로 여기서는 기준 줄에 대한 상대 들여쓰기만) ──
 MARK_FOR_DECK_EDIT = [
     '// 발표 덱 편집 모드(이 포크 전용, assets/deck-edit.js)가 화면의 글·그림이 data의 어느 장면(key)·몇 번째 시각 자료(visuals 번호)인지 알게 표시를 담',
     '//   기술 문서 원문 블록만 표시(data의 스크린샷 목록에서 온 그림 ref.direct는 md 줄이 없어 고칠 수 없음)',
