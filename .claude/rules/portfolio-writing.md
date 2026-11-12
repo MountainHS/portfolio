@@ -300,7 +300,7 @@ flowchart LR
 const brokenNames = [...document.querySelectorAll(':not(pre) > code')]
   .filter(code => code.getClientRects().length > 1)
   .map(code => ({
-    scene: code.closest('[data-pf-slide]')?.dataset.pfSlide ?? '',
+    scene: code.closest('.pf-scene[id^="d-"]')?.id ?? '',
     name: code.textContent,
     inTable: Boolean(code.closest('td, th')),
   }));

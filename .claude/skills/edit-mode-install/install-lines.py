@@ -1,9 +1,9 @@
-"""edit-mode-install 보조 스크립트 — 템플릿 파일 5개의 기준 줄을 확인하고, .claude/CLAUDE.md 절과 .claude/launch.json 구성을 맞춥니다.
+"""edit-mode-install 보조 스크립트 — 템플릿 파일의 기준 줄을 확인하고, .claude/CLAUDE.md 절과 .claude/launch.json 구성을 맞춥니다.
 
     python install-lines.py check <레포 루트>   # 무엇을 바꿀지 보여 주기만 합니다(파일을 쓰지 않음)
     python install-lines.py apply <레포 루트>   # .claude/CLAUDE.md 절·.claude/launch.json 구성을 실제로 씁니다
 
-- 템플릿 파일 5개(index.html·project.html·doc.html·assets/doc.js·assets/project-deck.js)는 쓰지 않습니다.
+- 템플릿 파일(index.html·project.html·doc.html·assets/doc.js)은 쓰지 않습니다.
   편집 서버(edit-server.py)가 보낼 때 edit-mode-patch.py로 메모리에서만 줄을 넣습니다. 여기서는 그 기준 줄이 맞는지만 봅니다.
   묶음 안의 기준 줄을 하나라도 찾지 못하거나 두 곳 이상이면 [멈춤] — 그 페이지는 편집 버튼 없이 원본 그대로 열립니다.
 - 멱등: 넣을 절·구성이 이미 있으면 건너뜁니다. 두 번 실행해도 두 번째는 아무것도 바꾸지 않습니다.
@@ -67,7 +67,7 @@ def main():
 # ── 템플릿 파일 기준 줄 확인 (쓰지 않음) ──
 
 def report_template_lines(root):
-    """edit-mode-patch.py의 check_all로 5개 파일의 기준 줄을 재서 묶음마다 찍습니다. 파일은 쓰지 않습니다.
+    """edit-mode-patch.py의 check_all로 템플릿 파일의 기준 줄을 재서 묶음마다 찍습니다. 파일은 쓰지 않습니다.
 
     root: 레포 루트
     돌려줌: 멈춘 묶음 수

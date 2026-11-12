@@ -1,8 +1,8 @@
-"""편집 모드 줄 넣기 모듈 — 템플릿 파일 5개를 보낼 때 메모리에서만 편집 모드 줄을 넣습니다(디스크 파일은 원본 그대로).
+"""편집 모드 줄 넣기 모듈 — 템플릿 파일(index.html·project.html·doc.html·assets/doc.js)을 보낼 때 메모리에서만 편집 모드 줄을 넣습니다(디스크 파일은 원본 그대로).
 
-- edit-server.py가 이 5개(index.html·project.html·doc.html·assets/doc.js·assets/project-deck.js)를 보낼 때 patch_file을 부르고,
+- edit-server.py가 이 파일들을 보낼 때 patch_file을 부르고,
   켤 때 check_all로 기준 줄을 한 번 재서 [멈춤]만 서버 창에 찍습니다.
-- install-lines.py check도 check_all로 기준 줄이 맞는지만 봅니다(5개 파일을 쓰지 않음).
+- install-lines.py check도 check_all로 기준 줄이 맞는지만 봅니다(템플릿 파일을 쓰지 않음).
 - 묶음: 함께 바뀌어야 하는 파일을 한 묶음으로 다룹니다(예: doc.js가 부르는 PFDocEdit는 doc.html이 싣는 doc-edit.js에 있음).
   한 파일을 보낼 때도 그 묶음 전체의 기준 줄을 확인하고, 하나라도 찾지 못하거나 두 곳 이상이면 그 묶음은 모두 원본 그대로 보냅니다(추측해서 넣지 않음).
 - 이미 들어 있는 줄은 두 번 넣지 않습니다([있음]).
@@ -31,19 +31,6 @@ class Step:
 
 
 # ── 넣을 줄 (MountainHS/portfolio main의 파일 그대로. 들여쓰기는 기준 줄을 따르므로 여기서는 기준 줄에 대한 상대 들여쓰기만) ──
-MARK_FOR_DECK_EDIT = [
-    '// 발표 덱 편집 모드(이 포크 전용, assets/deck-edit.js)가 화면의 글·그림이 data의 어느 장면(key)·몇 번째 시각 자료(visuals 번호)인지 알게 표시를 담',
-    '//   기술 문서 원문 블록만 표시(data의 스크린샷 목록에서 온 그림 ref.direct는 md 줄이 없어 고칠 수 없음)',
-    'function markForDeckEdit(s, sl, vis) {',
-    '  s.dataset.pfSlide = sl.key;',
-    "  s.querySelectorAll('.vis > figure.vbox').forEach((figure, i) => {",
-    '    const ref = vis[i]?.ref;',
-    '    const isSourceBlock = ref !== undefined && ref.direct !== true;',
-    '    if (isSourceBlock) figure.dataset.pfVisual = String((sl.visuals || []).indexOf(ref));',
-    '  });',
-    '}',
-]
-
 # md를 try 블록 밖에서 선언해야 done(); 다음 줄의 PFDocEdit.attach가 읽음(새 템플릿은 `try { await renderDoc(); ready(); }` 한 줄).
 # renderDoc 안에도 `let md;`가 있으므로, 이미 넣었는지는 뒤의 주석까지 포함한 이 줄 전체로 알아봄
 DECLARE_MD = 'let md;                                                             // 편집 모드: renderDoc()이 돌려준 md 원문(try 밖에 두어야 아래 PFDocEdit.attach가 읽음)'
@@ -79,7 +66,7 @@ GROUPS = [
              ['assets/portfolio-edit.js'],
              ['<script src="assets/portfolio-edit.js"></script><!-- 편집 모드: 로컬 편집 서버(edit-server.py)가 있을 때만 켜짐. portfolio.js 다음 -->']),
     ]),
-    ('발표 덱 (project.html · assets/project-deck.js)', [
+    ('발표 덱 (project.html)', [
         Step('project.html', 'after', '<link rel="stylesheet" href="assets/deck-theme.css" />',
              ['assets/doc-edit.css', 'assets/portfolio-edit.css', 'assets/deck-edit.css'],
              ['<link rel="stylesheet" href="assets/doc-edit.css" /><!-- 편집 모드(이 포크 전용): 버튼·고칠 칸 테두리·입력창은 상세 문서·포트폴리오 문서와 같은 모양 -->',
@@ -89,12 +76,6 @@ GROUPS = [
              ['assets/doc-edit.js', 'assets/deck-edit.js'],
              ['<script src="assets/doc-edit.js"></script><!-- 편집 모드(이 포크 전용): 덱의 표·그림·코드가 md 몇 줄인지 재는 데 씀 -->',
               '<script src="assets/deck-edit.js"></script><!-- 편집 모드: 로컬 편집 서버(edit-server.py)가 있을 때만 켜짐. project-deck.js 다음 -->']),
-        Step('assets/project-deck.js', 'before', 'function fitSlide(',
-             ['function markForDeckEdit('],
-             MARK_FOR_DECK_EDIT),
-        Step('assets/project-deck.js', 'after', 'PF.body(s).innerHTML = `<div class="pf-fill">${bodyHtml(sl, vs, v)}</div>`;',
-             ['markForDeckEdit(s, sl, vis);'],
-             ['markForDeckEdit(s, sl, vis);                                    // 발표 덱 편집 모드 표시(이 포크 전용, assets/deck-edit.js)']),
     ]),
 ]
 
@@ -109,7 +90,7 @@ def patch_file(root, relative_path):
     root: 레포 루트(Path 또는 글)
     relative_path: 레포 루트 기준 경로, '/' 구분(예: 'assets/doc.js')
     돌려줌: (보낼 바이트, 멈춘 이유 목록) — 목록이 비면 줄을 넣은(또는 이미 있던) 글, 차 있으면 원본 바이트.
-            5개 파일이 아니거나 그 파일이 디스크에 없으면 None(보통 정적 파일처럼 보내면 됨)
+            묶음에 없는 파일이거나 그 파일이 디스크에 없으면 None(보통 정적 파일처럼 보내면 됨)
     """
     root = Path(root)
     steps = find_group_steps(relative_path)
@@ -125,7 +106,7 @@ def patch_file(root, relative_path):
 
 
 def check_all(root):
-    """5개 파일의 기준 줄을 묶음마다 재서 결과를 돌려줍니다(디스크는 쓰지 않음).
+    """템플릿 파일의 기준 줄을 묶음마다 재서 결과를 돌려줍니다(디스크는 쓰지 않음).
 
     edit-server.py의 main(켤 때 [멈춤]만 찍음)과 install-lines.py check(모두 찍음)가 부릅니다.
     root: 레포 루트(Path 또는 글)
@@ -145,7 +126,7 @@ def find_group_steps(relative_path):
     """경로가 든 묶음의 Step 목록을 찾습니다.
 
     relative_path: 레포 루트 기준 경로, '/' 구분
-    돌려줌: 그 묶음의 Step 목록. 5개 파일이 아니면 None
+    돌려줌: 그 묶음의 Step 목록. 묶음에 없는 파일이면 None
     """
     for name, steps in GROUPS:
         paths_in_group = [step.path for step in steps]

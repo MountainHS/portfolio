@@ -5,7 +5,7 @@
     python edit-server.py 4601     → 포트 바꾸기
 
 - 정적 파일은 http.server와 똑같이 보냅니다(미리보기 세 페이지 그대로).
-- 단, 템플릿 파일 5개(index.html·project.html·doc.html·assets/doc.js·assets/project-deck.js)는 보낼 때 메모리에서만 편집 모드 줄을 넣습니다.
+- 단, 템플릿 파일(index.html·project.html·doc.html·assets/doc.js)은 보낼 때 메모리에서만 편집 모드 줄을 넣습니다.
   넣는 줄·기준 줄은 .claude/skills/edit-mode-install/edit-mode-patch.py에 있고, 디스크의 파일은 원본 그대로 둡니다(/portfolio-update가 덮어도 그대로 동작).
 - GET  /__edit/ping : 편집 서버가 떠 있다는 신호. assets/doc-edit.js가 이 응답을 받을 때만 상세 문서에 [편집 모드] 버튼을 보입니다.
 - POST /__edit/save : src/ 아래 기술 문서 md의 줄 범위 하나를 새 글로 바꿔 씁니다.
@@ -223,7 +223,7 @@ def main():
 
 
 def print_edit_mode_stops():
-    """템플릿 파일 5개의 기준 줄을 한 번 재서, 줄을 넣지 못하는 묶음만 [멈춤]으로 찍습니다(그 페이지는 편집 버튼 없이 원본 그대로 열림)."""
+    """템플릿 파일의 기준 줄을 한 번 재서, 줄을 넣지 못하는 묶음만 [멈춤]으로 찍습니다(그 페이지는 편집 버튼 없이 원본 그대로 열림)."""
     for result in load_edit_mode_patch().check_all(ROOT):
         for problem in result["problems"]:
             print(f"[멈춤] {result['name']}: {problem} — 이 페이지는 편집 버튼 없이 열립니다")

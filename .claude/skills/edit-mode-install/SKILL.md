@@ -9,7 +9,7 @@ disable-model-invocation: true
 이 레포(원본 템플릿 `krKooHoo/portfolio-template`에서 만든 레포)에 **편집 모드**를 넣습니다.
 편집 서버(`edit-server.py`)로 연 세 페이지(상세 문서 `doc.html`·포트폴리오 문서 `index.html`·발표 덱 `project.html`) 오른쪽 아래에 [✎ 편집 모드]가 생기고, 글을 누르면 소스에 저장됩니다.
 사용자의 원천과 결과물은 건드리지 않습니다. 여러 번 실행해도 결과가 같습니다(이미 있는 절·구성은 건너뜀).
-템플릿 파일 5개(`doc.html`·`index.html`·`project.html`·`assets/doc.js`·`assets/project-deck.js`)는 **디스크에서 고치지 않습니다.** 편집 서버가 그 파일을 브라우저에 보낼 때만 메모리에서 편집 모드 줄을 넣습니다. 그래서 `/portfolio-update`가 그 파일을 원본으로 바꿔도 편집 모드는 그대로입니다.
+템플릿 파일(`doc.html`·`index.html`·`project.html`·`assets/doc.js`)은 **디스크에서 고치지 않습니다.** 편집 서버가 그 파일을 브라우저에 보낼 때만 메모리에서 편집 모드 줄을 넣습니다. 그래서 `/portfolio-update`가 그 파일을 원본으로 바꿔도 편집 모드는 그대로입니다.
 
 받는 사람은 보통 이렇게 이 명령을 받습니다(부트스트랩).
 
@@ -25,15 +25,15 @@ git checkout FETCH_HEAD -- .claude/skills/edit-mode-install
 - 명령은 **Bash 도구(Git Bash)**로만 실행합니다(PowerShell의 `timeout`은 다른 명령입니다).
 - **레포 루트 `R`** = 지금 읽고 있는 이 파일(`.claude/skills/edit-mode-install/SKILL.md`)이 들어 있는 프로젝트 폴더. Bash 도구는 호출마다 작업 폴더가 처음으로 돌아가므로 **매 호출 첫 줄에 `R="<절대 경로>"`를 다시 적고** `git -C "$R" …` 형식으로 씁니다.
 - **Python `PY`**: `python --version`이 되면 `python`, 아니면 `py --version`이 되면 `py`. 정한 값을 매 호출에 `PY=<값>`으로 다시 적습니다.
-- 보조 파일(이 폴더): `edit-mode-patch.py`(편집 서버가 템플릿 파일 5개를 보낼 때 넣는 줄·기준 줄 — `edit-server.py`가 읽음), `install-lines.py`(템플릿 파일 5개의 기준 줄 확인 · `.claude/CLAUDE.md` 절 · `.claude/launch.json` 구성 — `check`는 보여 주기만, `apply`는 절·구성만 씀), `claude-md-block.md`(`.claude/CLAUDE.md`에 넣을 절의 글).
-  템플릿 파일 5개는 **디스크에서 고치지 않습니다.** Edit 도구로 손으로 줄을 넣지 않습니다(넣으면 편집 서버가 같은 줄을 알아보고 건너뛰지만, `/portfolio-update`가 "직접 고친 흔적"으로 묻게 됩니다).
+- 보조 파일(이 폴더): `edit-mode-patch.py`(편집 서버가 템플릿 파일을 보낼 때 넣는 줄·기준 줄 — `edit-server.py`가 읽음), `install-lines.py`(템플릿 파일의 기준 줄 확인 · `.claude/CLAUDE.md` 절 · `.claude/launch.json` 구성 — `check`는 보여 주기만, `apply`는 절·구성만 씀), `claude-md-block.md`(`.claude/CLAUDE.md`에 넣을 절의 글).
+  템플릿 파일은 **디스크에서 고치지 않습니다.** Edit 도구로 손으로 줄을 넣지 않습니다(넣으면 편집 서버가 같은 줄을 알아보고 건너뛰지만, `/portfolio-update`가 "직접 고친 흔적"으로 묻게 됩니다).
 
 ## 무엇을 바꾸나 (이 표가 이 명령의 전부입니다)
 
 | 분류 | 경로 | 처리 |
 |---|---|---|
 | 새 파일 받기 (10개) | `edit-server.py`, `preview.ps1`, `preview.cmd`, `assets/doc-edit.js`, `assets/doc-edit.css`, `assets/portfolio-edit.js`, `assets/portfolio-edit.css`, `assets/deck-edit.js`, `assets/deck-edit.css`, `.claude/skills/portfolio-build/portfolio-edits.py` | `git checkout $SRC -- <목록>`으로 소스 레포의 것을 그대로 받음(있으면 최신으로 바꿈) |
-| 서버가 보낼 때 넣음 (디스크는 그대로, 5개) | `doc.html`, `index.html`, `project.html`, `assets/doc.js`, `assets/project-deck.js` | 쓰지 않음. `edit-server.py`가 보낼 때 `edit-mode-patch.py`로 기준 줄 옆에 넣음. 설치는 `install-lines.py check`로 기준 줄이 맞는지만 봄 |
+| 서버가 보낼 때 넣음 (디스크는 그대로) | `doc.html`, `index.html`, `project.html`, `assets/doc.js` | 쓰지 않음. `edit-server.py`가 보낼 때 `edit-mode-patch.py`로 기준 줄 옆에 넣음. 설치는 `install-lines.py check`로 기준 줄이 맞는지만 봄 |
 | 절 넣기 | `.claude/CLAUDE.md` | 표지 주석 `<!-- edit-mode-install:start -->` … `<!-- edit-mode-install:end -->` 사이만 씀. 파일이 없으면 만들고, 표지가 없으면 끝에 더함 |
 | 추가만 | `.claude/launch.json` | `edit-server.py`를 띄우는 구성이 없을 때만 이름 `portfolio-edit` 구성을 더함. 기존 구성은 바꾸지 않음 |
 | 이 명령 | `.claude/skills/edit-mode-install/` | 부트스트랩으로 받은 그대로 커밋에 넣음 |
@@ -53,8 +53,6 @@ git checkout FETCH_HEAD -- .claude/skills/edit-mode-install
 | | `index.html` | `<script src="assets/portfolio.js"></script>` **다음** | `assets/portfolio-edit.js` 스크립트 1줄 |
 | 발표 덱 | `project.html` | `<link rel="stylesheet" href="assets/deck-theme.css" />` **다음** | `assets/doc-edit.css`·`assets/portfolio-edit.css`·`assets/deck-edit.css` 링크 3줄 |
 | | `project.html` | `<script src="assets/project-deck.js"></script>` **다음** | `assets/doc-edit.js`·`assets/deck-edit.js` 스크립트 2줄(이 순서) |
-| | `assets/project-deck.js` | `function fitSlide(` **위** | 주석 2줄 + `function markForDeckEdit(s, sl, vis) { … }` 함수 |
-| | `assets/project-deck.js` | `` PF.body(s).innerHTML = `<div class="pf-fill">${bodyHtml(sl, vs, v)}</div>`; `` **다음** | `markForDeckEdit(s, sl, vis);` 1줄 |
 
 - **묶음 단위**: 기준 줄을 하나라도 찾지 못하거나 두 곳 이상이면 편집 서버는 그 **묶음**(예: `doc.html`+`assets/doc.js`)의 파일을 모두 원본 그대로 보내고, 서버를 켤 때 창에 `[멈춤]`을 찍습니다. 한 파일에만 줄이 들어가면 페이지가 깨질 수 있기 때문입니다(예: `doc.js`가 부르는 `PFDocEdit`는 `doc.html`이 싣는 `doc-edit.js`에 있음). 그 페이지는 편집 버튼 없이 정상으로 열리고, 다른 묶음은 그대로 줄이 들어갑니다.
 - **이미 있음**: 디스크에 같은 줄이 이미 있으면 두 번 넣지 않습니다(`[있음]`). 한 칸의 넣을 줄 중 일부만 있으면(직접 고친 흔적) 그 묶음을 멈춥니다.
@@ -111,7 +109,7 @@ git -C "$R" diff --name-status --no-renames HEAD "$SRC" -- $NEW_FILES     # A = 
 ```
 편집 모드 <SRC 7자리>를 설치합니다. (지난 설치: <날짜 또는 처음>)
 - 새로 받는 파일 N개 · 최신으로 바뀌는 파일 N개: <짧은 목록>
-- 편집 서버가 줄을 넣는 페이지: <[멈춤]이 아닌 묶음 이름> (템플릿 파일 5개는 디스크에서 고치지 않음)
+- 편집 서버가 줄을 넣는 페이지: <[멈춤]이 아닌 묶음 이름> (템플릿 파일은 디스크에서 고치지 않음)
 - 멈춘 묶음: <없음 / 묶음 이름 — 이유 — 그 페이지의 편집 모드는 켜지지 않습니다>
 - .claude/CLAUDE.md: <새로 만듦 / 끝에 편집 모드 절을 더함 / 편집 모드 절을 새 내용으로 바꿈 / 그대로>
 - .claude/launch.json: <구성 portfolio-edit을 더함 / 그대로>
@@ -139,7 +137,7 @@ git -C "$R" diff --stat "$SRC" -- $NEW_FILES                     # 비어 있어
 git -C "$R" status --short
 ```
 
-- 템플릿 파일 5개(`doc.html`·`index.html`·`project.html`·`assets/doc.js`·`assets/project-deck.js`)가 `status`에 나오면 이 설치가 쓴 것이 아닙니다(설치는 쓰지 않음). 사용자가 따로 고친 것인지 묻습니다.
+- 템플릿 파일(`doc.html`·`index.html`·`project.html`·`assets/doc.js`)이 `status`에 나오면 이 설치가 쓴 것이 아닙니다(설치는 쓰지 않음). 사용자가 따로 고친 것인지 묻습니다.
 - `src/`·`profile.md`·`data/`·`custom/`·`theme/`가 `status`에 나오면 **잘못된 것**입니다. 멈추고, 이번에 바꾼 파일과 **status에 나온 그 경로들**을 `git -C "$R" restore --source=HEAD --staged --worktree -- <경로…>`로 함께 되돌린 뒤 알립니다(부트스트랩 파일은 되돌리지 않음).
 - `py_compile`이 실패하면 오류 첫 줄을 보여 주고 멈춥니다(커밋하지 않음).
 
@@ -191,4 +189,4 @@ git -C "$R" log -1 --format='%h %s'
 - `src/`·`profile.md`·`data/`·`custom/`·`theme/`은 읽기만 합니다. 사용자 문서를 대신 고치지 않습니다(CLAUDE.md 원칙 2).
 - 소스 주소는 고정 값만 씁니다.
 - 네트워크 접근, 파일 바꾸기, 커밋은 각각 동의를 받은 뒤에만 합니다(질문 1 → 2 → 3). push는 하지 않습니다.
-- 템플릿 파일 5개는 디스크에서 고치지 않습니다. 편집 서버가 보낼 때 `edit-mode-patch.py`로만 넣고, 기준 줄을 찾지 못하면 추측해서 넣지 않습니다.
+- 템플릿 파일은 디스크에서 고치지 않습니다. 편집 서버가 보낼 때 `edit-mode-patch.py`로만 넣고, 기준 줄을 찾지 못하면 추측해서 넣지 않습니다.

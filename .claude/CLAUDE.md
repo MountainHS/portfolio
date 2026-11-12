@@ -61,13 +61,13 @@
 
 - 편집 서버(`edit-server.py`)로 연 발표 덱(`project.html?p=<폴더>`) 오른쪽 아래 [✎ 편집 모드] → 덱 위 글·그림을 누르면 아래에 입력창이 뜨고, 저장하면 새로고침해 같은 장면으로 돌아옵니다. 덱 데이터(`deck`)로 그린 덱에서만 켜지고, 예전 데이터 자동 구성 덱·GitHub Pages·`python -m http.server`에서는 버튼이 없습니다.
 - 누른 것에 따라 저장 길이 둘입니다(`assets/deck-edit.js`가 나눔).
-  1. 표·그림·코드·다이어그램(기술 문서 원문 블록) → 그 블록의 md 원문 줄 → `POST /__edit/save`(상세 문서 편집과 같은 길, 기술 문서만 고침). 덱이 블록을 찾는 지문(표 머리 칸·그림 경로·코드·다이어그램 첫 줄)을 바꾸면 `/portfolio-build`를 다시 할 때까지 그 장면에 띠가 뜹니다(입력창에 안내). data의 스크린샷 목록에서 온 그림(`ref.direct`)과 원문을 찾지 못한 그림(빨간 띠)은 누를 수 없습니다.
+  1. 표·코드·다이어그램(기술 문서 원문 블록, 그림(image)은 편집에서 뺌) → 그 블록의 md 원문 줄 → `POST /__edit/save`(상세 문서 편집과 같은 길, 기술 문서만 고침). 덱이 블록을 찾는 지문(표 머리 칸·그림 경로·코드·다이어그램 첫 줄)을 바꾸면 `/portfolio-build`를 다시 할 때까지 그 장면에 띠가 뜹니다(입력창에 안내). data의 스크린샷 목록에서 온 그림(`ref.direct`)과 원문을 찾지 못한 그림(빨간 띠)은 누를 수 없습니다.
   2. 장면 제목·도입·요점 카드·장 표지 키워드 → `POST /__edit/deck` → `portfolio-edits.py`의 `save_deck_text`. 고친 글은 늘 `src/<폴더>/deck-edits.json`의 `"deckText"` 목록(`{slide, field, n?, value, from}`)에 남고, 기술 문서에 같은 글이 한 번만 그대로 있으면(제목 줄·코드 블록 제외) 그 줄도 고칩니다(입력창의 [발표 덱에만 저장]을 고르면 문서는 그대로). 키워드는 늘 덱에만. data는 `deck.slides`와 `deck.base`(있으면) 둘 다 고치고 `deck.applied` 해시를 맞추며, 글 조각의 `verbatim`은 `false`로 바꿉니다. 빌드 글(`from`)과 같게 고치면 그 줄이 지워집니다(되돌리기).
 - **`/portfolio-build`와 `/portfolio-edit` 뒤에는 반드시** `deck-edits.py apply --all` 다음에 `python .claude/skills/portfolio-build/portfolio-edits.py apply --all`을 실행합니다(`deckText`를 data에 다시 덮음, 멱등). 특히 `/portfolio-edit`로 고정(pin)한 장면은 고치기 파일의 글로 다시 만들어지므로 이 apply가 없으면 덱 편집 모드에서 고친 글이 빠집니다.
 - 장면 배치(틀·나누기·합치기·숨기기·순서)와 그림 파일 바꾸기는 편집 모드에 없습니다. 배치는 `/portfolio-edit`, 새 그림은 `src/<폴더>/images/`에 넣은 뒤 그림 줄의 경로를 고칩니다.
 - 템플릿 파일에 넣는 줄은 디스크에 없습니다. 편집 서버가 보낼 때만 메모리에서 넣으므로(`.claude/skills/edit-mode-install/edit-mode-patch.py`의 `GROUPS`) `/portfolio-update`가 덮어도 다시 넣을 것이 없습니다. 원본이 기준 줄을 바꿔 서버 창에 `[멈춤]`이 뜨면 `GROUPS`의 기준 줄을 고칩니다.
   - `project.html`: `<link rel="stylesheet" href="assets/deck-theme.css" />` 바로 다음 CSS 3줄(`assets/doc-edit.css`·`assets/portfolio-edit.css`·`assets/deck-edit.css`), `<script src="assets/project-deck.js"></script>` 바로 다음 스크립트 2줄(`assets/doc-edit.js`·`assets/deck-edit.js`, 이 순서)
-  - `assets/project-deck.js`: `fitSlide` 바로 위의 `markForDeckEdit` 함수(장면에 `data-pf-slide`, 원문 블록 그림에 `data-pf-visual`)와, `fitSlide`의 `build` 안 `PF.body(s).innerHTML = …` 다음 줄 `markForDeckEdit(s, sl, vis);`
+  - `assets/project-deck.js`는 가로채지 않습니다. 대신 `deck-edit.js`가 원본이 이미 다는 것을 읽습니다(원본이 바꾸면 이 둘이 **조용히** 안 됩니다): 장면 key는 장면 요소 `id`(`d-<key>`, 나뉜 장면은 `-2`·`-t1` 꼬리)에서(`slideForSceneId`), 표·코드·다이어그램은 `figure.vbox`의 `data-kind`와 내용(코드 글자 포함·표 머리 칸·다이어그램 순서)에서(`visualRefForFigure`) 찾습니다. 같은 종류가 한 장면에 여럿이라 못 가리면 누를 수 없습니다.
   - 남는 것(이 포크에만 있는 파일): `assets/deck-edit.js`·`assets/deck-edit.css`·`assets/doc-edit.js`(덱이 `PFDocEdit.mapBlocksToLines`를 빌려 씀)·`assets/doc-edit.css`·`assets/portfolio-edit.css`·`edit-server.py`(`/__edit/deck`)·`portfolio-edits.py`(`save_deck_text`·`apply_deck_text`).
 
 ## 발표 덱 장면 수 (이 포크 전용)

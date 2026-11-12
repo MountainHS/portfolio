@@ -2,10 +2,11 @@
 //   켜지는 조건: 주소가 localhost·127.0.0.1이고, 로컬 편집 서버(edit-server.py)의 /__edit/ping이 응답하고,
 //   덱을 발표 덱 데이터(deck)로 그렸을 때만(예전 데이터 자동 구성 덱은 아님). GitHub Pages나 python -m http.server에서는 아무것도 하지 않습니다.
 //   흐름: 덱이 다 그려지길 기다림 → data·기술 문서 md를 다시 읽음 → [편집 모드] 버튼 → 덱 위 글·그림 누르기 → 아래 입력창
-//         ├ 표·그림·코드·다이어그램 → 그 원문 md 줄 → /__edit/save (상세 문서 편집과 같은 길, 기술 문서만 고침)
+//         ├ 표·코드·다이어그램 → 그 원문 md 줄 → /__edit/save (상세 문서 편집과 같은 길, 기술 문서만 고침)
 //         └ 장면 제목·도입·요점·장 표지 키워드 → 글 한 칸 → /__edit/deck (deck-edits.json "deckText" + 같은 글이 있으면 기술 문서 줄, data도)
 //         → 저장하면 새로고침(주소 #s=<장면>이 그대로라 같은 장면으로 돌아옴)
-//   화면의 글·그림이 어느 장면인지는 project-deck.js가 단 data-pf-slide(장면 key)·data-pf-visual(visuals 번호) 표시로 압니다.
+//   화면의 글·그림이 어느 장면인지는 원본 project-deck.js가 이미 다는 것으로 압니다: 장면 요소 id(d-<key>, slideForSceneId) · figure.vbox의 data-kind와 내용(visualRefForFigure).
+//   표·코드·다이어그램만 고칠 수 있고 그림(image)은 뺐습니다.
 //   덱은 늦게 온 글꼴로 다시 그려질 수 있어서, 고칠 칸을 미리 모아 두지 않고 누를 때 찾습니다.
 (() => {
   const PING_URL = '/__edit/ping';
@@ -13,6 +14,7 @@
   const TEXT_SAVE_URL = '/__edit/deck';
   const RESTORE_KEY = 'pf-deck-edit-restore';         // 저장 뒤 새로고침에서 편집 모드를 다시 켜는 sessionStorage 키
   const POINT_SELECTOR = '.ncard, .fstep, .fe-card';  // 요점 카드·흐름 칸(문제 해결)·화면 카드 — 장면 안 순서 = data points 순서
+  const EDITABLE_FIGURE_SELECTOR = 'figure.vbox:is([data-kind="table"], [data-kind="code"], [data-kind="mermaid"])';   // 그림(image)은 편집에서 뺌
   const VISUAL_NAMES = { table: '표', image: '그림', code: '코드', mermaid: '다이어그램' };
   // 덱이 원문 블록을 찾는 지문(md-blocks.js pick). 바꾸면 다시 빌드할 때까지 그 장면에 띠가 뜸
   const FINGERPRINT_PARTS = { table: '표 머리 칸을', image: '그림 경로를', code: '코드 첫 줄을', mermaid: '다이어그램 첫 줄을' };
@@ -88,12 +90,12 @@
   function findSpot(session, target) {
     const keywordLine = target.closest('.ch-list .ld');
     if (keywordLine !== null) return keywordSpot(session, keywordLine);
-    const scene = target.closest('.pf-scene[data-pf-slide]');
+    const scene = target.closest('.pf-scene[id]');
     if (scene === null) return null;
-    const slide = slideByKey(session, scene.dataset.pfSlide);
+    const slide = slideForSceneId(session, scene.id);
     if (slide === undefined) return null;
 
-    const figure = target.closest('figure.vbox[data-pf-visual]');
+    const figure = target.closest(EDITABLE_FIGURE_SELECTOR);
     const title = target.closest('.pf-title');
     const lead = target.closest('.pf-lead');
     const point = target.closest(POINT_SELECTOR);
@@ -107,15 +109,31 @@
     return null;
   }
 
-  function slideByKey(session, key) {
-    return (session.source.project.deck?.slides || []).find((slide) => slide.key === key);
+  /**
+   * 장면 요소의 id(원본 project-deck.js가 다는 d-<key>)에서 data의 장면(deck.slides[])을 찾습니다.
+   * 나뉜 장면의 id는 d-<key>-2(코드 나뉨)·d-<key>-t1(표 나뉨)·둘의 조합이라, 꼬리가 그 꼴일 때만 key 뒤에 붙은 것으로 봅니다.
+   * key 자체에 -숫자가 들어갈 수 있어 '-'로 자르지 않고, 정확히 같은 key를 먼저, 없으면 가장 긴 key를 고릅니다.
+   * 반환: slide | undefined (표지·목차·장 표지·회고·맺음, key 오류 장면 d1-2 꼴은 undefined → 눌러도 아무 일 없음)
+   */
+  function slideForSceneId(session, sceneId) {
+    const isDeckSlideId = sceneId.startsWith('d-');
+    if (isDeckSlideId === false) return undefined;
+    const rest = sceneId.slice(2);
+    const slides = session.source.project.deck?.slides || [];
+    const exact = slides.find((slide) => slide.key === rest);
+    if (exact !== undefined) return exact;
+
+    const splitSuffix = /^(-\d+|-t\d+)+$/;
+    const prefixed = slides.filter((slide) => rest.startsWith(slide.key) && splitSuffix.test(rest.slice(slide.key.length)));
+    prefixed.sort((first, second) => second.key.length - first.key.length);
+    return prefixed[0];
   }
 
   /** 장 표지 목록의 키워드 한 줄 → 그 줄이 가리키는 장면의 keywords */
   function keywordSpot(session, keywordLine) {
     const sceneId = keywordLine.closest('a[data-pf-ref]')?.dataset.pfRef;
-    const scene = sceneId ? document.getElementById(sceneId) : null;
-    const slide = scene ? slideByKey(session, scene.dataset.pfSlide) : undefined;
+    if (sceneId === undefined) return null;
+    const slide = slideForSceneId(session, sceneId);
     if (slide === undefined) return null;
     return textSpot(session, slide, keywordLine, '키워드', { field: 'keywords' });
   }
@@ -141,12 +159,48 @@
   }
 
   /**
-   * 덱의 표·그림·코드·다이어그램 → 그 원문 블록의 md 줄 범위. 덱과 같은 규칙(PF.md.pick)으로 원문 요소를 찾고, 그 요소를 담은 md 블록을 고릅니다.
-   * 원문을 찾지 못한 그림(빨간 띠)은 null — 줄을 알 수 없으므로 상세 문서에서 고칩니다.
+   * 화면의 figure가 data 장면의 어느 visuals 항목(원문 블록)인지 찾습니다. 못 가리면 null(추측해 엉뚱한 md 줄을 고치지 않음).
+   * 같은 종류 후보가 하나면 그것, 여럿이면 코드는 글자 포함·표는 머리 칸 글자·다이어그램은 그려진 순서로 가립니다.
+   * 그림(image)과 스크린샷 목록에서 온 항목(ref.direct)은 후보가 아닙니다.
+   */
+  function visualRefForFigure(session, slide, figure) {
+    const kind = figure.dataset.kind;
+    if (kind === undefined) return null;
+    const candidates = (slide.visuals || []).filter((ref) => ref.kind === kind && ref.direct !== true);
+    if (candidates.length === 1) return candidates[0];
+    if (candidates.length === 0) return null;
+
+    if (kind === 'mermaid') {
+      const scene = figure.closest('.pf-scene');
+      const drawnFigures = [...scene.querySelectorAll('figure.vbox[data-kind="mermaid"]')];
+      const isOrderUsable = drawnFigures.length === candidates.length;
+      if (isOrderUsable === false) return null;
+      return candidates[drawnFigures.indexOf(figure)];
+    }
+
+    const figureText = kind === 'code' ? normalizedText(figure.querySelector('pre')) : normalizedText(figure.querySelector('thead'));
+    const matching = candidates.filter((ref) => {
+      const picked = PF.md.pick(session.source.parsed, ref, slide.sectionPath || []);
+      if (picked.el === undefined) return false;
+      if (kind === 'code') return normalizedText(picked.el.querySelector('pre') || picked.el).includes(figureText);
+      return normalizedText(picked.el.querySelector('thead')) === figureText;
+    });
+    return matching.length === 1 ? matching[0] : null;
+  }
+
+  /** 공백을 한 칸으로 줄인 글자(요소가 없으면 ''). 나뉜 코드 조각이 원문의 부분 글자인지 견줄 때 씀. */
+  function normalizedText(element) {
+    if (element === null) return '';
+    return element.textContent.replace(/\s+/g, ' ').trim();
+  }
+
+  /**
+   * 덱의 표·코드·다이어그램 → 그 원문 블록의 md 줄 범위. 덱과 같은 규칙(PF.md.pick)으로 원문 요소를 찾고, 그 요소를 담은 md 블록을 고릅니다.
+   * 원문을 찾지 못한 그림(빨간 띠)·어느 블록인지 못 가린 그림은 null — 줄을 알 수 없으므로 상세 문서에서 고칩니다.
    */
   function visualSpot(session, slide, figure) {
-    const ref = slide.visuals?.[Number(figure.dataset.pfVisual)];
-    if (ref === undefined) return null;
+    const ref = visualRefForFigure(session, slide, figure);
+    if (ref === null) return null;
     const picked = PF.md.pick(session.source.parsed, ref, slide.sectionPath || []);
     if (picked.el === undefined) return null;
     const block = session.source.blocks.find((candidate) => candidate.elements.some((element) => element.contains(picked.el)));
