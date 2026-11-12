@@ -8,7 +8,7 @@
   "team": {
     "type": "team",
     "size": "4인",
-    "role": "몬스터 전반 — 상태 머신·공격 6종, 피격·약점·시체, 웨이브·스폰·풀, 라운드 유형, 몬스터 이동, 밸런스 관리"
+    "role": "몬스터 전반 — 상태 머신·공격 6종, 피격·약점·시체, 웨이브·스폰·풀, 몬스터 이동, 밸런스 관리"
   },
   "meta": [
     {
@@ -595,7 +595,7 @@
             "src": "images/wave-timeline-vis.png",
             "w": 1518,
             "h": 669,
-            "caption": {"text": "AI로 만든 웨이브 편집 도구(Wave Studio)로 본 라운드 1 일정", "verbatim": true}
+            "caption": {"text": "AI로 만든 웨이브 편집 도구(Wave Studio)로 본 라운드 1 스테이지 2 일정", "verbatim": true}
           }
         ]
       },
@@ -1134,7 +1134,7 @@
         "visuals": [{"kind": "table", "n": 1, "fp": "C# 쪽에서 일어난 일|넣는 Animator 파라미터"}]
       },
       {
-        "key": "animator-attack",
+        "key": "animator-state",
         "chapter": "core",
         "layout": "code",
         "tab": "구현",
@@ -1146,7 +1146,7 @@
           {"label": "", "text": "Chase 안의 멈춤·이동은 C# 상태를 늘리지 않고 IsMoving 하나로 Animator에서 나눈다.", "verbatim": true},
           {"label": "", "text": "이동 자체가 공격인 돌진은 Attack 클립을 쓰지 않고, Move 클립을 돌진 속도에 맞춰 재생한다.", "verbatim": true}
         ],
-        "visuals": [{"kind": "code", "n": 1, "fp": "// code/MonsterController.cs:330-352, 364-372", "lines": [26, 35]}]
+        "visuals": [{"kind": "code", "n": 1, "fp": "// code/MonsterController.cs:330-352, 364-372", "lines": [26, 34]}]
       },
       {
         "key": "feedback",
@@ -1238,7 +1238,7 @@
             "src": "images/wave-timeline-vis.png",
             "w": 1518,
             "h": 669,
-            "caption": {"text": "AI로 만든 웨이브 편집 도구(Wave Studio)로 본 라운드 1 일정", "verbatim": true}
+            "caption": {"text": "AI로 만든 웨이브 편집 도구(Wave Studio)로 본 라운드 1 스테이지 2 일정", "verbatim": true}
           }
         ]
       },
@@ -1449,6 +1449,6 @@
         "visuals": [{"kind": "table", "n": 1, "fp": "부채|내용"}]
       }
     ],
-    "applied": "5804bce7506fed91"
+    "applied": "6b6581f1730686e5"
   }
 }

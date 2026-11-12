@@ -566,6 +566,119 @@
         ]
       },
       {
+        "key": "power-status",
+        "chapter": "features",
+        "layout": "screens",
+        "tab": "구조",
+        "title": {
+          "text": "시설 상태와 전력 바 상태",
+          "verbatim": true
+        },
+        "lead": {
+          "text": "각 상태의 실제 전력 바 이미지와 상태 조건을 카드마다 함께 비교한다.",
+          "verbatim": true
+        },
+        "keywords": [
+          "Available",
+          "UnAvailable",
+          "전력 바"
+        ],
+        "sectionPath": [
+          "3. 핵심 기능",
+          "3.1 전력 관리",
+          "시설 상태와 전력 바 상태"
+        ],
+        "points": [
+          {
+            "label": "활성화 · Available",
+            "text": "시설이 정상이고 전력이 1 이상이면 활성화된다.",
+            "verbatim": true
+          },
+          {
+            "label": "비활성화 · UnAvailable",
+            "text": "Power가 0이면 시설은 비활성화된다.",
+            "verbatim": true
+          }
+        ],
+        "visuals": [
+          {
+            "kind": "image",
+            "src": "images/power-ui-status-2.png",
+            "w": 50,
+            "h": 130,
+            "caption": {
+              "text": "활성화 · Available",
+              "verbatim": true
+            }
+          },
+          {
+            "kind": "image",
+            "src": "images/power-ui-status-1.png",
+            "w": 54,
+            "h": 139,
+            "caption": {
+              "text": "비활성화 · UnAvailable",
+              "verbatim": true
+            }
+          }
+        ]
+      },
+      {
+        "key": "power-status-damage",
+        "chapter": "features",
+        "layout": "screens",
+        "tab": "구조",
+        "title": {
+          "text": "시설 상태와 전력 바 상태 (피해)",
+          "verbatim": false
+        },
+        "lead": null,
+        "keywords": [
+          "Broken",
+          "Broked",
+          "피해 표시"
+        ],
+        "sectionPath": [
+          "3. 핵심 기능",
+          "3.1 전력 관리",
+          "시설 상태와 전력 바 상태"
+        ],
+        "points": [
+          {
+            "label": "고장 · Broken",
+            "text": "피해 수만큼 전력 바 칸의 상태가 Broken으로 바뀐다.",
+            "verbatim": true
+          },
+          {
+            "label": "파괴 · Broked",
+            "text": "시설 기능은 실행하지 않고 전력 칸 전체를 사용할 수 없다.",
+            "verbatim": true
+          }
+        ],
+        "visuals": [
+          {
+            "kind": "image",
+            "src": "images/power-ui-status-3.png",
+            "w": 55,
+            "h": 136,
+            "caption": {
+              "text": "고장 · Broken",
+              "verbatim": true
+            }
+          },
+          {
+            "kind": "image",
+            "src": "images/power-ui-status-4.png",
+            "w": 52,
+            "h": 137,
+            "caption": {
+              "text": "파괴 · Broked",
+              "verbatim": true
+            }
+          }
+        ]
+      },
+      {
         "key": "power-code",
         "chapter": "features",
         "layout": "code",
@@ -657,6 +770,54 @@
         ]
       },
       {
+        "key": "power-ui",
+        "chapter": "features",
+        "layout": "code",
+        "tab": "구현",
+        "title": {
+          "text": "전력 UI: 데이터 참조와 갱신",
+          "verbatim": true
+        },
+        "lead": {
+          "text": "반응로·시설 뷰어는 매 프레임 참조 중인 컨트롤러의 현재 값을 읽어 UI를 갱신한다.",
+          "verbatim": true
+        },
+        "keywords": [
+          "FacilityPowerViewer",
+          "ReactorViewer",
+          "매 프레임"
+        ],
+        "sectionPath": [
+          "3. 핵심 기능",
+          "3.1 전력 관리",
+          "전력 UI: 데이터 참조와 갱신"
+        ],
+        "points": [
+          {
+            "label": "시설 데이터 참조",
+            "text": "FacilityPowerViewer는 FacilityController의 power, maxPower, maxPowerLimit, totalDamage를 매 프레임 읽는다.",
+            "verbatim": true
+          },
+          {
+            "label": "UI 갱신",
+            "text": "상태 변경을 전력 로직에서 직접 UI로 호출하지 않는다.",
+            "verbatim": true
+          }
+        ],
+        "visuals": [
+          {
+            "kind": "code",
+            "n": 1,
+            "fp": "protected override void UpdateViewer()"
+          },
+          {
+            "kind": "code",
+            "n": 2,
+            "fp": "int totalPower = reactorController.MaxPower;"
+          }
+        ]
+      },
+      {
         "key": "weapon-overview",
         "chapter": "features",
         "layout": "visual",
@@ -712,6 +873,49 @@
         ]
       },
       {
+        "key": "weapon-fire",
+        "chapter": "features",
+        "layout": "visual",
+        "tab": "흐름",
+        "title": {
+          "text": "무기 활성화 · 충전 · 투사체 발사",
+          "verbatim": true
+        },
+        "lead": {
+          "text": "무기 활성화부터 목표 데이터 전달과 투사체 발사까지의 핵심 로직만 시퀀스로 정리했다.",
+          "verbatim": true
+        },
+        "keywords": [
+          "무기 활성화",
+          "충전",
+          "투사체 발사"
+        ],
+        "sectionPath": [
+          "3. 핵심 기능",
+          "3.2 무기 조준",
+          "무기 활성화 · 충전 · 투사체 발사"
+        ],
+        "points": [
+          {
+            "label": "무기 활성화 조건",
+            "text": "WeaponSystem은 시설에 전력이 1 이상 공급되면 소속 WeaponController의 IsPowered를 켠다.",
+            "verbatim": true
+          },
+          {
+            "label": "무기 충전 및 투사체 발사",
+            "text": "WeaponController는 충전 완료와 유효한 TargetData를 모두 확인한다.",
+            "verbatim": true
+          }
+        ],
+        "visuals": [
+          {
+            "kind": "mermaid",
+            "n": 1,
+            "fp": "sequenceDiagram"
+          }
+        ]
+      },
+      {
         "key": "projectile-damage",
         "chapter": "features",
         "layout": "visual",
@@ -746,6 +950,54 @@
             "kind": "mermaid",
             "n": 1,
             "fp": "sequenceDiagram"
+          }
+        ]
+      },
+      {
+        "key": "weapon-code",
+        "chapter": "features",
+        "layout": "code",
+        "tab": "구현",
+        "title": {
+          "text": "무기 핵심 코드: 선택 · 충전 · 발사 조건",
+          "verbatim": true
+        },
+        "lead": {
+          "text": "WeaponSystem은 선택과 목표 전달을, WeaponController는 개별 무기의 충전과 발사 가능 상태를 맡는다.",
+          "verbatim": true
+        },
+        "keywords": [
+          "SetRoomTarget",
+          "IsReadyToFire",
+          "충전 보정"
+        ],
+        "sectionPath": [
+          "3. 핵심 기능",
+          "3.2 무기 조준",
+          "무기 핵심 코드: 선택 · 충전 · 발사 조건"
+        ],
+        "points": [
+          {
+            "label": "목표 저장",
+            "text": "TargetPosition은 투사체가 이동할 좌표이고 RoomId는 도착 뒤 피해를 줄 방을 식별한다.",
+            "verbatim": true
+          },
+          {
+            "label": "충전과 보조",
+            "text": "전력이 공급되면 chargeProgress가 증가한다.",
+            "verbatim": true
+          }
+        ],
+        "visuals": [
+          {
+            "kind": "code",
+            "n": 1,
+            "fp": "public void SetRoomTarget(ProjectileTargetData targetData)"
+          },
+          {
+            "kind": "code",
+            "n": 2,
+            "fp": "GameObject projectile = Instantiate(projectilePrefab, transf"
           }
         ]
       },
@@ -883,6 +1135,109 @@
         ]
       },
       {
+        "key": "crew-input",
+        "chapter": "features",
+        "layout": "code",
+        "tab": "구현",
+        "title": {
+          "text": "플레이어 입력과 개별 CrewController 사이의 상호작용 관리",
+          "verbatim": true
+        },
+        "lead": {
+          "text": "PlayerController가 클릭 대상을 판별하고, CrewSystem이 선택 목록과 목표 방을 관리해 개별 CrewController에 명령을 중계한다.",
+          "verbatim": true
+        },
+        "keywords": [
+          "AddSelectedCrew",
+          "SetTargetRoom",
+          "명령 중계"
+        ],
+        "sectionPath": [
+          "3. 핵심 기능",
+          "3.3 승무원 관리",
+          "플레이어 입력과 개별 CrewController 사이의 상호작용 관리"
+        ],
+        "points": [
+          {
+            "label": "입력 수집과 선택",
+            "text": "PlayerController는 좌클릭한 플레이어 승무원을 찾아 CrewSystem.AddSelectedCrew로 전달한다.",
+            "verbatim": true
+          },
+          {
+            "label": "이동 명령 전달",
+            "text": "방 우클릭 시 PlayerController가 Room을 찾아 CrewSystem.SetTargetRoom을 호출한다.",
+            "verbatim": true
+          }
+        ],
+        "visuals": [
+          {
+            "kind": "code",
+            "n": 1,
+            "fp": "public void AddSelectedCrew(CrewController crew)"
+          },
+          {
+            "kind": "code",
+            "n": 2,
+            "fp": "if (isPlayerCrewSelected)"
+          }
+        ]
+      },
+      {
+        "key": "crew-conditions",
+        "chapter": "features",
+        "layout": "visual",
+        "tab": "구조",
+        "title": {
+          "text": "CrewStatus 전환 조건",
+          "verbatim": true
+        },
+        "lead": null,
+        "keywords": [
+          "Moving",
+          "Repair",
+          "Assisting"
+        ],
+        "sectionPath": [
+          "3. 핵심 기능",
+          "3.3 승무원 관리",
+          "CrewStatus 전환 조건"
+        ],
+        "points": [
+          {
+            "label": "Moving",
+            "text": "SetTargetRoom이 목표 방을 저장하고 crewStatus를 Moving으로 바꾼다.",
+            "verbatim": true
+          },
+          {
+            "label": "Idle",
+            "text": "MoveToTargetRoom이 목표 위치에 도착하면 Idle이 된다.",
+            "verbatim": true
+          },
+          {
+            "label": "Repair",
+            "text": "이동이 아닌 상태에서 현재 방 시설이 Damaged 또는 Broked이면 UpdateCrewStatus가 Repair로 전환한다.",
+            "verbatim": true
+          },
+          {
+            "label": "Assisting",
+            "text": "현재 방 시설이 Normal이면 Assisting으로 전환한다.",
+            "verbatim": true
+          }
+        ],
+        "visuals": [
+          {
+            "kind": "mermaid",
+            "n": 1,
+            "fp": "stateDiagram-v2",
+            "sectionPath": [
+              "3. 핵심 기능",
+              "3.3 승무원 관리",
+              "CrewStatus 상태 전이와 상태별 작업"
+            ]
+          }
+        ]
+      },
+      {
         "key": "crew-room-ship",
         "chapter": "features",
         "layout": "code",
@@ -911,6 +1266,89 @@
             "kind": "code",
             "n": 1,
             "fp": "public void RepairFacility()"
+          }
+        ]
+      },
+      {
+        "key": "crew-handle-status",
+        "chapter": "features",
+        "layout": "code",
+        "tab": "구현",
+        "title": {
+          "text": "방 · 승무원 · 함선의 상호작용 코드 (CrewController)",
+          "verbatim": false
+        },
+        "lead": null,
+        "keywords": [
+          "HandleStatus",
+          "상태별 작업",
+          "보조 적용"
+        ],
+        "sectionPath": [
+          "3. 핵심 기능",
+          "3.3 승무원 관리",
+          "방 · 승무원 · 함선의 상호작용 코드"
+        ],
+        "points": [
+          {
+            "label": "CrewController",
+            "text": "Moving·Idle·Repair·Assisting에 따라 이동, 보조 해제, 수리, 보조 적용 메서드를 나눠 실행한다.",
+            "verbatim": true
+          }
+        ],
+        "visuals": [
+          {
+            "kind": "code",
+            "n": 2,
+            "fp": "private void HandleStatus()"
+          }
+        ]
+      },
+      {
+        "key": "crew-flow",
+        "chapter": "features",
+        "layout": "visual",
+        "tab": "흐름",
+        "title": {
+          "text": "승무원 선택 · 이동 · 작업 · 피해 흐름",
+          "verbatim": true
+        },
+        "lead": {
+          "text": "CombatSystem은 제외하고, 플레이어 입력부터 CrewSystem·CrewController·Room 사이의 순서만 표현했다.",
+          "verbatim": true
+        },
+        "keywords": [
+          "승무원 선택",
+          "이동",
+          "피해 전달"
+        ],
+        "sectionPath": [
+          "3. 핵심 기능",
+          "3.3 승무원 관리",
+          "승무원 선택 · 이동 · 작업 · 피해 흐름"
+        ],
+        "points": [
+          {
+            "label": "이동",
+            "text": "좌클릭으로 승무원을 선택한 뒤 플레이어 방을 우클릭하면 CrewSystem이 선택 목록을 순회해 각 CrewController의 목표 방을 설정한다.",
+            "verbatim": true
+          },
+          {
+            "label": "작업",
+            "text": "도착 뒤 CrewController는 Room의 FacilityStatus를 확인한다.",
+            "verbatim": true
+          },
+          {
+            "label": "피해",
+            "text": "방 피격 시 Room.TakeDamageToCrews가 내부 승무원에게 피해를 전달한다.",
+            "verbatim": true
+          }
+        ],
+        "visuals": [
+          {
+            "kind": "mermaid",
+            "n": 1,
+            "fp": "sequenceDiagram"
           }
         ]
       },
@@ -964,6 +1402,102 @@
               "text": "Solar flare environment",
               "verbatim": true
             }
+          }
+        ]
+      },
+      {
+        "key": "env-code",
+        "chapter": "features",
+        "layout": "code",
+        "tab": "구현",
+        "title": {
+          "text": "환경 효과 핵심 코드",
+          "verbatim": true
+        },
+        "lead": {
+          "text": "환경 코루틴은 전투 상태와 스테이지 유형을 확인한 뒤, 일정 시간마다 소행성 또는 태양 플레어 효과를 실행한다.",
+          "verbatim": true
+        },
+        "keywords": [
+          "EnvironmentCoroutine",
+          "전투 상태 확인",
+          "피해 경로"
+        ],
+        "sectionPath": [
+          "3. 핵심 기능",
+          "3.4 환경 효과와 공통 입력",
+          "환경 효과 핵심 코드"
+        ],
+        "points": [
+          {
+            "label": "전투 상태 확인",
+            "text": "GameManager.Instance.CanRunCombat이 false가 되면 코루틴을 중단한다.",
+            "verbatim": true
+          },
+          {
+            "label": "피해 처리",
+            "text": "소행성은 투사체로 이동한 뒤 충돌 처리를 요청한다.",
+            "verbatim": true
+          }
+        ],
+        "visuals": [
+          {
+            "kind": "code",
+            "n": 1,
+            "fp": "private IEnumerator EnvironmentCoroutine()"
+          },
+          {
+            "kind": "code",
+            "n": 2,
+            "fp": "Asteroid"
+          }
+        ]
+      },
+      {
+        "key": "common-input",
+        "chapter": "features",
+        "layout": "code",
+        "tab": "구현",
+        "title": {
+          "text": "공통 입력: 승무원 선택과 적 방 조준",
+          "verbatim": true
+        },
+        "lead": {
+          "text": "PlayerController는 클릭 위치의 방·함선 소속·승무원 콜라이더를 판별해 무기 조준 또는 승무원 명령으로 전달한다.",
+          "verbatim": true
+        },
+        "keywords": [
+          "입력 대상 판별",
+          "레이어",
+          "명령 경계"
+        ],
+        "sectionPath": [
+          "3. 핵심 기능",
+          "3.4 환경 효과와 공통 입력",
+          "공통 입력: 승무원 선택과 적 방 조준"
+        ],
+        "points": [
+          {
+            "label": "레이어 기반 판별",
+            "text": "같은 마우스 위치의 콜라이더를 수집한 뒤 Room·Ship·Crew 레이어와 소속 ShipSide를 확인한다.",
+            "verbatim": true
+          },
+          {
+            "label": "명령 경계",
+            "text": "무기 조준은 적 방의 좌표·RoomId를 WeaponSystem에 전달한다.",
+            "verbatim": true
+          }
+        ],
+        "visuals": [
+          {
+            "kind": "code",
+            "n": 1,
+            "fp": "Collider2D[] clickCols ="
+          },
+          {
+            "kind": "code",
+            "n": 2,
+            "fp": "// 좌클릭: 적 방 → WeaponSystem, 플레이어 승무원 → CrewSystem"
           }
         ]
       },

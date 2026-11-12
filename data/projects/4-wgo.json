@@ -662,13 +662,12 @@
         "points": [
           {"label": "", "text": "A로 모으는 리팩토링 작업을 올렸지만 프로젝트 안에 끝내지 못했다.", "verbatim": true},
           {
-            "label": "",
-            "text": "지금 다시 한다면 두 방식의 장점을 합쳐, 각 매니저가 처음에 RoomClient의 델리게이트를 구독하고 OnSnapshot에서는 Invoke만 하도록 바꾸겠다",
+            "label": "나중에 다시 한다면",
+            "text": "두 방식의 장점을 합쳐, 각 매니저가 처음에 RoomClient의 델리게이트를 구독하고 OnSnapshot에서는 Invoke만 하도록 바꾸겠다",
             "verbatim": true
           }
         ],
-        "visuals": [{"kind": "table", "n": 1, "fp": "대안|장점|단점"}],
-        "edited": true
+        "visuals": [{"kind": "table", "n": 1, "fp": "대안|장점|단점"}]
       },
       {
         "key": "host-guest",
@@ -945,6 +944,34 @@
         "visuals": [{"kind": "table", "n": 1, "fp": "구성요소|위치|책임 (그리고 하지 않는 일)"}]
       },
       {
+        "key": "structure-why",
+        "chapter": "structure",
+        "layout": "overview",
+        "tab": "구조",
+        "title": {"text": "3.2 왜 이렇게 나눴나", "verbatim": true},
+        "lead": null,
+        "keywords": ["RoomHub·Room 분리", "RoomClient 하나", "Update 직전"],
+        "sectionPath": ["3. 시스템 구조", "3.2 왜 이렇게 나눴나"],
+        "points": [
+          {
+            "label": "",
+            "text": "방 생성·삭제를 담당하는 RoomHub와 방 내부의 메시지를 처리하는 Room의 역할을 분리했다. 기존 서버의 구조를 유지하면서 방 관리 기능은 거의 수정하지 않고 데이터 동기화 방식만 변경할 수 있었다.",
+            "verbatim": true
+          },
+          {
+            "label": "",
+            "text": "클라이언트에서 소켓을 아는 클래스는 RoomClient 하나다. 다른 매니저는 ApplySnapshot(값)만 받아서, 다리·인벤토리 기능을 고칠 때 연결·수신·송신 코드를 볼 필요가 없다.",
+            "verbatim": true
+          },
+          {
+            "label": "",
+            "text": "ApplySnapshot은 RoomClient의 수신 루프가 메인 스레드로 돌아온 뒤, Update 직전에 부른다. 그래서 매니저는 스레드나 프레임 순서를 신경 쓰지 않고 오브젝트를 바꿀 수 있다.",
+            "verbatim": true
+          }
+        ],
+        "visuals": []
+      },
+      {
         "key": "flow",
         "chapter": "structure",
         "layout": "visual",
@@ -973,6 +1000,23 @@
         "sectionPath": ["3. 시스템 구조", "3.4 게스트 입력 1회가 게스트 화면에 반영되기까지"],
         "points": [],
         "visuals": [{"kind": "mermaid", "n": 1, "fp": "sequenceDiagram"}]
+      },
+      {
+        "key": "roomclient-api",
+        "chapter": "features",
+        "layout": "visual",
+        "tab": "구조",
+        "title": {"text": "4.0 사용법: RoomClient API와 팀원용 연동 가이드", "verbatim": true},
+        "lead": {"text": "새 기능을 동기화하는 순서는 세 단계다. 이 순서를 팀원용 연동 가이드로 정리해 공유했다.", "verbatim": true},
+        "keywords": ["RoomClient API", "연동 가이드", "세 단계"],
+        "sectionPath": ["4. 핵심 기능", "4.0 사용법: RoomClient API와 팀원용 연동 가이드"],
+        "points": [
+          {"label": "", "text": "Protocol의 SnapshotMessage에 필드를 추가한다.", "verbatim": true},
+          {"label": "", "text": "호스트 쪽 SendSnapshotOrInputMessage에서 그 필드를 채운다.", "verbatim": true},
+          {"label": "", "text": "게스트 쪽 OnSnapshot에서 그 값을 반영한다.", "verbatim": true},
+          {"label": "", "text": "첫 메시지는 반드시 hello이고, 이후 input(게스트) 또는 snapshot(호스트)만 처리한다.", "verbatim": true}
+        ],
+        "visuals": [{"kind": "table", "n": 1, "fp": "호출|하는 일"}]
       },
       {
         "key": "input-relay",
@@ -1004,6 +1048,47 @@
           {"label": "", "text": "채널 크기는 1이고, 꽉 차면 오래된 것을 버린다. 느린 멤버에게는 밀린 스냅샷이 쌓이지 않고 가장 최신 것만 간다.", "verbatim": true}
         ],
         "visuals": [{"kind": "code", "n": 1, "lines": [1, 20], "fp": "// Member 안: 멤버마다 크기 1짜리 채널"}]
+      },
+      {
+        "key": "snapshot-send-loop",
+        "chapter": "features",
+        "layout": "code",
+        "tab": "구현",
+        "title": {"text": "4.2 멤버별 \"최신 스냅샷 1개\" 채널 — 송신 루프", "verbatim": false},
+        "lead": null,
+        "keywords": ["송신 루프", "BroadcastNowAsync"],
+        "sectionPath": ["4. 핵심 기능", "4.2 멤버별 \"최신 스냅샷 1개\" 채널"],
+        "points": [
+          {"label": "", "text": "멤버마다 송신 전담 루프가 하나씩 돌며 자기 채널에서 꺼내 보낸다.", "verbatim": true},
+          {
+            "label": "",
+            "text": "join·leave처럼 한 번만 일어나고 놓치면 안 되는 메시지는 이 채널을 쓰지 않고 BroadcastNowAsync로 바로 보낸다. 크기 1 + 오래된 것 버림 채널에 넣으면 스냅샷에 밀려 버려질 수 있기 때문이다.",
+            "verbatim": true
+          },
+          {"label": "", "text": "이 구조는 프로젝트 이후 개선한 결과다.", "verbatim": true}
+        ],
+        "visuals": [{"kind": "code", "n": 1, "lines": [23, 38], "fp": "// Member 안: 멤버마다 크기 1짜리 채널"}]
+      },
+      {
+        "key": "room-lifecycle",
+        "chapter": "features",
+        "layout": "code",
+        "tab": "구현",
+        "title": {"text": "4.3 방 수명과 연결 예외 처리 — 방 입장과 인원 제한", "verbatim": false},
+        "lead": null,
+        "keywords": ["인원 제한", "호스트 결정", "호스트 승계"],
+        "sectionPath": ["4. 핵심 기능", "4.3 방 수명과 연결 예외 처리"],
+        "points": [
+          {"label": "", "text": "호스트 결정: 방이 비어 있을 때 들어온 사람이 호스트다.", "verbatim": true},
+          {
+            "label": "",
+            "text": "호스트 퇴장: 호스트가 나가면 roomExpired = true와 취소 토큰으로 남은 멤버의 수신 대기를 모두 깨워 연결을 닫는다.",
+            "verbatim": true
+          },
+          {"label": "", "text": "호스트 승계는 계획했지만 하지 않았다.", "verbatim": true},
+          {"label": "", "text": "일정이 짧았고, 네트워크를 최대한 단순하게 두고 인게임 핵심 루프의 완성도에 집중하고 싶었다.", "verbatim": true}
+        ],
+        "visuals": [{"kind": "code", "n": 1, "fp": "lock (gate) // (Why) 여러 접속이 동시에 같은 방 코드로 들어와도 인원 수를 정확히 세기 위"}]
       },
       {
         "key": "send-timeout",
@@ -1217,6 +1302,25 @@
         "visuals": [{"kind": "table", "n": 1, "fp": "대안|장점|단점"}]
       },
       {
+        "key": "snapshot-apply",
+        "chapter": "decisions",
+        "layout": "visual",
+        "tab": "선택",
+        "title": {"text": "5.4 스냅샷 반영 지점: RoomClient 한곳에서 vs 각 매니저가 직접", "verbatim": true},
+        "lead": {"text": "결과: 두 방식이 섞인 채로 끝났다.", "verbatim": true},
+        "keywords": ["반영 지점", "델리게이트"],
+        "sectionPath": ["5. 고민과 선택", "5.4 스냅샷 반영 지점: RoomClient 한곳에서 vs 각 매니저가 직접"],
+        "points": [
+          {"label": "", "text": "A로 모으는 리팩토링 작업을 올렸지만 프로젝트 안에 끝내지 못했다.", "verbatim": true},
+          {
+            "label": "나중에 다시 한다면",
+            "text": "두 방식의 장점을 합쳐, 각 매니저가 처음에 RoomClient의 델리게이트를 구독하고 OnSnapshot에서는 Invoke만 하도록 바꾸겠다",
+            "verbatim": true
+          }
+        ],
+        "visuals": [{"kind": "table", "n": 1, "fp": "대안|장점|단점"}]
+      },
+      {
         "key": "host-guest",
         "chapter": "decisions",
         "layout": "full",
@@ -1336,6 +1440,6 @@
         "visuals": []
       }
     ],
-    "applied": "75643f47c2b5cfd0"
+    "applied": "df03dc41ef341921"
   }
 }
