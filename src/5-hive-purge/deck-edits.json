@@ -1,0 +1,159 @@
+{
+  "schemaVersion": 1,
+  "pin": [
+    {
+      "key": "attack-cycle",
+      "after": "attack-flow",
+      "chapter": "core",
+      "layout": "code",
+      "tab": "구현",
+      "title": {
+        "text": "3.3 공격 사이클: `MonsterAttack.Tick`",
+        "verbatim": true
+      },
+      "lead": {
+        "text": "공격 클래스는 템플릿 메서드 형태로 되어 있다.",
+        "verbatim": true
+      },
+      "keywords": [
+        "템플릿 메서드",
+        "단계 4개",
+        "nextReadyTime"
+      ],
+      "sectionPath": [
+        "3. 핵심 기능",
+        "3.3 공격 사이클: `MonsterAttack.Tick`"
+      ],
+      "points": [
+        {
+          "label": "Windup 예고",
+          "text": "매 틱 대상 쪽으로 몸을 돌리고, 예고 시간(TelegraphTime)이 지나면 Active로 넘어간다.",
+          "verbatim": true
+        },
+        {
+          "label": "Active 공격",
+          "text": "판정 시각(Active 시작 + Active 길이 × HitTimeRatio)부터 OnActive를 매 틱 부른다.",
+          "verbatim": true
+        },
+        {
+          "label": "Recover 회복",
+          "text": "회복 시간(RecoveryTime) 동안 멈춰, 플레이어에게 반격 기회를 준다.",
+          "verbatim": true
+        },
+        {
+          "label": "Cooldown 대기",
+          "text": "회복이 끝나는 순간 nextReadyTime을 정하고 공격을 끝낸다.",
+          "verbatim": true
+        }
+      ],
+      "visuals": [
+        {
+          "kind": "code",
+          "n": 1,
+          "fp": "// code/MonsterAttack.cs:197-228",
+          "lines": [
+            6,
+            29
+          ]
+        }
+      ],
+      "from": {
+        "key": "attack-cycle",
+        "sectionPath": [
+          "3. 핵심 기능",
+          "3.3 공격 사이클: `MonsterAttack.Tick`"
+        ],
+        "sig": [
+          "3.3 공격 사이클: MonsterAttack.Tick|code|1|// code/MonsterAttack.cs:197-228"
+        ]
+      }
+    },
+    {
+      "key": "wave-hierarchy",
+      "chapter": "core",
+      "layout": "visual",
+      "tab": "구조",
+      "title": {
+        "text": "3.7 웨이브와 풀 — 왜 라운드 안에 스테이지를 뒀나",
+        "verbatim": false
+      },
+      "lead": null,
+      "keywords": [
+        "시간대마다 위협",
+        "스테이지",
+        "라운드 → 스포너"
+      ],
+      "points": [
+        {
+          "label": "이유",
+          "text": "한 라운드 안에서도 시간대마다 위협을 바꿔, 플레이어가 한 자리에 머물지 않고 계속 움직이게 하고 싶었다.",
+          "verbatim": true
+        },
+        {
+          "label": "",
+          "text": "초반에는 사방에서 근접 몬스터가 몰려오고, 중반에는 독안개로 한 자리에 버티기 어렵게 만든 뒤 측면·공중 몬스터와 보급으로 이동을 유도한다.",
+          "verbatim": true
+        },
+        {
+          "label": "",
+          "text": "후반에는 돌진형이 합류해 수류탄으로 포위를 뚫고 나가게 한다.",
+          "verbatim": true
+        },
+        {
+          "label": "구현",
+          "text": "이렇게 시간대별 몬스터 묶음을 나누려고 라운드와 웨이브 사이에 스테이지를 하나 더 두었다.",
+          "verbatim": true
+        }
+      ],
+      "sectionPath": [
+        "3. 핵심 기능",
+        "3.7 웨이브와 풀"
+      ],
+      "visuals": [
+        {
+          "kind": "mermaid",
+          "n": 1,
+          "fp": "flowchart LR"
+        }
+      ],
+      "from": {
+        "key": "wave-hierarchy",
+        "sectionPath": [
+          "3. 핵심 기능",
+          "3.7 웨이브와 풀"
+        ],
+        "sig": [
+          "3.7 웨이브와 풀|mermaid|1|flowchart LR"
+        ]
+      },
+      "group": "merge-wave-hierarchy"
+    }
+  ],
+  "hide": [
+    {
+      "key": "animator-state",
+      "from": {
+        "key": "animator-state",
+        "sectionPath": [
+          "3. 핵심 기능",
+          "3.5 상태·공격 단계를 Animator에 잇기"
+        ],
+        "sig": [
+          "3.5 상태·공격 단계를 Animator에 잇기|code|1|// code/MonsterController.cs:330-352, 364-372"
+        ]
+      }
+    },
+    {
+      "key": "wave-threat",
+      "from": {
+        "key": "wave-threat",
+        "sectionPath": [
+          "3. 핵심 기능",
+          "3.7 웨이브와 풀"
+        ],
+        "sig": []
+      },
+      "group": "merge-wave-hierarchy"
+    }
+  ]
+}

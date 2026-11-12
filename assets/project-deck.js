@@ -14,7 +14,7 @@
   const info = (PFScene.info = { page: 'project', id, t: {}, summary: {}, overflow: [], errors: [], unresolved: [], notes: [], mode: '' });
   const mark = (k) => { info.t[k] = Math.round(performance.now()); };
   const { esc, inline, shortUrl, DOT, link } = PF;
-  const MAXL = 20;                                                     // 코드 한 장면 20줄 안팎(Q8), 넘으면 "계속" 장면
+  const MAXL = 24;                                                     // 코드 한 장면 24줄까지(이 포크: 20 → 24), 넘으면 "계속" 장면
 
   // ── 옛 주소(결정 G3) ──
   //   #s=… · #<숫자> · #s-n · 새 장면 id → 덱이 받음(옛 장면 id는 그린 뒤 remapHash가 바꿈) / #pf-doc → 상세 문서 /
@@ -212,7 +212,7 @@
     return `<div class="dk dk-side${tight}" style="--vw:${variant.vw}fr">${vis(vs)}${ncards(points, { num: true })}</div>`;
   }
 
-  // 장면 하나(나뉠 수 있음): 코드 줄 범위 20줄 단위, 표는 넘치면 행을 반으로
+  // 장면 하나(나뉠 수 있음): 코드 줄 범위 MAXL줄 단위, 표는 넘치면 행을 반으로
   function slideScenes(sl, sid, meta) {
     const vis = sl._v || [];
     const code = vis.find((v) => v.ref.kind === 'code' && (v.status === 'ok' || v.status === 'changed'));
