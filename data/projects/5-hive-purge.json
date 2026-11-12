@@ -505,21 +505,6 @@
         "visuals": [{"kind": "table", "n": 1, "fp": "C# 쪽에서 일어난 일|넣는 Animator 파라미터"}]
       },
       {
-        "key": "animator-attack",
-        "chapter": "core",
-        "layout": "code",
-        "tab": "구현",
-        "title": {"text": "3.5 Animator에 잇기 — 공격 단계", "verbatim": false},
-        "lead": {"text": "공격 클립은 공격 Active 단계가 시작될 때 재생한다.", "verbatim": true},
-        "keywords": ["OnAttackPhaseChanged", "AttackSpeed", "Active 단계"],
-        "sectionPath": ["3. 핵심 기능", "3.5 상태·공격 단계를 Animator에 잇기"],
-        "points": [
-          {"label": "", "text": "Chase 안의 멈춤·이동은 C# 상태를 늘리지 않고 IsMoving 하나로 Animator에서 나눈다.", "verbatim": true},
-          {"label": "", "text": "이동 자체가 공격인 돌진은 Attack 클립을 쓰지 않고, Move 클립을 돌진 속도에 맞춰 재생한다.", "verbatim": true}
-        ],
-        "visuals": [{"kind": "code", "n": 1, "fp": "// code/MonsterController.cs:330-352, 364-372", "lines": [26, 35]}]
-      },
-      {
         "key": "feedback",
         "chapter": "core",
         "layout": "full",
@@ -607,9 +592,9 @@
           {"kind": "table", "n": 1, "fp": "표|한 행에 들어 있는 것"},
           {
             "kind": "image",
-            "src": "images/wave-studio.png",
-            "w": 1600,
-            "h": 900,
+            "src": "images/wave-timeline-vis.png",
+            "w": 1518,
+            "h": 669,
             "caption": {"text": "AI로 만든 웨이브 편집 도구(Wave Studio)로 본 라운드 1 일정", "verbatim": true}
           }
         ]
@@ -1149,18 +1134,6 @@
         "visuals": [{"kind": "table", "n": 1, "fp": "C# 쪽에서 일어난 일|넣는 Animator 파라미터"}]
       },
       {
-        "key": "animator-state",
-        "chapter": "core",
-        "layout": "code",
-        "tab": "구현",
-        "title": {"text": "3.5 Animator에 잇기 — 상태 바뀜", "verbatim": false},
-        "lead": {"text": "상태가 바뀌면 OnStateChanged, 공격 단계가 바뀌면 OnAttackPhaseChanged가 Animator 파라미터를 넣는다.", "verbatim": true},
-        "keywords": ["OnStateChanged", "IsStunned", "Death"],
-        "sectionPath": ["3. 핵심 기능", "3.5 상태·공격 단계를 Animator에 잇기"],
-        "points": [],
-        "visuals": [{"kind": "code", "n": 1, "fp": "// code/MonsterController.cs:330-352, 364-372", "lines": [2, 24]}]
-      },
-      {
         "key": "animator-attack",
         "chapter": "core",
         "layout": "code",
@@ -1222,13 +1195,13 @@
         ]
       },
       {
-        "key": "wave-threat",
+        "key": "wave-hierarchy",
         "chapter": "core",
-        "layout": "overview",
-        "tab": "선택",
+        "layout": "visual",
+        "tab": "구조",
         "title": {"text": "3.7 웨이브와 풀 — 왜 라운드 안에 스테이지를 뒀나", "verbatim": false},
         "lead": null,
-        "keywords": ["시간대마다 위협", "독안개", "스테이지"],
+        "keywords": ["시간대마다 위협", "스테이지", "라운드 → 스포너"],
         "sectionPath": ["3. 핵심 기능", "3.7 웨이브와 풀"],
         "points": [
           {"label": "이유", "text": "한 라운드 안에서도 시간대마다 위협을 바꿔, 플레이어가 한 자리에 머물지 않고 계속 움직이게 하고 싶었다.", "verbatim": true},
@@ -1240,18 +1213,6 @@
           {"label": "", "text": "후반에는 돌진형이 합류해 수류탄으로 포위를 뚫고 나가게 한다.", "verbatim": true},
           {"label": "구현", "text": "이렇게 시간대별 몬스터 묶음을 나누려고 라운드와 웨이브 사이에 스테이지를 하나 더 두었다.", "verbatim": true}
         ],
-        "visuals": []
-      },
-      {
-        "key": "wave-hierarchy",
-        "chapter": "core",
-        "layout": "visual",
-        "tab": "구조",
-        "title": {"text": "3.7 웨이브와 풀 — 표 4개의 계층", "verbatim": false},
-        "lead": null,
-        "keywords": ["라운드", "스테이지", "스포너"],
-        "points": [],
-        "sectionPath": ["3. 핵심 기능", "3.7 웨이브와 풀"],
         "visuals": [{"kind": "mermaid", "n": 1, "fp": "flowchart LR"}]
       },
       {
@@ -1274,9 +1235,9 @@
           {"kind": "table", "n": 1, "fp": "표|한 행에 들어 있는 것"},
           {
             "kind": "image",
-            "src": "images/wave-studio.png",
-            "w": 1600,
-            "h": 900,
+            "src": "images/wave-timeline-vis.png",
+            "w": 1518,
+            "h": 669,
             "caption": {"text": "AI로 만든 웨이브 편집 도구(Wave Studio)로 본 라운드 1 일정", "verbatim": true}
           }
         ]
@@ -1488,6 +1449,6 @@
         "visuals": [{"kind": "table", "n": 1, "fp": "부채|내용"}]
       }
     ],
-    "applied": "a3669a06b28049be"
+    "applied": "5804bce7506fed91"
   }
 }
