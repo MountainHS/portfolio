@@ -38,7 +38,7 @@
 
 - `preview.cmd`(더블클릭) 또는 `.\preview.ps1 [all|portfolio|deck|doc|report|server|stop] [프로젝트 폴더]`로 엽니다. 편집 서버(`edit-server.py`, 포트 4600)를 켜고 페이지를 브라우저로 엽니다.
 - 4600 포트를 `python -m http.server`가 쓰고 있으면 편집 모드가 꺼지므로 `.\preview.ps1 stop` 뒤 다시 켭니다. 사용자에게 미리보기를 안내할 때도 이 스크립트를 먼저 알려 줍니다.
-- Claude 안에서는 `/local-preview [portfolio|deck|doc|all|report|server|stop] [프로젝트 폴더]`(`.claude/skills/local-preview/`)가 같은 `preview.ps1`을 불러 엽니다. 페이지 종류를 빼면(인자 없음·폴더만) 포트폴리오 문서만 열고, 발표 덱·상세 문서는 `deck`·`doc`·`all`을 적었을 때만 엽니다(`preview.cmd` 더블클릭 기본은 그대로 `all`). 이름이 `portfolio-`로 시작하지 않아 `/portfolio-update`의 교체 목록 밖입니다.
+- Claude 안에서는 `/local-preview [portfolio|deck|doc|all|report|server|stop] [프로젝트 폴더]`(`.claude/skills/local-preview/`)가 같은 `preview.ps1`을 불러 엽니다. 페이지 종류를 빼면(인자 없음·폴더만) 포트폴리오 문서만 열고, 발표 덱·상세 문서는 `deck`·`doc`·`all`을 적었을 때만 엽니다(`preview.cmd` 더블클릭·`preview.ps1` 인자 없음도 같은 기본값 `portfolio`). 이름이 `portfolio-`로 시작하지 않아 `/portfolio-update`의 교체 목록 밖입니다.
 
 ## 포트폴리오 문서 편집 모드 (이 포크 전용)
 

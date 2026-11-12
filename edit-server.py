@@ -124,9 +124,17 @@ class EditHandler(SimpleHTTPRequestHandler):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, directory=str(ROOT), **kwargs)
 
+    def end_headers(self):
+        """모든 응답(정적 파일·JSON·ping)에 캐시 금지를 붙입니다.
+
+        같은 주소(127.0.0.1:4600)를 다른 레포가 번갈아 쓰므로, 브라우저가 이전 레포의 index.html·JS를 휴리스틱으로 재사용하지 않게 합니다.
+        """
+        self.send_header("Cache-Control", "no-store")
+        super().end_headers()
+
     def do_GET(self):
         if self.path == "/__edit/ping":
-            self.send_json(200, {"ok": True})
+            self.send_json(200, {"ok": True, "root": str(ROOT)})   # preview.ps1이 다른 폴더의 서버를 재사용하지 않도록 폴더를 알려 줌
             return
         relative_path = requested_file(self.path)
         patched = load_edit_mode_patch().patch_file(ROOT, relative_path)   # 요청마다 다시 읽음 → 넣는 줄을 고쳐도 서버를 다시 켜지 않아도 됨
@@ -141,12 +149,11 @@ class EditHandler(SimpleHTTPRequestHandler):
 
         relative_path: 레포 루트 기준 경로(Content-Type을 정할 때 씀)
         data: 보낼 바이트(edit-mode-patch.py의 patch_file이 돌려준 것)
-        Cache-Control: no-store — http.server는 파일 날짜만 보고 304를 주므로, 넣는 줄을 고쳐도 예전 글이 남지 않게 캐시를 끕니다.
+        캐시 금지 헤더는 end_headers가 모든 응답에 붙입니다(http.server는 파일 날짜만 보고 304를 주므로, 넣는 줄을 고쳐도 예전 글이 남지 않게).
         """
         self.send_response(200)
         self.send_header("Content-Type", self.guess_type(relative_path))
         self.send_header("Content-Length", str(len(data)))
-        self.send_header("Cache-Control", "no-store")
         self.end_headers()
         self.wfile.write(data)
 

@@ -25,7 +25,7 @@ argument-hint: "[portfolio|deck|doc|all|report|server|stop] [프로젝트 폴더
 | `stop` | `preview.ps1 stop` |
 
 - 페이지 종류: `portfolio`(기본) · `deck` · `doc` · `all`(세 페이지) · `report`(루트 `report.md` + `report/<폴더>.md`) · `server`(서버만) · `stop`(4600 포트 서버 끄기).
-- 인자가 없으면 `preview.ps1`에 `portfolio`를 붙여 부릅니다. `preview.ps1`만 부르면 그 기본값 `all`(더블클릭 `preview.cmd`와 같음)로 세 페이지가 열리므로, 페이지 종류를 빼고 부르지 않습니다.
+- 인자가 없으면 `preview.ps1`에 `portfolio`를 붙여 부릅니다. `preview.ps1`의 기본값도 `portfolio`라서(더블클릭 `preview.cmd`와 같음) 같은 결과지만, 의도가 분명하도록 페이지 종류를 붙여 부릅니다.
 - 첫 인자가 위 종류가 아니고 `src/<그 이름>/` 폴더가 있으면 프로젝트 폴더로 보고 `portfolio`를 앞에 붙입니다. 명령 패널의 "미리보기 띄우기" 버튼(`/local-preview <고른 폴더>`)도 이 경우라 포트폴리오 문서만 엽니다.
 - 둘 다 아니면 실행하지 않고, 쓸 수 있는 종류와 `src/`의 폴더 목록(`_`로 시작하는 폴더 제외)을 보여 줍니다.
 

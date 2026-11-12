@@ -3,7 +3,8 @@
   로컬 미리보기를 한 번에 엽니다. 편집 서버(edit-server.py)를 띄우고 포트폴리오 문서·발표 덱·상세 문서를 브라우저로 엽니다.
 
 .EXAMPLE
-  .\preview.ps1                 # 서버 켜고 세 페이지 모두 열기 (첫 프로젝트)
+  .\preview.ps1                 # 서버 켜고 포트폴리오 문서만 열기 (= .\preview.ps1 portfolio)
+  .\preview.ps1 all             # 세 페이지 모두 열기 (첫 프로젝트)
   .\preview.ps1 doc             # 상세 문서만
   .\preview.ps1 deck 3-mini-ftl # 특정 프로젝트의 발표 덱만
   .\preview.ps1 report          # 요약판 report.md와 프로젝트 report 열기
@@ -12,7 +13,7 @@
 #>
 param(
     [ValidateSet('all', 'portfolio', 'deck', 'doc', 'report', 'server', 'stop')]
-    [string]$Page = 'all',
+    [string]$Page = 'portfolio',
     [string]$Project = ''
 )
 
@@ -69,8 +70,19 @@ function Stop-PreviewServer {
 function Start-EditServer {
     $isEditServerRunning = Test-Url "$BaseUrl/__edit/ping"
     if ($isEditServerRunning) {
-        Write-Host "편집 서버가 이미 켜져 있습니다: $BaseUrl"
-        return
+        # ping의 root가 이 폴더와 다르면(또는 root가 없는 옛 서버) 다른 폴더의 서버이므로 끄고 새로 켭니다.
+        $servedRoot = $null
+        try {
+            $servedRoot = (Invoke-RestMethod -Uri "$BaseUrl/__edit/ping" -TimeoutSec 2).root
+        } catch { }
+        $isSameFolder = ($null -ne $servedRoot) -and ($servedRoot -ieq $Root)
+        if ($isSameFolder) {
+            Write-Host "편집 서버가 이미 켜져 있습니다: $BaseUrl"
+            return
+        }
+        Write-Warning "포트 $Port 의 서버가 이 폴더의 것이 아닙니다(서버 폴더: $servedRoot). 끄고 이 폴더로 다시 켭니다."
+        Stop-PreviewServer
+        Start-Sleep -Milliseconds 500
     }
 
     $isOtherServerRunning = $null -ne (Get-PortProcessId)
