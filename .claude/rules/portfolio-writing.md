@@ -1,7 +1,17 @@
+---
+paths:
+  - "src/**"
+  - "data/**"
+  - "report/**"
+  - "report.md"
+  - "format/**"
+  - ".claude/skills/portfolio-*/**"
+---
+
 # 문서·발표 덱 작성 지침 (이 포크 전용, 항상 적용)
 
 > 읽는 쪽: 이 레포에서 일하는 Claude Code 메인 세션과 그 하위 에이전트.
-> 이 파일은 `.claude/rules/`에 있어 세션마다 자동으로 실린다. `/portfolio-update`의 교체 목록(`format/`·루트 `CLAUDE.md`·`.claude/skills/portfolio-*/`·렌더러)에 없으므로 원본 템플릿이 바뀌어도 남는다.
+> 이 파일은 `.claude/rules/`에 있고, 위 `paths`의 파일(기술 문서·데이터·리포트·`format/`·포트폴리오 스킬)을 읽거나 고칠 때 자동으로 실린다. `/portfolio-update`의 교체 목록(`format/`·루트 `CLAUDE.md`·`.claude/skills/portfolio-*/`·렌더러)에 없으므로 원본 템플릿이 바뀌어도 남는다.
 > 우선순위: 루트 `CLAUDE.md` 원칙 1~6(지어내지 않음·대신 고쳐 쓰지 않음 등) > 이 파일 > `format/`·`.claude/skills/portfolio-*`. 이 파일과 `format/`·스킬이 다르면 이 파일을 따른다(「기존 규칙과 다른 점」).
 
 ## 이 레포에서 규칙이 걸리는 자리
