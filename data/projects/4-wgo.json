@@ -384,7 +384,7 @@
           {"label": "", "text": "RoomHub 타이머가 틱마다 모든 방의 SendGuestInputsToHostAsync를 동시에 부른다.", "verbatim": true},
           {"label": "", "text": "방은 게스트마다 LastInput을 \"꺼내면서 비우고\", 입력이 하나라도 있으면 묶어서 호스트에게 보낸다.", "verbatim": true}
         ],
-        "visuals": [{"kind": "code", "n": 1, "lines": [1, 20], "fp": "public async Task SendGuestInputsToHostAsync()"}]
+        "visuals": [{"kind": "code", "n": 1, "lines": [8, 28], "fp": "public async Task SendGuestInputsToHostAsync()"}]
       },
       {
         "key": "snapshot-channel",
@@ -521,7 +521,7 @@
           {
             "kind": "code",
             "n": 1,
-            "lines": [4, 23],
+            "lines": [2, 23],
             "fp": "// WorldItemSnapshotSynchronizer.ApplyFishes — 게스트에서 RoomCli"
           }
         ]
@@ -567,14 +567,7 @@
           },
           {"label": "", "text": "즉, 필수 자원을 확보한 뒤 건설에 필요한 점수를 최대한 낭비 없이 충족하고, 나머지 자원은 플레이어가 보유하도록 한다.", "verbatim": true}
         ],
-        "visuals": [
-          {
-            "kind": "code",
-            "n": 1,
-            "lines": [3, 22],
-            "fp": "public void BridgeBuild() // 호스트에서만 불림 (Bridge.OnCollisionSt"
-          }
-        ]
+        "visuals": [{"kind": "code", "n": 1, "fp": "public void BridgeBuild() // 호스트에서만 불림 (Bridge.OnCollisionSt"}]
       },
       {
         "key": "sync-model",
@@ -774,6 +767,21 @@
         "edited": true
       },
       {
+        "key": "ts-host-dup",
+        "chapter": "results",
+        "layout": "problem",
+        "tab": "문제 해결",
+        "title": {"text": "6.2-3 스냅샷에 호스트 플레이어가 두 번 들어감 (클라이언트)", "verbatim": true},
+        "lead": null,
+        "keywords": ["remotes", "Me 중복"],
+        "sectionPath": ["6. 결과 및 배운 점", "6.2 문제 해결 경험", "6.2-3 스냅샷에 호스트 플레이어가 두 번 들어감 (클라이언트)"],
+        "points": [
+          {"label": "원인", "text": "플레이어 목록 remotes에 자기 자신도 들어 있는데, 스냅샷을 만들 때 Me를 따로 한 번 더 넣었다.", "verbatim": true},
+          {"label": "해결", "text": "별도 추가를 지우고 remotes만 순회한다.", "verbatim": true}
+        ],
+        "visuals": []
+      },
+      {
         "key": "ts-bridge-count",
         "chapter": "results",
         "layout": "problem",
@@ -790,6 +798,49 @@
           },
           {"label": "해결", "text": "개수를 필드로 즉시 올리고, 게스트는 늘어난 칸만 켠다(4.6).", "verbatim": true},
           {"label": "배운 점", "text": "인게임 오브젝트(뷰)로 개수를 추적하지 않고 자체 데이터로 증감해야 처리가 일관되고, 변경과 확장에도 쉽다.", "verbatim": true}
+        ],
+        "visuals": []
+      },
+      {
+        "key": "ts-rejoin",
+        "chapter": "results",
+        "layout": "problem",
+        "tab": "문제 해결",
+        "title": {"text": "6.2-5 게임이 끝난 뒤 다시 들어가면 종료 상태가 남음 (클라이언트)", "verbatim": true},
+        "lead": null,
+        "keywords": ["종료 상태", "welcome", "ClearInfo"],
+        "sectionPath": ["6. 결과 및 배운 점", "6.2 문제 해결 경험", "6.2-5 게임이 끝난 뒤 다시 들어가면 종료 상태가 남음 (클라이언트)"],
+        "points": [
+          {"label": "문제", "text": "게임 종료 후 같은 방으로 다시 들어가면 이전 판의 종료 상태가 그대로 보였다.", "verbatim": true},
+          {
+            "label": "해결",
+            "text": "welcome을 받을 때 플레이어 목록과 승패 집계 등 매니저의 주요 멤버를 모두 초기화한다(ClearInfo, GameManager.ResetNetworkPlayerCounts).",
+            "verbatim": true
+          }
+        ],
+        "visuals": []
+      },
+      {
+        "key": "ts-keyboard",
+        "chapter": "results",
+        "layout": "problem",
+        "tab": "문제 해결",
+        "title": {"text": "6.2-6 강의실 키보드가 동시에 2~3키만 인식함 (환경)", "verbatim": true},
+        "lead": null,
+        "keywords": ["동시 입력", "마우스 잡기"],
+        "sectionPath": ["6. 결과 및 배운 점", "6.2 문제 해결 경험", "6.2-6 강의실 키보드가 동시에 2~3키만 인식함 (환경)"],
+        "points": [
+          {
+            "label": "문제",
+            "text": "기존 조작(WASD + 왼쪽 Shift + 오른쪽 Shift)은 여러 키를 동시에 눌러야 했는데, 강의실 키보드가 동시 입력을 2~3개만 인식했다.",
+            "verbatim": true
+          },
+          {
+            "label": "해결",
+            "text": "잡기를 마우스 좌·우 클릭으로 바꿨다. 네트워크 메시지 필드 이름(IsLeftShiftHold, IsRightShiftHold)은 그대로 두고 값만 마우스 버튼에서 채운다.",
+            "verbatim": true
+          },
+          {"label": "배운 점", "text": "기획 단계의 입력 설계가 실제 실행 환경에서 그대로 동작하는지 먼저 확인해야 한다.", "verbatim": true}
         ],
         "visuals": []
       }
@@ -1032,7 +1083,7 @@
           {"label": "", "text": "RoomHub 타이머가 틱마다 모든 방의 SendGuestInputsToHostAsync를 동시에 부른다.", "verbatim": true},
           {"label": "", "text": "방은 게스트마다 LastInput을 \"꺼내면서 비우고\", 입력이 하나라도 있으면 묶어서 호스트에게 보낸다.", "verbatim": true}
         ],
-        "visuals": [{"kind": "code", "n": 1, "lines": [1, 20], "fp": "public async Task SendGuestInputsToHostAsync()"}]
+        "visuals": [{"kind": "code", "n": 1, "lines": [8, 28], "fp": "public async Task SendGuestInputsToHostAsync()"}]
       },
       {
         "key": "snapshot-channel",
@@ -1047,7 +1098,7 @@
           {"label": "", "text": "호스트 스냅샷이 오면 서버는 직접 보내지 않고, 호스트를 뺀 멤버마다 있는 채널에 넣기만 한다.", "verbatim": true},
           {"label": "", "text": "채널 크기는 1이고, 꽉 차면 오래된 것을 버린다. 느린 멤버에게는 밀린 스냅샷이 쌓이지 않고 가장 최신 것만 간다.", "verbatim": true}
         ],
-        "visuals": [{"kind": "code", "n": 1, "lines": [1, 20], "fp": "// Member 안: 멤버마다 크기 1짜리 채널"}]
+        "visuals": [{"kind": "code", "n": 1, "lines": [1, 21], "fp": "// Member 안: 멤버마다 크기 1짜리 채널"}]
       },
       {
         "key": "snapshot-send-loop",
@@ -1095,18 +1146,11 @@
         "chapter": "features",
         "layout": "code",
         "tab": "구현",
-        "title": {"text": "4.3 방 수명과 연결 예외 처리", "verbatim": true},
+        "title": {"text": "4.3 방 수명과 연결 예외 처리 — 송신 타임아웃과 실패 표시", "verbatim": false},
         "lead": null,
-        "keywords": ["인원 제한", "9초 제한", "송신 실패"],
+        "keywords": ["9초 제한", "SendLock", "송신 실패"],
         "sectionPath": ["4. 핵심 기능", "4.3 방 수명과 연결 예외 처리"],
-        "points": [
-          {
-            "label": "",
-            "text": "호스트 퇴장: 호스트가 나가면 roomExpired = true와 취소 토큰으로 남은 멤버의 수신 대기를 모두 깨워 연결을 닫는다.",
-            "verbatim": true
-          },
-          {"label": "", "text": "소켓 연결 중 예외로 한쪽이 비정상 종료되면 반대편도 이상해질 수 있어, 송신 실패는 반드시 한 곳에서 처리하게 했다.", "verbatim": true}
-        ],
+        "points": [{"label": "", "text": "소켓 연결 중 예외로 한쪽이 비정상 종료되면 반대편도 이상해질 수 있어, 송신 실패는 반드시 한 곳에서 처리하게 했다.", "verbatim": true}],
         "visuals": [
           {
             "kind": "code",
@@ -1172,7 +1216,7 @@
           {
             "kind": "code",
             "n": 1,
-            "lines": [4, 23],
+            "lines": [2, 23],
             "fp": "// WorldItemSnapshotSynchronizer.ApplyFishes — 게스트에서 RoomCli"
           }
         ]
@@ -1218,14 +1262,7 @@
           },
           {"label": "", "text": "즉, 필수 자원을 확보한 뒤 건설에 필요한 점수를 최대한 낭비 없이 충족하고, 나머지 자원은 플레이어가 보유하도록 한다.", "verbatim": true}
         ],
-        "visuals": [
-          {
-            "kind": "code",
-            "n": 1,
-            "lines": [3, 22],
-            "fp": "public void BridgeBuild() // 호스트에서만 불림 (Bridge.OnCollisionSt"
-          }
-        ]
+        "visuals": [{"kind": "code", "n": 1, "fp": "public void BridgeBuild() // 호스트에서만 불림 (Bridge.OnCollisionSt"}]
       },
       {
         "key": "sync-model",
@@ -1420,6 +1457,21 @@
         "visuals": []
       },
       {
+        "key": "ts-host-dup",
+        "chapter": "results",
+        "layout": "problem",
+        "tab": "문제 해결",
+        "title": {"text": "6.2-3 스냅샷에 호스트 플레이어가 두 번 들어감 (클라이언트)", "verbatim": true},
+        "lead": null,
+        "keywords": ["remotes", "Me 중복"],
+        "sectionPath": ["6. 결과 및 배운 점", "6.2 문제 해결 경험", "6.2-3 스냅샷에 호스트 플레이어가 두 번 들어감 (클라이언트)"],
+        "points": [
+          {"label": "원인", "text": "플레이어 목록 remotes에 자기 자신도 들어 있는데, 스냅샷을 만들 때 Me를 따로 한 번 더 넣었다.", "verbatim": true},
+          {"label": "해결", "text": "별도 추가를 지우고 remotes만 순회한다.", "verbatim": true}
+        ],
+        "visuals": []
+      },
+      {
         "key": "ts-bridge-count",
         "chapter": "results",
         "layout": "problem",
@@ -1438,8 +1490,51 @@
           {"label": "배운 점", "text": "인게임 오브젝트(뷰)로 개수를 추적하지 않고 자체 데이터로 증감해야 처리가 일관되고, 변경과 확장에도 쉽다.", "verbatim": true}
         ],
         "visuals": []
+      },
+      {
+        "key": "ts-rejoin",
+        "chapter": "results",
+        "layout": "problem",
+        "tab": "문제 해결",
+        "title": {"text": "6.2-5 게임이 끝난 뒤 다시 들어가면 종료 상태가 남음 (클라이언트)", "verbatim": true},
+        "lead": null,
+        "keywords": ["종료 상태", "welcome", "ClearInfo"],
+        "sectionPath": ["6. 결과 및 배운 점", "6.2 문제 해결 경험", "6.2-5 게임이 끝난 뒤 다시 들어가면 종료 상태가 남음 (클라이언트)"],
+        "points": [
+          {"label": "문제", "text": "게임 종료 후 같은 방으로 다시 들어가면 이전 판의 종료 상태가 그대로 보였다.", "verbatim": true},
+          {
+            "label": "해결",
+            "text": "welcome을 받을 때 플레이어 목록과 승패 집계 등 매니저의 주요 멤버를 모두 초기화한다(ClearInfo, GameManager.ResetNetworkPlayerCounts).",
+            "verbatim": true
+          }
+        ],
+        "visuals": []
+      },
+      {
+        "key": "ts-keyboard",
+        "chapter": "results",
+        "layout": "problem",
+        "tab": "문제 해결",
+        "title": {"text": "6.2-6 강의실 키보드가 동시에 2~3키만 인식함 (환경)", "verbatim": true},
+        "lead": null,
+        "keywords": ["동시 입력", "마우스 잡기"],
+        "sectionPath": ["6. 결과 및 배운 점", "6.2 문제 해결 경험", "6.2-6 강의실 키보드가 동시에 2~3키만 인식함 (환경)"],
+        "points": [
+          {
+            "label": "문제",
+            "text": "기존 조작(WASD + 왼쪽 Shift + 오른쪽 Shift)은 여러 키를 동시에 눌러야 했는데, 강의실 키보드가 동시 입력을 2~3개만 인식했다.",
+            "verbatim": true
+          },
+          {
+            "label": "해결",
+            "text": "잡기를 마우스 좌·우 클릭으로 바꿨다. 네트워크 메시지 필드 이름(IsLeftShiftHold, IsRightShiftHold)은 그대로 두고 값만 마우스 버튼에서 채운다.",
+            "verbatim": true
+          },
+          {"label": "배운 점", "text": "기획 단계의 입력 설계가 실제 실행 환경에서 그대로 동작하는지 먼저 확인해야 한다.", "verbatim": true}
+        ],
+        "visuals": []
       }
     ],
-    "applied": "df03dc41ef341921"
+    "applied": "2bac1e23f6a8affd"
   }
 }

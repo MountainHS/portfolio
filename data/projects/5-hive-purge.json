@@ -299,6 +299,23 @@
         "visuals": [{"kind": "table", "n": 1, "fp": "클래스|맡은 일"}]
       },
       {
+        "key": "split-reason",
+        "chapter": "structure",
+        "layout": "overview",
+        "tab": "선택",
+        "title": {"text": "2.2 왜 이렇게 나눴나", "verbatim": true},
+        "lead": null,
+        "keywords": ["추상 클래스", "Update 하나", "직접 참조 금지"],
+        "sectionPath": ["2. 시스템 구조", "2.2 왜 이렇게 나눴나"],
+        "points": [
+          {"label": "", "text": "공격은 추상 클래스 하나로 묶었다.", "verbatim": true},
+          {"label": "", "text": "몬스터의 판단은 `MonsterController.Update` 하나에 매달린다.", "verbatim": true},
+          {"label": "", "text": "공격 도중에 죽어도 기존 행동이 다 무효가 되고 바로 사망 처리된다.", "verbatim": true},
+          {"label": "", "text": "다른 파트와는 팀 규칙대로 직접 참조하지 않는다.", "verbatim": true}
+        ],
+        "visuals": []
+      },
+      {
         "key": "frame",
         "chapter": "structure",
         "layout": "visual",
@@ -319,7 +336,7 @@
         "lead": {"text": "죽었으면 시체만 진행하고, 살아 있으면 대상 확보 → 공격 튜닝 → 피격 슬로우 종료 → 상태 판단 → 이동 애니메이션 순서로 돈다.", "verbatim": true},
         "keywords": ["시체만 진행", "상태 판단", "공격 중 사망"],
         "sectionPath": ["3. 핵심 기능", "3.1 매 프레임 진입점: `MonsterController.Update`"],
-        "points": [],
+        "points": [{"label": "", "text": "별도의 \"공격 중 사망\" 처리 없이 이 구조로 막았다.", "verbatim": true}],
         "visuals": [{"kind": "code", "n": 1, "fp": "// code/MonsterController.cs:281-295"}]
       },
       {
@@ -331,7 +348,14 @@
         "lead": {"text": "모든 몬스터는 같은 상태 5개(Idle·Chase·Attack·Stunned·Dead)를 쓴다.", "verbatim": true},
         "keywords": ["상태 5개", "기본 세 상태", "기절·사망"],
         "sectionPath": ["3. 핵심 기능", "3.2 상태 머신: 상태 5개와 전이"],
-        "points": [{"label": "", "text": "이 그림에서 볼 것은 기본 세 상태(Idle·Chase·Attack)가 돌고, 기절·사망은 어디서든 끼어든다는 점이다.", "verbatim": true}],
+        "points": [
+          {"label": "", "text": "이 그림에서 볼 것은 기본 세 상태(Idle·Chase·Attack)가 돌고, 기절·사망은 어디서든 끼어든다는 점이다.", "verbatim": true},
+          {
+            "label": "",
+            "text": "상태마다 `Enter`(들어올 때 1번)·`Tick`(머무는 동안 매 프레임)·`Exit`(나갈 때 1번)가 있고, 다음 상태로 갈지는 각 상태의 `Tick` 안에서 직접 판단한다.",
+            "verbatim": true
+          }
+        ],
         "visuals": [{"kind": "mermaid", "n": 1, "fp": "stateDiagram-v2"}]
       },
       {
@@ -365,10 +389,16 @@
         "tab": "구현",
         "title": {"text": "3.2 상태 머신 — AttackState", "verbatim": false},
         "lead": {"text": "상태 머신과 공격이 만나는 곳은 AttackState 하나다.", "verbatim": true},
-        "keywords": ["AttackState", "FinishAttackCycle", "WallHit"],
+        "keywords": ["AttackState", "공격 진행", "다음 공격"],
         "sectionPath": ["3. 핵심 기능", "3.2 상태 머신: 상태 5개와 전이"],
-        "points": [{"label": "", "text": "돌진이 벽에 막혀 끝나면(WallHit) 행선지 대신 기절(Stunned)로 간다.", "verbatim": true}],
-        "visuals": [{"kind": "code", "n": 1, "fp": "// code/AttackState.cs:23-43, 51-77", "lines": [2, 21]}]
+        "points": [
+          {
+            "label": "",
+            "text": "공격이 진행 중이면 공격의 `Tick`만 부르고, 공격이 끝난 그 프레임에 `FinishAttackCycle`이 행선지를 정한다.",
+            "verbatim": true
+          }
+        ],
+        "visuals": [{"kind": "code", "n": 1, "fp": "// code/AttackState.cs:23-43, 51-77", "lines": [2, 22]}]
       },
       {
         "key": "change-state",
@@ -380,7 +410,7 @@
         "keywords": ["ChangeState", "Exit → Enter", "StateChanged"],
         "sectionPath": ["3. 핵심 기능", "3.2 상태 머신: 상태 5개와 전이"],
         "points": [
-          {"label": "", "text": "순서는 이전 상태 Exit → 새 상태 Enter → StateChanged 알림이다.", "verbatim": true},
+          {"label": "", "text": "순서는 이전 상태 `Exit` → 새 상태 `Enter` → `StateChanged` 알림이다.", "verbatim": true},
           {"label": "", "text": "Dead가 된 뒤의 변경은 무시한다.", "verbatim": true}
         ],
         "visuals": [{"kind": "code", "n": 2, "fp": "// code/MonsterStateMachine.cs:174-184"}]
@@ -393,11 +423,11 @@
         "title": {"text": "3.3 공격 사이클 — 단계 흐름", "verbatim": false},
         "lead": {"text": "모든 공격은 같은 순서(예고 Windup → 공격 Active → 회복 Recover)를 따른다.", "verbatim": true},
         "keywords": ["Windup", "Active·Recover", "Cooldown"],
-        "points": [
-          {"label": "", "text": "쿨다운은 회복이 끝난 뒤 다음 Begin까지 기다리는 시간이다.", "verbatim": true},
-          {"label": "", "text": "공격 단계(SkillPhase)에는 들어 있지 않다.", "verbatim": true}
-        ],
         "sectionPath": ["3. 핵심 기능", "3.3 공격 사이클: `MonsterAttack.Tick`"],
+        "points": [
+          {"label": "", "text": "쿨다운은 회복이 끝난 뒤 다음 `Begin`까지 기다리는 시간이다.", "verbatim": true},
+          {"label": "", "text": "공격 단계(`SkillPhase`)에는 들어 있지 않다.", "verbatim": true}
+        ],
         "visuals": [{"kind": "mermaid", "n": 1, "fp": "flowchart LR"}]
       },
       {
@@ -428,8 +458,8 @@
         "layout": "code",
         "tab": "구현",
         "title": {"text": "3.3 공격 사이클 — 자식 클래스가 채우는 훅", "verbatim": false},
-        "lead": null,
-        "keywords": ["훅 4개", "OnActive", "EndEarly"],
+        "lead": {"text": "자식 클래스(공격 6종)는 각 단계에서 실제로 할 일만 훅 4개(OnWindup·OnActive·OnRecover·OnCancel)로 채운다.", "verbatim": true},
+        "keywords": ["훅 4개", "OnActive", "OnCancel"],
         "sectionPath": ["3. 핵심 기능", "3.3 공격 사이클: `MonsterAttack.Tick`"],
         "points": [],
         "visuals": [{"kind": "code", "n": 2, "fp": "// code/MonsterAttack.cs:259-272"}]
@@ -441,7 +471,7 @@
         "tab": "구현",
         "title": {"text": "3.3 공격 사이클 — 훅과 돌진의 예", "verbatim": false},
         "lead": null,
-        "keywords": ["OnWindup", "OnActive", "OnCancel"],
+        "keywords": ["OnWindup", "EndEarly", "ChargeAttack"],
         "sectionPath": ["3. 핵심 기능", "3.3 공격 사이클: `MonsterAttack.Tick`"],
         "points": [],
         "visuals": [{"kind": "table", "n": 1, "fp": "훅|언제 불리나|돌진(ChargeAttack)의 예"}]
@@ -489,7 +519,7 @@
         "lead": {"text": "새 공격 방식은 공격 클래스 1개와 case 1줄로 추가한다.", "verbatim": true},
         "keywords": ["몬스터 역할", "공격 6종", "FindSettings"],
         "sectionPath": ["3. 핵심 기능", "3.4 공격 갈아 끼우기: `MonsterAttackFactory.CreateAttack`"],
-        "points": [],
+        "points": [{"label": "", "text": "몬스터 역할(Role) 하나에 공격 클래스 하나가 대응한다.", "verbatim": true}],
         "visuals": [{"kind": "code", "n": 1, "fp": "// code/MonsterAttackFactory.cs:27-42"}]
       },
       {
@@ -600,16 +630,34 @@
         ]
       },
       {
+        "key": "wave-director",
+        "chapter": "core",
+        "layout": "code",
+        "tab": "구현",
+        "title": {"text": "3.7 웨이브와 풀 — 디렉터의 한 프레임", "verbatim": false},
+        "lead": {"text": "그 뒤 매 프레임 라운드 시간을 진행하고, 실행 중인 스테이지를 Tick한 다음 시작 시각이 된 스테이지를 시작한다.", "verbatim": true},
+        "keywords": ["라운드 시간", "스테이지 시작", "미리 만들기"],
+        "sectionPath": ["3. 핵심 기능", "3.7 웨이브와 풀"],
+        "points": [
+          {"label": "", "text": "스테이지를 시작하기 직전에 그 스테이지에서 나올 몬스터 수의 50%(종류마다 최소 10마리)를 풀에 미리 만들어 둔다", "verbatim": true},
+          {"label": "", "text": "다음 스테이지가 시작돼도 이전 스테이지를 멈추지 않는다.", "verbatim": true}
+        ],
+        "visuals": [{"kind": "code", "n": 2, "fp": "// code/MonsterWaveDirector.cs:125-134"}]
+      },
+      {
         "key": "pool",
         "chapter": "core",
         "layout": "code",
         "tab": "구현",
         "title": {"text": "3.7 웨이브와 풀 — 풀", "verbatim": false},
-        "lead": null,
+        "lead": {"text": "풀은 종류마다 스택을 두 개 둔다", "verbatim": true},
         "keywords": ["스택 두 개", "Respawn", "꺼진 채로"],
         "sectionPath": ["3. 핵심 기능", "3.7 웨이브와 풀"],
-        "points": [{"label": "", "text": "돌려받은 개체는 꺼진 채로 위치를 옮긴 뒤 켠다.", "verbatim": true}],
-        "visuals": [{"kind": "code", "n": 3, "fp": "// code/MonsterPool.cs:180-205", "lines": [2, 21]}]
+        "points": [
+          {"label": "", "text": "돌려받은 개체는 꺼진 채로 위치를 옮긴 뒤 켠다.", "verbatim": true},
+          {"label": "", "text": "시체가 남아 있는 동안은 회수하지 않는다.", "verbatim": true}
+        ],
+        "visuals": [{"kind": "code", "n": 3, "fp": "// code/MonsterPool.cs:180-205", "lines": [2, 23]}]
       },
       {
         "key": "shader",
@@ -618,7 +666,7 @@
         "tab": "결과",
         "title": {"text": "3.8 사이드: 셰이더 (AI 작성)", "verbatim": true},
         "lead": null,
-        "keywords": ["HLSL 셰이더", "EliteAura", "TerrainDiscMesh"],
+        "keywords": ["HLSL 셰이더", "EliteAura", "독 장판"],
         "sectionPath": ["3. 핵심 기능", "3.8 사이드: 셰이더 (AI 작성)"],
         "points": [],
         "visuals": [
@@ -646,16 +694,53 @@
         ]
       },
       {
+        "key": "attack-context",
+        "chapter": "choices",
+        "layout": "overview",
+        "tab": "선택",
+        "title": {"text": "4.1 공격 구조 — 당시 상황과 첫 요청", "verbatim": false},
+        "lead": {"text": "몬스터 행동 상태, 공격 전략 모두 바뀔 가능성이 크니까 oop, 디자인 패턴을 적극적으로 적용해서 먼저 어떻게 설계할지 나에게 설명해봐.", "verbatim": true},
+        "keywords": ["바뀔 가능성", "첫 요청", "NUnit 테스트"],
+        "sectionPath": ["4. 고민과 선택", "4.1 공격 구조: 인터페이스 + 추상 클래스에서 추상 클래스로"],
+        "points": [
+          {"label": "당시 상황", "text": "몬스터 공격은 핵심 기능이면서도 바뀔 가능성이 높았다.", "verbatim": true},
+          {"label": "", "text": "프로토타입부터 상태 전이·공격을 하드 코딩하면 나중에 힘들어질 것 같았다.", "verbatim": true},
+          {"label": "", "text": "AI가 Unity 없이 도는 NUnit 테스트를 제안했고, 나는 그대로 받아들였다.", "verbatim": true}
+        ],
+        "visuals": []
+      },
+      {
         "key": "ai-process",
         "chapter": "choices",
         "layout": "full",
         "tab": "선택",
         "title": {"text": "4.1 공격 구조 — AI와 함께 한 과정", "verbatim": false},
-        "lead": {"text": "AI가 Unity 없이 도는 NUnit 테스트를 제안했고, 나는 그대로 받아들였다.", "verbatim": true},
-        "keywords": ["첫 프롬프트", "AI가 한 것", "내 판단"],
-        "points": [],
+        "lead": null,
+        "keywords": ["AI가 한 것", "내 판단", "단계별 검증"],
         "sectionPath": ["4. 고민과 선택", "4.1 공격 구조: 인터페이스 + 추상 클래스에서 추상 클래스로"],
+        "points": [],
         "visuals": [{"kind": "table", "n": 2, "fp": "단계|AI가 한 것|내가 판단·수정한 것"}]
+      },
+      {
+        "key": "refactor-why",
+        "chapter": "choices",
+        "layout": "overview",
+        "tab": "선택",
+        "title": {"text": "4.1 공격 구조 — 왜 정리했나", "verbatim": false},
+        "lead": {"text": "사실상 지금 Assets/Scripts/Monster 여기에 사용된 인터페이스 몇개는 추상클래스와 다를바가 없거든?", "verbatim": true},
+        "keywords": ["리뷰 범위", "일회용 추상화", "인터페이스 기준"],
+        "sectionPath": ["4. 고민과 선택", "4.1 공격 구조: 인터페이스 + 추상 클래스에서 추상 클래스로"],
+        "points": [
+          {
+            "label": "",
+            "text": "처음 구조는 한 번에 크게 들어왔고, 커밋된 코드를 본 뒤에야 내가 코드 리뷰하기 힘든 너무 넓은 범위의 작업을 AI에게 맡겼다는 걸 깨달았다.",
+            "verbatim": true
+          },
+          {"label": "", "text": "인터페이스가 테스트를 위한 일회용 추상화 그 이상, 그 이하도 아니어서 코드 읽기가 너무 힘들었다.", "verbatim": true},
+          {"label": "기준", "text": "인터페이스는 구현이 2개 이상이거나 백로그에 확장 예정이 있을 때만 만든다.", "verbatim": true},
+          {"label": "", "text": "테스트를 편하게 하려는 목적만으로는 만들지 않는다.", "verbatim": true}
+        ],
+        "visuals": []
       },
       {
         "key": "abstraction",
@@ -664,9 +749,20 @@
         "tab": "선택",
         "title": {"text": "4.1 공격 구조: 인터페이스 + 추상 클래스에서 추상 클래스로", "verbatim": true},
         "lead": {"text": "인터페이스는 구현이 2개 이상이거나 백로그에 확장 예정이 있을 때만 만든다.", "verbatim": true},
-        "keywords": ["추상 클래스", "인터페이스 기준", "PlayMode"],
+        "keywords": ["추상 클래스", "인터페이스 삭제", "PlayMode"],
         "sectionPath": ["4. 고민과 선택", "4.1 공격 구조: 인터페이스 + 추상 클래스에서 추상 클래스로"],
-        "points": [],
+        "points": [
+          {
+            "label": "결과",
+            "text": "정리 전후 테스트 48개가 모두 통과했다(정리 전 EditMode 48개 → 정리 후 EditMode 14 + PlayMode 34, Unity CLI 결과 기록).",
+            "verbatim": true
+          },
+          {
+            "label": "결과",
+            "text": "인터페이스 4개(`IMonsterAttack`·`IMonsterBody`·`IMonsterMover`·`ISlotNavigation`)를 지웠다.",
+            "verbatim": true
+          }
+        ],
         "visuals": [{"kind": "table", "n": 1, "fp": "|처음|정리 후 (지금)"}]
       },
       {
@@ -687,10 +783,13 @@
         "layout": "full",
         "tab": "선택",
         "title": {"text": "4.3 애니메이션: 코드 강제 전환 대신 Animator 상태 전이", "verbatim": true},
-        "lead": null,
+        "lead": {"text": "공격 클립이 끝나기 전에 상태가 바뀌어 attack → idle → attack처럼 부자연스러웠다.", "verbatim": true},
         "keywords": ["Base Controller", "Override", "Animator 창"],
         "sectionPath": ["4. 고민과 선택", "4.3 애니메이션: 코드 강제 전환 대신 Animator 상태 전이"],
-        "points": [],
+        "points": [
+          {"label": "", "text": "공용 Base Controller 1개 + 몬스터별 Override Controller 11개.", "verbatim": true},
+          {"label": "", "text": "새 몬스터는 클립만 끼우면 된다.", "verbatim": true}
+        ],
         "visuals": [{"kind": "table", "n": 1, "fp": "방법|장점|단점"}]
       },
       {
@@ -702,8 +801,28 @@
         "lead": null,
         "keywords": ["셰이더 5개", "밸런스 기준선", "웨이브 테마"],
         "sectionPath": ["4. 고민과 선택", "4.4 AI 도구를 어떻게 썼나"],
-        "points": [],
+        "points": [{"label": "돌아보면", "text": "처음 공격 구조를 한 번에 크게 맡긴 것은 너무 넓었다.", "verbatim": true}],
         "visuals": [{"kind": "table", "n": 1, "fp": "맡긴 것|내가 정한 것"}]
+      },
+      {
+        "key": "team-structure",
+        "chapter": "choices",
+        "layout": "overview",
+        "tab": "선택",
+        "title": {"text": "4.5 팀 구조: ServiceLocator와 EventBus를 쓰면서", "verbatim": true},
+        "lead": {"text": "ServiceLocator·EventBus는 팀원이 만든 팀 공용 구조다.", "verbatim": true},
+        "keywords": ["ServiceLocator", "EventBus", "인터페이스 주입"],
+        "sectionPath": ["4. 고민과 선택", "4.5 팀 구조: ServiceLocator와 EventBus를 쓰면서"],
+        "points": [
+          {
+            "label": "편했던 점",
+            "text": "플레이어 객체 같은 주요 개체를 싱글톤으로 만들거나 특정 클래스에서 노출할 필요 없이, `ServiceLocator` 하나가 주요 정보를 인터페이스로 저장해 공유할 수 있었다.",
+            "verbatim": true
+          },
+          {"label": "", "text": "실제 클래스가 없어도 모두가 그 규약을 가정하고 빠르게 진행할 수 있었다.", "verbatim": true},
+          {"label": "의문", "text": "몬스터 풀처럼 직접 참조해도 무방해 보이는 것까지 인터페이스로 한 번 거르는 게 맞는지는 아직 확신이 없다.", "verbatim": true}
+        ],
+        "visuals": []
       },
       {
         "key": "result",
@@ -739,7 +858,7 @@
           },
           {
             "label": "해결",
-            "text": "시체 단계를 Alive → Lying → Sinking → Gone으로 나누고, 고정 시간 대신 Gone이 되면 회수하게 했다.",
+            "text": "시체 단계를 `Alive → Lying → Sinking → Gone`으로 나누고, 고정 시간 대신 `Gone`이 되면 회수하게 했다.",
             "verbatim": true
           },
           {"label": "결과", "text": "시체가 누웠다가 가라앉은 뒤 풀로 돌아간다.", "verbatim": true}
@@ -929,6 +1048,23 @@
         "visuals": [{"kind": "table", "n": 1, "fp": "클래스|맡은 일"}]
       },
       {
+        "key": "split-reason",
+        "chapter": "structure",
+        "layout": "overview",
+        "tab": "선택",
+        "title": {"text": "2.2 왜 이렇게 나눴나", "verbatim": true},
+        "lead": null,
+        "keywords": ["추상 클래스", "Update 하나", "직접 참조 금지"],
+        "sectionPath": ["2. 시스템 구조", "2.2 왜 이렇게 나눴나"],
+        "points": [
+          {"label": "", "text": "공격은 추상 클래스 하나로 묶었다.", "verbatim": true},
+          {"label": "", "text": "몬스터의 판단은 `MonsterController.Update` 하나에 매달린다.", "verbatim": true},
+          {"label": "", "text": "공격 도중에 죽어도 기존 행동이 다 무효가 되고 바로 사망 처리된다.", "verbatim": true},
+          {"label": "", "text": "다른 파트와는 팀 규칙대로 직접 참조하지 않는다.", "verbatim": true}
+        ],
+        "visuals": []
+      },
+      {
         "key": "frame",
         "chapter": "structure",
         "layout": "visual",
@@ -949,7 +1085,7 @@
         "lead": {"text": "죽었으면 시체만 진행하고, 살아 있으면 대상 확보 → 공격 튜닝 → 피격 슬로우 종료 → 상태 판단 → 이동 애니메이션 순서로 돈다.", "verbatim": true},
         "keywords": ["시체만 진행", "상태 판단", "공격 중 사망"],
         "sectionPath": ["3. 핵심 기능", "3.1 매 프레임 진입점: `MonsterController.Update`"],
-        "points": [],
+        "points": [{"label": "", "text": "별도의 \"공격 중 사망\" 처리 없이 이 구조로 막았다.", "verbatim": true}],
         "visuals": [{"kind": "code", "n": 1, "fp": "// code/MonsterController.cs:281-295"}]
       },
       {
@@ -961,7 +1097,14 @@
         "lead": {"text": "모든 몬스터는 같은 상태 5개(Idle·Chase·Attack·Stunned·Dead)를 쓴다.", "verbatim": true},
         "keywords": ["상태 5개", "기본 세 상태", "기절·사망"],
         "sectionPath": ["3. 핵심 기능", "3.2 상태 머신: 상태 5개와 전이"],
-        "points": [{"label": "", "text": "이 그림에서 볼 것은 기본 세 상태(Idle·Chase·Attack)가 돌고, 기절·사망은 어디서든 끼어든다는 점이다.", "verbatim": true}],
+        "points": [
+          {"label": "", "text": "이 그림에서 볼 것은 기본 세 상태(Idle·Chase·Attack)가 돌고, 기절·사망은 어디서든 끼어든다는 점이다.", "verbatim": true},
+          {
+            "label": "",
+            "text": "상태마다 `Enter`(들어올 때 1번)·`Tick`(머무는 동안 매 프레임)·`Exit`(나갈 때 1번)가 있고, 다음 상태로 갈지는 각 상태의 `Tick` 안에서 직접 판단한다.",
+            "verbatim": true
+          }
+        ],
         "visuals": [{"kind": "mermaid", "n": 1, "fp": "stateDiagram-v2"}]
       },
       {
@@ -995,10 +1138,16 @@
         "tab": "구현",
         "title": {"text": "3.2 상태 머신 — AttackState", "verbatim": false},
         "lead": {"text": "상태 머신과 공격이 만나는 곳은 AttackState 하나다.", "verbatim": true},
-        "keywords": ["AttackState", "FinishAttackCycle", "WallHit"],
+        "keywords": ["AttackState", "공격 진행", "다음 공격"],
         "sectionPath": ["3. 핵심 기능", "3.2 상태 머신: 상태 5개와 전이"],
-        "points": [{"label": "", "text": "돌진이 벽에 막혀 끝나면(WallHit) 행선지 대신 기절(Stunned)로 간다.", "verbatim": true}],
-        "visuals": [{"kind": "code", "n": 1, "fp": "// code/AttackState.cs:23-43, 51-77", "lines": [2, 21]}]
+        "points": [
+          {
+            "label": "",
+            "text": "공격이 진행 중이면 공격의 `Tick`만 부르고, 공격이 끝난 그 프레임에 `FinishAttackCycle`이 행선지를 정한다.",
+            "verbatim": true
+          }
+        ],
+        "visuals": [{"kind": "code", "n": 1, "fp": "// code/AttackState.cs:23-43, 51-77", "lines": [2, 22]}]
       },
       {
         "key": "change-state",
@@ -1010,7 +1159,7 @@
         "keywords": ["ChangeState", "Exit → Enter", "StateChanged"],
         "sectionPath": ["3. 핵심 기능", "3.2 상태 머신: 상태 5개와 전이"],
         "points": [
-          {"label": "", "text": "순서는 이전 상태 Exit → 새 상태 Enter → StateChanged 알림이다.", "verbatim": true},
+          {"label": "", "text": "순서는 이전 상태 `Exit` → 새 상태 `Enter` → `StateChanged` 알림이다.", "verbatim": true},
           {"label": "", "text": "Dead가 된 뒤의 변경은 무시한다.", "verbatim": true}
         ],
         "visuals": [{"kind": "code", "n": 2, "fp": "// code/MonsterStateMachine.cs:174-184"}]
@@ -1023,11 +1172,11 @@
         "title": {"text": "3.3 공격 사이클 — 단계 흐름", "verbatim": false},
         "lead": {"text": "모든 공격은 같은 순서(예고 Windup → 공격 Active → 회복 Recover)를 따른다.", "verbatim": true},
         "keywords": ["Windup", "Active·Recover", "Cooldown"],
-        "points": [
-          {"label": "", "text": "쿨다운은 회복이 끝난 뒤 다음 Begin까지 기다리는 시간이다.", "verbatim": true},
-          {"label": "", "text": "공격 단계(SkillPhase)에는 들어 있지 않다.", "verbatim": true}
-        ],
         "sectionPath": ["3. 핵심 기능", "3.3 공격 사이클: `MonsterAttack.Tick`"],
+        "points": [
+          {"label": "", "text": "쿨다운은 회복이 끝난 뒤 다음 `Begin`까지 기다리는 시간이다.", "verbatim": true},
+          {"label": "", "text": "공격 단계(`SkillPhase`)에는 들어 있지 않다.", "verbatim": true}
+        ],
         "visuals": [{"kind": "mermaid", "n": 1, "fp": "flowchart LR"}]
       },
       {
@@ -1040,14 +1189,18 @@
         "keywords": ["템플릿 메서드", "단계 4개", "nextReadyTime"],
         "sectionPath": ["3. 핵심 기능", "3.3 공격 사이클: `MonsterAttack.Tick`"],
         "points": [
-          {"label": "Windup 예고", "text": "매 틱 대상 쪽으로 몸을 돌리고, 예고 시간(TelegraphTime)이 지나면 Active로 넘어간다.", "verbatim": true},
           {
-            "label": "Active 공격",
-            "text": "판정 시각(Active 시작 + Active 길이 × HitTimeRatio)부터 OnActive를 매 틱 부른다.",
+            "label": "Windup 예고",
+            "text": "매 틱 대상 쪽으로 몸을 돌리고, 예고 시간(`TelegraphTime`)이 지나면 Active로 넘어간다.",
             "verbatim": true
           },
-          {"label": "Recover 회복", "text": "회복 시간(RecoveryTime) 동안 멈춰, 플레이어에게 반격 기회를 준다.", "verbatim": true},
-          {"label": "Cooldown 대기", "text": "회복이 끝나는 순간 nextReadyTime을 정하고 공격을 끝낸다.", "verbatim": true}
+          {
+            "label": "Active 공격",
+            "text": "판정 시각(Active 시작 + Active 길이 × `HitTimeRatio`)부터 `OnActive`를 매 틱 부른다.",
+            "verbatim": true
+          },
+          {"label": "Recover 회복", "text": "회복 시간(`RecoveryTime`) 동안 멈춰, 플레이어에게 반격 기회를 준다.", "verbatim": true},
+          {"label": "Cooldown 대기", "text": "회복이 끝나는 순간 `nextReadyTime`을 정하고 공격을 끝낸다.", "verbatim": true}
         ],
         "visuals": [{"kind": "code", "n": 1, "fp": "// code/MonsterAttack.cs:197-228", "lines": [6, 29]}]
       },
@@ -1057,8 +1210,8 @@
         "layout": "code",
         "tab": "구현",
         "title": {"text": "3.3 공격 사이클 — 자식 클래스가 채우는 훅", "verbatim": false},
-        "lead": null,
-        "keywords": ["훅 4개", "OnActive", "EndEarly"],
+        "lead": {"text": "자식 클래스(공격 6종)는 각 단계에서 실제로 할 일만 훅 4개(OnWindup·OnActive·OnRecover·OnCancel)로 채운다.", "verbatim": true},
+        "keywords": ["훅 4개", "OnActive", "OnCancel"],
         "sectionPath": ["3. 핵심 기능", "3.3 공격 사이클: `MonsterAttack.Tick`"],
         "points": [],
         "visuals": [{"kind": "code", "n": 2, "fp": "// code/MonsterAttack.cs:259-272"}]
@@ -1070,7 +1223,7 @@
         "tab": "구현",
         "title": {"text": "3.3 공격 사이클 — 훅과 돌진의 예", "verbatim": false},
         "lead": null,
-        "keywords": ["OnWindup", "OnActive", "OnCancel"],
+        "keywords": ["OnWindup", "EndEarly", "ChargeAttack"],
         "sectionPath": ["3. 핵심 기능", "3.3 공격 사이클: `MonsterAttack.Tick`"],
         "points": [],
         "visuals": [{"kind": "table", "n": 1, "fp": "훅|언제 불리나|돌진(ChargeAttack)의 예"}]
@@ -1118,7 +1271,7 @@
         "lead": {"text": "새 공격 방식은 공격 클래스 1개와 case 1줄로 추가한다.", "verbatim": true},
         "keywords": ["몬스터 역할", "공격 6종", "FindSettings"],
         "sectionPath": ["3. 핵심 기능", "3.4 공격 갈아 끼우기: `MonsterAttackFactory.CreateAttack`"],
-        "points": [],
+        "points": [{"label": "", "text": "몬스터 역할(Role) 하나에 공격 클래스 하나가 대응한다.", "verbatim": true}],
         "visuals": [{"kind": "code", "n": 1, "fp": "// code/MonsterAttackFactory.cs:27-42"}]
       },
       {
@@ -1143,7 +1296,7 @@
         "keywords": ["OnAttackPhaseChanged", "AttackSpeed", "Active 단계"],
         "sectionPath": ["3. 핵심 기능", "3.5 상태·공격 단계를 Animator에 잇기"],
         "points": [
-          {"label": "", "text": "Chase 안의 멈춤·이동은 C# 상태를 늘리지 않고 IsMoving 하나로 Animator에서 나눈다.", "verbatim": true},
+          {"label": "", "text": "Chase 안의 멈춤·이동은 C# 상태를 늘리지 않고 `IsMoving` 하나로 Animator에서 나눈다.", "verbatim": true},
           {"label": "", "text": "이동 자체가 공격인 돌진은 Attack 클립을 쓰지 않고, Move 클립을 돌진 속도에 맞춰 재생한다.", "verbatim": true}
         ],
         "visuals": [{"kind": "code", "n": 1, "fp": "// code/MonsterController.cs:330-352, 364-372", "lines": [26, 34]}]
@@ -1195,13 +1348,13 @@
         ]
       },
       {
-        "key": "wave-hierarchy",
+        "key": "wave-threat",
         "chapter": "core",
-        "layout": "visual",
-        "tab": "구조",
+        "layout": "overview",
+        "tab": "개요",
         "title": {"text": "3.7 웨이브와 풀 — 왜 라운드 안에 스테이지를 뒀나", "verbatim": false},
         "lead": null,
-        "keywords": ["시간대마다 위협", "스테이지", "라운드 → 스포너"],
+        "keywords": ["시간대마다 위협", "스테이지", "계속 움직이게"],
         "sectionPath": ["3. 핵심 기능", "3.7 웨이브와 풀"],
         "points": [
           {"label": "이유", "text": "한 라운드 안에서도 시간대마다 위협을 바꿔, 플레이어가 한 자리에 머물지 않고 계속 움직이게 하고 싶었다.", "verbatim": true},
@@ -1210,9 +1363,20 @@
             "text": "초반에는 사방에서 근접 몬스터가 몰려오고, 중반에는 독안개로 한 자리에 버티기 어렵게 만든 뒤 측면·공중 몬스터와 보급으로 이동을 유도한다.",
             "verbatim": true
           },
-          {"label": "", "text": "후반에는 돌진형이 합류해 수류탄으로 포위를 뚫고 나가게 한다.", "verbatim": true},
-          {"label": "구현", "text": "이렇게 시간대별 몬스터 묶음을 나누려고 라운드와 웨이브 사이에 스테이지를 하나 더 두었다.", "verbatim": true}
+          {"label": "", "text": "후반에는 돌진형이 합류해 수류탄으로 포위를 뚫고 나가게 한다.", "verbatim": true}
         ],
+        "visuals": []
+      },
+      {
+        "key": "wave-hierarchy",
+        "chapter": "core",
+        "layout": "visual",
+        "tab": "구조",
+        "title": {"text": "3.7 웨이브와 풀 — 4계층 흐름", "verbatim": false},
+        "lead": null,
+        "keywords": ["라운드 → 스포너", "스테이지", "WaveTable"],
+        "sectionPath": ["3. 핵심 기능", "3.7 웨이브와 풀"],
+        "points": [{"label": "구현", "text": "이렇게 시간대별 몬스터 묶음을 나누려고 라운드와 웨이브 사이에 스테이지를 하나 더 두었다.", "verbatim": true}],
         "visuals": [{"kind": "mermaid", "n": 1, "fp": "flowchart LR"}]
       },
       {
@@ -1243,16 +1407,34 @@
         ]
       },
       {
+        "key": "wave-director",
+        "chapter": "core",
+        "layout": "code",
+        "tab": "구현",
+        "title": {"text": "3.7 웨이브와 풀 — 디렉터의 한 프레임", "verbatim": false},
+        "lead": {"text": "그 뒤 매 프레임 라운드 시간을 진행하고, 실행 중인 스테이지를 Tick한 다음 시작 시각이 된 스테이지를 시작한다.", "verbatim": true},
+        "keywords": ["라운드 시간", "스테이지 시작", "미리 만들기"],
+        "sectionPath": ["3. 핵심 기능", "3.7 웨이브와 풀"],
+        "points": [
+          {"label": "", "text": "스테이지를 시작하기 직전에 그 스테이지에서 나올 몬스터 수의 50%(종류마다 최소 10마리)를 풀에 미리 만들어 둔다", "verbatim": true},
+          {"label": "", "text": "다음 스테이지가 시작돼도 이전 스테이지를 멈추지 않는다.", "verbatim": true}
+        ],
+        "visuals": [{"kind": "code", "n": 2, "fp": "// code/MonsterWaveDirector.cs:125-134"}]
+      },
+      {
         "key": "pool",
         "chapter": "core",
         "layout": "code",
         "tab": "구현",
         "title": {"text": "3.7 웨이브와 풀 — 풀", "verbatim": false},
-        "lead": null,
+        "lead": {"text": "풀은 종류마다 스택을 두 개 둔다", "verbatim": true},
         "keywords": ["스택 두 개", "Respawn", "꺼진 채로"],
         "sectionPath": ["3. 핵심 기능", "3.7 웨이브와 풀"],
-        "points": [{"label": "", "text": "돌려받은 개체는 꺼진 채로 위치를 옮긴 뒤 켠다.", "verbatim": true}],
-        "visuals": [{"kind": "code", "n": 3, "fp": "// code/MonsterPool.cs:180-205", "lines": [2, 21]}]
+        "points": [
+          {"label": "", "text": "돌려받은 개체는 꺼진 채로 위치를 옮긴 뒤 켠다.", "verbatim": true},
+          {"label": "", "text": "시체가 남아 있는 동안은 회수하지 않는다.", "verbatim": true}
+        ],
+        "visuals": [{"kind": "code", "n": 3, "fp": "// code/MonsterPool.cs:180-205", "lines": [2, 23]}]
       },
       {
         "key": "shader",
@@ -1261,7 +1443,7 @@
         "tab": "결과",
         "title": {"text": "3.8 사이드: 셰이더 (AI 작성)", "verbatim": true},
         "lead": null,
-        "keywords": ["HLSL 셰이더", "EliteAura", "TerrainDiscMesh"],
+        "keywords": ["HLSL 셰이더", "EliteAura", "독 장판"],
         "sectionPath": ["3. 핵심 기능", "3.8 사이드: 셰이더 (AI 작성)"],
         "points": [],
         "visuals": [
@@ -1289,16 +1471,53 @@
         ]
       },
       {
+        "key": "attack-context",
+        "chapter": "choices",
+        "layout": "overview",
+        "tab": "선택",
+        "title": {"text": "4.1 공격 구조 — 당시 상황과 첫 요청", "verbatim": false},
+        "lead": {"text": "몬스터 행동 상태, 공격 전략 모두 바뀔 가능성이 크니까 oop, 디자인 패턴을 적극적으로 적용해서 먼저 어떻게 설계할지 나에게 설명해봐.", "verbatim": true},
+        "keywords": ["바뀔 가능성", "첫 요청", "NUnit 테스트"],
+        "sectionPath": ["4. 고민과 선택", "4.1 공격 구조: 인터페이스 + 추상 클래스에서 추상 클래스로"],
+        "points": [
+          {"label": "당시 상황", "text": "몬스터 공격은 핵심 기능이면서도 바뀔 가능성이 높았다.", "verbatim": true},
+          {"label": "", "text": "프로토타입부터 상태 전이·공격을 하드 코딩하면 나중에 힘들어질 것 같았다.", "verbatim": true},
+          {"label": "", "text": "AI가 Unity 없이 도는 NUnit 테스트를 제안했고, 나는 그대로 받아들였다.", "verbatim": true}
+        ],
+        "visuals": []
+      },
+      {
         "key": "ai-process",
         "chapter": "choices",
         "layout": "full",
         "tab": "선택",
         "title": {"text": "4.1 공격 구조 — AI와 함께 한 과정", "verbatim": false},
-        "lead": {"text": "AI가 Unity 없이 도는 NUnit 테스트를 제안했고, 나는 그대로 받아들였다.", "verbatim": true},
-        "keywords": ["첫 프롬프트", "AI가 한 것", "내 판단"],
-        "points": [],
+        "lead": null,
+        "keywords": ["AI가 한 것", "내 판단", "단계별 검증"],
         "sectionPath": ["4. 고민과 선택", "4.1 공격 구조: 인터페이스 + 추상 클래스에서 추상 클래스로"],
+        "points": [],
         "visuals": [{"kind": "table", "n": 2, "fp": "단계|AI가 한 것|내가 판단·수정한 것"}]
+      },
+      {
+        "key": "refactor-why",
+        "chapter": "choices",
+        "layout": "overview",
+        "tab": "선택",
+        "title": {"text": "4.1 공격 구조 — 왜 정리했나", "verbatim": false},
+        "lead": {"text": "사실상 지금 Assets/Scripts/Monster 여기에 사용된 인터페이스 몇개는 추상클래스와 다를바가 없거든?", "verbatim": true},
+        "keywords": ["리뷰 범위", "일회용 추상화", "인터페이스 기준"],
+        "sectionPath": ["4. 고민과 선택", "4.1 공격 구조: 인터페이스 + 추상 클래스에서 추상 클래스로"],
+        "points": [
+          {
+            "label": "",
+            "text": "처음 구조는 한 번에 크게 들어왔고, 커밋된 코드를 본 뒤에야 내가 코드 리뷰하기 힘든 너무 넓은 범위의 작업을 AI에게 맡겼다는 걸 깨달았다.",
+            "verbatim": true
+          },
+          {"label": "", "text": "인터페이스가 테스트를 위한 일회용 추상화 그 이상, 그 이하도 아니어서 코드 읽기가 너무 힘들었다.", "verbatim": true},
+          {"label": "기준", "text": "인터페이스는 구현이 2개 이상이거나 백로그에 확장 예정이 있을 때만 만든다.", "verbatim": true},
+          {"label": "", "text": "테스트를 편하게 하려는 목적만으로는 만들지 않는다.", "verbatim": true}
+        ],
+        "visuals": []
       },
       {
         "key": "abstraction",
@@ -1307,9 +1526,20 @@
         "tab": "선택",
         "title": {"text": "4.1 공격 구조: 인터페이스 + 추상 클래스에서 추상 클래스로", "verbatim": true},
         "lead": {"text": "인터페이스는 구현이 2개 이상이거나 백로그에 확장 예정이 있을 때만 만든다.", "verbatim": true},
-        "keywords": ["추상 클래스", "인터페이스 기준", "PlayMode"],
+        "keywords": ["추상 클래스", "인터페이스 삭제", "PlayMode"],
         "sectionPath": ["4. 고민과 선택", "4.1 공격 구조: 인터페이스 + 추상 클래스에서 추상 클래스로"],
-        "points": [],
+        "points": [
+          {
+            "label": "결과",
+            "text": "정리 전후 테스트 48개가 모두 통과했다(정리 전 EditMode 48개 → 정리 후 EditMode 14 + PlayMode 34, Unity CLI 결과 기록).",
+            "verbatim": true
+          },
+          {
+            "label": "결과",
+            "text": "인터페이스 4개(`IMonsterAttack`·`IMonsterBody`·`IMonsterMover`·`ISlotNavigation`)를 지웠다.",
+            "verbatim": true
+          }
+        ],
         "visuals": [{"kind": "table", "n": 1, "fp": "|처음|정리 후 (지금)"}]
       },
       {
@@ -1330,10 +1560,13 @@
         "layout": "full",
         "tab": "선택",
         "title": {"text": "4.3 애니메이션: 코드 강제 전환 대신 Animator 상태 전이", "verbatim": true},
-        "lead": null,
+        "lead": {"text": "공격 클립이 끝나기 전에 상태가 바뀌어 attack → idle → attack처럼 부자연스러웠다.", "verbatim": true},
         "keywords": ["Base Controller", "Override", "Animator 창"],
         "sectionPath": ["4. 고민과 선택", "4.3 애니메이션: 코드 강제 전환 대신 Animator 상태 전이"],
-        "points": [],
+        "points": [
+          {"label": "", "text": "공용 Base Controller 1개 + 몬스터별 Override Controller 11개.", "verbatim": true},
+          {"label": "", "text": "새 몬스터는 클립만 끼우면 된다.", "verbatim": true}
+        ],
         "visuals": [{"kind": "table", "n": 1, "fp": "방법|장점|단점"}]
       },
       {
@@ -1345,8 +1578,28 @@
         "lead": null,
         "keywords": ["셰이더 5개", "밸런스 기준선", "웨이브 테마"],
         "sectionPath": ["4. 고민과 선택", "4.4 AI 도구를 어떻게 썼나"],
-        "points": [],
+        "points": [{"label": "돌아보면", "text": "처음 공격 구조를 한 번에 크게 맡긴 것은 너무 넓었다.", "verbatim": true}],
         "visuals": [{"kind": "table", "n": 1, "fp": "맡긴 것|내가 정한 것"}]
+      },
+      {
+        "key": "team-structure",
+        "chapter": "choices",
+        "layout": "overview",
+        "tab": "선택",
+        "title": {"text": "4.5 팀 구조: ServiceLocator와 EventBus를 쓰면서", "verbatim": true},
+        "lead": {"text": "ServiceLocator·EventBus는 팀원이 만든 팀 공용 구조다.", "verbatim": true},
+        "keywords": ["ServiceLocator", "EventBus", "인터페이스 주입"],
+        "sectionPath": ["4. 고민과 선택", "4.5 팀 구조: ServiceLocator와 EventBus를 쓰면서"],
+        "points": [
+          {
+            "label": "편했던 점",
+            "text": "플레이어 객체 같은 주요 개체를 싱글톤으로 만들거나 특정 클래스에서 노출할 필요 없이, `ServiceLocator` 하나가 주요 정보를 인터페이스로 저장해 공유할 수 있었다.",
+            "verbatim": true
+          },
+          {"label": "", "text": "실제 클래스가 없어도 모두가 그 규약을 가정하고 빠르게 진행할 수 있었다.", "verbatim": true},
+          {"label": "의문", "text": "몬스터 풀처럼 직접 참조해도 무방해 보이는 것까지 인터페이스로 한 번 거르는 게 맞는지는 아직 확신이 없다.", "verbatim": true}
+        ],
+        "visuals": []
       },
       {
         "key": "result",
@@ -1382,7 +1635,7 @@
           },
           {
             "label": "해결",
-            "text": "시체 단계를 Alive → Lying → Sinking → Gone으로 나누고, 고정 시간 대신 Gone이 되면 회수하게 했다.",
+            "text": "시체 단계를 `Alive → Lying → Sinking → Gone`으로 나누고, 고정 시간 대신 `Gone`이 되면 회수하게 했다.",
             "verbatim": true
           },
           {"label": "결과", "text": "시체가 누웠다가 가라앉은 뒤 풀로 돌아간다.", "verbatim": true}
@@ -1449,6 +1702,6 @@
         "visuals": [{"kind": "table", "n": 1, "fp": "부채|내용"}]
       }
     ],
-    "applied": "6b6581f1730686e5"
+    "applied": "a5e1db19b0064a62"
   }
 }
