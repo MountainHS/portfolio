@@ -112,8 +112,7 @@
   document.getElementById('glance').open = !matchMedia('(max-width: 719.98px)').matches;
 
   const zoom = lightbox();
-  let md;                                                             // 편집 모드: renderDoc()이 돌려준 md 원문(try 밖에 두어야 아래 PFDocEdit.attach가 읽음)
-  try { md = await renderDoc(); ready(); }
+  try { await renderDoc(); ready(); }
   catch (err) {                                                       // 그리다 멈추면 "불러오는 중…"에 머물지 않게 이유를 보이고 준비 신호는 냄
     errors.push(String(err && err.stack || err));
     console.error('[doc] 기술 문서를 그리지 못함:', err);
@@ -121,7 +120,6 @@
     if (doc?.querySelector('.loading')) doc.innerHTML = `<p class="error">기술 문서를 그리지 못했습니다 (${esc(err && err.message || err)}).</p>`;
   }
   done();
-  if (md) PFDocEdit.attach({ id, docFile: p.doc, md, docElement: document.getElementById('doc') });   // 로컬 편집 서버(edit-server.py)가 있을 때만 [편집 모드] (assets/doc-edit.js)
 
   // ───────────────────────────────────────────────────────────────
   async function renderDoc() {
@@ -270,7 +268,6 @@
     const pres = [...doc.querySelectorAll('pre')].filter((x) => !x.closest('.mmd-src'));
     pres.forEach((pre) => { fade(pre); pre.addEventListener('scroll', () => fade(pre), { passive: true }); });
     addEventListener('resize', () => pres.forEach(fade));
-    return md;                                                         // 편집 모드가 블록의 md 줄 범위를 찾을 때 씀
   }
 
   function classifyMdLink(a, isRelative, decode) {

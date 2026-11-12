@@ -5,6 +5,8 @@
     python edit-server.py 4601     → 포트 바꾸기
 
 - 정적 파일은 http.server와 똑같이 보냅니다(미리보기 세 페이지 그대로).
+- 단, 템플릿 파일 5개(index.html·project.html·doc.html·assets/doc.js·assets/project-deck.js)는 보낼 때 메모리에서만 편집 모드 줄을 넣습니다.
+  넣는 줄·기준 줄은 .claude/skills/edit-mode-install/edit-mode-patch.py에 있고, 디스크의 파일은 원본 그대로 둡니다(/portfolio-update가 덮어도 그대로 동작).
 - GET  /__edit/ping : 편집 서버가 떠 있다는 신호. assets/doc-edit.js가 이 응답을 받을 때만 상세 문서에 [편집 모드] 버튼을 보입니다.
 - POST /__edit/save : src/ 아래 기술 문서 md의 줄 범위 하나를 새 글로 바꿔 씁니다.
 - POST /__edit/portfolio : 포트폴리오 문서(index.html)의 글 한 칸을 소스(profile.md·기술 문서·deck-edits.json)와 data/에 씁니다.
@@ -18,12 +20,14 @@ import importlib.util
 import json
 import re
 import sys
+import urllib.parse
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
 SRC = ROOT / "src"
 PORTFOLIO_EDITS_SCRIPT = ROOT / ".claude" / "skills" / "portfolio-build" / "portfolio-edits.py"
+EDIT_MODE_PATCH_SCRIPT = ROOT / ".claude" / "skills" / "edit-mode-install" / "edit-mode-patch.py"
 DEFAULT_PORT = 4600
 
 
@@ -94,6 +98,26 @@ def load_portfolio_edits():
     return module
 
 
+def load_edit_mode_patch():
+    """편집 모드 줄 넣기 모듈(edit-mode-patch.py)을 읽습니다. 설치 스킬의 check와 같은 파일을 써서 넣는 줄·기준 줄이 한 곳에만 있게 합니다."""
+    spec = importlib.util.spec_from_file_location("edit_mode_patch", str(EDIT_MODE_PATCH_SCRIPT))
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def requested_file(request_path):
+    """요청 주소를 레포 루트 기준 파일 경로로 바꿉니다(쿼리·# 뺌). 루트 주소(/)는 http.server처럼 index.html입니다.
+
+    request_path: 요청 줄의 경로(예: '/project.html?p=5-hive-purge')
+    돌려줌: '/' 구분 상대 경로(예: 'project.html')
+    """
+    path = urllib.parse.unquote(urllib.parse.urlsplit(request_path).path).lstrip("/")
+    if path == "":
+        return "index.html"
+    return path
+
+
 class EditHandler(SimpleHTTPRequestHandler):
     """정적 파일 + /__edit/ping · /__edit/save · /__edit/portfolio · /__edit/deck 주소만 더한 http.server 처리기입니다."""
 
@@ -104,7 +128,27 @@ class EditHandler(SimpleHTTPRequestHandler):
         if self.path == "/__edit/ping":
             self.send_json(200, {"ok": True})
             return
-        super().do_GET()
+        relative_path = requested_file(self.path)
+        patched = load_edit_mode_patch().patch_file(ROOT, relative_path)   # 요청마다 다시 읽음 → 넣는 줄을 고쳐도 서버를 다시 켜지 않아도 됨
+        if patched is None:
+            super().do_GET()
+            return
+        data = patched[0]                                          # [1]은 멈춘 이유 목록 — 서버를 켤 때 main이 [멈춤]으로 찍음
+        self.send_patched_file(relative_path, data)
+
+    def send_patched_file(self, relative_path, data):
+        """편집 모드 줄을 넣은 템플릿 파일 하나를 보냅니다(멈춘 묶음이면 원본 그대로의 바이트).
+
+        relative_path: 레포 루트 기준 경로(Content-Type을 정할 때 씀)
+        data: 보낼 바이트(edit-mode-patch.py의 patch_file이 돌려준 것)
+        Cache-Control: no-store — http.server는 파일 날짜만 보고 304를 주므로, 넣는 줄을 고쳐도 예전 글이 남지 않게 캐시를 끕니다.
+        """
+        self.send_response(200)
+        self.send_header("Content-Type", self.guess_type(relative_path))
+        self.send_header("Content-Length", str(len(data)))
+        self.send_header("Cache-Control", "no-store")
+        self.end_headers()
+        self.wfile.write(data)
 
     def do_POST(self):
         length = int(self.headers.get("Content-Length", 0))
@@ -167,7 +211,15 @@ def main():
     server = ThreadingHTTPServer(("127.0.0.1", port), EditHandler)
     # localhost로 열면 브라우저가 IPv6(::1)를 먼저 찾아, 같은 포트의 다른 서버(python -m http.server 등)로 갈 수 있음 → 127.0.0.1 주소로 안내
     print(f"미리보기 + 편집 서버: http://127.0.0.1:{port}  (포트폴리오 문서·발표 덱·상세 문서 오른쪽 아래 [편집 모드])  끄기: Ctrl+C")
+    print_edit_mode_stops()
     server.serve_forever()
+
+
+def print_edit_mode_stops():
+    """템플릿 파일 5개의 기준 줄을 한 번 재서, 줄을 넣지 못하는 묶음만 [멈춤]으로 찍습니다(그 페이지는 편집 버튼 없이 원본 그대로 열림)."""
+    for result in load_edit_mode_patch().check_all(ROOT):
+        for problem in result["problems"]:
+            print(f"[멈춤] {result['name']}: {problem} — 이 페이지는 편집 버튼 없이 열립니다")
 
 
 if __name__ == "__main__":

@@ -252,16 +252,6 @@
     });
     return out;
   }
-  // 발표 덱 편집 모드(이 포크 전용, assets/deck-edit.js)가 화면의 글·그림이 data의 어느 장면(key)·몇 번째 시각 자료(visuals 번호)인지 알게 표시를 담
-  //   기술 문서 원문 블록만 표시(data의 스크린샷 목록에서 온 그림 ref.direct는 md 줄이 없어 고칠 수 없음)
-  function markForDeckEdit(s, sl, vis) {
-    s.dataset.pfSlide = sl.key;
-    s.querySelectorAll('.vis > figure.vbox').forEach((figure, i) => {
-      const ref = vis[i]?.ref;
-      const isSourceBlock = ref !== undefined && ref.direct !== true;
-      if (isSourceBlock) figure.dataset.pfVisual = String((sl.visuals || []).indexOf(ref));
-    });
-  }
   //   codeChunk(v) = 그 코드의 이번 줄 범위 · tsplit = { v, rows: [a, b) } 행을 나누는 표 하나(다른 표는 그대로 둠)
   function fitSlide(sl, vis, sid, part, codeChunk, meta, tsplit = null, depth = 0) {
     const vs = vis.map((v) => vboxHtml(v, v.ref.kind === 'code' ? codeChunk(v) : v.ref.kind === 'table' && tsplit && tsplit.v === v ? tsplit.rows : null));
@@ -273,7 +263,6 @@
       if (meta.err) s.dataset.pfErr = meta.err;
       if (sl.edited) s.dataset.pfEdited = '1';                       // 장면 고치기로 고친 장면(미리보기 개요에 ✎)
       PF.body(s).innerHTML = `<div class="pf-fill">${bodyHtml(sl, vs, v)}</div>`;
-      markForDeckEdit(s, sl, vis);                                    // 발표 덱 편집 모드 표시(이 포크 전용, assets/deck-edit.js)
       if (meta.auto) s.querySelector('.pf-foot > span').insertAdjacentHTML('beforeend', '<span class="pf-autoband" data-pf-ui="note">예전 데이터로 자동 구성 — /portfolio-build를 다시 실행하면 발표 덱이 됩니다</span>');
       return PF.fitVisuals(s);
     };
