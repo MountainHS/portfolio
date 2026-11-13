@@ -15,6 +15,7 @@
   const RESTORE_KEY = 'pf-deck-edit-restore';         // 저장 뒤 새로고침에서 편집 모드를 다시 켜는 sessionStorage 키
   const POINT_SELECTOR = '.ncard, .fstep, .fe-card';  // 요점 카드·흐름 칸(문제 해결)·화면 카드 — 장면 안 순서 = data points 순서
   const EDITABLE_FIGURE_SELECTOR = 'figure.vbox:is([data-kind="table"], [data-kind="code"], [data-kind="mermaid"])';   // 그림(image)은 편집에서 뺌
+  const IMAGE_CAPTION_SELECTOR = 'figure.vbox[data-kind="image"] > figcaption.cap';   // 그림 아래 설명 글(코드 캡션은 렌더러가 만든 라벨이라 제외)
   const VISUAL_NAMES = { table: '표', image: '그림', code: '코드', mermaid: '다이어그램' };
   // 덱이 원문 블록을 찾는 지문(md-blocks.js pick). 바꾸면 다시 빌드할 때까지 그 장면에 띠가 뜸
   const FINGERPRINT_PARTS = { table: '표 머리 칸을', image: '그림 경로를', code: '코드 첫 줄을', mermaid: '다이어그램 첫 줄을' };
@@ -96,10 +97,12 @@
     if (slide === undefined) return null;
 
     const figure = target.closest(EDITABLE_FIGURE_SELECTOR);
+    const imageCaption = target.closest(IMAGE_CAPTION_SELECTOR);
     const title = target.closest('.pf-title');
     const lead = target.closest('.pf-lead');
     const point = target.closest(POINT_SELECTOR);
     if (figure !== null) return visualSpot(session, slide, figure);
+    if (imageCaption !== null) return captionSpot(session, slide, imageCaption);
     if (title !== null) return textSpot(session, slide, title, '장면 제목', { field: 'title' });
     if (lead !== null) return textSpot(session, slide, lead, '도입 글', { field: 'lead' });
     if (point !== null) {
@@ -150,9 +153,27 @@
     return { kind, element, label, request: { project: session.source.id, slide: slide.key, ...place }, value };
   }
 
+  /**
+   * 그림 아래 설명 글 → data 장면 visuals[]의 caption. 값의 주인은 data라(project-deck.js가 caption을 먼저 읽음) 장면 글과 같은 길(/__edit/deck)로 저장합니다.
+   * 어느 그림인지 못 가리거나(같은 src가 둘) 캡션이 비었으면 null.
+   */
+  function captionSpot(session, slide, figcaption) {
+    const figure = figcaption.parentElement;
+    const ref = visualRefForFigure(session, slide, figure);
+    if (ref === null) return null;
+    const number = slide.visuals.indexOf(ref) + 1;
+    const value = slideTextValue(slide, { field: 'caption', n: number });
+    if (value === '') return null;
+    return { kind: 'text', element: figcaption, label: '그림 설명', request: { project: session.source.id, slide: slide.key, field: 'caption', n: number }, value };
+  }
+
   /** data 장면의 글 칸 값. 글은 { text, verbatim } 글 조각 또는 글자(schema.md 「글 조각」), 키워드는 글자 목록. 없으면 ''. */
   function slideTextValue(slide, place) {
     if (place.field === 'keywords') return Array.isArray(slide.keywords) ? slide.keywords : '';
+    if (place.field === 'caption') {
+      const caption = slide.visuals?.[place.n - 1]?.caption;
+      return typeof caption === 'string' ? caption : caption?.text || '';
+    }
     const piece = place.field === 'point' ? slide.points?.[place.n - 1] : slide[place.field];
     if (typeof piece === 'string') return piece;
     return piece?.text || '';
@@ -161,12 +182,17 @@
   /**
    * 화면의 figure가 data 장면의 어느 visuals 항목(원문 블록)인지 찾습니다. 못 가리면 null(추측해 엉뚱한 md 줄을 고치지 않음).
    * 같은 종류 후보가 하나면 그것, 여럿이면 코드는 글자 포함·표는 머리 칸 글자·다이어그램은 그려진 순서로 가립니다.
-   * 그림(image)과 스크린샷 목록에서 온 항목(ref.direct)은 후보가 아닙니다.
+   * 스크린샷 목록에서 온 항목(ref.direct)은 후보가 아닙니다. 그림(image)은 src로 가립니다(원문 블록이 아니라 캡션 글 자리를 찾는 데만 씀).
    */
   function visualRefForFigure(session, slide, figure) {
     const kind = figure.dataset.kind;
     if (kind === undefined) return null;
     const candidates = (slide.visuals || []).filter((ref) => ref.kind === kind && ref.direct !== true);
+    if (kind === 'image') {
+      const drawnSource = figure.querySelector('img')?.getAttribute('src');
+      const sameSource = candidates.filter((ref) => PF.srcPath(session.source.id, ref.src) === drawnSource);
+      return sameSource.length === 1 ? sameSource[0] : null;
+    }
     if (candidates.length === 1) return candidates[0];
     if (candidates.length === 0) return null;
 

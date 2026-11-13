@@ -5,10 +5,10 @@
 .pf-edit-toggle { bottom: calc(var(--pf-hud-h, 44px) + 12px); z-index: 1100; }
 .pf-edit-panel { bottom: calc(var(--pf-hud-h, 44px) + 12px); z-index: 1100; max-height: 60vh; overflow: auto; }
 
-/* 덱에서 고칠 수 있는 글·그림: 장면 제목·도입·요점 카드·원문 블록(표·코드·다이어그램)·장 표지 키워드 줄. 장면은 원본이 다는 id(d-<key>)로 가림 */
-.pf-editing .pf-scene[id^="d-"] :is(.pf-title, .pf-lead, .ncard, .fstep, .fe-card > p, figure.vbox:is([data-kind="table"], [data-kind="code"], [data-kind="mermaid"])),
+/* 덱에서 고칠 수 있는 글·그림: 장면 제목·도입·요점 카드·원문 블록(표·코드·다이어그램)·그림 설명(캡션)·장 표지 키워드 줄. 장면은 원본이 다는 id(d-<key>)로 가림 */
+.pf-editing .pf-scene[id^="d-"] :is(.pf-title, .pf-lead, .ncard, .fstep, .fe-card > p, figure.vbox:is([data-kind="table"], [data-kind="code"], [data-kind="mermaid"]), figure.vbox[data-kind="image"] > figcaption.cap),
 .pf-editing .ch-list .ld { cursor: text; outline: 1px dashed transparent; outline-offset: 3px; border-radius: 2px; }
-.pf-editing .pf-scene[id^="d-"] :is(.pf-title, .pf-lead, .ncard, .fstep, .fe-card > p, figure.vbox:is([data-kind="table"], [data-kind="code"], [data-kind="mermaid"])):hover,
+.pf-editing .pf-scene[id^="d-"] :is(.pf-title, .pf-lead, .ncard, .fstep, .fe-card > p, figure.vbox:is([data-kind="table"], [data-kind="code"], [data-kind="mermaid"]), figure.vbox[data-kind="image"] > figcaption.cap):hover,
 .pf-editing .ch-list .ld:hover { outline-color: var(--accent, #36c); background: color-mix(in srgb, var(--accent, #36c) 6%, transparent); }
 
 @media print {

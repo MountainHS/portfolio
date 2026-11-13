@@ -506,14 +506,15 @@ def describe_entry(entry):
 # ════════════════════════════════════════════════════════════════
 
 DECK_TEXT_LIST = "deckText"
-DECK_TEXT_FIELDS = ("title", "lead", "point", "keywords")
+DECK_TEXT_FIELDS = ("title", "lead", "point", "caption", "keywords")
 DECK_KEYWORDS_MAX = 3                                              # deck-edits.py 검사와 같은 개수 상한
 
 
 def save_deck_text(request):
     """발표 덱 편집 모드의 장면 글 한 칸 저장(또는 저장 위치 묻기). edit-server.py의 /__edit/deck이 부릅니다.
 
-    request: { project, slide: 장면 key, field: title | lead | point | keywords, n: 요점 번호(point만, 1부터),
+    request: { project, slide: 장면 key, field: title | lead | point | caption | keywords,
+               n: 요점 번호(point) 또는 visuals 번호(caption, 그림 설명) — 둘 다 1부터,
                expected: 화면을 그릴 때의 값, value: 새 값(keywords는 글자 목록), deckOnly?, dryRun? }
       deckOnly = true면 기술 문서에 같은 글이 있어도 deck-edits.json에만 저장, dryRun = true면 저장 위치만 알려 줌
     반환: { ok, where: 저장 위치 설명, canChooseOverride: 기술 문서를 빼고 발표 덱에만 저장할 수 있는지 }
@@ -553,7 +554,7 @@ def deck_text_entry_key(request):
     if field not in DECK_TEXT_FIELDS:
         raise EditError(400, f"모르는 장면 글 칸입니다: {field}")
     entry_key = {"slide": str(request.get("slide", "")), "field": field}
-    if field == "point":
+    if field in ("point", "caption"):
         entry_key["n"] = int(request["n"])
     return entry_key
 
@@ -594,6 +595,18 @@ def slide_text_path(slide, entry_key):
         number = entry_key["n"]
         is_known_point = 1 <= number <= len(points) and isinstance(points[number - 1], dict)
         return ["points", number - 1, "text"] if is_known_point else None
+    if field == "caption":
+        visuals = slide.get("visuals") or []
+        number = entry_key["n"]
+        is_image = 1 <= number <= len(visuals) and visuals[number - 1].get("kind") == "image"
+        if is_image == False:
+            return None
+        caption = visuals[number - 1].get("caption")
+        if isinstance(caption, dict) and isinstance(caption.get("text"), str) and caption["text"] != "":
+            return ["visuals", number - 1, "caption", "text"]
+        if isinstance(caption, str) and caption != "":
+            return ["visuals", number - 1, "caption"]
+        return None
     piece = slide.get(field)
     if isinstance(piece, dict) and isinstance(piece.get("text"), str) and piece["text"] != "":
         return [field, "text"]

@@ -5,7 +5,7 @@
 - **편집 모드**: 편집 서버(`edit-server.py`, 포트 4600)로 연 세 페이지 오른쪽 아래에 [✎ 편집 모드]가 생깁니다. 글을 누르면 입력창이 뜨고, 저장하면 소스와 `data/`를 함께 고칩니다.
   - 상세 문서(`doc.html`): 누른 블록의 md 원문 줄을 기술 문서에 바로 씁니다.
   - 포트폴리오 문서(`index.html`): 입력창에 `저장 위치: …`를 먼저 보여 줍니다. 저장 위치는 `.claude/skills/portfolio-build/portfolio-edits.py`가 정합니다(프로필·기술 이름 → `profile.md`, 기술 문서에 한 번만 그대로 있는 글 → 그 기술 문서 줄, 그 밖 → `src/<폴더>/deck-edits.json`의 `"portfolio"` 목록).
-  - 발표 덱(`project.html`): 표·코드·다이어그램(그림은 제외) → 기술 문서의 원문 줄. 장면 제목·도입·요점 카드 → `deck-edits.json`의 `"deckText"` 목록(기술 문서에 같은 글이 한 번만 그대로 있으면 그 줄도). 장면 배치(틀·나누기·합치기·숨기기·순서)는 편집 모드가 아니라 `/portfolio-edit`로 고칩니다.
+  - 발표 덱(`project.html`): 표·코드·다이어그램(그림 자체는 제외) → 기술 문서의 원문 줄. 장면 제목·도입·요점 카드·그림 설명(캡션) → `deck-edits.json`의 `"deckText"` 목록(기술 문서에 같은 글이 한 번만 그대로 있으면 그 줄도). 장면 배치(틀·나누기·합치기·숨기기·순서)는 편집 모드가 아니라 `/portfolio-edit`로 고칩니다.
   - GitHub Pages나 `python -m http.server`로 열면 버튼이 없습니다(배포된 페이지는 그대로).
 - **빌드 뒤 반영**: `/portfolio-build`와 `/portfolio-edit`가 끝나면 **반드시** 이 순서로 실행합니다(여러 번 실행해도 결과가 같음). 빠뜨리면 다시 만든 `data/`에서 편집 모드로 고친 글이 빠집니다.
   1. `python .claude/skills/portfolio-build/deck-edits.py apply --all`
