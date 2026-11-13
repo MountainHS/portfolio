@@ -5,9 +5,9 @@
     python edit-server.py 4601     → 포트 바꾸기
 
 - 정적 파일은 http.server와 똑같이 보냅니다(미리보기 세 페이지 그대로).
-- 단, 템플릿 파일(index.html·project.html·doc.html·assets/doc.js)은 보낼 때 메모리에서만 편집 모드 줄을 넣습니다.
+- 단, 템플릿 파일(index.html·project.html·doc.html)은 보낼 때 메모리에서만 </body> 위에 로더 한 줄(assets/edit-loader.js)을 넣습니다.
   넣는 줄·기준 줄은 .claude/skills/edit-mode-install/edit-mode-patch.py에 있고, 디스크의 파일은 원본 그대로 둡니다(/portfolio-update가 덮어도 그대로 동작).
-- GET  /__edit/ping : 편집 서버가 떠 있다는 신호. assets/doc-edit.js가 이 응답을 받을 때만 상세 문서에 [편집 모드] 버튼을 보입니다.
+- GET  /__edit/ping : 편집 서버가 떠 있다는 신호. assets/edit-loader.js가 이 응답을 받을 때만 편집 파일을 싣고 [편집 모드] 버튼을 보입니다.
 - POST /__edit/save : src/ 아래 기술 문서 md의 줄 범위 하나를 새 글로 바꿔 씁니다.
 - POST /__edit/portfolio : 포트폴리오 문서(index.html)의 글 한 칸을 소스(profile.md·기술 문서·deck-edits.json)와 data/에 씁니다.
   어디에 쓸지는 .claude/skills/portfolio-build/portfolio-edits.py가 정합니다(assets/portfolio-edit.js가 부름).

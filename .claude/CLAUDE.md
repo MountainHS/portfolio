@@ -48,8 +48,8 @@
   2. 기술 문서에 같은 글자가 한 번만 그대로 있는 글(한 줄 소개·역할·기간 같은 개요 표 값·그대로 옮긴 개발 의도 등) → 그 기술 문서 줄. 제목 줄·코드 블록은 빼고, 입력창의 [포트폴리오에만 저장]을 고르면 3으로
   3. 그 밖(Claude가 줄인 글·태그·프로젝트 이름·기술 근거 문장) → `src/<폴더>/deck-edits.json`의 `"portfolio"` 목록. 빌드 글(`from`)과 같게 고치면 그 줄이 지워집니다(되돌리기)
 - **`/portfolio-build` 뒤에는 반드시** `deck-edits.py apply --all` 다음에 `python .claude/skills/portfolio-build/portfolio-edits.py apply --all`을 실행합니다(3의 글을 data에 다시 덮음, 멱등). 빌드 스킬 §5에도 적었지만 `/portfolio-update`가 스킬을 덮어쓰면 그 줄이 사라지므로 이 규칙이 기준입니다.
-- `index.html`의 편집 CSS 2줄·스크립트 1줄은 디스크에 없습니다. 편집 서버가 보낼 때만 메모리에서 넣습니다(`.claude/skills/edit-mode-install/edit-mode-patch.py`의 `GROUPS`). 그래서 `/portfolio-update` 뒤에도 할 일이 없습니다. 원본이 기준 줄을 바꾸면 서버 창에 `[멈춤]`이 뜨고 그 페이지만 편집 버튼이 없습니다 → `GROUPS`의 기준 줄을 고칩니다.
-- `/portfolio-update`가 템플릿 원본으로 덮는 이 기능의 파일: `.claude/skills/portfolio-build/SKILL.md`·`schema.md`·`deck-edits.py`(설명 몇 줄). 새 파일(`assets/portfolio-edit.js`·`assets/portfolio-edit.css`·`portfolio-edits.py`)과 `edit-server.py`는 남습니다.
+- `index.html`의 `</body>` 위 로더 한 줄(`assets/edit-loader.js`)은 디스크에 없습니다. 편집 서버가 보낼 때만 메모리에서 넣습니다(`.claude/skills/edit-mode-install/edit-mode-patch.py`의 `GROUPS`). 편집 CSS·JS는 로더가 편집 서버가 있을 때만 싣습니다(포트폴리오 문서는 전역 `PFPage`로 알아봄). 그래서 `/portfolio-update` 뒤에도 할 일이 없습니다. 원본이 `</body>` 줄을 바꾸면 서버 창에 `[멈춤]`이 뜨고 그 페이지만 편집 버튼이 없습니다 → `GROUPS`의 기준 줄을 고칩니다.
+- `/portfolio-update`가 템플릿 원본으로 덮는 이 기능의 파일: `.claude/skills/portfolio-build/SKILL.md`·`schema.md`·`deck-edits.py`(설명 몇 줄). 새 파일(`assets/edit-loader.js`·`assets/portfolio-edit.js`·`assets/portfolio-edit.css`·`portfolio-edits.py`)과 `edit-server.py`는 남습니다.
 - 편집 서버를 이 기능 전에 켜 두었으면 저장 때 "편집 서버가 이 기능 전의 것입니다"가 뜹니다 → `.\preview.ps1 stop` 뒤 다시 켭니다.
 
 ## 발표 덱 장 표지 키워드 (이 포크 전용)
@@ -65,10 +65,10 @@
   2. 장면 제목·도입·요점 카드·장 표지 키워드 → `POST /__edit/deck` → `portfolio-edits.py`의 `save_deck_text`. 고친 글은 늘 `src/<폴더>/deck-edits.json`의 `"deckText"` 목록(`{slide, field, n?, value, from}`)에 남고, 기술 문서에 같은 글이 한 번만 그대로 있으면(제목 줄·코드 블록 제외) 그 줄도 고칩니다(입력창의 [발표 덱에만 저장]을 고르면 문서는 그대로). 키워드는 늘 덱에만. data는 `deck.slides`와 `deck.base`(있으면) 둘 다 고치고 `deck.applied` 해시를 맞추며, 글 조각의 `verbatim`은 `false`로 바꿉니다. 빌드 글(`from`)과 같게 고치면 그 줄이 지워집니다(되돌리기).
 - **`/portfolio-build`와 `/portfolio-edit` 뒤에는 반드시** `deck-edits.py apply --all` 다음에 `python .claude/skills/portfolio-build/portfolio-edits.py apply --all`을 실행합니다(`deckText`를 data에 다시 덮음, 멱등). 특히 `/portfolio-edit`로 고정(pin)한 장면은 고치기 파일의 글로 다시 만들어지므로 이 apply가 없으면 덱 편집 모드에서 고친 글이 빠집니다.
 - 장면 배치(틀·나누기·합치기·숨기기·순서)와 그림 파일 바꾸기는 편집 모드에 없습니다. 배치는 `/portfolio-edit`, 새 그림은 `src/<폴더>/images/`에 넣은 뒤 그림 줄의 경로를 고칩니다.
-- 템플릿 파일에 넣는 줄은 디스크에 없습니다. 편집 서버가 보낼 때만 메모리에서 넣으므로(`.claude/skills/edit-mode-install/edit-mode-patch.py`의 `GROUPS`) `/portfolio-update`가 덮어도 다시 넣을 것이 없습니다. 원본이 기준 줄을 바꿔 서버 창에 `[멈춤]`이 뜨면 `GROUPS`의 기준 줄을 고칩니다.
-  - `project.html`: `<link rel="stylesheet" href="assets/deck-theme.css" />` 바로 다음 CSS 3줄(`assets/doc-edit.css`·`assets/portfolio-edit.css`·`assets/deck-edit.css`), `<script src="assets/project-deck.js"></script>` 바로 다음 스크립트 2줄(`assets/doc-edit.js`·`assets/deck-edit.js`, 이 순서)
+- 템플릿 파일에 넣는 줄은 디스크에 없습니다. 편집 서버가 보낼 때만 메모리에서 넣으므로(`.claude/skills/edit-mode-install/edit-mode-patch.py`의 `GROUPS`) `/portfolio-update`가 덮어도 다시 넣을 것이 없습니다. 원본이 `</body>` 줄을 바꿔 서버 창에 `[멈춤]`이 뜨면 `GROUPS`의 기준 줄을 고칩니다.
+  - `project.html`: `</body>` 바로 위 로더 한 줄(`assets/edit-loader.js`). 로더가 전역 `PFScene.info.page === 'project'`로 덱을 알아보고 CSS 3개(`doc-edit.css`→`portfolio-edit.css`→`deck-edit.css`)를 `<head>` 끝에, JS 2개(`doc-edit.js`→`deck-edit.js`)를 차례로 싣습니다. 원본이 `PFDoc`·`PFPage`·`PFScene.info.page`를 안 만들게 바뀌면 편집 버튼이 **조용히** 없습니다.
   - `assets/project-deck.js`는 가로채지 않습니다. 대신 `deck-edit.js`가 원본이 이미 다는 것을 읽습니다(원본이 바꾸면 이 둘이 **조용히** 안 됩니다): 장면 key는 장면 요소 `id`(`d-<key>`, 나뉜 장면은 `-2`·`-t1` 꼬리)에서(`slideForSceneId`), 표·코드·다이어그램은 `figure.vbox`의 `data-kind`와 내용(코드 글자 포함·표 머리 칸·다이어그램 순서)에서(`visualRefForFigure`) 찾습니다. 같은 종류가 한 장면에 여럿이라 못 가리면 누를 수 없습니다.
-  - 남는 것(이 포크에만 있는 파일): `assets/deck-edit.js`·`assets/deck-edit.css`·`assets/doc-edit.js`(덱이 `PFDocEdit.mapBlocksToLines`를 빌려 씀)·`assets/doc-edit.css`·`assets/portfolio-edit.css`·`edit-server.py`(`/__edit/deck`)·`portfolio-edits.py`(`save_deck_text`·`apply_deck_text`).
+  - 남는 것(이 포크에만 있는 파일): `assets/edit-loader.js`·`assets/deck-edit.js`·`assets/deck-edit.css`·`assets/doc-edit.js`(덱이 `PFDocEdit.mapBlocksToLines`를 빌려 씀)·`assets/doc-edit.css`·`assets/portfolio-edit.css`·`edit-server.py`(`/__edit/deck`)·`portfolio-edits.py`(`save_deck_text`·`apply_deck_text`).
 
 ## 발표 덱 장면 수 (이 포크 전용)
 

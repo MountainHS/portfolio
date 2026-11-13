@@ -1,4 +1,5 @@
-// 상세 문서 편집 모드 — doc.html이 doc.js 다음에 싣습니다. doc.js가 문서를 다 그린 뒤 PFDocEdit.attach(...)를 부릅니다.
+// 상세 문서 편집 모드 — assets/edit-loader.js가 상세 문서·발표 덱에 싣습니다(발표 덱은 mapBlocksToLines만 빌려 씀).
+//   상세 문서에서는 파일 끝의 startOnDocPage()가 doc.js가 문서를 다 그리길 기다린 뒤 PFDocEdit.attach(...)를 부릅니다.
 //   켜지는 조건: 주소가 localhost·127.0.0.1이고, 로컬 편집 서버(edit-server.py)의 /__edit/ping이 응답할 때만.
 //   GitHub Pages나 python -m http.server에서는 아무것도 하지 않습니다(편집 버튼 없음).
 //   흐름: md 블록마다 원문 줄 범위 찾기 → [편집 모드] 버튼 → 블록 누르기 → 그 줄들의 md 원문 입력창 → [저장] → 서버가 그 줄만 바꿔 씀 → 새로고침
@@ -10,7 +11,7 @@
   const RESTORE_KEY = 'pf-doc-edit-restore';       // 저장 뒤 새로고침에서 편집 모드·스크롤 위치를 되살리는 sessionStorage 키
 
   /**
-   * 편집 모드 진입점. doc.js가 문서를 다 그린 뒤 부릅니다.
+   * 편집 모드 진입점. startOnDocPage가 문서를 다 그린 뒤 부릅니다.
    * id: src 폴더 이름, docFile: 그 폴더 안 기술 문서 파일 이름, md: 화면을 그린 md 원문, docElement: 문서 본문(#doc)
    */
   async function attach({ id, docFile, md, docElement }) {
@@ -260,4 +261,28 @@
 
   // mapBlocksToLines는 발표 덱 편집 모드(assets/deck-edit.js)도 씀: 덱의 표·그림·코드가 md 몇 줄인지 같은 방법으로 잼
   window.PFDocEdit = { attach, mapBlocksToLines };
+
+  /**
+   * 상세 문서(doc.html)에서만 스스로 켭니다(window.PFDoc가 있을 때. 발표 덱에는 없어 건너뜀).
+   * doc.js가 문서를 다 그린 뒤, doc.js와 같은 값(?p=, data/projects/<id>.json의 doc, 그 기술 문서 md)을 다시 읽어 attach를 부릅니다.
+   * 주소에 ?p=가 없거나 data·md를 읽지 못하면 doc.js가 이미 오류 화면을 그린 것이므로 아무것도 하지 않습니다.
+   */
+  async function startOnDocPage() {
+    if (window.PFDoc === undefined) return;
+    await PFDoc.whenReady();
+    const id = new URLSearchParams(location.search).get('p');
+    const docElement = document.getElementById('doc');
+    if (id === null || docElement === null) return;
+    let docFile;
+    let md;
+    try {
+      const project = await PF.loadJSON(`data/projects/${encodeURIComponent(id)}.json`);
+      docFile = project.doc;
+      md = await PF.loadText(PF.srcPath(id, docFile));
+    } catch {
+      return;
+    }
+    await attach({ id, docFile, md, docElement });
+  }
+  startOnDocPage();
 })();
