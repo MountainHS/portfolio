@@ -31,7 +31,7 @@
   "tags": [
     "Unity 6.3",
     "C#",
-    "CrewStatus 상태 전이",
+    "CrewStatus",
     "ITargeting 주입",
     "싱글톤",
     "ScriptableObject"
@@ -808,7 +808,7 @@
           "verbatim": true
         },
         "keywords": [
-          "FacilityPowerViewer",
+          "데이터 참조",
           "ReactorViewer",
           "매 프레임"
         ],
@@ -1217,7 +1217,7 @@
           "verbatim": true
         },
         "keywords": [
-          "AddSelectedCrew",
+          "입력 수집과 선택",
           "SetTargetRoom",
           "선택 목록"
         ],
@@ -1498,7 +1498,7 @@
           "verbatim": true
         },
         "keywords": [
-          "EnvironmentCoroutine",
+          "환경 코루틴",
           "전투 상태 확인",
           "피해 경로"
         ],
@@ -1975,7 +1975,7 @@
         "keywords": [
           "초기화 순서",
           "싱글톤",
-          "DefaultExecutionOrder"
+          "실행 순서 지정"
         ],
         "sectionPath": [
           "5. 결과 및 배운 점",
