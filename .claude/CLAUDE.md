@@ -85,3 +85,9 @@
 - 새 PC에서 켜기: 앱에 딸린 `claude.exe`로 `claude plugin marketplace add ./tools` 한 번(사용자 설정에 마켓 등록). `enabledPlugins`는 레포에 있습니다.
 - 확인: `claude plugin validate tools/portfolio-panel` · `claude plugin test tools/portfolio-panel`(버튼 run·fill·say가 각각 `command.run`·`prompt.fill`·`prompt.submit`으로 넘어가는지).
 - `/portfolio-update`는 `tools/`·`.claude/settings.json`을 건드리지 않습니다.
+
+## 기술 문서 고민 분류 (이 포크 전용)
+
+- 기술 문서 원천 자료(회고·노트·Asana·발표·일지)에서 고민을 찾아 L1·L2·L3로 나누고, 수준별 형식 칸을 먼저 채운 초안을 `report/고민-분류/`에 쓴 뒤, 질문·답 반영·대화 세션(티키타카)으로 구체화하고 기술 문서로 옮기는 절차는 `/tech-doc-gomin <src 폴더> [시작|답 반영|대화 Q-번호|기술 문서 반영]`(`.claude/skills/tech-doc-gomin/`)에 있습니다. WGO 작업(2026-11-12~16)에서 쓴 방식을 옮긴 것이고, 본보기는 `report/고민-분류/WGO.md`입니다.
+- `src/**`·`report/고민-분류/**`를 다룰 때만 자동으로 실립니다(`paths`). 직접 불러도 첫 인자가 `src/` 프로젝트 폴더가 아니면 실행하지 않습니다.
+- 이름이 `portfolio-`로 시작하지 않아 `/portfolio-update`의 교체 목록 밖입니다.
