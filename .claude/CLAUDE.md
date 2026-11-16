@@ -40,54 +40,22 @@
 - 4600 포트를 `python -m http.server`가 쓰고 있으면 편집 모드가 꺼지므로 `.\preview.ps1 stop` 뒤 다시 켭니다. 사용자에게 미리보기를 안내할 때도 이 스크립트를 먼저 알려 줍니다.
 - Claude 안에서는 `/local-preview [portfolio|deck|doc|all|report|server|stop] [프로젝트 폴더]`(`.claude/skills/local-preview/`)가 같은 `preview.ps1`을 불러 엽니다. 페이지 종류를 빼면(인자 없음·폴더만) 포트폴리오 문서만 열고, 발표 덱·상세 문서는 `deck`·`doc`·`all`을 적었을 때만 엽니다(`preview.cmd` 더블클릭·`preview.ps1` 인자 없음도 같은 기본값 `portfolio`). 이름이 `portfolio-`로 시작하지 않아 `/portfolio-update`의 교체 목록 밖입니다.
 
-## 포트폴리오 문서 편집 모드 (이 포크 전용)
+## 이 포크 전용 기능 (편집 모드·발표 덱·명령 패널)
 
-- 편집 서버(`edit-server.py`)로 연 포트폴리오 문서(`index.html`) 오른쪽 아래 [✎ 편집 모드] → 글을 누르면 아래에 입력창이 뜨고, 저장할 곳(`저장 위치: …`)을 먼저 보여 줍니다. 저장하면 소스와 `data/`를 함께 고치고 새로고침합니다.
-- 저장 위치 규칙(`.claude/skills/portfolio-build/portfolio-edits.py`가 정함, 편집 서버는 요청만 넘김):
-  1. 프로필(이름·영문 이름·한 줄 정체성·이메일·GitHub·자기소개)·기술 이름 → `profile.md`의 그 줄(기술 이름은 「기술 스택 메모」에 적힌 것만)
-  2. 기술 문서에 같은 글자가 한 번만 그대로 있는 글(한 줄 소개·역할·기간 같은 개요 표 값·그대로 옮긴 개발 의도 등) → 그 기술 문서 줄. 제목 줄·코드 블록은 빼고, 입력창의 [포트폴리오에만 저장]을 고르면 3으로
-  3. 그 밖(Claude가 줄인 글·태그·프로젝트 이름·기술 근거 문장) → `src/<폴더>/deck-edits.json`의 `"portfolio"` 목록. 빌드 글(`from`)과 같게 고치면 그 줄이 지워집니다(되돌리기)
-- **`/portfolio-build` 뒤에는 반드시** `deck-edits.py apply --all` 다음에 `python .claude/skills/portfolio-build/portfolio-edits.py apply --all`을 실행합니다(3의 글을 data에 다시 덮음, 멱등). 빌드 스킬 §5에도 적었지만 `/portfolio-update`가 스킬을 덮어쓰면 그 줄이 사라지므로 이 규칙이 기준입니다.
-- `index.html`의 `</body>` 위 로더 한 줄(`assets/edit-loader.js`)은 디스크에 없습니다. 편집 서버가 보낼 때만 메모리에서 넣습니다(`.claude/skills/edit-mode-install/edit-mode-patch.py`의 `GROUPS`). 편집 CSS·JS는 로더가 편집 서버가 있을 때만 싣습니다(포트폴리오 문서는 전역 `PFPage`로 알아봄). 그래서 `/portfolio-update` 뒤에도 할 일이 없습니다. 원본이 `</body>` 줄을 바꾸면 서버 창에 `[멈춤]`이 뜨고 그 페이지만 편집 버튼이 없습니다 → `GROUPS`의 기준 줄을 고칩니다.
-- `/portfolio-update`가 템플릿 원본으로 덮는 이 기능의 파일: `.claude/skills/portfolio-build/SKILL.md`·`schema.md`·`deck-edits.py`(설명 몇 줄). 새 파일(`assets/edit-loader.js`·`assets/portfolio-edit.js`·`assets/portfolio-edit.css`·`portfolio-edits.py`)과 `edit-server.py`는 남습니다.
-- 편집 서버를 이 기능 전에 켜 두었으면 저장 때 "편집 서버가 이 기능 전의 것입니다"가 뜹니다 → `.\preview.ps1 stop` 뒤 다시 켭니다.
+- 자세한 규칙은 `.claude/rules/fork-features.md`에 있습니다. `assets/`·`*.html`·`data/`·`edit-server.py`·`tools/`·포트폴리오·편집 모드 스킬을 다룰 때 자동으로 실리고, 그 전에 이 기능을 고쳐야 하면 직접 Read합니다.
+- **`/portfolio-build`와 `/portfolio-edit` 뒤에는 반드시** `python .claude/skills/portfolio-build/deck-edits.py apply --all` 다음에 `python .claude/skills/portfolio-build/portfolio-edits.py apply --all`을 실행합니다(편집 모드에서 고친 글을 data에 다시 덮음, 멱등).
+- 발표 덱은 30~40장 권장이고, `/portfolio-build`는 장면 수를 맞추려고 장면을 빼지 않습니다. 40장을 넘을 때만 리포트에 [참고]로 알립니다.
 
-## 발표 덱 장 표지 키워드 (이 포크 전용)
+## `/portfolio-build` 실행 방식 (토큰 절약)
 
-- 장 표지(장면 4개 이하) 목록은 장면마다 `deck.slides[].keywords`(낱말 2~3개)를 ` · `로 이어 한 줄로 보여 줍니다. 도입 문장(`lead`)은 쓰지 않습니다(길이가 들쭉날쭉해서). `keywords`가 비면 설명 줄이 없습니다.
-- `/portfolio-update`가 덮으면 다시 넣어야 하는 곳: `assets/project-deck.js`의 `keywordLine`과 `chapterScene`의 `roomy ? keywordLine(x.sl)`, `assets/deck-theme.css`의 `.ch-list.roomy .toc-list .ld` 한 줄 처리, `schema.md`·`SKILL.md`의 `keywords` 규칙, `deck-edits.py`의 `SLIDE_FIELDS`·검사·"확인해 주세요" 출력.
-
-## 발표 덱 편집 모드 (이 포크 전용)
-
-- 편집 서버(`edit-server.py`)로 연 발표 덱(`project.html?p=<폴더>`) 오른쪽 아래 [✎ 편집 모드] → 덱 위 글·그림을 누르면 아래에 입력창이 뜨고, 저장하면 새로고침해 같은 장면으로 돌아옵니다. 덱 데이터(`deck`)로 그린 덱에서만 켜지고, 예전 데이터 자동 구성 덱·GitHub Pages·`python -m http.server`에서는 버튼이 없습니다.
-- 누른 것에 따라 저장 길이 둘입니다(`assets/deck-edit.js`가 나눔).
-  1. 표·코드·다이어그램(기술 문서 원문 블록, 그림(image) 자체는 편집에서 뺌 — 그림 설명 글만 아래 2번) → 그 블록의 md 원문 줄 → `POST /__edit/save`(상세 문서 편집과 같은 길, 기술 문서만 고침). 덱이 블록을 찾는 지문(표 머리 칸·그림 경로·코드·다이어그램 첫 줄)을 바꾸면 `/portfolio-build`를 다시 할 때까지 그 장면에 띠가 뜹니다(입력창에 안내). data의 스크린샷 목록에서 온 그림(`ref.direct`)과 원문을 찾지 못한 그림(빨간 띠)은 누를 수 없습니다.
-  2. 장면 제목·도입·요점 카드·그림 설명(캡션)·장 표지 키워드 → `POST /__edit/deck` → `portfolio-edits.py`의 `save_deck_text`. 고친 글은 늘 `src/<폴더>/deck-edits.json`의 `"deckText"` 목록(`{slide, field, n?, value, from}`)에 남고, 기술 문서에 같은 글이 한 번만 그대로 있으면(제목 줄·코드 블록 제외) 그 줄도 고칩니다(입력창의 [발표 덱에만 저장]을 고르면 문서는 그대로). 키워드는 늘 덱에만. 그림 설명은 `{slide, field:"caption", n: visuals 번호(1부터)}`이고 값은 data `visuals[n-1].caption.text`(글자면 `.caption`)이며, 기술 문서에서는 같은 글이 한 번뿐인 그림 줄(alt)을 고칩니다. 같은 장면에 같은 `src` 그림이 둘이거나 `ref.direct`면 누를 수 없고, 코드 캡션(렌더러가 만든 언어·줄 범위 라벨)은 대상이 아닙니다. data는 `deck.slides`와 `deck.base`(있으면) 둘 다 고치고 `deck.applied` 해시를 맞추며, 글 조각의 `verbatim`은 `false`로 바꿉니다. 빌드 글(`from`)과 같게 고치면 그 줄이 지워집니다(되돌리기).
-- **`/portfolio-build`와 `/portfolio-edit` 뒤에는 반드시** `deck-edits.py apply --all` 다음에 `python .claude/skills/portfolio-build/portfolio-edits.py apply --all`을 실행합니다(`deckText`를 data에 다시 덮음, 멱등). 특히 `/portfolio-edit`로 고정(pin)한 장면은 고치기 파일의 글로 다시 만들어지므로 이 apply가 없으면 덱 편집 모드에서 고친 글이 빠집니다.
-- 장면 배치(틀·나누기·합치기·숨기기·순서)와 그림 파일 바꾸기는 편집 모드에 없습니다. 배치는 `/portfolio-edit`, 새 그림은 `src/<폴더>/images/`에 넣은 뒤 그림 줄의 경로를 고칩니다.
-- 템플릿 파일에 넣는 줄은 디스크에 없습니다. 편집 서버가 보낼 때만 메모리에서 넣으므로(`.claude/skills/edit-mode-install/edit-mode-patch.py`의 `GROUPS`) `/portfolio-update`가 덮어도 다시 넣을 것이 없습니다. 원본이 `</body>` 줄을 바꿔 서버 창에 `[멈춤]`이 뜨면 `GROUPS`의 기준 줄을 고칩니다.
-  - `project.html`: `</body>` 바로 위 로더 한 줄(`assets/edit-loader.js`). 로더가 전역 `PFScene.info.page === 'project'`로 덱을 알아보고 CSS 3개(`doc-edit.css`→`portfolio-edit.css`→`deck-edit.css`)를 `<head>` 끝에, JS 2개(`doc-edit.js`→`deck-edit.js`)를 차례로 싣습니다. 원본이 `PFDoc`·`PFPage`·`PFScene.info.page`를 안 만들게 바뀌면 편집 버튼이 **조용히** 없습니다.
-  - `assets/project-deck.js`는 가로채지 않습니다. 대신 `deck-edit.js`가 원본이 이미 다는 것을 읽습니다(원본이 바꾸면 이 둘이 **조용히** 안 됩니다): 장면 key는 장면 요소 `id`(`d-<key>`, 나뉜 장면은 `-2`·`-t1` 꼬리)에서(`slideForSceneId`), 표·코드·다이어그램은 `figure.vbox`의 `data-kind`와 내용(코드 글자 포함·표 머리 칸·다이어그램 순서)에서(`visualRefForFigure`) 찾습니다. 같은 종류가 한 장면에 여럿이라 못 가리면 누를 수 없습니다.
-  - 그림 설명 칸은 `figure.vbox[data-kind="image"] > figcaption.cap`(원본 `project-deck.js`의 `vboxHtml`)과 그림 `<img src>`를 읽습니다. 원본이 클래스 `cap`이나 그 구조를 바꾸면 캡션만 **조용히** 안 눌립니다.
-  - 남는 것(이 포크에만 있는 파일): `assets/edit-loader.js`·`assets/deck-edit.js`·`assets/deck-edit.css`·`assets/doc-edit.js`(덱이 `PFDocEdit.mapBlocksToLines`를 빌려 씀)·`assets/doc-edit.css`·`assets/portfolio-edit.css`·`edit-server.py`(`/__edit/deck`)·`portfolio-edits.py`(`save_deck_text`·`apply_deck_text`).
-
-## 발표 덱 장면 수 (이 포크 전용)
-
-- 발표 덱은 **30~40장 권장**이고, 필요하면 넘겨도 됩니다. `/portfolio-build`는 장면 수를 맞추려고 장면(두 번째 코드·보조 표·겹치는 화면)을 **빼지 않습니다.** 40장을 넘을 때만 리포트에 [참고]로 장면 수를 알리고, 줄일지는 사용자가 `/portfolio-edit`로 정합니다.
-- `/portfolio-update`가 템플릿 원본으로 덮으면 다시 고칠 곳(원본은 15~30장·30장 초과 시 빼기): `.claude/skills/portfolio-build/SKILL.md` §6 분량·§7 `many-scenes` 행, `schema.md` 「분량」, `deck-edits.py`의 `n1 > 40` 안내, `.claude/skills/portfolio-edit/SKILL.md`의 "40장 넘으면 알림", `assets/project-deck.js`의 `all.length > 40` `many-scenes` 알림, `assets/deck-common.js` 주석, `format/01-portfolio.md`·`format/02-tech-document.md`·`README.md`의 숫자.
-- 코드 한 장면 상한은 **24줄**입니다(원본 20줄, 2026-11-11 Hive Purge `MonsterAttack.Tick` 세 단계를 한 장에 띄우려고 바꿈). `/portfolio-update`가 덮으면 `assets/project-deck.js`의 `const MAXL = 24;`와 그 아래 `slideScenes` 위 주석을 다시 고칩니다. 스킬·`schema.md`·`.claude/rules/portfolio-writing.md` 규칙 3의 "20줄" 글은 아직 그대로입니다.
-
-## 명령 패널 (이 포크 전용)
-
-- Claude 데스크톱 앱의 채팅 옆 패널 "포트폴리오 명령"(mod `portfolio-panel`). 이 레포를 연 세션에서 자동으로 뜨고, 닫았으면 `/portfolio-panel`로 다시 엽니다. README 「도구 한눈에」의 명령을 단계별 버튼으로 보여 주고, 맨 위에서 고른 프로젝트(`src/` 폴더, `_`로 시작하는 폴더 제외)를 명령 뒤에 붙입니다.
-- 버튼 종류: **run**(`/portfolio-check`·`/portfolio-build` — 바로 실행) · **fill**(✋ 명령과 주소·스크린샷·요청 글이 필요한 명령 — 입력창에 채우기만, Enter는 사용자) · **say**(말 부탁 문장을 사용자 말로 보냄). ✋ 명령은 fill이므로 "사용자가 직접 입력했을 때만" 규칙이 그대로 지켜집니다.
-- 파일: `tools/portfolio-panel/`(버튼 표는 `hooks/register.tsx` 맨 위 `BUTTONS` 배열만 고침) · `tools/.claude-plugin/marketplace.json`(로컬 마켓 `portfolio-tools`) · `.claude/settings.json`의 `enabledPlugins`. 설치된 플러그인은 레포 폴더를 그대로 읽으므로 고친 뒤 새 세션부터 반영됩니다.
-- 새 PC에서 켜기: 앱에 딸린 `claude.exe`로 `claude plugin marketplace add ./tools` 한 번(사용자 설정에 마켓 등록). `enabledPlugins`는 레포에 있습니다.
-- 확인: `claude plugin validate tools/portfolio-panel` · `claude plugin test tools/portfolio-panel`(버튼 run·fill·say가 각각 `command.run`·`prompt.fill`·`prompt.submit`으로 넘어가는지).
-- `/portfolio-update`는 `tools/`·`.claude/settings.json`을 건드리지 않습니다.
+- 스킬 §1의 "프로젝트마다 서브에이전트를 병렬로"는 쓰지 않습니다. 새 서브에이전트는 시작 문맥과 schema·format을 각자 다시 읽어 실행 한 번에 1~3M 토큰이 더 듭니다(2026-11-12·13 측정).
+- 프로젝트 1~2개 재빌드는 메인 세션에서 차례로 합니다.
+- 전체(3개 이상) 빌드는 메인에서 schema·format을 먼저 읽은 뒤, 프로젝트마다 `fork` 서브에이전트(부모 문맥을 물려받음)로 나눕니다. 효과가 없으면 메인 순차로 돌아갑니다.
+- `SKILL.md`는 `/portfolio-update`가 덮어쓰므로 이 규칙은 여기에 둡니다.
 
 ## 기술 문서 고민 분류 (이 포크 전용)
 
-- 기술 문서 원천 자료(회고·노트·Asana·발표·일지)에서 고민을 찾아 L1·L2·L3로 나누고, 수준별 형식 칸을 먼저 채운 초안을 `report/고민-분류/`에 쓴 뒤, 질문·답 반영·대화 세션(티키타카)으로 구체화하고 기술 문서로 옮기는 절차는 `/tech-doc-gomin <src 폴더> [시작|답 반영|대화 Q-번호|기술 문서 반영]`(`.claude/skills/tech-doc-gomin/`)에 있습니다. WGO 작업(2026-11-12~16)에서 쓴 방식을 옮긴 것이고, 본보기는 `report/고민-분류/WGO.md`입니다.
+- 기술 문서 원천 자료(회고·노트·Asana·발표·일지)에서 고민을 찾아 L1·L2·L3로 나누고, 수준별 형식 칸을 먼저 채운 초안을 `report/고민-분류/`에 쓴 뒤, 질문·답 반영·대화 세션(티키타카)으로 구체화하고 기술 문서로 옮기는 절차는 `/tech-doc-issue-summary <src 폴더> [시작|답 반영|대화 Q-번호|기술 문서 반영]`(`.claude/skills/tech-doc-issue-summary/`)에 있습니다. WGO 작업(2026-11-12~16)에서 쓴 방식을 옮긴 것이고, 본보기는 `report/고민-분류/WGO.md`입니다.
 - `src/**`·`report/고민-분류/**`를 다룰 때만 자동으로 실립니다(`paths`). 직접 불러도 첫 인자가 `src/` 프로젝트 폴더가 아니면 실행하지 않습니다.
 - 이름이 `portfolio-`로 시작하지 않아 `/portfolio-update`의 교체 목록 밖입니다.
+- 고민 분류 파일(`report/고민-분류/*.md`)은 §1 상태표를 먼저 읽고, 필요한 고민은 `### <고민 ID>` 제목 줄을 Grep으로 찾아 그 절만 Read합니다. 파일 전체를 처음부터 읽지 않습니다.
