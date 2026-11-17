@@ -184,13 +184,9 @@
         "tab": "개요",
         "title": {"text": "1.1 프로젝트 소개", "verbatim": true},
         "lead": {"text": "플레이어가 라운드마다 몰려오는 몬스터 무리를 버티고, 얻은 재화로 강화해 3라운드 보스를 쓰러뜨리는 PvE 호드 FPS", "verbatim": true},
-        "keywords": ["몬스터 무리", "재화 강화", "3라운드 보스"],
+        "keywords": ["몬스터 무리", "레퍼런스", "접근 패턴"],
         "sectionPath": ["1. 개요 · 팀 · 역할", "1.1 프로젝트 소개"],
-        "points": [
-          {"label": "", "text": "플레이어는 한 라운드 동안 몬스터를 죽이며 재화를 얻고 생존한다.", "verbatim": true},
-          {"label": "", "text": "라운드가 끝나면 얻은 재화로 업그레이드를 사고 무기를 골라 다음 라운드를 준비한다.", "verbatim": true},
-          {"label": "", "text": "3라운드 보스를 처치할 때까지 이 흐름을 반복한다.", "verbatim": true}
-        ],
+        "points": [{"label": "", "text": "Helldivers 2의 적처럼 몬스터마다 플레이어에게 다가가는 방법이 다르게 하고 싶었다.", "verbatim": true}],
         "visuals": [
           {
             "kind": "image",
@@ -234,16 +230,50 @@
         ]
       },
       {
+        "key": "loop",
+        "chapter": "overview",
+        "layout": "visual",
+        "tab": "개요",
+        "title": {"text": "1.3 핵심 경험과 게임 루프", "verbatim": true},
+        "lead": {"text": "플레이어는 라운드마다 쏟아지는 몬스터를 처치하며 버티고, 라운드 사이에 강화해 더 센 물량에 맞선다.", "verbatim": true},
+        "keywords": ["라운드 전투", "강화", "섬멸 라운드"],
+        "sectionPath": ["1. 개요 · 팀 · 역할", "1.3 핵심 경험과 게임 루프"],
+        "points": [
+          {"label": "라운드 전투", "text": "한 라운드 동안 몬스터를 죽이며 재화를 얻고 생존한다.", "verbatim": true},
+          {"label": "강화", "text": "라운드가 끝나면 얻은 재화로 업그레이드를 사고 무기를 골라 다음 라운드를 준비한다.", "verbatim": true},
+          {"label": "체력보다 수", "text": "몬스터 하나하나를 단단하게 만들기보다 수를 늘려 압박한다.", "verbatim": true},
+          {"label": "섬멸 라운드", "text": "남은 몬스터를 일정 수 아래로 줄여야 보스가 등장한다.", "verbatim": true}
+        ],
+        "visuals": [{"kind": "mermaid", "n": 1, "fp": "flowchart LR"}]
+      },
+      {
         "key": "role",
         "chapter": "overview",
         "layout": "full",
         "tab": "개요",
-        "title": {"text": "1.3 팀과 내 역할", "verbatim": true},
+        "title": {"text": "1.4 팀과 내 역할", "verbatim": true},
         "lead": null,
         "keywords": ["몬스터 상태 머신", "팀 공용 코어", "외부 에셋"],
-        "sectionPath": ["1. 개요 · 팀 · 역할", "1.3 팀과 내 역할"],
+        "sectionPath": ["1. 개요 · 팀 · 역할", "1.4 팀과 내 역할"],
         "points": [],
         "visuals": [{"kind": "table", "n": 1, "fp": "구분|내용"}]
+      },
+      {
+        "key": "my-part",
+        "chapter": "overview",
+        "layout": "overview",
+        "tab": "개요",
+        "title": {"text": "1.4 팀과 내 역할", "verbatim": true},
+        "lead": {"text": "내 담당은 이 루프의 라운드 전투 구간, 플레이어가 맞서는 몬스터 쪽 전부다.", "verbatim": true},
+        "keywords": ["상태 머신과 공격", "피격 ~ 시체", "웨이브와 풀"],
+        "sectionPath": ["1. 개요 · 팀 · 역할", "1.4 팀과 내 역할"],
+        "points": [
+          {"label": "상태 머신과 공격", "text": "모든 몬스터가 같은 상태 5개를 쓰고, 공격 6종을 갈아 끼우는 구조", "verbatim": true},
+          {"label": "피격 ~ 시체", "text": "상시 체력바 없이 피격 방향·저체력·약점·시체로 몬스터 상태를 읽게 하는 표현", "verbatim": true},
+          {"label": "웨이브와 풀", "text": "표(TSV) 데이터로 라운드마다 몬스터를 시간대별로 소환하고 재사용하는 흐름", "verbatim": true},
+          {"label": "사이드", "text": "군중 이동·독 장판·셰이더는 사이드로 짧게 다룬다.", "verbatim": true}
+        ],
+        "visuals": []
       },
       {
         "key": "approach",
@@ -704,8 +734,8 @@
         "sectionPath": ["4. 고민과 선택", "4.1 공격 구조: 인터페이스 + 추상 클래스에서 추상 클래스로"],
         "points": [
           {"label": "당시 상황", "text": "몬스터 공격은 핵심 기능이면서도 바뀔 가능성이 높았다.", "verbatim": true},
-          {"label": "", "text": "프로토타입부터 상태 전이·공격을 하드 코딩하면 나중에 힘들어질 것 같았다.", "verbatim": true},
-          {"label": "", "text": "AI가 Unity 없이 도는 NUnit 테스트를 제안했고, 나는 그대로 받아들였다.", "verbatim": true}
+          {"label": "", "text": "프로토타입부터 상태 전이·공격을 유연한 구조로 설계하지 않으면 나중에 힘들어질 것 같았다.", "verbatim": true},
+          {"label": "테스트", "text": "테스트 방식은 Unity 없이 도는 NUnit 테스트였다. 이동 작업 때 내가 먼저 고른 방식이다.", "verbatim": true}
         ],
         "visuals": []
       },
@@ -778,6 +808,27 @@
         "visuals": [{"kind": "table", "n": 1, "fp": "방법|결과"}]
       },
       {
+        "key": "range-fix",
+        "chapter": "choices",
+        "layout": "overview",
+        "tab": "선택",
+        "title": {"text": "원인을 나누기 전에는 값을 늘려 버텼다", "verbatim": true},
+        "lead": {"text": "최종 결정 — 원인을 감속과 거리 구분 두 가지로 나눈 뒤, 감속 문제를 먼저 해결하고 진입·유지·판정 거리를 나눴다.", "verbatim": true},
+        "keywords": ["임시 해법", "원인 분리", "감속 먼저"],
+        "sectionPath": ["4. 고민과 선택", "4.2 공격 사거리: 진입·유지·판정 거리를 나누기"],
+        "points": [
+          {"label": "임시", "text": "HitRangeRatio를 예고(Windup) 뒤에도 공격을 유지하는 거리로 바꿔 쓰고, 그 범위를 크게 늘렸다.", "verbatim": true},
+          {"label": "문제", "text": "공격은 억지로 유지됐지만, FlankPolicy 같은 이동 정책 설정이나 사거리를 조금만 바꿔도 문제가 다시 생겼다.", "verbatim": true},
+          {
+            "label": "해결",
+            "text": "감속 문제를 먼저 해결하고, 그다음 HitRangeRatio를 지금의 형태(사거리 × 비율로 유지·명중 판정)로 바꿨다.",
+            "verbatim": true
+          },
+          {"label": "돌아보면", "text": "증상이 여러 개 겹쳐 보이면 원인부터 나눠야 한다.", "verbatim": true}
+        ],
+        "visuals": []
+      },
+      {
         "key": "animator",
         "chapter": "choices",
         "layout": "full",
@@ -793,14 +844,68 @@
         "visuals": [{"kind": "table", "n": 1, "fp": "방법|장점|단점"}]
       },
       {
+        "key": "crowd-tries",
+        "chapter": "choices",
+        "layout": "full",
+        "tab": "선택",
+        "title": {"text": "4.4 군중 이동: 전원 포위에서 묶음별 군중으로, 그리고 축소", "verbatim": true},
+        "lead": {"text": "군중 이동은 사이드로 정한 주제지만, 이 프로젝트에서 시도가 가장 많았던 고민이다.", "verbatim": true},
+        "keywords": ["CrowdCoordinator", "묶음별 군중", "unrestricted"],
+        "sectionPath": ["4. 고민과 선택", "4.4 군중 이동: 전원 포위에서 묶음별 군중으로, 그리고 축소"],
+        "points": [],
+        "visuals": [{"kind": "table", "n": 1, "fp": "단계|방식|결과"}]
+      },
+      {
+        "key": "crowd-decision",
+        "chapter": "choices",
+        "layout": "overview",
+        "tab": "선택",
+        "title": {"text": "4.4 군중 이동: 전원 포위에서 묶음별 군중으로, 그리고 축소", "verbatim": true},
+        "lead": {"text": "최종 결정 — 마지막에 군중 이동을 크게 줄였다.", "verbatim": true},
+        "keywords": ["효과 작음", "책임 엉킴", "문제 정의"],
+        "sectionPath": ["4. 고민과 선택", "4.4 군중 이동: 전원 포위에서 묶음별 군중으로, 그리고 축소"],
+        "points": [
+          {"label": "이유", "text": "가장 큰 이유는 슬롯·토큰 방식이 실제 플레이에서 효과가 작았던 것이다.", "verbatim": true},
+          {
+            "label": "이유",
+            "text": "Claude를 쓰기 시작한 초기에 만든 코드라 MonsterMovement와 CrowdController의 책임이 많이 엉켜 있었고, 유지보수가 매우 힘들었다.",
+            "verbatim": true
+          },
+          {"label": "문제 정의", "text": "그래서 군중 소속을 스폰 묶음 단위로 다시 정했다.", "verbatim": true},
+          {"label": "남은 것", "text": "지금 구조가 제출본의 최종 구조다.", "verbatim": true}
+        ],
+        "visuals": []
+      },
+      {
+        "key": "wave-choice",
+        "chapter": "choices",
+        "layout": "overview",
+        "tab": "선택",
+        "title": {"text": "4.5 웨이브 데이터: 라운드 안에 스테이지를 하나 더 두기", "verbatim": true},
+        "lead": {"text": "최종 결정 — 라운드 → 스테이지 → 웨이브 → 스포너 4계층의 표(TSV) 4개로 나눴다.", "verbatim": true},
+        "keywords": ["WaveStage", "4계층", "3단으로"],
+        "sectionPath": ["4. 고민과 선택", "4.5 웨이브 데이터: 라운드 안에 스테이지를 하나 더 두기"],
+        "points": [
+          {"label": "장점", "text": "웨이브 편집 도구(Wave Studio)로 보면 스테이지마다 패턴이 심화되는 구분이 보였다.", "verbatim": true},
+          {"label": "단점", "text": "4계층 코드가 한눈에 읽히지 않아 다른 팀원이 이해하기 어려웠고, 재사용도 잘 되지 않았다.", "verbatim": true},
+          {"label": "단점", "text": "수치 조절이 힘들어 사실상 AI가 수치를 조절했다.", "verbatim": true},
+          {
+            "label": "다시 고른다면",
+            "text": "3단(라운드 → 웨이브 → 스포너)으로 줄이되, 시간이 지날수록 웨이브 기믹이 강화되는 특성만 잘 표현할 방법을 찾을 것이다.",
+            "verbatim": true
+          }
+        ],
+        "visuals": []
+      },
+      {
         "key": "ai",
         "chapter": "choices",
         "layout": "full",
         "tab": "선택",
-        "title": {"text": "4.4 AI 도구를 어떻게 썼나", "verbatim": true},
+        "title": {"text": "4.6 AI 도구를 어떻게 썼나", "verbatim": true},
         "lead": null,
         "keywords": ["셰이더 5개", "밸런스 기준선", "웨이브 테마"],
-        "sectionPath": ["4. 고민과 선택", "4.4 AI 도구를 어떻게 썼나"],
+        "sectionPath": ["4. 고민과 선택", "4.6 AI 도구를 어떻게 썼나"],
         "points": [{"label": "돌아보면", "text": "처음 공격 구조를 한 번에 크게 맡긴 것은 너무 넓었다.", "verbatim": true}],
         "visuals": [{"kind": "table", "n": 1, "fp": "맡긴 것|내가 정한 것"}]
       },
@@ -809,17 +914,21 @@
         "chapter": "choices",
         "layout": "overview",
         "tab": "선택",
-        "title": {"text": "4.5 팀 구조: ServiceLocator와 EventBus를 쓰면서", "verbatim": true},
+        "title": {"text": "4.7 팀 구조: ServiceLocator와 EventBus를 쓰면서", "verbatim": true},
         "lead": {"text": "ServiceLocator·EventBus는 팀원이 만든 팀 공용 구조다.", "verbatim": true},
         "keywords": ["ServiceLocator", "EventBus", "인터페이스 주입"],
-        "sectionPath": ["4. 고민과 선택", "4.5 팀 구조: ServiceLocator와 EventBus를 쓰면서"],
+        "sectionPath": ["4. 고민과 선택", "4.7 팀 구조: ServiceLocator와 EventBus를 쓰면서"],
         "points": [
+          {
+            "label": "처음 부딪힌 점",
+            "text": "내가 만든 것은 데이터를 \"어떻게 모을지\"이고, 서비스 로케이터는 \"어떻게 가져올지\"라는 것을 알았다.",
+            "verbatim": true
+          },
           {
             "label": "편했던 점",
             "text": "플레이어 객체 같은 주요 개체를 싱글톤으로 만들거나 특정 클래스에서 노출할 필요 없이, `ServiceLocator` 하나가 주요 정보를 인터페이스로 저장해 공유할 수 있었다.",
             "verbatim": true
           },
-          {"label": "", "text": "실제 클래스가 없어도 모두가 그 규약을 가정하고 빠르게 진행할 수 있었다.", "verbatim": true},
           {"label": "의문", "text": "몬스터 풀처럼 직접 참조해도 무방해 보이는 것까지 인터페이스로 한 번 거르는 게 맞는지는 아직 확신이 없다.", "verbatim": true}
         ],
         "visuals": []
@@ -836,6 +945,7 @@
         "points": [
           {"label": "", "text": "모든 몬스터가 같은 상태 머신 위에서 공격 6종을 쓰고, 몬스터 프리팹 6종(강화형 변형 포함)이 같은 구조로 조립된다.", "verbatim": true},
           {"label": "", "text": "처음 하는 플레이어에게는 기존 물량도 꽤 도전적이었다.", "verbatim": true},
+          {"label": "섬멸 라운드", "text": "그 뒤 플레이어가 잡몹을 더 잡았고, 몬스터를 잡지 않고 회피만 하는 플레이도 줄었다.", "verbatim": true},
           {"label": "아쉬운 점", "text": "몬스터 수에 따른 프레임 시간·GC를 Profiler로 잰 기록이 없다.", "verbatim": true}
         ],
         "visuals": []
@@ -933,13 +1043,9 @@
         "tab": "개요",
         "title": {"text": "1.1 프로젝트 소개", "verbatim": true},
         "lead": {"text": "플레이어가 라운드마다 몰려오는 몬스터 무리를 버티고, 얻은 재화로 강화해 3라운드 보스를 쓰러뜨리는 PvE 호드 FPS", "verbatim": true},
-        "keywords": ["몬스터 무리", "재화 강화", "3라운드 보스"],
+        "keywords": ["몬스터 무리", "레퍼런스", "접근 패턴"],
         "sectionPath": ["1. 개요 · 팀 · 역할", "1.1 프로젝트 소개"],
-        "points": [
-          {"label": "", "text": "플레이어는 한 라운드 동안 몬스터를 죽이며 재화를 얻고 생존한다.", "verbatim": true},
-          {"label": "", "text": "라운드가 끝나면 얻은 재화로 업그레이드를 사고 무기를 골라 다음 라운드를 준비한다.", "verbatim": true},
-          {"label": "", "text": "3라운드 보스를 처치할 때까지 이 흐름을 반복한다.", "verbatim": true}
-        ],
+        "points": [{"label": "", "text": "Helldivers 2의 적처럼 몬스터마다 플레이어에게 다가가는 방법이 다르게 하고 싶었다.", "verbatim": true}],
         "visuals": [
           {
             "kind": "image",
@@ -983,16 +1089,50 @@
         ]
       },
       {
+        "key": "loop",
+        "chapter": "overview",
+        "layout": "visual",
+        "tab": "개요",
+        "title": {"text": "1.3 핵심 경험과 게임 루프", "verbatim": true},
+        "lead": {"text": "플레이어는 라운드마다 쏟아지는 몬스터를 처치하며 버티고, 라운드 사이에 강화해 더 센 물량에 맞선다.", "verbatim": true},
+        "keywords": ["라운드 전투", "강화", "섬멸 라운드"],
+        "sectionPath": ["1. 개요 · 팀 · 역할", "1.3 핵심 경험과 게임 루프"],
+        "points": [
+          {"label": "라운드 전투", "text": "한 라운드 동안 몬스터를 죽이며 재화를 얻고 생존한다.", "verbatim": true},
+          {"label": "강화", "text": "라운드가 끝나면 얻은 재화로 업그레이드를 사고 무기를 골라 다음 라운드를 준비한다.", "verbatim": true},
+          {"label": "체력보다 수", "text": "몬스터 하나하나를 단단하게 만들기보다 수를 늘려 압박한다.", "verbatim": true},
+          {"label": "섬멸 라운드", "text": "남은 몬스터를 일정 수 아래로 줄여야 보스가 등장한다.", "verbatim": true}
+        ],
+        "visuals": [{"kind": "mermaid", "n": 1, "fp": "flowchart LR"}]
+      },
+      {
         "key": "role",
         "chapter": "overview",
         "layout": "full",
         "tab": "개요",
-        "title": {"text": "1.3 팀과 내 역할", "verbatim": true},
+        "title": {"text": "1.4 팀과 내 역할", "verbatim": true},
         "lead": null,
         "keywords": ["몬스터 상태 머신", "팀 공용 코어", "외부 에셋"],
-        "sectionPath": ["1. 개요 · 팀 · 역할", "1.3 팀과 내 역할"],
+        "sectionPath": ["1. 개요 · 팀 · 역할", "1.4 팀과 내 역할"],
         "points": [],
         "visuals": [{"kind": "table", "n": 1, "fp": "구분|내용"}]
+      },
+      {
+        "key": "my-part",
+        "chapter": "overview",
+        "layout": "overview",
+        "tab": "개요",
+        "title": {"text": "1.4 팀과 내 역할", "verbatim": true},
+        "lead": {"text": "내 담당은 이 루프의 라운드 전투 구간, 플레이어가 맞서는 몬스터 쪽 전부다.", "verbatim": true},
+        "keywords": ["상태 머신과 공격", "피격 ~ 시체", "웨이브와 풀"],
+        "sectionPath": ["1. 개요 · 팀 · 역할", "1.4 팀과 내 역할"],
+        "points": [
+          {"label": "상태 머신과 공격", "text": "모든 몬스터가 같은 상태 5개를 쓰고, 공격 6종을 갈아 끼우는 구조", "verbatim": true},
+          {"label": "피격 ~ 시체", "text": "상시 체력바 없이 피격 방향·저체력·약점·시체로 몬스터 상태를 읽게 하는 표현", "verbatim": true},
+          {"label": "웨이브와 풀", "text": "표(TSV) 데이터로 라운드마다 몬스터를 시간대별로 소환하고 재사용하는 흐름", "verbatim": true},
+          {"label": "사이드", "text": "군중 이동·독 장판·셰이더는 사이드로 짧게 다룬다.", "verbatim": true}
+        ],
+        "visuals": []
       },
       {
         "key": "approach",
@@ -1481,8 +1621,8 @@
         "sectionPath": ["4. 고민과 선택", "4.1 공격 구조: 인터페이스 + 추상 클래스에서 추상 클래스로"],
         "points": [
           {"label": "당시 상황", "text": "몬스터 공격은 핵심 기능이면서도 바뀔 가능성이 높았다.", "verbatim": true},
-          {"label": "", "text": "프로토타입부터 상태 전이·공격을 하드 코딩하면 나중에 힘들어질 것 같았다.", "verbatim": true},
-          {"label": "", "text": "AI가 Unity 없이 도는 NUnit 테스트를 제안했고, 나는 그대로 받아들였다.", "verbatim": true}
+          {"label": "", "text": "프로토타입부터 상태 전이·공격을 유연한 구조로 설계하지 않으면 나중에 힘들어질 것 같았다.", "verbatim": true},
+          {"label": "테스트", "text": "테스트 방식은 Unity 없이 도는 NUnit 테스트였다. 이동 작업 때 내가 먼저 고른 방식이다.", "verbatim": true}
         ],
         "visuals": []
       },
@@ -1555,6 +1695,27 @@
         "visuals": [{"kind": "table", "n": 1, "fp": "방법|결과"}]
       },
       {
+        "key": "range-fix",
+        "chapter": "choices",
+        "layout": "overview",
+        "tab": "선택",
+        "title": {"text": "원인을 나누기 전에는 값을 늘려 버텼다", "verbatim": true},
+        "lead": {"text": "최종 결정 — 원인을 감속과 거리 구분 두 가지로 나눈 뒤, 감속 문제를 먼저 해결하고 진입·유지·판정 거리를 나눴다.", "verbatim": true},
+        "keywords": ["임시 해법", "원인 분리", "감속 먼저"],
+        "sectionPath": ["4. 고민과 선택", "4.2 공격 사거리: 진입·유지·판정 거리를 나누기"],
+        "points": [
+          {"label": "임시", "text": "HitRangeRatio를 예고(Windup) 뒤에도 공격을 유지하는 거리로 바꿔 쓰고, 그 범위를 크게 늘렸다.", "verbatim": true},
+          {"label": "문제", "text": "공격은 억지로 유지됐지만, FlankPolicy 같은 이동 정책 설정이나 사거리를 조금만 바꿔도 문제가 다시 생겼다.", "verbatim": true},
+          {
+            "label": "해결",
+            "text": "감속 문제를 먼저 해결하고, 그다음 HitRangeRatio를 지금의 형태(사거리 × 비율로 유지·명중 판정)로 바꿨다.",
+            "verbatim": true
+          },
+          {"label": "돌아보면", "text": "증상이 여러 개 겹쳐 보이면 원인부터 나눠야 한다.", "verbatim": true}
+        ],
+        "visuals": []
+      },
+      {
         "key": "animator",
         "chapter": "choices",
         "layout": "full",
@@ -1570,14 +1731,68 @@
         "visuals": [{"kind": "table", "n": 1, "fp": "방법|장점|단점"}]
       },
       {
+        "key": "crowd-tries",
+        "chapter": "choices",
+        "layout": "full",
+        "tab": "선택",
+        "title": {"text": "4.4 군중 이동: 전원 포위에서 묶음별 군중으로, 그리고 축소", "verbatim": true},
+        "lead": {"text": "군중 이동은 사이드로 정한 주제지만, 이 프로젝트에서 시도가 가장 많았던 고민이다.", "verbatim": true},
+        "keywords": ["CrowdCoordinator", "묶음별 군중", "unrestricted"],
+        "sectionPath": ["4. 고민과 선택", "4.4 군중 이동: 전원 포위에서 묶음별 군중으로, 그리고 축소"],
+        "points": [],
+        "visuals": [{"kind": "table", "n": 1, "fp": "단계|방식|결과"}]
+      },
+      {
+        "key": "crowd-decision",
+        "chapter": "choices",
+        "layout": "overview",
+        "tab": "선택",
+        "title": {"text": "4.4 군중 이동: 전원 포위에서 묶음별 군중으로, 그리고 축소", "verbatim": true},
+        "lead": {"text": "최종 결정 — 마지막에 군중 이동을 크게 줄였다.", "verbatim": true},
+        "keywords": ["효과 작음", "책임 엉킴", "문제 정의"],
+        "sectionPath": ["4. 고민과 선택", "4.4 군중 이동: 전원 포위에서 묶음별 군중으로, 그리고 축소"],
+        "points": [
+          {"label": "이유", "text": "가장 큰 이유는 슬롯·토큰 방식이 실제 플레이에서 효과가 작았던 것이다.", "verbatim": true},
+          {
+            "label": "이유",
+            "text": "Claude를 쓰기 시작한 초기에 만든 코드라 MonsterMovement와 CrowdController의 책임이 많이 엉켜 있었고, 유지보수가 매우 힘들었다.",
+            "verbatim": true
+          },
+          {"label": "문제 정의", "text": "그래서 군중 소속을 스폰 묶음 단위로 다시 정했다.", "verbatim": true},
+          {"label": "남은 것", "text": "지금 구조가 제출본의 최종 구조다.", "verbatim": true}
+        ],
+        "visuals": []
+      },
+      {
+        "key": "wave-choice",
+        "chapter": "choices",
+        "layout": "overview",
+        "tab": "선택",
+        "title": {"text": "4.5 웨이브 데이터: 라운드 안에 스테이지를 하나 더 두기", "verbatim": true},
+        "lead": {"text": "최종 결정 — 라운드 → 스테이지 → 웨이브 → 스포너 4계층의 표(TSV) 4개로 나눴다.", "verbatim": true},
+        "keywords": ["WaveStage", "4계층", "3단으로"],
+        "sectionPath": ["4. 고민과 선택", "4.5 웨이브 데이터: 라운드 안에 스테이지를 하나 더 두기"],
+        "points": [
+          {"label": "장점", "text": "웨이브 편집 도구(Wave Studio)로 보면 스테이지마다 패턴이 심화되는 구분이 보였다.", "verbatim": true},
+          {"label": "단점", "text": "4계층 코드가 한눈에 읽히지 않아 다른 팀원이 이해하기 어려웠고, 재사용도 잘 되지 않았다.", "verbatim": true},
+          {"label": "단점", "text": "수치 조절이 힘들어 사실상 AI가 수치를 조절했다.", "verbatim": true},
+          {
+            "label": "다시 고른다면",
+            "text": "3단(라운드 → 웨이브 → 스포너)으로 줄이되, 시간이 지날수록 웨이브 기믹이 강화되는 특성만 잘 표현할 방법을 찾을 것이다.",
+            "verbatim": true
+          }
+        ],
+        "visuals": []
+      },
+      {
         "key": "ai",
         "chapter": "choices",
         "layout": "full",
         "tab": "선택",
-        "title": {"text": "4.4 AI 도구를 어떻게 썼나", "verbatim": true},
+        "title": {"text": "4.6 AI 도구를 어떻게 썼나", "verbatim": true},
         "lead": null,
         "keywords": ["셰이더 5개", "밸런스 기준선", "웨이브 테마"],
-        "sectionPath": ["4. 고민과 선택", "4.4 AI 도구를 어떻게 썼나"],
+        "sectionPath": ["4. 고민과 선택", "4.6 AI 도구를 어떻게 썼나"],
         "points": [{"label": "돌아보면", "text": "처음 공격 구조를 한 번에 크게 맡긴 것은 너무 넓었다.", "verbatim": true}],
         "visuals": [{"kind": "table", "n": 1, "fp": "맡긴 것|내가 정한 것"}]
       },
@@ -1586,17 +1801,21 @@
         "chapter": "choices",
         "layout": "overview",
         "tab": "선택",
-        "title": {"text": "4.5 팀 구조: ServiceLocator와 EventBus를 쓰면서", "verbatim": true},
+        "title": {"text": "4.7 팀 구조: ServiceLocator와 EventBus를 쓰면서", "verbatim": true},
         "lead": {"text": "ServiceLocator·EventBus는 팀원이 만든 팀 공용 구조다.", "verbatim": true},
         "keywords": ["ServiceLocator", "EventBus", "인터페이스 주입"],
-        "sectionPath": ["4. 고민과 선택", "4.5 팀 구조: ServiceLocator와 EventBus를 쓰면서"],
+        "sectionPath": ["4. 고민과 선택", "4.7 팀 구조: ServiceLocator와 EventBus를 쓰면서"],
         "points": [
+          {
+            "label": "처음 부딪힌 점",
+            "text": "내가 만든 것은 데이터를 \"어떻게 모을지\"이고, 서비스 로케이터는 \"어떻게 가져올지\"라는 것을 알았다.",
+            "verbatim": true
+          },
           {
             "label": "편했던 점",
             "text": "플레이어 객체 같은 주요 개체를 싱글톤으로 만들거나 특정 클래스에서 노출할 필요 없이, `ServiceLocator` 하나가 주요 정보를 인터페이스로 저장해 공유할 수 있었다.",
             "verbatim": true
           },
-          {"label": "", "text": "실제 클래스가 없어도 모두가 그 규약을 가정하고 빠르게 진행할 수 있었다.", "verbatim": true},
           {"label": "의문", "text": "몬스터 풀처럼 직접 참조해도 무방해 보이는 것까지 인터페이스로 한 번 거르는 게 맞는지는 아직 확신이 없다.", "verbatim": true}
         ],
         "visuals": []
@@ -1613,6 +1832,7 @@
         "points": [
           {"label": "", "text": "모든 몬스터가 같은 상태 머신 위에서 공격 6종을 쓰고, 몬스터 프리팹 6종(강화형 변형 포함)이 같은 구조로 조립된다.", "verbatim": true},
           {"label": "", "text": "처음 하는 플레이어에게는 기존 물량도 꽤 도전적이었다.", "verbatim": true},
+          {"label": "섬멸 라운드", "text": "그 뒤 플레이어가 잡몹을 더 잡았고, 몬스터를 잡지 않고 회피만 하는 플레이도 줄었다.", "verbatim": true},
           {"label": "아쉬운 점", "text": "몬스터 수에 따른 프레임 시간·GC를 Profiler로 잰 기록이 없다.", "verbatim": true}
         ],
         "visuals": []
@@ -1702,6 +1922,6 @@
         "visuals": [{"kind": "table", "n": 1, "fp": "부채|내용"}]
       }
     ],
-    "applied": "a5e1db19b0064a62"
+    "applied": "ff7b91773f7b430d"
   }
 }
