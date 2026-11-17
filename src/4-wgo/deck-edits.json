@@ -53,10 +53,10 @@
       "chapter": "features",
       "layout": "code",
       "tab": "구현",
-      "title": {"text": "3.2 멤버별 \"최신 스냅샷 1개\" 채널", "verbatim": true},
+      "title": {"text": "3.3 멤버별 \"최신 스냅샷 1개\" 채널", "verbatim": true},
       "lead": null,
       "keywords": ["최신 스냅샷", "DropOldest", "송신 루프"],
-      "sectionPath": ["3. 핵심 기능", "3.2 멤버별 \"최신 스냅샷 1개\" 채널"],
+      "sectionPath": ["3. 핵심 기능", "3.3 멤버별 \"최신 스냅샷 1개\" 채널"],
       "points": [
         {"label": "", "text": "호스트 스냅샷이 오면 서버는 직접 보내지 않고, 호스트를 뺀 멤버마다 있는 채널에 넣기만 한다.", "verbatim": true},
         {"label": "", "text": "채널 크기는 1이고, 꽉 차면 오래된 것을 버린다. 느린 멤버에게는 밀린 스냅샷이 쌓이지 않고 가장 최신 것만 간다.", "verbatim": true}
@@ -64,8 +64,8 @@
       "visuals": [{"kind": "code", "n": 1, "lines": [1, 20], "fp": "// Member 안: 멤버마다 크기 1짜리 채널"}],
       "from": {
         "key": "snapshot-channel",
-        "sectionPath": ["3. 핵심 기능", "3.2 멤버별 \"최신 스냅샷 1개\" 채널"],
-        "sig": ["3.2 멤버별 \"최신 스냅샷 1개\" 채널|code|1|// Member 안: 멤버마다 크기 1짜리 채널"]
+        "sectionPath": ["3. 핵심 기능", "3.3 멤버별 \"최신 스냅샷 1개\" 채널"],
+        "sig": ["3.3 멤버별 \"최신 스냅샷 1개\" 채널|code|1|// Member 안: 멤버마다 크기 1짜리 채널"]
       },
       "group": "split-snapshot-send-loop"
     },
@@ -74,10 +74,10 @@
       "chapter": "features",
       "layout": "code",
       "tab": "구현",
-      "title": {"text": "3.2 멤버별 \"최신 스냅샷 1개\" 채널 — 송신 루프", "verbatim": false},
+      "title": {"text": "3.3 멤버별 \"최신 스냅샷 1개\" 채널 — 송신 루프", "verbatim": false},
       "lead": null,
       "keywords": ["송신 루프", "BroadcastNowAsync"],
-      "sectionPath": ["3. 핵심 기능", "3.2 멤버별 \"최신 스냅샷 1개\" 채널"],
+      "sectionPath": ["3. 핵심 기능", "3.3 멤버별 \"최신 스냅샷 1개\" 채널"],
       "points": [
         {"label": "", "text": "멤버마다 송신 전담 루프가 하나씩 돌며 자기 채널에서 꺼내 보낸다.", "verbatim": true},
         {
@@ -96,16 +96,16 @@
       "chapter": "features",
       "layout": "code",
       "tab": "구현",
-      "title": {"text": "3.3 방 수명과 연결 예외 처리 — 송신 타임아웃과 실패 표시", "verbatim": false},
+      "title": {"text": "3.4 방 수명과 연결 예외 처리 — 송신 타임아웃과 실패 표시", "verbatim": false},
       "lead": null,
       "keywords": ["9초 제한", "송신 실패"],
-      "sectionPath": ["3. 핵심 기능", "3.3 방 수명과 연결 예외 처리"],
+      "sectionPath": ["3. 핵심 기능", "3.4 방 수명과 연결 예외 처리"],
       "points": [{"label": "", "text": "소켓 연결 중 예외로 한쪽이 비정상 종료되면 반대편도 이상해질 수 있어, 송신 실패는 반드시 한 곳에서 처리하게 했다.", "verbatim": true}],
       "visuals": [{"kind": "code", "n": 2, "lines": [1, 28], "fp": "private async Task SendRawAsync(Member member, string json)"}],
       "from": {
         "key": "send-timeout",
-        "sectionPath": ["3. 핵심 기능", "3.3 방 수명과 연결 예외 처리"],
-        "sig": ["3.3 방 수명과 연결 예외 처리|code|2|private async Task SendRawAsync(Member member, string json)"]
+        "sectionPath": ["3. 핵심 기능", "3.4 방 수명과 연결 예외 처리"],
+        "sig": ["3.4 방 수명과 연결 예외 처리|code|2|private async Task SendRawAsync(Member member, string json)"]
       },
       "group": "split-room-lifecycle"
     },
@@ -114,10 +114,10 @@
       "chapter": "features",
       "layout": "code",
       "tab": "구현",
-      "title": {"text": "3.3 방 수명과 연결 예외 처리 — 방 입장과 인원 제한", "verbatim": false},
+      "title": {"text": "3.4 방 수명과 연결 예외 처리 — 방 입장과 인원 제한", "verbatim": false},
       "lead": null,
       "keywords": ["인원 제한", "호스트 결정"],
-      "sectionPath": ["3. 핵심 기능", "3.3 방 수명과 연결 예외 처리"],
+      "sectionPath": ["3. 핵심 기능", "3.4 방 수명과 연결 예외 처리"],
       "points": [
         {"label": "", "text": "호스트 결정: 방이 비어 있을 때 들어온 사람이 호스트다.", "verbatim": true},
         {
