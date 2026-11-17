@@ -36,10 +36,10 @@
       "chapter": "structure",
       "layout": "visual",
       "tab": "구조",
-      "title": {"text": "4.0 사용법: RoomClient API와 팀원용 연동 가이드", "verbatim": true},
-      "lead": {"text": "새 기능을 동기화하는 순서는 세 단계다. 이 순서를 팀원용 연동 가이드로 정리해 공유했다.", "verbatim": true},
-      "keywords": ["RoomClient API", "연동 가이드", "세 단계"],
-      "sectionPath": ["4. 핵심 기능", "4.0 사용법: RoomClient API와 팀원용 연동 가이드"],
+      "title": {"text": "3.5 다른 기능이 네트워크에 붙는 방법: RoomClient API", "verbatim": true},
+      "lead": {"text": "새 기능을 동기화하는 순서는 세 단계다.", "verbatim": true},
+      "keywords": ["RoomClient API", "세 단계"],
+      "sectionPath": ["3. 시스템 구조", "3.5 다른 기능이 네트워크에 붙는 방법: RoomClient API"],
       "points": [
         {"label": "", "text": "Protocol의 SnapshotMessage에 필드를 추가한다.", "verbatim": true},
         {"label": "", "text": "호스트 쪽 SendSnapshotOrInputMessage에서 그 필드를 채운다.", "verbatim": true},
@@ -116,7 +116,7 @@
       "tab": "구현",
       "title": {"text": "4.3 방 수명과 연결 예외 처리 — 방 입장과 인원 제한", "verbatim": false},
       "lead": null,
-      "keywords": ["인원 제한", "호스트 결정", "호스트 승계"],
+      "keywords": ["인원 제한", "호스트 결정"],
       "sectionPath": ["4. 핵심 기능", "4.3 방 수명과 연결 예외 처리"],
       "points": [
         {"label": "", "text": "호스트 결정: 방이 비어 있을 때 들어온 사람이 호스트다.", "verbatim": true},

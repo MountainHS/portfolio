@@ -3,7 +3,7 @@
   "id": "4-wgo",
   "doc": "기술문서.md",
   "title": "We Got One",
-  "tagline": "서로 붙잡고 자원을 모아 다리를 짓는 4인 협동 물리 생존 게임",
+  "tagline": "서로 붙잡고 자원을 모아 다리를 짓는 4인 협동 물리 탐험 게임",
   "cover": "images/cover.png",
   "team": {
     "type": "team",
@@ -13,7 +13,7 @@
   "meta": [
     {
       "label": "장르",
-      "value": "2D 협동 물리 생존 게임"
+      "value": "2D 협동 물리 탐험 게임"
     },
     {
       "label": "기간",
@@ -151,8 +151,8 @@
         "layout": "overview",
         "tab": "개요",
         "title": {"text": "1.1 프로젝트 소개", "verbatim": true},
-        "lead": {"text": "플레이어들이 서로의 몸을 붙잡아 바닷속 자원을 모으고, 그 자원으로 다리를 지어 육지까지 가는 2D 협동 물리 생존 게임", "verbatim": true},
-        "keywords": ["4인 협동", "물리 생존", "다리 건설"],
+        "lead": {"text": "플레이어들이 서로의 몸을 붙잡아 바닷속 자원을 모으고, 그 자원으로 다리를 지어 육지까지 가는 2D 협동 물리 탐험 게임", "verbatim": true},
+        "keywords": ["4인 협동", "물리 탐험", "다리 건설"],
         "sectionPath": ["1. 개요 · 팀 · 역할", "1.1 프로젝트 소개"],
         "points": [
           {"label": "", "text": "방 코드를 입력해 최대 4명이 한 방에 들어간다.", "verbatim": true},
@@ -172,24 +172,13 @@
       {
         "key": "scope",
         "chapter": "overview",
-        "layout": "visual",
+        "layout": "full",
         "tab": "개요",
-        "title": {"text": "1.1 프로젝트 소개 — 담당 범위", "verbatim": false},
-        "lead": {"text": "제가 이 프로젝트에서 맡은 부분은 다음과 같습니다.", "verbatim": true},
-        "keywords": ["네트워크 동기화", "다리 건설 조건"],
+        "title": {"text": "1.1 프로젝트 소개 — 핵심 루프와 승패", "verbatim": false},
+        "lead": null,
+        "keywords": ["핵심 루프", "승리", "패배"],
         "sectionPath": ["1. 개요 · 팀 · 역할", "1.1 프로젝트 소개"],
-        "points": [
-          {
-            "label": "",
-            "text": "클라이언트·서버 네트워크 동기화의 뼈대 — 강사 제공 서버 뼈대를 호스트 권한형 입력 중계 서버로 바꾸고, 팀원들이 각자 기능을 네트워크에 붙일 수 있게 한 구조",
-            "verbatim": true
-          },
-          {
-            "label": "",
-            "text": "다리 건설 조건 개편 — 나무만 쓰던 다리 건설을 물고기까지 포함하는 조건으로 바꾸고, 다리마다의 조건을 TSV 표로 관리하게 한 작업",
-            "verbatim": true
-          }
-        ],
+        "points": [],
         "visuals": [{"kind": "table", "n": 1, "fp": "구분|내용"}]
       },
       {
@@ -198,8 +187,8 @@
         "layout": "overview",
         "tab": "개요",
         "title": {"text": "1.2 왜 만들었나", "verbatim": true},
-        "lead": null,
-        "keywords": ["네트워크 멀티플레이", "협동 게임", "탐험"],
+        "lead": {"text": "팀 프로젝트로 네트워크 멀티플레이에 도전하면서, 협동 물리 속 좌충우돌 낚시를 핵심 재미로 삼은 게임을 만들었다.", "verbatim": true},
+        "keywords": ["네트워크 멀티플레이", "협동 게임", "좌충우돌 낚시"],
         "sectionPath": ["1. 개요 · 팀 · 역할", "1.2 왜 만들었나"],
         "points": [
           {
@@ -208,13 +197,8 @@
             "verbatim": true
           },
           {
-            "label": "경쟁보다 협동 게임",
+            "label": "팀원 모두가 선호한 협동 게임",
             "text": "협동 게임은 \"모두가 같은 화면을 보고 함께 문제를 푼다\"는 경험이 핵심이라, 네트워크 동기화의 품질이 곧 게임의 재미가 된다.",
-            "verbatim": true
-          },
-          {
-            "label": "생존보다 탐험과 좌충우돌 낚시로 방향 바꾸기",
-            "text": "뗏목 대신 다리를 두고, 다리를 넓히려고 새 지역을 탐사하는 방향으로 바꿨다. 1차 빌드에서 느낀 핵심 재미는 캐릭터들이 물고기를 잡으며 좌충우돌하는 상황이었다.",
             "verbatim": true
           }
         ],
@@ -239,12 +223,13 @@
         "tab": "개요",
         "title": {"text": "2.1 주요 담당 작업 및 개발 범위", "verbatim": true},
         "lead": null,
-        "keywords": ["네트워크 구조 개편", "연동 가이드", "TSV 데이터"],
+        "keywords": ["네트워크 구조 개편", "WorldItemId", "TSV 데이터"],
         "sectionPath": ["2. 담당 파트 개요", "2.1 주요 담당 작업 및 개발 범위"],
         "points": [
           {"label": "", "text": "네트워크 구조 개편: 호스트 권한형 구조에 맞춰 서버의 메시지 처리 방식을 입력 중계와 스냅샷 중계로 변경했다.", "verbatim": true},
+          {"label": "", "text": "월드 아이템 동기화: 물고기·나무 같은 월드 물체를 호스트와 게스트가 같은 WorldItemId로 가리키게 했다.", "verbatim": true},
           {"label": "", "text": "네트워크 연동 및 디버깅: 팀원들의 기능을 서버에 통합하고, 연동 가이드와 동기화 상태 확인용 디버그 도구를 제작했다.", "verbatim": true},
-          {"label": "", "text": "다리 건설 시스템 개편: 건설 조건에 물고기를 추가하고, 다리 15칸의 건설 비용을 TSV 데이터로 관리하도록 변경했다", "verbatim": true}
+          {"label": "", "text": "다리 건설 시스템 개편: 건설 조건에 물고기를 추가하고, 다리 15칸의 건설 비용을 TSV 데이터로 관리하도록 변경했다.", "verbatim": true}
         ],
         "visuals": []
       },
@@ -342,11 +327,8 @@
             "text": "초당 횟수는 저장소의 설정값이다. 게스트·호스트 송신 sendPerSecond: 20, 서버 입력 전달 BroadcastPerSecond: 10.",
             "verbatim": true
           },
-          {
-            "label": "",
-            "text": "서버 → 게스트 전달은 처음에 일정 주기마다 보내려 했다. 설계를 다듬으며 따로 주기를 두지 않고, 호스트 스냅샷을 받을 때마다 바로 보내는 쪽으로 바꿨다.",
-            "verbatim": true
-          }
+          {"label": "", "text": "서버 → 게스트 전달에는 별도 주기가 없다. 호스트 스냅샷을 받을 때마다 바로 보낸다.", "verbatim": true},
+          {"label": "", "text": "이 채널 구조는 프로젝트 이후 개선한 3단계다. 프로젝트 안에서는 방 단위 큐를 쓰는 2단계까지였다.", "verbatim": true}
         ],
         "visuals": [{"kind": "mermaid", "n": 1, "fp": "flowchart LR"}]
       },
@@ -367,10 +349,10 @@
         "chapter": "structure",
         "layout": "visual",
         "tab": "구조",
-        "title": {"text": "4.0 사용법: RoomClient API와 팀원용 연동 가이드", "verbatim": true},
-        "lead": {"text": "새 기능을 동기화하는 순서는 세 단계다. 이 순서를 팀원용 연동 가이드로 정리해 공유했다.", "verbatim": true},
-        "keywords": ["RoomClient API", "연동 가이드", "세 단계"],
-        "sectionPath": ["4. 핵심 기능", "4.0 사용법: RoomClient API와 팀원용 연동 가이드"],
+        "title": {"text": "3.5 다른 기능이 네트워크에 붙는 방법: RoomClient API", "verbatim": true},
+        "lead": {"text": "새 기능을 동기화하는 순서는 세 단계다.", "verbatim": true},
+        "keywords": ["RoomClient API", "세 단계"],
+        "sectionPath": ["3. 시스템 구조", "3.5 다른 기능이 네트워크에 붙는 방법: RoomClient API"],
         "points": [
           {"label": "", "text": "Protocol의 SnapshotMessage에 필드를 추가한다.", "verbatim": true},
           {"label": "", "text": "호스트 쪽 SendSnapshotOrInputMessage에서 그 필드를 채운다.", "verbatim": true},
@@ -390,9 +372,9 @@
         "keywords": ["LastInput", "Interlocked"],
         "sectionPath": ["4. 핵심 기능", "4.1 게스트 입력 모아서 호스트에게 보내기"],
         "points": [
-          {"label": "", "text": "게스트 입력이 올 때마다 그 멤버의 LastInput을 최신 값으로 덮어쓴다. 쌓지 않는다.", "verbatim": true},
+          {"label": "", "text": "게스트 입력이 올 때마다 그 멤버의 LastInput을 최신 값으로 덮어쓴다.", "verbatim": true},
           {"label": "", "text": "RoomHub 타이머가 틱마다 모든 방의 SendGuestInputsToHostAsync를 동시에 부른다.", "verbatim": true},
-          {"label": "", "text": "방은 게스트마다 LastInput을 \"꺼내면서 비우고\", 입력이 하나라도 있으면 묶어서 호스트에게 보낸다.", "verbatim": true}
+          {"label": "", "text": "방은 게스트마다 LastInput을 \"꺼내면서 비우고\", 입력이 하나라도 있으면 묶어서 호스트에게 보낸다", "verbatim": true}
         ],
         "visuals": [{"kind": "code", "n": 1, "lines": [8, 28], "fp": "public async Task SendGuestInputsToHostAsync()"}]
       },
@@ -465,7 +447,7 @@
         "tab": "구현",
         "title": {"text": "4.3 방 수명과 연결 예외 처리 — 방 입장과 인원 제한", "verbatim": false},
         "lead": null,
-        "keywords": ["인원 제한", "호스트 결정", "호스트 승계"],
+        "keywords": ["인원 제한", "호스트 결정"],
         "sectionPath": ["4. 핵심 기능", "4.3 방 수명과 연결 예외 처리"],
         "points": [
           {"label": "", "text": "호스트 결정: 방이 비어 있을 때 들어온 사람이 호스트다.", "verbatim": true},
@@ -607,27 +589,14 @@
         "chapter": "features",
         "layout": "visual",
         "tab": "구조",
-        "title": {"text": "4.6 다리 건설 조건 개편 — 구조와 이유", "verbatim": false},
-        "lead": null,
+        "title": {"text": "4.6 다리 건설 조건 개편 — 구조와 세 규칙", "verbatim": false},
+        "lead": {"text": "다리 건설에는 세 규칙을 둔다. 다리마다 꼭 필요한 재료, 필요 가치 합, 최소 낭비를 정해 둔다.", "verbatim": true},
         "keywords": ["꼭 필요한 재료", "필요 가치 합", "최소 낭비"],
         "sectionPath": ["4. 핵심 기능", "4.6 다리 건설 조건 개편과 비용 계산"],
         "points": [
-          {
-            "label": "",
-            "text": "빌드 테스트 뒤 허기가 스태미나로 바뀌며 기획이 확정될 때, 탐험할 이유를 늘리려고 나무만 쓰던 다리 건설 조건을 넓혔다.",
-            "verbatim": true
-          },
-          {
-            "label": "",
-            "text": "그래서 다리마다 꼭 필요한 재료(탐험 강제), 필요 가치 합(자유롭게 채우기), 최소 낭비(모은 자원을 아끼기) 세 규칙을 두었다. 셋 중 하나가 빠지면 이 문제를 풀기 어렵다고 판단했다.",
-            "verbatim": true
-          },
-          {"label": "", "text": "넣을 재료는 플레이어가 고르지 않고 시스템이 최소 낭비로 자동으로 고른다.", "verbatim": true},
-          {
-            "label": "",
-            "text": "AI 도구는 내가 정한 명세대로 BridgeManager에서 쓸 가치 연산 모듈(BridgeBuildCostCalculator)을 만들고, TSV → DTO → Ref 데이터 파이프라인을 구축하는 데 썼다.",
-            "verbatim": true
-          }
+          {"label": "꼭 필요한 재료", "text": "다리마다 정해 둔 재료를 반드시 모아야 한다. 플레이어가 새 지역을 탐험하게 만든다.", "verbatim": true},
+          {"label": "필요 가치 합", "text": "필수 재료 외에는 플레이어가 스스로 낚시해 모은 자원으로 자유롭게 채운다.", "verbatim": true},
+          {"label": "최소 낭비", "text": "건설에 쓸 재료는 시스템이 골라, 모은 자원을 아낀다.", "verbatim": true}
         ],
         "visuals": [{"kind": "mermaid", "n": 1, "fp": "classDiagram"}]
       },
@@ -679,6 +648,35 @@
           {"label": "", "text": "즉, 필수 자원을 확보한 뒤 건설에 필요한 점수를 최대한 낭비 없이 충족하고, 나머지 자원은 플레이어가 보유하도록 한다.", "verbatim": true}
         ],
         "visuals": [{"kind": "code", "n": 1, "fp": "public void BridgeBuild() // 호스트에서만 불림 (Bridge.OnCollisionSt"}]
+      },
+      {
+        "key": "bridge-why",
+        "chapter": "features",
+        "layout": "overview",
+        "tab": "선택",
+        "title": {"text": "4.6 왜 \"가치 합 + 꼭 필요한 재료 + 최소 낭비\"인가", "verbatim": false},
+        "lead": null,
+        "keywords": ["스태미나", "탐험 강제", "자동 선택"],
+        "sectionPath": ["4. 핵심 기능", "4.6 다리 건설 조건 개편과 비용 계산"],
+        "points": [
+          {
+            "label": "계기",
+            "text": "빌드 테스트 뒤 허기가 스태미나로 바뀌며 기획이 확정될 때, 탐험할 이유를 늘리려고 나무만 쓰던 다리 건설 조건을 넓혔다.",
+            "verbatim": true
+          },
+          {
+            "label": "",
+            "text": "다리 조건으로 두 가지를 동시에 만족시키고 싶었다. 하나는 꼭 모아야 할 재료를 정해 플레이어에게 탐험을 강제하는 것, 다른 하나는 그 외에는 플레이어가 스스로 낚시해 모은 자원으로 자유롭게 채우는 재미를 잃지 않게 하는 것이다.",
+            "verbatim": true
+          },
+          {"label": "자동 선택", "text": "넣을 재료는 플레이어가 고르지 않고 시스템이 최소 낭비로 자동으로 고른다.", "verbatim": true},
+          {
+            "label": "AI 활용",
+            "text": "AI 도구는 내가 정한 명세대로 BridgeManager에서 쓸 가치 연산 모듈(BridgeBuildCostCalculator)을 만들고, TSV → DTO → Ref 데이터 파이프라인을 구축하는 데 썼다.",
+            "verbatim": true
+          }
+        ],
+        "visuals": []
       },
       {
         "key": "bridge-alt",
@@ -939,6 +937,26 @@
         "visuals": [{"kind": "table", "n": 1, "fp": "대안|장점|단점"}]
       },
       {
+        "key": "direction",
+        "chapter": "decisions",
+        "layout": "visual",
+        "tab": "선택",
+        "title": {"text": "5.7 게임 방향: 생존에서 탐험으로 (기획)", "verbatim": true},
+        "lead": {"text": "1차 빌드를 팀원들과 해 보니 조작이 생각보다 어려웠다. 처음 하는 사람은 조작에 적응하다가, 낚시로 허기를 채우기 전에 죽는 일이 많았다.", "verbatim": true},
+        "keywords": ["허기→스태미나", "뗏목→다리", "탐험"],
+        "sectionPath": ["5. 고민과 선택", "5.7 게임 방향: 생존에서 탐험으로 (기획)"],
+        "points": [
+          {"label": "결정", "text": "생존 요소를 없애고 탐험 쪽으로 바꿨다.", "verbatim": true},
+          {
+            "label": "이유",
+            "text": "1차 빌드에서 느낀 핵심 재미는 캐릭터들이 물고기를 잡으며 좌충우돌하는 상황이었다. 생존 압박보다 다리를 넓히려는 탐사를 앞에 두었다.",
+            "verbatim": true
+          },
+          {"label": "", "text": "탐험할 이유를 늘리려고 다리 건설 조건도 이때 함께 넓혔다.", "verbatim": true}
+        ],
+        "visuals": [{"kind": "table", "n": 1, "fp": "항목|처음 기획|바꾼 기획"}]
+      },
+      {
         "key": "result",
         "chapter": "results",
         "layout": "overview",
@@ -1028,6 +1046,7 @@
         "keywords": ["remotes", "Me 중복"],
         "sectionPath": ["6. 결과 및 배운 점", "6.2 문제 해결 경험", "6.2-3 스냅샷에 호스트 플레이어가 두 번 들어감 (클라이언트)"],
         "points": [
+          {"label": "문제", "text": "스냅샷에 호스트 플레이어가 두 번 들어갔다.", "verbatim": true},
           {"label": "원인", "text": "플레이어 목록 remotes에 자기 자신도 들어 있는데, 스냅샷을 만들 때 Me를 따로 한 번 더 넣었다.", "verbatim": true},
           {"label": "해결", "text": "별도 추가를 지우고 remotes만 순회한다.", "verbatim": true}
         ],
@@ -1043,6 +1062,7 @@
         "keywords": ["다리 개수", "뷰 대신 데이터"],
         "sectionPath": ["6. 결과 및 배운 점", "6.2 문제 해결 경험", "6.2-4 다리 개수가 늦게 오르고 게스트와 어긋남 (클라이언트)"],
         "points": [
+          {"label": "문제", "text": "다리 개수가 늦게 오르고 게스트와 어긋났다.", "verbatim": true},
           {
             "label": "원인",
             "text": "개수를 \"켜진 다리 오브젝트 수\"로 셌는데 다리는 연출 2초 뒤에 켜졌고, 게스트는 매 스냅샷마다 0번부터 다시 켰다.",
@@ -1183,8 +1203,8 @@
         "layout": "overview",
         "tab": "개요",
         "title": {"text": "1.1 프로젝트 소개", "verbatim": true},
-        "lead": {"text": "플레이어들이 서로의 몸을 붙잡아 바닷속 자원을 모으고, 그 자원으로 다리를 지어 육지까지 가는 2D 협동 물리 생존 게임", "verbatim": true},
-        "keywords": ["4인 협동", "물리 생존", "다리 건설"],
+        "lead": {"text": "플레이어들이 서로의 몸을 붙잡아 바닷속 자원을 모으고, 그 자원으로 다리를 지어 육지까지 가는 2D 협동 물리 탐험 게임", "verbatim": true},
+        "keywords": ["4인 협동", "물리 탐험", "다리 건설"],
         "sectionPath": ["1. 개요 · 팀 · 역할", "1.1 프로젝트 소개"],
         "points": [
           {"label": "", "text": "방 코드를 입력해 최대 4명이 한 방에 들어간다.", "verbatim": true},
@@ -1204,24 +1224,13 @@
       {
         "key": "scope",
         "chapter": "overview",
-        "layout": "visual",
+        "layout": "full",
         "tab": "개요",
-        "title": {"text": "1.1 프로젝트 소개 — 담당 범위", "verbatim": false},
-        "lead": {"text": "제가 이 프로젝트에서 맡은 부분은 다음과 같습니다.", "verbatim": true},
-        "keywords": ["네트워크 동기화", "다리 건설 조건"],
+        "title": {"text": "1.1 프로젝트 소개 — 핵심 루프와 승패", "verbatim": false},
+        "lead": null,
+        "keywords": ["핵심 루프", "승리", "패배"],
         "sectionPath": ["1. 개요 · 팀 · 역할", "1.1 프로젝트 소개"],
-        "points": [
-          {
-            "label": "",
-            "text": "클라이언트·서버 네트워크 동기화의 뼈대 — 강사 제공 서버 뼈대를 호스트 권한형 입력 중계 서버로 바꾸고, 팀원들이 각자 기능을 네트워크에 붙일 수 있게 한 구조",
-            "verbatim": true
-          },
-          {
-            "label": "",
-            "text": "다리 건설 조건 개편 — 나무만 쓰던 다리 건설을 물고기까지 포함하는 조건으로 바꾸고, 다리마다의 조건을 TSV 표로 관리하게 한 작업",
-            "verbatim": true
-          }
-        ],
+        "points": [],
         "visuals": [{"kind": "table", "n": 1, "fp": "구분|내용"}]
       },
       {
@@ -1230,8 +1239,8 @@
         "layout": "overview",
         "tab": "개요",
         "title": {"text": "1.2 왜 만들었나", "verbatim": true},
-        "lead": null,
-        "keywords": ["네트워크 멀티플레이", "협동 게임", "탐험"],
+        "lead": {"text": "팀 프로젝트로 네트워크 멀티플레이에 도전하면서, 협동 물리 속 좌충우돌 낚시를 핵심 재미로 삼은 게임을 만들었다.", "verbatim": true},
+        "keywords": ["네트워크 멀티플레이", "협동 게임", "좌충우돌 낚시"],
         "sectionPath": ["1. 개요 · 팀 · 역할", "1.2 왜 만들었나"],
         "points": [
           {
@@ -1240,13 +1249,8 @@
             "verbatim": true
           },
           {
-            "label": "경쟁보다 협동 게임",
+            "label": "팀원 모두가 선호한 협동 게임",
             "text": "협동 게임은 \"모두가 같은 화면을 보고 함께 문제를 푼다\"는 경험이 핵심이라, 네트워크 동기화의 품질이 곧 게임의 재미가 된다.",
-            "verbatim": true
-          },
-          {
-            "label": "생존보다 탐험과 좌충우돌 낚시로 방향 바꾸기",
-            "text": "뗏목 대신 다리를 두고, 다리를 넓히려고 새 지역을 탐사하는 방향으로 바꿨다. 1차 빌드에서 느낀 핵심 재미는 캐릭터들이 물고기를 잡으며 좌충우돌하는 상황이었다.",
             "verbatim": true
           }
         ],
@@ -1271,12 +1275,13 @@
         "tab": "개요",
         "title": {"text": "2.1 주요 담당 작업 및 개발 범위", "verbatim": true},
         "lead": null,
-        "keywords": ["네트워크 구조 개편", "연동 가이드", "TSV 데이터"],
+        "keywords": ["네트워크 구조 개편", "WorldItemId", "TSV 데이터"],
         "sectionPath": ["2. 담당 파트 개요", "2.1 주요 담당 작업 및 개발 범위"],
         "points": [
           {"label": "", "text": "네트워크 구조 개편: 호스트 권한형 구조에 맞춰 서버의 메시지 처리 방식을 입력 중계와 스냅샷 중계로 변경했다.", "verbatim": true},
+          {"label": "", "text": "월드 아이템 동기화: 물고기·나무 같은 월드 물체를 호스트와 게스트가 같은 WorldItemId로 가리키게 했다.", "verbatim": true},
           {"label": "", "text": "네트워크 연동 및 디버깅: 팀원들의 기능을 서버에 통합하고, 연동 가이드와 동기화 상태 확인용 디버그 도구를 제작했다.", "verbatim": true},
-          {"label": "", "text": "다리 건설 시스템 개편: 건설 조건에 물고기를 추가하고, 다리 15칸의 건설 비용을 TSV 데이터로 관리하도록 변경했다", "verbatim": true}
+          {"label": "", "text": "다리 건설 시스템 개편: 건설 조건에 물고기를 추가하고, 다리 15칸의 건설 비용을 TSV 데이터로 관리하도록 변경했다.", "verbatim": true}
         ],
         "visuals": []
       },
@@ -1373,11 +1378,8 @@
             "text": "초당 횟수는 저장소의 설정값이다. 게스트·호스트 송신 sendPerSecond: 20, 서버 입력 전달 BroadcastPerSecond: 10.",
             "verbatim": true
           },
-          {
-            "label": "",
-            "text": "서버 → 게스트 전달은 처음에 일정 주기마다 보내려 했다. 설계를 다듬으며 따로 주기를 두지 않고, 호스트 스냅샷을 받을 때마다 바로 보내는 쪽으로 바꿨다.",
-            "verbatim": true
-          }
+          {"label": "", "text": "서버 → 게스트 전달에는 별도 주기가 없다. 호스트 스냅샷을 받을 때마다 바로 보낸다.", "verbatim": true},
+          {"label": "", "text": "이 채널 구조는 프로젝트 이후 개선한 3단계다. 프로젝트 안에서는 방 단위 큐를 쓰는 2단계까지였다.", "verbatim": true}
         ],
         "visuals": [{"kind": "mermaid", "n": 1, "fp": "flowchart LR"}]
       },
@@ -1395,13 +1397,13 @@
       },
       {
         "key": "roomclient-api",
-        "chapter": "features",
+        "chapter": "structure",
         "layout": "visual",
         "tab": "구조",
-        "title": {"text": "4.0 사용법: RoomClient API와 팀원용 연동 가이드", "verbatim": true},
+        "title": {"text": "3.5 다른 기능이 네트워크에 붙는 방법: RoomClient API", "verbatim": true},
         "lead": {"text": "새 기능을 동기화하는 순서는 세 단계다. 이 순서를 팀원용 연동 가이드로 정리해 공유했다.", "verbatim": true},
         "keywords": ["RoomClient API", "연동 가이드", "세 단계"],
-        "sectionPath": ["4. 핵심 기능", "4.0 사용법: RoomClient API와 팀원용 연동 가이드"],
+        "sectionPath": ["3. 시스템 구조", "3.5 다른 기능이 네트워크에 붙는 방법: RoomClient API"],
         "points": [
           {"label": "", "text": "Protocol의 SnapshotMessage에 필드를 추가한다.", "verbatim": true},
           {"label": "", "text": "호스트 쪽 SendSnapshotOrInputMessage에서 그 필드를 채운다.", "verbatim": true},
@@ -1420,9 +1422,9 @@
         "keywords": ["LastInput", "Interlocked"],
         "sectionPath": ["4. 핵심 기능", "4.1 게스트 입력 모아서 호스트에게 보내기"],
         "points": [
-          {"label": "", "text": "게스트 입력이 올 때마다 그 멤버의 LastInput을 최신 값으로 덮어쓴다. 쌓지 않는다.", "verbatim": true},
+          {"label": "", "text": "게스트 입력이 올 때마다 그 멤버의 LastInput을 최신 값으로 덮어쓴다.", "verbatim": true},
           {"label": "", "text": "RoomHub 타이머가 틱마다 모든 방의 SendGuestInputsToHostAsync를 동시에 부른다.", "verbatim": true},
-          {"label": "", "text": "방은 게스트마다 LastInput을 \"꺼내면서 비우고\", 입력이 하나라도 있으면 묶어서 호스트에게 보낸다.", "verbatim": true}
+          {"label": "", "text": "방은 게스트마다 LastInput을 \"꺼내면서 비우고\", 입력이 하나라도 있으면 묶어서 호스트에게 보낸다", "verbatim": true}
         ],
         "visuals": [{"kind": "code", "n": 1, "lines": [8, 28], "fp": "public async Task SendGuestInputsToHostAsync()"}]
       },
@@ -1633,27 +1635,14 @@
         "chapter": "features",
         "layout": "visual",
         "tab": "구조",
-        "title": {"text": "4.6 다리 건설 조건 개편 — 구조와 이유", "verbatim": false},
-        "lead": null,
+        "title": {"text": "4.6 다리 건설 조건 개편 — 구조와 세 규칙", "verbatim": false},
+        "lead": {"text": "다리 건설에는 세 규칙을 둔다. 다리마다 꼭 필요한 재료, 필요 가치 합, 최소 낭비를 정해 둔다.", "verbatim": true},
         "keywords": ["꼭 필요한 재료", "필요 가치 합", "최소 낭비"],
         "sectionPath": ["4. 핵심 기능", "4.6 다리 건설 조건 개편과 비용 계산"],
         "points": [
-          {
-            "label": "",
-            "text": "빌드 테스트 뒤 허기가 스태미나로 바뀌며 기획이 확정될 때, 탐험할 이유를 늘리려고 나무만 쓰던 다리 건설 조건을 넓혔다.",
-            "verbatim": true
-          },
-          {
-            "label": "",
-            "text": "그래서 다리마다 꼭 필요한 재료(탐험 강제), 필요 가치 합(자유롭게 채우기), 최소 낭비(모은 자원을 아끼기) 세 규칙을 두었다. 셋 중 하나가 빠지면 이 문제를 풀기 어렵다고 판단했다.",
-            "verbatim": true
-          },
-          {"label": "", "text": "넣을 재료는 플레이어가 고르지 않고 시스템이 최소 낭비로 자동으로 고른다.", "verbatim": true},
-          {
-            "label": "",
-            "text": "AI 도구는 내가 정한 명세대로 BridgeManager에서 쓸 가치 연산 모듈(BridgeBuildCostCalculator)을 만들고, TSV → DTO → Ref 데이터 파이프라인을 구축하는 데 썼다.",
-            "verbatim": true
-          }
+          {"label": "꼭 필요한 재료", "text": "다리마다 정해 둔 재료를 반드시 모아야 한다. 플레이어가 새 지역을 탐험하게 만든다.", "verbatim": true},
+          {"label": "필요 가치 합", "text": "필수 재료 외에는 플레이어가 스스로 낚시해 모은 자원으로 자유롭게 채운다.", "verbatim": true},
+          {"label": "최소 낭비", "text": "건설에 쓸 재료는 시스템이 골라, 모은 자원을 아낀다.", "verbatim": true}
         ],
         "visuals": [{"kind": "mermaid", "n": 1, "fp": "classDiagram"}]
       },
@@ -1705,6 +1694,35 @@
           {"label": "", "text": "즉, 필수 자원을 확보한 뒤 건설에 필요한 점수를 최대한 낭비 없이 충족하고, 나머지 자원은 플레이어가 보유하도록 한다.", "verbatim": true}
         ],
         "visuals": [{"kind": "code", "n": 1, "fp": "public void BridgeBuild() // 호스트에서만 불림 (Bridge.OnCollisionSt"}]
+      },
+      {
+        "key": "bridge-why",
+        "chapter": "features",
+        "layout": "overview",
+        "tab": "선택",
+        "title": {"text": "4.6 왜 \"가치 합 + 꼭 필요한 재료 + 최소 낭비\"인가", "verbatim": false},
+        "lead": null,
+        "keywords": ["스태미나", "탐험 강제", "자동 선택"],
+        "sectionPath": ["4. 핵심 기능", "4.6 다리 건설 조건 개편과 비용 계산"],
+        "points": [
+          {
+            "label": "계기",
+            "text": "빌드 테스트 뒤 허기가 스태미나로 바뀌며 기획이 확정될 때, 탐험할 이유를 늘리려고 나무만 쓰던 다리 건설 조건을 넓혔다.",
+            "verbatim": true
+          },
+          {
+            "label": "",
+            "text": "다리 조건으로 두 가지를 동시에 만족시키고 싶었다. 하나는 꼭 모아야 할 재료를 정해 플레이어에게 탐험을 강제하는 것, 다른 하나는 그 외에는 플레이어가 스스로 낚시해 모은 자원으로 자유롭게 채우는 재미를 잃지 않게 하는 것이다.",
+            "verbatim": true
+          },
+          {"label": "자동 선택", "text": "넣을 재료는 플레이어가 고르지 않고 시스템이 최소 낭비로 자동으로 고른다.", "verbatim": true},
+          {
+            "label": "AI 활용",
+            "text": "AI 도구는 내가 정한 명세대로 BridgeManager에서 쓸 가치 연산 모듈(BridgeBuildCostCalculator)을 만들고, TSV → DTO → Ref 데이터 파이프라인을 구축하는 데 썼다.",
+            "verbatim": true
+          }
+        ],
+        "visuals": []
       },
       {
         "key": "bridge-alt",
@@ -1965,6 +1983,26 @@
         "visuals": [{"kind": "table", "n": 1, "fp": "대안|장점|단점"}]
       },
       {
+        "key": "direction",
+        "chapter": "decisions",
+        "layout": "visual",
+        "tab": "선택",
+        "title": {"text": "5.7 게임 방향: 생존에서 탐험으로 (기획)", "verbatim": true},
+        "lead": {"text": "1차 빌드를 팀원들과 해 보니 조작이 생각보다 어려웠다. 처음 하는 사람은 조작에 적응하다가, 낚시로 허기를 채우기 전에 죽는 일이 많았다.", "verbatim": true},
+        "keywords": ["허기→스태미나", "뗏목→다리", "탐험"],
+        "sectionPath": ["5. 고민과 선택", "5.7 게임 방향: 생존에서 탐험으로 (기획)"],
+        "points": [
+          {"label": "결정", "text": "생존 요소를 없애고 탐험 쪽으로 바꿨다.", "verbatim": true},
+          {
+            "label": "이유",
+            "text": "1차 빌드에서 느낀 핵심 재미는 캐릭터들이 물고기를 잡으며 좌충우돌하는 상황이었다. 생존 압박보다 다리를 넓히려는 탐사를 앞에 두었다.",
+            "verbatim": true
+          },
+          {"label": "", "text": "탐험할 이유를 늘리려고 다리 건설 조건도 이때 함께 넓혔다.", "verbatim": true}
+        ],
+        "visuals": [{"kind": "table", "n": 1, "fp": "항목|처음 기획|바꾼 기획"}]
+      },
+      {
         "key": "result",
         "chapter": "results",
         "layout": "overview",
@@ -2049,6 +2087,7 @@
         "keywords": ["remotes", "Me 중복"],
         "sectionPath": ["6. 결과 및 배운 점", "6.2 문제 해결 경험", "6.2-3 스냅샷에 호스트 플레이어가 두 번 들어감 (클라이언트)"],
         "points": [
+          {"label": "문제", "text": "스냅샷에 호스트 플레이어가 두 번 들어갔다.", "verbatim": true},
           {"label": "원인", "text": "플레이어 목록 remotes에 자기 자신도 들어 있는데, 스냅샷을 만들 때 Me를 따로 한 번 더 넣었다.", "verbatim": true},
           {"label": "해결", "text": "별도 추가를 지우고 remotes만 순회한다.", "verbatim": true}
         ],
@@ -2064,6 +2103,7 @@
         "keywords": ["다리 개수", "뷰 대신 데이터"],
         "sectionPath": ["6. 결과 및 배운 점", "6.2 문제 해결 경험", "6.2-4 다리 개수가 늦게 오르고 게스트와 어긋남 (클라이언트)"],
         "points": [
+          {"label": "문제", "text": "다리 개수가 늦게 오르고 게스트와 어긋났다.", "verbatim": true},
           {
             "label": "원인",
             "text": "개수를 \"켜진 다리 오브젝트 수\"로 셌는데 다리는 연출 2초 뒤에 켜졌고, 게스트는 매 스냅샷마다 0번부터 다시 켰다.",
@@ -2197,6 +2237,6 @@
         "visuals": []
       }
     ],
-    "applied": "ab191bcfb3c8553a"
+    "applied": "e8a40865f112adf3"
   }
 }
