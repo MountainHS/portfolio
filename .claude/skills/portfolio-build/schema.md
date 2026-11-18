@@ -271,7 +271,7 @@
 - **다른 절의 원문 블록**도 가리킬 수 있습니다(수강생이 요청할 때). 참조마다 자기 `sectionPath`를 적고, "확인해 주세요"에 기록됩니다.
 - 장 제목(원문 H2)과 렌더러 장면(표지·목차·장 표지·회고·맺음)은 고치지 않습니다.
 
-**반영**: `python .claude/skills/portfolio-build/deck-edits.py apply <폴더>|--all` (결정적·멱등, Python 3.8 이상·표준 라이브러리만). `data/projects/<폴더>.json`의 `deck`에 다음을 씁니다
+**반영**: `python .claude/skills/portfolio-build/deck-edits.py apply <폴더>|--all` (`/portfolio-build <폴더>`로 하나만 빌드하면 `<폴더>`. 결정적·멱등, Python 3.8 이상·표준 라이브러리만). `data/projects/<폴더>.json`의 `deck`에 다음을 씁니다
 (deck 값만 바꿔 끼우므로 나머지 글자는 그대로지만, deck 블록은 스크립트의 줄 모양으로 바뀌고 되돌린 뒤에도 그 모양이 남습니다 — 내용은 같음).
 스크립트는 원문 블록 지문(코드·mermaid·표·그림 경로)도 미리 대조해 다르면 `[권장]`으로 알립니다(최종 판정은 미리보기 감사).
 명령은 `apply`·`check`·`show`·`pin [--as]`·`add --after`·`hide [--into]`·`undo [--all]`(스크립트 머리말).
