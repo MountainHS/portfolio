@@ -1,0 +1,30 @@
+/* 문서용 스크린샷(theme-after.png)을 찍을 때만 쓰는 견본 테마입니다. 페이지에는 적용되지 않습니다.
+   capture.mjs가 이 파일을 theme/theme.css 대신 내보내 "테마를 입힌 모습"을 찍습니다.
+   밝은 바탕 · 청록 강조 · 단정한 모서리 · 광채 없음 */
+:root {
+  --t-scheme: light;
+  --t-bg: #F7F8FA;
+  --t-surface: #FFFFFF;
+  --t-ink: #14161C;
+  --t-body: #3A3F4B;
+  --t-muted: #5B6170;
+  --t-line: #DDE1E8;
+  --t-line-2: #B9C0CC;
+
+  --t-accent: #0F766E;
+  --t-accent-2: #0F766E;
+  --t-accent-3: #0F766E;
+
+  --t-radius: 8px;
+  --t-pill: 6px;
+  --t-shadow: rgb(20 22 30 / .16);
+
+  --t-display: 'Montserrat';
+
+  --t-grad: linear-gradient(90deg, var(--accent-ink), var(--accent-ink));
+  --t-badge: var(--accent-fill);
+  --t-glow: 0;
+  --t-mark: 0;
+
+  --t-diagram: #FFFFFF;
+}
