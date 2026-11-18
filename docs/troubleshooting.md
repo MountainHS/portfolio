@@ -8,6 +8,7 @@
 | `/portfolio-…` 명령이 목록에 없음 | 이 레포 폴더를 열고 Claude Code를 시작했는지 확인하세요. 방금 받은 명령이면 Claude Code를 새로 시작합니다. 방법 B로 만들었다면 숨김 폴더 `.claude/`가 복사됐는지 확인하세요. 옛 템플릿이면 [템플릿 업데이트 받기](tools/update.md#템플릿-업데이트-받기) |
 | "Python이 없습니다" | Windows에서는 `python` 대신 `py`를 써 보세요. 둘 다 없으면 [Python](https://www.python.org/downloads/) 3.8 이상을 설치(**Add python.exe to PATH** 체크)한 뒤 Claude Code를 다시 시작합니다. 장면 고치기는 Python 없이 동작하지 않습니다 |
 | README의 `docs/…` 링크가 열리지 않음 · `docs/` 폴더가 없음 | 예전 `/portfolio-update`로 받은 레포입니다(예전 명령은 `docs/`를 받지 않음). `/portfolio-update`를 한 번 더 입력하세요 → [`docs/` 폴더가 없다면](tools/update.md#docs-폴더가-없다면) |
+| `/portfolio-update`가 "템플릿이 아닌 곳에서 받게 됩니다"라며 멈춤 | 이 PC의 git 설정(`url.….insteadOf`)이 템플릿 주소를 다른 곳으로 바꾸고 있습니다. 일부러 넣은 설정인지 확인하거나 강사에게 문의하세요 → [더 알아 둘 것](tools/update.md#더-알아-둘-것) |
 | `/portfolio-build`가 내 프로젝트를 건너뜀 | 폴더 바로 아래에 `.md` 프로젝트 문서가 있는지 확인하세요. `_intake/`(재료집·발표자료)만 있으면 "아직 재료집 단계"로 건너뜁니다 |
 | 고친 것이 안 보임 | **Ctrl+F5**. 배포는 반영까지 1~2분(최대 10분) 걸립니다 |
 

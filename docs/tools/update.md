@@ -24,6 +24,7 @@
 ## 더 알아 둘 것
 
 - 커밋하지 않은 변경이 있으면 먼저 커밋하라고 하고 멈춥니다.
+- 이 PC의 git 설정(`url.….insteadOf`)이 템플릿 주소를 다른 곳으로 바꾸고 있으면 받기 전에 멈춥니다(다른 곳의 코드가 렌더러로 들어오지 않게). 설정을 확인하거나 강사에게 문의하세요. GitHub 로그인 때문에 같은 저장소를 SSH·토큰 주소로 바꾸는 설정은 그대로 진행됩니다.
 - README는 직접 고치지 않았으면 새 것으로 바꾸고, 고쳤으면 유지할지 묻습니다(기본은 유지). 렌더러나 명령 파일을 직접 고친 흔적이 있으면 파일마다 바꿀지 남길지 묻습니다.
   한 번 남기기로 한 파일은 템플릿에서 그 파일이 다시 바뀌기 전까지 다음 업데이트에서 다시 묻지 않습니다.
 - 예전 템플릿에 있던 `GUIDE.md`(전체 흐름 가이드)는 `docs/2-workflow.md`로 옮겨졌으므로 지웁니다. 직접 고친 흔적이 있으면 지울지 묻습니다.
@@ -34,11 +35,17 @@
 
 예전 템플릿에 들어 있던 `/portfolio-update`는 `docs/`(이 안내 문서들)를 받지 않았습니다. 그 명령으로 한 번 받은 레포에는 새 `CLAUDE.md`·명령·렌더러는 들어오고 `docs/`만 없습니다.
 README의 `docs/…` 링크가 열리지 않으면 `/portfolio-update`를 **한 번 더** 입력하세요. 두 번째에는 새 명령이 실행되어 `docs/`가 들어옵니다(내 문서·데이터는 그대로). Claude도 이 상태를 알아채면 같은 안내를 합니다.
-처음부터 한 번에 받으려면 아래 두 줄로 명령을 먼저 새로 받은 뒤 `/portfolio-update`를 입력합니다.
+처음부터 한 번에 받으려면 아래 방법으로 명령을 먼저 새로 받은 뒤 `/portfolio-update`를 입력합니다.
 
 ## 내 레포에 `/portfolio-update` 명령이 없다면
 
-레포 폴더의 터미널에서 아래 두 줄을 **한 번만** 실행해 명령부터 받습니다.
+레포 폴더의 터미널에서 먼저 받을 곳을 확인합니다(접속하지 않고 주소만 보여 줌).
+
+```bash
+git ls-remote --get-url https://github.com/krKooHoo/portfolio-template
+```
+
+`https://github.com/krKooHoo/portfolio-template`(또는 `git@github.com:krKooHoo/portfolio-template`)이 나오면 아래 두 줄을 **한 번만** 실행해 명령부터 받습니다. 다른 주소가 나오면 이 PC의 git 설정이 주소를 바꾸고 있는 것이니 실행하지 말고 강사에게 문의하세요.
 
 ```bash
 git fetch https://github.com/krKooHoo/portfolio-template main
