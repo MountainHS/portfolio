@@ -63,7 +63,7 @@ flowchart LR
 
 1. 이 레포를 **Fork**해서 내 PC에 clone합니다.
    - clone하자마자 [미리보기](docs/tools/build.md#미리보기)를 열면 샘플로 만든 결과를 바로 볼 수 있습니다. 어떤 모양이 나오는지 먼저 보세요.
-2. `src/`의 샘플 프로젝트 4개를 지우고, 내 프로젝트 폴더(예: `src/1-my-game/`)에 `프로젝트문서.md`와 `images/`를 넣습니다. → [프로젝트 문서 쓰는 법](docs/3-writing.md#프로젝트-문서와-소스-넣기)
+2. 내 프로젝트 폴더(예: `src/1-my-game/`)에 `프로젝트문서.md`와 `images/`를 넣고, 내 프로젝트가 들어가면 `src/`의 샘플 프로젝트 4개를 지웁니다. → [프로젝트 문서 쓰는 법](docs/3-writing.md#프로젝트-문서와-소스-넣기)
    - 프로젝트 문서가 아직 없다면 [`/portfolio-intake`](docs/tools/intake.md#재료-모으기)로 GitHub 레포나 발표 자료(.pptx)에서 재료부터 뽑고, 쓰는 중에는 [`/portfolio-check`](docs/tools/check.md#쓰는-중에-점검받기)로 점검받습니다.
 3. `profile.md`의 예시 값(홍길동 등)을 내 정보로 바꿉니다. → [profile.md 채우기](docs/tools/build.md#profilemd-채우기)
 4. 레포 폴더에서 Claude Code를 열고 `/portfolio-build`를 입력합니다. → [포트폴리오 만들기](docs/tools/build.md#포트폴리오-만들기)

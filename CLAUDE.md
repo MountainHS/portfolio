@@ -73,8 +73,14 @@ flowchart LR
 | `/portfolio-theme [되돌리기\|요청]` | 첨부한 웹페이지 스크린샷에서 색·모양·영문 글꼴·효과를 정해진 규칙으로 뽑아 `theme/theme.css`에 씀(세 페이지가 함께 바뀜). 렌더러는 안 건드림. 말로 "이 사이트 느낌으로", "버튼 덜 둥글게"라고 해도 됨 |
 | `/portfolio-layout [주소\|스크린샷\|되돌리기]` | 레퍼런스 페이지의 배치 골격(띠·단 나눔·카드 격자·그림 쪽·콘텐츠 폭)을 `measure-layout.js`로 재거나(브라우저 도구) 스크린샷으로 어림해, 내 절에 맞춘 뒤 **확인받고** `theme/layout.json`에 씀. 글·그림·로고·이름은 안 가져옴. 페이지에는 `/portfolio-custom`이 반영(`index.html`·제출 PDF는 그대로) |
 | `/portfolio-custom [디자인 요청]` | 직접 생성 모드. `theme/layout.json`이 있으면 그 배치를 따름. **사용자가 직접 입력했을 때만** 실행 |
-| `/portfolio-update [되돌리기]` | 템플릿 원본에서 렌더러·스킬·`format/`·`CLAUDE.md`만 받아 반영(`src/`·`profile.md`·`data/`·`custom/`은 안 건드림). **사용자가 직접 입력했을 때만** 실행 |
+| `/portfolio-update [되돌리기]` | 템플릿 원본에서 렌더러·스킬·`format/`·`docs/`·`CLAUDE.md`만 받아 반영(`src/`·`profile.md`·`data/`·`custom/`은 안 건드림). **사용자가 직접 입력했을 때만** 실행 |
 | `/portfolio-intake <레포 주소\|폴더\|발표.pptx>` | GitHub 레포에서 핵심 `.cs`·재료집(사실 + 질문)·촬영 목록을 `src/<NN>/`에 만듦. `.pptx`면 슬라이드 글·표·노트·그림을 그대로 `_intake/발표자료.md`·`_intake/pptx/`로 꺼냄(`pptx-extract.py`, 표준 라이브러리만). 프로젝트 문서는 만들지 않음. **사용자가 직접 입력했을 때만** 실행 |
+
+### 업데이트가 덜 된 레포 알아채기
+
+`docs/` 폴더가 없으면(이 파일과 README가 `docs/…`를 가리키는데 폴더가 없음) 예전 `/portfolio-update`로 한 번 받은 레포입니다 — 예전 명령은 `docs/`를 받지 않았습니다.
+세션에서 처음 알아챈 때 한 번, 하던 답 끝에 이렇게 알립니다: "템플릿의 안내 문서 폴더(`docs/`)가 아직 들어오지 않았습니다. `/portfolio-update`를 한 번 더 입력하면 들어옵니다(내 문서·데이터는 그대로입니다)."
+`/portfolio-update`는 직접 입력 전용이라 Claude가 실행하지 않습니다. 그동안 흐름을 물으면 `docs/2-workflow.md` 대신 템플릿 원본의 같은 문서(https://github.com/krKooHoo/portfolio-template/blob/main/docs/2-workflow.md, 폴더는 `…/tree/main/docs`)를 가리키고, 내용이 필요하면 그 주소에서 읽습니다.
 
 ---
 
@@ -110,6 +116,9 @@ flowchart LR
 | `format/06-deploy.md` | 배포 안내·문제 해결 |
 | `format/07-materials.md` | 뼈대 칸마다 필요한 자료 — `/portfolio-check`의 재료 점검표, 문서가 없는 프로젝트 안내 |
 
+수강생이 다이어그램을 그려 달라고 **직접 요청하면** `format/03-diagrams.md` 「소스에서 읽히는 것 → 다이어그램」 표로 종류를 고르고(데이터·필드 → ERD, 여러 클래스를 차례로 부름 → 시퀀스, 한 규칙의 갈림길 → 플로우차트, 상태 → 상태, 상속·협력 → 클래스),
+그 부분의 코드(`code/`·문서 코드 블록)를 읽어 실제 이름으로 그립니다. 고른 종류와 이유를 한 줄 덧붙이고, 문서에 넣는 것은 수강생이 하거나 "넣어 줘"라고 할 때만 합니다(원칙 2).
+
 수강생이 전체 흐름(무엇을 어떤 순서로 하는지, 지금 어느 단계인지)을 물으면 `docs/2-workflow.md`를 따라 안내합니다. 명령마다의 자세한 사용법은 `docs/tools/`에 있습니다.
 
 ## 미리보기
@@ -126,7 +135,7 @@ flowchart LR
   을 실행해 `#pf-audit`의 base64 JSON(= `report()`)을 읽고, `ready`가 `yes`인지 확인합니다.
   포트폴리오 페이지(`index.html`)는 장면이 없는 흐르는 페이지라 빨간 띠가 없고, `await PFPage.whenReady()` 뒤 `PFPage.report()`
   (깨진 이미지 `images.broken`·가로 넘침 `overflowX`·`errors`)를 봅니다. headless는 `index.html?pf-audit=1`로 같은 방법입니다.
-  상세 문서(`doc.html?p=<id>`)는 `await PFDoc.whenReady()` 뒤 `PFDoc.report()`(`errors`·깨진 이미지 `images.broken`·그리지 못한 다이어그램 `diagrams.failed`)를 봅니다.
+  상세 문서(`doc.html?p=<id>`)는 `await PFDoc.whenReady()` 뒤 `PFDoc.report()`(`errors`·깨진 이미지 `images.broken`·그리지 못한 다이어그램 `diagrams.failed`)를 봅니다. headless는 `doc.html?p=<id>&pf-audit=1`로 같은 방법이고(그림까지 받은 뒤 씀), 상세 문서의 `ready`는 `true`입니다.
   슬라이드의 빨간 띠(원문 블록을 찾지 못함·여러 곳·바뀜)도 `audit`에 함께 나오고, `info.mode`가 `auto`면 예전 데이터로 자동 구성된 슬라이드이므로 `/portfolio-build`를 다시 실행하도록 안내합니다.
 - 슬라이드의 **[PPTX로 저장]**(`assets/deck-pptx.js`)은 렌더러 기능이라 데이터를 다시 만들지 않습니다. 결과가 이상하다고 하면 그 슬라이드에서 `await PFScene.whenReady()` 뒤
   `(await PFPptx.build()).report`(내려받지 않음)의 `warnings`(넣지 못한 그림 등)·`slides`(슬라이드별 글상자·도형·그림·표·코드 개수)·`fonts`(들어간 글꼴 이름)를 봅니다.
