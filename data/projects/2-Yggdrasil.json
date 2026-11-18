@@ -11,29 +11,63 @@
     "role": "보드 규칙 전체(턴·이동·칸 효과·경제·영토·황금카드), 서버 게임 로직 전체, 전투의 온라인 연동"
   },
   "meta": [
-    { "label": "장르", "value": "2~4인 온라인 보드게임" },
-    { "label": "기간", "value": "2026.08.20 ~ 2026.09.11 (약 3주)" },
-    { "label": "인원", "value": "3인 (시작 4인, 1인 중도 이탈)" },
-    { "label": "환경", "value": "Unity 6 (C#), ASP.NET Core WebSocket 서버 (.NET 10), UniTask, DOTween" }
+    {
+      "label": "장르",
+      "value": "2~4인 온라인 보드게임"
+    },
+    {
+      "label": "기간",
+      "value": "2026.08.20 ~ 2026.09.11 (약 3주)"
+    },
+    {
+      "label": "인원",
+      "value": "3인 (시작 4인, 1인 중도 이탈)"
+    },
+    {
+      "label": "환경",
+      "value": "Unity 6 (C#), ASP.NET Core WebSocket 서버 (.NET 10), UniTask, DOTween"
+    }
   ],
-  "tags": ["Unity 6", "C#", "ASP.NET Core", "WebSocket", "UniTask", "DOTween", "턴 동기화"],
+  "tags": [
+    "Unity 6",
+    "C#",
+    "ASP.NET Core",
+    "WebSocket",
+    "UniTask",
+    "DOTween",
+    "턴 동기화"
+  ],
   "links": {
     "github": "https://github.com/chesherneko/Yggdrasil",
     "video": "https://youtu.be/vVEbGkKm4BM",
     "extra": [
-      { "label": "서버 GitHub", "url": "https://github.com/chesherneko/Yggdrasil-Server" },
-      { "label": "풀 플레이 영상 (약 30분)", "url": "https://youtu.be/yN_i65ytxaU" }
+      {
+        "label": "서버 GitHub",
+        "url": "https://github.com/chesherneko/Yggdrasil-Server"
+      },
+      {
+        "label": "풀 플레이 영상 (약 30분)",
+        "url": "https://youtu.be/yN_i65ytxaU"
+      }
     ]
   },
-  "intent": { "text": "부루마블류 게임은 주사위 운으로 한번 뒤처지면 남은 시간을 지켜보기만 하게 됩니다. 저희 팀은 여기에 직접 겨루는 대결을 넣어 이 문제를 풀고 싶었습니다.", "verbatim": true },
+  "intent": {
+    "text": "부루마블류 게임은 주사위 운으로 한번 뒤처지면 남은 시간을 지켜보기만 하게 됩니다. 저희 팀은 여기에 직접 겨루는 대결을 넣어 이 문제를 풀고 싶었습니다.",
+    "verbatim": true
+  },
   "highlights": [
     {
       "title": "전원 보고 기반 턴 동기화",
       "what": "모든 클라이언트가 완료를 보고해야 다음 단계로 넘어가, 모든 화면이 같은 진행을 봅니다.",
-      "how": "서버는 단계마다 아직 보고하지 않은 플레이어 목록을 들고 있다가, 보고가 올 때마다 지우고 목록이 비면 전원에게 신호를 보냅니다. 칸 효과는 Ready(모두 도착)와 Resolved(효과 끝) 두 단계로 맞추고, 효과는 현재 턴 클라이언트만 실행합니다.",
+      "how": "서버가 진행 단계마다 모든 클라이언트의 완료 보고를 모은 뒤에 다음 단계를 알립니다. 서버는 아직 보고하지 않은 플레이어 목록을 들고 있다가, 보고가 올 때마다 지우고 목록이 비면 전원에게 신호를 보냅니다.",
       "why": "현재 턴 플레이어의 종료 보고 하나로 진행하면 구현은 단순하지만 다른 화면의 연출·행동이 끝나지 않아도 진행되어, 한 플레이어가 아직 상점 창을 열고 있는데 턴이 넘어가는 문제를 겪었습니다. 가장 느린 클라이언트에 맞춰 진행되는 대가를 감수하고, 모든 화면이 같은 단계에 있음이 보장되는 전원 보고 방식으로 바꿨습니다.",
       "section": "5.1 모두의 완료 보고를 모은 뒤 다음으로",
-      "image": { "src": "images/shop_status.gif", "w": 760, "h": 409, "caption": "상점 이용 중 대기" }
+      "image": {
+        "src": "images/shop_status.gif",
+        "w": 760,
+        "h": 409,
+        "caption": "상점 이용 중 대기"
+      }
     },
     {
       "title": "클라이언트 처리 · 서버 중계 구조",
@@ -80,22 +114,52 @@
       "section": "11.7 결투가 화면 타이머보다 일찍 끝난 문제"
     },
     {
-      "title": "내 말과 남의 말을 나눴다가 합친 일",
-      "problem": "서버를 처음 다루면서 플레이어를 내가 조작하는 `LocalPlayer`와 다른 사람의 `RemotePlayer` 두 클래스로 나눴습니다. 그런데 두 클래스의 이동 코드(`MoveNext`, `MoveTo`)가 거의 같았습니다.",
-      "cause": "이 게임은 자기 턴에만 행동합니다. 입력은 내 클라이언트에서만 받고, 다른 플레이어의 말은 서버 메시지대로 움직이기만 하면 되므로 원격 플레이어라는 별도 개념이 필요 없었습니다. 서버 구조를 처음 접해 클라이언트를 어떻게 나눠야 할지 판단이 서지 않았던 것이 원인입니다.",
-      "solution": "두 클래스를 `Player` 하나로 통합했습니다(09-04). 입력은 `TurnManager`가 내 턴일 때만 받고, 모든 말은 같은 `Player` 코드로 움직입니다. 중복 클래스 1개(약 70줄)를 삭제했습니다.",
+      "title": "폴더 정리 후 병합이 꼬인 문제",
+      "problem": "팀원 브랜치를 main에 병합할 때 충돌이 대량으로 발생했습니다.",
+      "cause": "스프라이트 같은 에셋이 `Assets` 바로 아래에 흩어져 있어, 제가 팀에 알리지 않고 폴더 구조를 정리했습니다. 또 팀에 main 병합 주기가 정해져 있지 않아 작업 브랜치와 main의 차이가 크게 쌓여 있었고, 두 가지가 겹쳐 파일 이동과 수정이 한꺼번에 충돌했습니다.",
+      "solution": "강사 피드백에 따라 각자 작업 브랜치에 main을 주기적으로 병합해 최신 상태를 유지하는 방식으로 바꿨습니다.",
       "result": "",
-      "lesson": "네트워크 구조를 정할 때는 기술적 구분(로컬/원격)보다 게임 규칙상 누가 언제 입력하는지를 먼저 따져야 합니다.",
-      "section": "6.5 내 말과 남의 말을 나눴다가 합친 일"
+      "lesson": "파일 위치를 바꾸는 작업은 혼자 정할 일이 아니라 팀에 먼저 알려야 했습니다. 또 폴더 구조 같은 공용 규칙은 프로젝트를 시작할 때 팀이 함께 정해야 합니다. main 주기 병합은 이후 작업에서도 계속 쓰는 습관이 됐습니다.",
+      "section": "12.4 폴더 정리 후 병합이 꼬인 문제"
     }
   ],
   "screenshots": [
-    { "src": "images/shop_status.gif", "caption": "상점 이용 중 대기", "w": 760, "h": 409 },
-    { "src": "images/teleport.gif", "caption": "비프로스트 이동", "w": 760, "h": 409 },
-    { "src": "images/gold_card.gif", "caption": "황금카드 연출", "w": 760, "h": 409 },
-    { "src": "images/territory.gif", "caption": "영토·랜드마크 구매", "w": 760, "h": 409 },
-    { "src": "images/yacha_request.gif", "caption": "결투 신청", "w": 760, "h": 409 },
-    { "src": "images/yacha_battle.gif", "caption": "야차 전투", "w": 760, "h": 409 }
+    {
+      "src": "images/shop_status.gif",
+      "caption": "상점 이용 중 대기",
+      "w": 760,
+      "h": 409
+    },
+    {
+      "src": "images/teleport.gif",
+      "caption": "비프로스트 이동",
+      "w": 760,
+      "h": 409
+    },
+    {
+      "src": "images/gold_card.gif",
+      "caption": "황금카드 연출",
+      "w": 760,
+      "h": 409
+    },
+    {
+      "src": "images/territory.gif",
+      "caption": "영토·랜드마크 구매",
+      "w": 760,
+      "h": 409
+    },
+    {
+      "src": "images/yacha_request.gif",
+      "caption": "결투 신청",
+      "w": 760,
+      "h": 409
+    },
+    {
+      "src": "images/yacha_battle.gif",
+      "caption": "야차 전투",
+      "w": 760,
+      "h": 409
+    }
   ],
   "retro": {
     "achieved": [
@@ -118,20 +182,97 @@
   },
   "deck": {
     "chapters": [
-      { "key": "intro", "title": "개요", "sectionPath": ["1. 개요"] },
-      { "key": "play", "title": "한 판의 흐름", "sectionPath": ["2. 한 판의 흐름"] },
-      { "key": "part", "title": "팀과 내가 맡은 부분", "sectionPath": ["3. 팀과 내가 맡은 부분"] },
-      { "key": "arch", "title": "서버와 클라이언트가 맡은 일", "sectionPath": ["4. 서버와 클라이언트가 맡은 일"] },
-      { "key": "turn", "title": "턴 진행 맞추기", "sectionPath": ["5. 턴 진행 맞추기"] },
-      { "key": "moving", "title": "말 이동", "sectionPath": ["6. 말 이동"] },
-      { "key": "tile", "title": "칸 효과", "sectionPath": ["7. 칸 효과"] },
-      { "key": "goldcard", "title": "황금카드", "sectionPath": ["8. 황금카드"] },
-      { "key": "econ", "title": "경제와 영토", "sectionPath": ["9. 경제와 영토"] },
-      { "key": "builder", "title": "보드 제작 도구", "sectionPath": ["10. 보드 제작 도구"] },
-      { "key": "yacha", "title": "결투 '야차'", "sectionPath": ["11. 결투 '야차'"] },
-      { "key": "collab", "title": "팀원 파트와 맞춘 것", "sectionPath": ["12. 팀원 파트와 맞춘 것"] },
-      { "key": "ai", "title": "AI와 일한 방식", "sectionPath": ["13. AI와 일한 방식"] },
-      { "key": "result", "title": "회고", "sectionPath": ["14. 회고"] }
+      {
+        "key": "intro",
+        "title": "개요",
+        "sectionPath": [
+          "1. 개요"
+        ]
+      },
+      {
+        "key": "play",
+        "title": "한 판의 흐름",
+        "sectionPath": [
+          "2. 한 판의 흐름"
+        ]
+      },
+      {
+        "key": "part",
+        "title": "팀과 내가 맡은 부분",
+        "sectionPath": [
+          "3. 팀과 내가 맡은 부분"
+        ]
+      },
+      {
+        "key": "arch",
+        "title": "서버와 클라이언트가 맡은 일",
+        "sectionPath": [
+          "4. 서버와 클라이언트가 맡은 일"
+        ]
+      },
+      {
+        "key": "turn",
+        "title": "턴 진행 맞추기",
+        "sectionPath": [
+          "5. 턴 진행 맞추기"
+        ]
+      },
+      {
+        "key": "moving",
+        "title": "말 이동",
+        "sectionPath": [
+          "6. 말 이동"
+        ]
+      },
+      {
+        "key": "tile",
+        "title": "칸 효과",
+        "sectionPath": [
+          "7. 칸 효과"
+        ]
+      },
+      {
+        "key": "goldcard",
+        "title": "황금카드",
+        "sectionPath": [
+          "8. 황금카드"
+        ]
+      },
+      {
+        "key": "econ",
+        "title": "경제와 영토",
+        "sectionPath": [
+          "9. 경제와 영토"
+        ]
+      },
+      {
+        "key": "builder",
+        "title": "보드 제작 도구",
+        "sectionPath": [
+          "10. 보드 제작 도구"
+        ]
+      },
+      {
+        "key": "yacha",
+        "title": "결투 '야차'",
+        "sectionPath": [
+          "11. 결투 '야차'"
+        ]
+      },
+      {
+        "key": "collab",
+        "title": "팀원 파트와 맞춘 것",
+        "sectionPath": [
+          "12. 팀원 파트와 맞춘 것"
+        ]
+      },
+      {
+        "key": "ai",
+        "title": "AI와 일한 방식",
+        "sectionPath": [
+          "13. AI와 일한 방식"
+        ]
+      }
     ],
     "slides": [
       {
@@ -139,17 +280,45 @@
         "chapter": "intro",
         "layout": "overview",
         "tab": "개요",
-        "title": { "text": "1. 개요", "verbatim": true },
-        "lead": { "text": "이그드라실은 북유럽 신화를 배경으로 한 2~4인 온라인 보드게임입니다.", "verbatim": true },
-        "sectionPath": ["1. 개요"],
+        "title": {
+          "text": "1. 개요",
+          "verbatim": true
+        },
+        "lead": {
+          "text": "이그드라실은 북유럽 신화를 배경으로 한 2~4인 온라인 보드게임입니다.",
+          "verbatim": true
+        },
+        "sectionPath": [
+          "1. 개요"
+        ],
         "points": [
-          { "label": "", "text": "플레이어가 느끼기를 바란 것은, 운으로 밀리던 사람도 대결 한 번으로 판을 뒤집을 수 있다는 긴장과 그 순간을 모두가 같은 화면으로 함께 지켜보는 재미였습니다.", "verbatim": true },
-          { "label": "", "text": "첫째는 모든 플레이어의 화면이 같은 진행을 보게 하는 것입니다.", "verbatim": true },
-          { "label": "", "text": "둘째는 기획이 바뀌어도 프로그램을 고치지 않는 것입니다.", "verbatim": true }
+          {
+            "label": "문제",
+            "text": "부루마블류 게임은 주사위 운으로 한번 뒤처지면 남은 시간을 지켜보기만 하게 됩니다.",
+            "verbatim": true
+          },
+          {
+            "label": "",
+            "text": "플레이어가 느끼기를 바란 것은, 운으로 밀리던 사람도 대결 한 번으로 판을 뒤집을 수 있다는 긴장과 그 순간을 모두가 같은 화면으로 함께 지켜보는 재미였습니다.",
+            "verbatim": true
+          },
+          {
+            "label": "",
+            "text": "첫째는 모든 플레이어의 화면이 같은 진행을 보게 하는 것입니다.",
+            "verbatim": true
+          },
+          {
+            "label": "",
+            "text": "둘째는 기획이 바뀌어도 프로그램을 고치지 않는 것입니다.",
+            "verbatim": true
+          }
         ],
         "visuals": [
-          { "kind": "table", "n": 1, "fp": "항목|내용" },
-          { "kind": "table", "n": 2, "fp": "#|기술|한 줄 설명|문서 위치", "caption": { "text": "핵심 기술 3가지", "verbatim": true }, "sectionPath": ["0. 한 장 요약"] }
+          {
+            "kind": "table",
+            "n": 1,
+            "fp": "항목|내용"
+          }
         ]
       },
       {
@@ -157,16 +326,41 @@
         "chapter": "play",
         "layout": "visual",
         "tab": "흐름",
-        "title": { "text": "2.1 한 차례에 하는 일", "verbatim": true },
-        "lead": { "text": "자기 차례에는 주사위 2개를 굴려 나온 만큼 말을 옮기고, 도착한 칸의 효과를 받습니다.", "verbatim": true },
-        "sectionPath": ["2. 한 판의 흐름", "2.1 한 차례에 하는 일"],
+        "title": {
+          "text": "2.1 한 차례에 하는 일",
+          "verbatim": true
+        },
+        "lead": {
+          "text": "자기 차례에는 주사위 2개를 굴려 나온 만큼 말을 옮기고, 도착한 칸의 효과를 받습니다.",
+          "verbatim": true
+        },
+        "sectionPath": [
+          "2. 한 판의 흐름",
+          "2.1 한 차례에 하는 일"
+        ],
         "points": [
-          { "label": "", "text": "플레이어가 되풀이하는 것은 굴린다 → 도착한 칸에서 벌거나 잃는다 → 상대 영토라면 대결을 걸지 정한다입니다.", "verbatim": true },
-          { "label": "", "text": "앞의 둘은 운이 정하고, 마지막 하나만 플레이어가 정합니다.", "verbatim": true },
-          { "label": "승리 조건", "text": "다른 플레이어가 모두 파산하거나, 최대 라운드가 끝났을 때 총자산(현금 + 영토 가치)이 가장 높은 플레이어가 승리합니다.", "verbatim": true }
+          {
+            "label": "",
+            "text": "플레이어가 되풀이하는 것은 굴린다 → 도착한 칸에서 벌거나 잃는다 → 상대 영토라면 대결을 걸지 정한다입니다.",
+            "verbatim": true
+          },
+          {
+            "label": "",
+            "text": "앞의 둘은 운이 정하고, 마지막 하나만 플레이어가 정합니다.",
+            "verbatim": true
+          },
+          {
+            "label": "승리 조건",
+            "text": "다른 플레이어가 모두 파산하거나, 최대 라운드가 끝났을 때 총자산(현금 + 영토 가치)이 가장 높은 플레이어가 승리합니다.",
+            "verbatim": true
+          }
         ],
         "visuals": [
-          { "kind": "mermaid", "n": 1, "fp": "flowchart LR" }
+          {
+            "kind": "mermaid",
+            "n": 1,
+            "fp": "flowchart LR"
+          }
         ]
       },
       {
@@ -174,17 +368,40 @@
         "chapter": "part",
         "layout": "overview",
         "tab": "개요",
-        "title": { "text": "3. 팀과 내가 맡은 부분", "verbatim": true },
-        "lead": { "text": "4명으로 시작해 1명이 중간에 빠졌고, 3명이 끝까지 만들었습니다.", "verbatim": true },
-        "sectionPath": ["3. 팀과 내가 맡은 부분"],
+        "title": {
+          "text": "3. 팀과 내가 맡은 부분",
+          "verbatim": true
+        },
+        "lead": {
+          "text": "4명으로 시작해 1명이 중간에 빠졌고, 3명이 끝까지 만들었습니다.",
+          "verbatim": true
+        },
+        "sectionPath": [
+          "3. 팀과 내가 맡은 부분"
+        ],
         "points": [
-          { "label": "", "text": "이 가운데 보드 화면의 규칙 전부와, 세 파트를 온라인으로 이어 주는 서버가 제 몫입니다.", "verbatim": true },
-          { "label": "", "text": "대결 화면과 창·연출은 팀원이 만들었고, 저는 그것들이 보드·서버와 만나는 지점(결투의 신청·시작·승패 판정, 구매 창을 띄우는 시점 등)을 맡았습니다.", "verbatim": true },
-          { "label": "", "text": "4장부터의 기능 장은 제가 만든 부분만 다룹니다.", "verbatim": true }
+          {
+            "label": "",
+            "text": "이 가운데 보드 화면의 규칙 전부와, 세 파트를 온라인으로 이어 주는 서버가 제 몫입니다.",
+            "verbatim": true
+          },
+          {
+            "label": "",
+            "text": "4장부터의 기능 장은 제가 만든 부분만 다룹니다.",
+            "verbatim": true
+          }
         ],
         "visuals": [
-          { "kind": "table", "n": 1, "fp": "담당|역할" },
-          { "kind": "table", "n": 2, "fp": "영역|주요 클래스" }
+          {
+            "kind": "table",
+            "n": 1,
+            "fp": "담당|역할"
+          },
+          {
+            "kind": "table",
+            "n": 2,
+            "fp": "영역|주요 클래스"
+          }
         ]
       },
       {
@@ -192,16 +409,41 @@
         "chapter": "arch",
         "layout": "visual",
         "tab": "구조",
-        "title": { "text": "4.1 누가 무엇을 정하는가", "verbatim": true },
-        "lead": { "text": "게임 규칙은 클라이언트가 계산하고, 서버는 진행 순서·난수를 정하고 결과를 모두에게 전달하는 구조입니다.", "verbatim": true },
-        "sectionPath": ["4. 서버와 클라이언트가 맡은 일", "4.1 누가 무엇을 정하는가"],
+        "title": {
+          "text": "4.1 누가 무엇을 정하는가",
+          "verbatim": true
+        },
+        "lead": {
+          "text": "이 게임은 게임 규칙은 클라이언트가 계산하고, 서버는 진행 순서·난수를 정하고 결과를 모두에게 전달하는 구조입니다.",
+          "verbatim": true
+        },
+        "sectionPath": [
+          "4. 서버와 클라이언트가 맡은 일",
+          "4.1 누가 무엇을 정하는가"
+        ],
         "points": [
-          { "label": "현재 턴 클라이언트", "text": "현재 턴인 플레이어의 클라이언트 한 곳만 칸 효과를 계산해 서버에 요청합니다.", "verbatim": true },
-          { "label": "서버", "text": "서버는 요청을 반영한 결과를 전원에게 보내고, 모든 클라이언트는 그 결과로 화면을 갱신합니다.", "verbatim": true }
+          {
+            "label": "",
+            "text": "다만 아무 클라이언트나 계산하지 않고, 현재 턴인 플레이어의 클라이언트 한 곳만 칸 효과를 계산해 서버에 요청합니다.",
+            "verbatim": true
+          },
+          {
+            "label": "",
+            "text": "서버는 요청을 반영한 결과를 전원에게 보내고, 모든 클라이언트는 그 결과로 화면을 갱신합니다.",
+            "verbatim": true
+          },
+          {
+            "label": "서버가 결정",
+            "text": "턴 순서(무작위), 주사위 눈, 황금카드 선택, 턴·라운드 진행, 결투 거절 성공 여부, 결투 시간 초과 판정, 접속 종료 처리",
+            "verbatim": true
+          }
         ],
         "visuals": [
-          { "kind": "mermaid", "n": 1, "fp": "flowchart LR" },
-          { "kind": "table", "n": 1, "fp": "누가 정하는가|항목" }
+          {
+            "kind": "mermaid",
+            "n": 1,
+            "fp": "flowchart LR"
+          }
         ]
       },
       {
@@ -209,16 +451,31 @@
         "chapter": "arch",
         "layout": "full",
         "tab": "선택",
-        "title": { "text": "4.5 서버에 얼마나 맡길 것인가", "verbatim": true },
-        "lead": { "text": "골드·영토 같은 게임 상태를 누가 계산하고 누가 검증할지부터 정해야 했습니다.", "verbatim": true },
-        "sectionPath": ["4. 서버와 클라이언트가 맡은 일", "4.5 서버에 얼마나 맡길 것인가"],
+        "title": {
+          "text": "4.5 서버에 얼마나 맡길 것인가",
+          "verbatim": true
+        },
+        "lead": {
+          "text": "이 조건에서는 규칙을 클라이언트 한 곳에만 두는 쪽이 맞다고 판단했습니다.",
+          "verbatim": true
+        },
+        "sectionPath": [
+          "4. 서버와 클라이언트가 맡은 일",
+          "4.5 서버에 얼마나 맡길 것인가"
+        ],
         "points": [
-          { "label": "이유", "text": "이 조건에서는 규칙을 클라이언트 한 곳에만 두는 쪽이 맞다고 판단했습니다. 대신 결과가 갈리면 안 되는 것(주사위, 카드 선택, 턴 순서, 턴 진행)만 서버가 결정하게 했습니다.", "verbatim": true },
-          { "label": "결과", "text": "3주 안에 영토·경제·황금카드·결투 연동까지 보드 규칙 전체를 구현했습니다.", "verbatim": true },
-          { "label": "", "text": "그 대가로 서버는 골드·영토 변경 요청을 계산 없이 그대로 반영하므로, 클라이언트를 조작하면 값을 바꿀 수 있습니다.", "verbatim": true }
+          {
+            "label": "",
+            "text": "대신 결과가 갈리면 안 되는 것(주사위, 카드 선택, 턴 순서, 턴 진행)만 서버가 결정하게 했습니다.",
+            "verbatim": true
+          }
         ],
         "visuals": [
-          { "kind": "table", "n": 1, "fp": "|[A] 서버가 모든 규칙을 계산·검증|[B] 클라이언트가 계산, 서버는 진행 결정·중계" }
+          {
+            "kind": "table",
+            "n": 1,
+            "fp": "|[A] 서버가 모든 규칙을 계산·검증|[B] 클라이언트가 계산, 서버는 진행 결정·중계"
+          }
         ]
       },
       {
@@ -226,30 +483,41 @@
         "chapter": "turn",
         "layout": "visual",
         "tab": "흐름",
-        "title": { "text": "5.1 모두의 완료 보고를 모은 뒤 다음으로", "verbatim": true },
-        "lead": { "text": "서버가 진행 단계마다 모든 클라이언트의 완료 보고를 모은 뒤에 다음 단계를 알리는 방식으로, 모든 화면의 진행을 맞춥니다.", "verbatim": true },
-        "sectionPath": ["5. 턴 진행 맞추기", "5.1 모두의 완료 보고를 모은 뒤 다음으로"],
+        "title": {
+          "text": "5.1 모두의 완료 보고를 모은 뒤 다음으로",
+          "verbatim": true
+        },
+        "lead": {
+          "text": "이 게임은 서버가 진행 단계마다 모든 클라이언트의 완료 보고를 모은 뒤에 다음 단계를 알리는 방식으로, 모든 화면의 진행을 맞춥니다.",
+          "verbatim": true
+        },
+        "sectionPath": [
+          "5. 턴 진행 맞추기",
+          "5.1 모두의 완료 보고를 모은 뒤 다음으로"
+        ],
         "points": [
-          { "label": "", "text": "온라인 보드게임에서는 한 플레이어가 행동하는 동안 나머지 플레이어가 그 과정을 같은 화면으로 지켜봐야 합니다.", "verbatim": true }
+          {
+            "label": "",
+            "text": "현재 턴 플레이어가 상점을 보는 동안, 다른 플레이어 화면에는 \"상점 둘러보는중...\" 말풍선이 뜨고 진행은 멈춰 있습니다.",
+            "verbatim": true
+          }
         ],
         "visuals": [
-          { "kind": "mermaid", "n": 1, "fp": "sequenceDiagram" }
-        ]
-      },
-      {
-        "key": "sync-server",
-        "chapter": "turn",
-        "layout": "code",
-        "tab": "구현",
-        "title": { "text": "5.3 서버: 대기 목록이 비면 알린다", "verbatim": true },
-        "lead": { "text": "서버는 단계마다 아직 보고하지 않은 플레이어 목록을 들고 있다가, 보고가 올 때마다 지우고, 목록이 비면 전원에게 신호를 보냅니다.", "verbatim": true },
-        "sectionPath": ["5. 턴 진행 맞추기", "5.3 서버: 대기 목록이 비면 알린다"],
-        "points": [
-          { "label": "이유", "text": "같은 턴 안에서도 이동(MoveId)과 칸(StepIndex)마다 따로 기다려야 하므로 셋을 묶어 키로 사용", "verbatim": true },
-          { "label": "", "text": "턴 종료도 같은 방식입니다. `GameSession.ReportTurnFinished`는 보고한 플레이어 수가 전체 인원과 같아질 때만 다음 턴으로 넘어갑니다.", "verbatim": true }
-        ],
-        "visuals": [
-          { "kind": "code", "n": 1, "fp": "// Room.Game.cs — 칸 효과 Ready 보고 처리" }
+          {
+            "kind": "mermaid",
+            "n": 1,
+            "fp": "sequenceDiagram"
+          },
+          {
+            "kind": "image",
+            "src": "images/shop_status.gif",
+            "w": 760,
+            "h": 409,
+            "caption": {
+              "text": "상점 이용 중 대기",
+              "verbatim": true
+            }
+          }
         ]
       },
       {
@@ -257,17 +525,25 @@
         "chapter": "turn",
         "layout": "problem",
         "tab": "문제 해결",
-        "title": { "text": "5.6 상점을 보는 중에 턴이 넘어가던 문제", "verbatim": true },
-        "lead": { "text": "전원 보고 방식은 처음부터 있던 것이 아니라, 아래 문제를 겪고 나서 만든 것입니다.", "verbatim": true },
-        "sectionPath": ["5. 턴 진행 맞추기", "5.6 상점을 보는 중에 턴이 넘어가던 문제"],
-        "points": [
-          { "label": "문제", "text": "한 플레이어가 아직 상점 창을 열고 행동 중인데, 다른 클라이언트에서는 턴이 먼저 넘어감", "verbatim": true },
-          { "label": "원인", "text": "서버가 현재 턴 클라이언트의 종료 보고 하나만 받고 다음 턴을 시작함. 다른 클라이언트의 연출·행동이 끝났는지는 확인하지 않음", "verbatim": true },
-          { "label": "해결", "text": "턴 종료를 전원 보고 방식으로 변경 (모든 클라이언트가 보고해야 다음 턴). 이후 같은 문제가 생길 수 있는 칸 효과·황금카드 연출·지정 이동에도 같은 방식 적용 (5.2)", "verbatim": true },
-          { "label": "배운 점", "text": "멀티플레이에서는 \"내 화면에서 끝났다\"와 \"모두의 화면에서 끝났다\"가 다릅니다. 진행을 넘기는 지점마다 누구의 완료를 기준으로 삼을지 먼저 정해야 합니다", "verbatim": true }
+        "title": {
+          "text": "5.6 상점을 보는 중에 턴이 넘어가던 문제",
+          "verbatim": true
+        },
+        "lead": {
+          "text": "전원 보고 방식은 처음부터 있던 것이 아니라, 아래 문제를 겪고 나서 만든 것입니다.",
+          "verbatim": true
+        },
+        "sectionPath": [
+          "5. 턴 진행 맞추기",
+          "5.6 상점을 보는 중에 턴이 넘어가던 문제"
         ],
+        "points": [],
         "visuals": [
-          { "kind": "image", "src": "images/shop_status.gif", "w": 760, "h": 409, "caption": { "text": "상점 이용 중 대기", "verbatim": true }, "sectionPath": ["5. 턴 진행 맞추기", "5.1 모두의 완료 보고를 모은 뒤 다음으로"] }
+          {
+            "kind": "table",
+            "n": 1,
+            "fp": "단계|내용"
+          }
         ]
       },
       {
@@ -275,63 +551,147 @@
         "chapter": "turn",
         "layout": "full",
         "tab": "선택",
-        "title": { "text": "5.7 다음 단계로 넘어가는 기준", "verbatim": true },
-        "lead": { "text": "턴과 연출을 언제 다음으로 넘길지는 두 방식을 놓고 정했습니다.", "verbatim": true },
-        "sectionPath": ["5. 턴 진행 맞추기", "5.7 다음 단계로 넘어가는 기준"],
+        "title": {
+          "text": "5.7 다음 단계로 넘어가는 기준",
+          "verbatim": true
+        },
+        "lead": {
+          "text": "턴과 연출을 언제 다음으로 넘길지는 두 방식을 놓고 정했습니다.",
+          "verbatim": true
+        },
+        "sectionPath": [
+          "5. 턴 진행 맞추기",
+          "5.7 다음 단계로 넘어가는 기준"
+        ],
         "points": [
-          { "label": "이유", "text": "처음에는 [A]에 가까웠지만, 위의 문제(5.6)를 겪고 나서 턴 종료부터 전원 보고로 바꿨고, 같은 문제가 생길 수 있는 나머지 지점(5.2)에도 같은 방식을 적용했습니다.", "verbatim": true },
-          { "label": "결과", "text": "보드 진행 중 모든 플레이어가 같은 장면을 보게 됐고, 새로운 연출 단계를 추가할 때도 \"대기 목록을 만들고, 비면 보낸다\"는 같은 틀을 그대로 썼습니다.", "verbatim": true },
-          { "label": "", "text": "대신 한 클라이언트가 느리면 모두가 기다립니다. 다만 연결이 끊긴 플레이어는 대기 목록에서 바로 빠지므로, 나간 사람 때문에 진행이 멈추지는 않습니다.", "verbatim": true }
+          {
+            "label": "결과",
+            "text": "그 결과 보드 진행 중 모든 플레이어가 같은 장면을 보게 됐고, 새로운 연출 단계를 추가할 때도 \"대기 목록을 만들고, 비면 보낸다\"는 같은 틀을 그대로 썼습니다.",
+            "verbatim": true
+          }
         ],
         "visuals": [
-          { "kind": "table", "n": 1, "fp": "|[A] 현재 턴 플레이어가 끝나면 진행|[B] 모든 클라이언트가 보고하면 진행" }
+          {
+            "kind": "table",
+            "n": 1,
+            "fp": "|[A] 현재 턴 플레이어가 끝나면 진행|[B] 모든 클라이언트가 보고하면 진행"
+          }
         ]
       },
       {
         "key": "move",
         "chapter": "moving",
-        "layout": "overview",
-        "tab": "개요",
-        "title": { "text": "6.1 주사위 이동과 지정 이동", "verbatim": true },
-        "lead": { "text": "이동하면서 도착한 칸과 지나가기만 해도 발동하는 칸(출발지 월급, 상점)에서 5.4의 칸 효과 동기화를 실행합니다.", "verbatim": true },
-        "sectionPath": ["6. 말 이동", "6.1 주사위 이동과 지정 이동"],
-        "points": [],
+        "layout": "visual",
+        "tab": "결과",
+        "title": {
+          "text": "6.1 주사위 이동과 지정 이동",
+          "verbatim": true
+        },
+        "lead": {
+          "text": "말은 `DOTween`으로 한 칸씩 점프하며 이동합니다.",
+          "verbatim": true
+        },
+        "sectionPath": [
+          "6. 말 이동",
+          "6.1 주사위 이동과 지정 이동"
+        ],
+        "points": [
+          {
+            "label": "",
+            "text": "마지막 칸 다음은 출발지로 이어지고, 이동하면서 도착한 칸과 지나가기만 해도 발동하는 칸(출발지 월급, 상점)에서 5.4의 칸 효과 동기화를 실행합니다.",
+            "verbatim": true
+          },
+          {
+            "label": "지정 이동 (MoveTo)",
+            "text": "비프로스트(원하는 칸 선택), 황금카드 강제 이동",
+            "verbatim": true
+          }
+        ],
         "visuals": [
-          { "kind": "image", "src": "images/teleport.gif", "w": 760, "h": 409, "caption": { "text": "비프로스트 이동", "verbatim": true } },
-          { "kind": "table", "n": 1, "fp": "|주사위 이동 (MoveBy)|지정 이동 (MoveTo)" }
+          {
+            "kind": "image",
+            "src": "images/teleport.gif",
+            "w": 760,
+            "h": 409,
+            "caption": {
+              "text": "비프로스트 이동",
+              "verbatim": true
+            }
+          }
         ]
       },
       {
-        "key": "ts-player",
+        "key": "move-choice",
         "chapter": "moving",
-        "layout": "problem",
-        "tab": "문제 해결",
-        "title": { "text": "6.5 내 말과 남의 말을 나눴다가 합친 일", "verbatim": true },
-        "lead": null,
-        "sectionPath": ["6. 말 이동", "6.5 내 말과 남의 말을 나눴다가 합친 일"],
-        "points": [
-          { "label": "상황", "text": "서버를 처음 다루면서 플레이어를 내가 조작하는 `LocalPlayer`와 다른 사람의 `RemotePlayer` 두 클래스로 나눔. 그런데 두 클래스의 이동 코드(`MoveNext`, `MoveTo`)가 거의 같았음", "verbatim": true },
-          { "label": "원인", "text": "이 게임은 자기 턴에만 행동합니다. 입력은 내 클라이언트에서만 받고, 다른 플레이어의 말은 서버 메시지대로 움직이기만 하면 되므로 원격 플레이어라는 별도 개념이 필요 없었음", "verbatim": true },
-          { "label": "해결", "text": "두 클래스를 `Player` 하나로 통합(09-04). 입력은 `TurnManager`가 내 턴일 때만 받고, 모든 말은 같은 `Player` 코드로 움직임. 중복 클래스 1개(약 70줄) 삭제", "verbatim": true },
-          { "label": "배운 점", "text": "네트워크 구조를 정할 때는 기술적 구분(로컬/원격)보다 게임 규칙상 누가 언제 입력하는지를 먼저 따져야 합니다", "verbatim": true }
+        "layout": "full",
+        "tab": "선택",
+        "title": {
+          "text": "6.4 지정 이동을 누가 관리할 것인가",
+          "verbatim": true
+        },
+        "lead": {
+          "text": "\"몇 칸\"이 아니라 \"어디로\" 움직이는 이동을 모든 클라이언트에 어떻게 맞출지가 문제였습니다.",
+          "verbatim": true
+        },
+        "sectionPath": [
+          "6. 말 이동",
+          "6.4 지정 이동을 누가 관리할 것인가"
         ],
-        "visuals": []
+        "points": [
+          {
+            "label": "이유",
+            "text": "ID를 클라이언트가 만들면 서로 겹칠 수 있어 서버가 순서대로 발급하게 했습니다.",
+            "verbatim": true
+          }
+        ],
+        "visuals": [
+          {
+            "kind": "table",
+            "n": 1,
+            "fp": "|[A] 주사위 이동처럼 각 클라이언트가 처리|[B] 서버가 목적지와 이동 ID를 발급"
+          }
+        ]
       },
       {
         "key": "effect",
         "chapter": "tile",
         "layout": "visual",
         "tab": "구조",
-        "title": { "text": "7.2 효과에서 매니저로", "verbatim": true },
-        "lead": { "text": "효과 클래스는 어느 매니저에게 맡길지만 정하고, 실제 규칙은 매니저가 처리합니다.", "verbatim": true },
-        "sectionPath": ["7. 칸 효과", "7.2 효과에서 매니저로"],
+        "title": {
+          "text": "7.2 효과에서 매니저로",
+          "verbatim": true
+        },
+        "lead": {
+          "text": "칸에 도착하면 처리가 아래 경로로 넘어갑니다.",
+          "verbatim": true
+        },
+        "sectionPath": [
+          "7. 칸 효과",
+          "7.2 효과에서 매니저로"
+        ],
         "points": [
-          { "label": "구현", "text": "`Tile`은 생성될 때 한 번 팩토리로 효과 객체를 받아 두고, 칸에 도착하면 `effect.Apply()`만 부릅니다. `Tile`은 자기 효과가 무엇인지 모릅니다.", "verbatim": true },
-          { "label": "기존 효과를 가진 칸 추가", "text": "`spaces.tsv`에 한 줄 추가 + 보드 배치", "verbatim": true },
-          { "label": "새로운 효과 종류 추가", "text": "효과 클래스 1개 + 팩토리 한 줄 + enum 값", "verbatim": true }
+          {
+            "label": "",
+            "text": "효과 클래스는 어느 매니저에게 맡길지만 정하고, 실제 규칙은 매니저가 처리합니다.",
+            "verbatim": true
+          },
+          {
+            "label": "",
+            "text": "`Tile`은 생성될 때 한 번 팩토리로 효과 객체를 받아 두고, 칸에 도착하면 `effect.Apply()`만 부릅니다.",
+            "verbatim": true
+          },
+          {
+            "label": "새로운 효과 종류 추가",
+            "text": "효과 클래스 1개 + 팩토리 한 줄 + enum 값",
+            "verbatim": true
+          }
         ],
         "visuals": [
-          { "kind": "mermaid", "n": 1, "fp": "flowchart LR" }
+          {
+            "kind": "mermaid",
+            "n": 1,
+            "fp": "flowchart LR"
+          }
         ]
       },
       {
@@ -339,32 +699,31 @@
         "chapter": "tile",
         "layout": "full",
         "tab": "선택",
-        "title": { "text": "7.3 도착 처리를 어디에 둘 것인가", "verbatim": true },
-        "lead": { "text": "칸에 도착했을 때의 처리(구매, 통행료, 카드…)를 누가 맡을지 정해야 했습니다.", "verbatim": true },
-        "sectionPath": ["7. 칸 효과", "7.3 도착 처리를 어디에 둘 것인가"],
+        "title": {
+          "text": "7.3 도착 처리를 어디에 둘 것인가",
+          "verbatim": true
+        },
+        "lead": {
+          "text": "칸에 도착했을 때의 처리(구매, 통행료, 카드…)를 누가 맡을지 정해야 했습니다.",
+          "verbatim": true
+        },
+        "sectionPath": [
+          "7. 칸 효과",
+          "7.3 도착 처리를 어디에 둘 것인가"
+        ],
         "points": [
-          { "label": "이유", "text": "효과 로직을 각 `Tile`이나 `Player`가 가지면 구조적으로 좋지 않고 중간에서 처리를 맡을 매니저가 필요하다고 판단했습니다.", "verbatim": true },
-          { "label": "결과", "text": "영토·황금카드·비프로스트·보물 효과를 차례로 붙이는 동안, `Tile` 코드는 영토 건물 그림을 표시하는 기능 외에는 바뀌지 않았습니다(git 기록 기준).", "verbatim": true },
-          { "label": "", "text": "대신 칸 하나의 동작을 이해하려면 `Tile` → 효과 클래스 → 매니저 순으로 파일 세 곳을 봐야 합니다.", "verbatim": true }
+          {
+            "label": "결과",
+            "text": "규칙 수정은 각 매니저 안에서만 했습니다.",
+            "verbatim": true
+          }
         ],
         "visuals": [
-          { "kind": "table", "n": 1, "fp": "|[A] Tile이나 Player가 직접 처리|[B] Tile은 효과 객체만, 처리는 매니저" }
-        ]
-      },
-      {
-        "key": "card",
-        "chapter": "goldcard",
-        "layout": "visual",
-        "tab": "구조",
-        "title": { "text": "8.1 무엇을 × 누구에게", "verbatim": true },
-        "lead": { "text": "카드 한 장은 무엇을 하는지(패턴 5종)와 누구에게 하는지(범위 4종)의 조합이고, `gold_cards.tsv`의 한 줄로 정의합니다.", "verbatim": true },
-        "sectionPath": ["8. 황금카드", "8.1 무엇을 × 누구에게"],
-        "points": [
-          { "label": "", "text": "황금카드 칸에 도착하면 카드 20장 중 1장을 뽑아 효과를 적용합니다.", "verbatim": true }
-        ],
-        "visuals": [
-          { "kind": "table", "n": 1, "fp": "패턴 \\ 범위|나 (Self)|모두 (All)|나 제외 (ExceptSelf)|무작위 (Random)", "caption": { "text": "현재 카드 20장의 분포", "verbatim": true } },
-          { "kind": "image", "src": "images/gold_card.gif", "w": 760, "h": 409, "caption": { "text": "황금카드 연출", "verbatim": true } }
+          {
+            "kind": "table",
+            "n": 1,
+            "fp": "|[A] Tile이나 Player가 직접 처리|[B] Tile은 효과 객체만, 처리는 매니저"
+          }
         ]
       },
       {
@@ -372,14 +731,29 @@
         "chapter": "goldcard",
         "layout": "code",
         "tab": "구현",
-        "title": { "text": "8.2 패턴과 범위 조립", "verbatim": true },
-        "lead": { "text": "`GoldCardManager`는 시작할 때 enum의 모든 값에 대해 팩토리로 객체를 만들어 사전에 넣어 둡니다.", "verbatim": true },
-        "sectionPath": ["8. 황금카드", "8.2 패턴과 범위 조립"],
-        "points": [
-          { "label": "구현", "text": "카드를 적용할 때는 범위 객체로 대상 목록을 구하고, 패턴 객체에 그 목록을 넘기기만 합니다.", "verbatim": true }
+        "title": {
+          "text": "8.2 패턴과 범위 조립",
+          "verbatim": true
+        },
+        "lead": {
+          "text": "카드를 적용할 때는 범위 객체로 대상 목록을 구하고, 패턴 객체에 그 목록을 넘기기만 합니다.",
+          "verbatim": true
+        },
+        "sectionPath": [
+          "8. 황금카드",
+          "8.2 패턴과 범위 조립"
         ],
+        "points": [],
         "visuals": [
-          { "kind": "code", "n": 1, "lines": [8, 21], "fp": "// GoldCardManager.cs" }
+          {
+            "kind": "code",
+            "n": 1,
+            "lines": [
+              2,
+              21
+            ],
+            "fp": "// GoldCardManager.cs"
+          }
         ]
       },
       {
@@ -387,33 +761,61 @@
         "chapter": "goldcard",
         "layout": "full",
         "tab": "선택",
-        "title": { "text": "8.4 카드를 어떻게 정의할 것인가", "verbatim": true },
-        "lead": { "text": "카드 종류가 계속 늘어날 때 새 카드를 어떻게 추가할지가 문제였습니다.", "verbatim": true },
-        "sectionPath": ["8. 황금카드", "8.4 카드를 어떻게 정의할 것인가"],
+        "title": {
+          "text": "8.4 카드를 어떻게 정의할 것인가",
+          "verbatim": true
+        },
+        "lead": {
+          "text": "카드 종류가 계속 늘어날 때 새 카드를 어떻게 추가할지가 문제였습니다.",
+          "verbatim": true
+        },
+        "sectionPath": [
+          "8. 황금카드",
+          "8.4 카드를 어떻게 정의할 것인가"
+        ],
         "points": [
-          { "label": "이유", "text": "카드 종류를 본격적으로 늘리는 단계에서 카드 정의를 TSV로 옮기고, \"모두\", \"나 제외\" 같은 대상도 표현할 수 있도록 패턴과 범위를 나눈 조합 구조로 다시 만들었습니다.", "verbatim": true },
-          { "label": "결과", "text": "09-09에 카드를 11장에서 20장으로 늘린 커밋은 `gold_cards.tsv` 한 파일만 수정했습니다.", "verbatim": true },
-          { "label": "", "text": "대신 패턴마다 필요한 값이 달라서, TSV에는 쓰지 않는 열을 `-1`로 채운 칸이 많습니다.", "verbatim": true }
+          {
+            "label": "결과",
+            "text": "덕분에 09-09에 카드를 11장에서 20장으로 늘린 커밋은 `gold_cards.tsv` 한 파일만 수정했습니다.",
+            "verbatim": true
+          }
         ],
         "visuals": [
-          { "kind": "table", "n": 1, "fp": "|[A] 카드 목록을 코드에 두고 효과 종류별로 처리 (초기 임시 구현)|[B] 패턴 × 범위 조합, 카드는 TSV 한 줄" }
+          {
+            "kind": "table",
+            "n": 1,
+            "fp": "|[A] 카드 목록을 코드에 두고 효과 종류별로 처리 (초기 임시 구현)|[B] 패턴 × 범위 조합, 카드는 TSV 한 줄"
+          }
         ]
       },
       {
-        "key": "economy",
+        "key": "pay-order",
         "chapter": "econ",
-        "layout": "visual",
-        "tab": "흐름",
-        "title": { "text": "9.1 영토 가격과 통행료", "verbatim": true },
-        "lead": { "text": "영토 24칸은 구매 → 건물 → 랜드마크 순으로 키울 수 있고, 다른 플레이어가 도착하면 통행료를 받습니다.", "verbatim": true },
-        "sectionPath": ["9. 경제와 영토", "9.1 영토 가격과 통행료"],
-        "points": [
-          { "label": "", "text": "가격 배수와 통행료율은 모두 `config.json`에 있습니다.", "verbatim": true },
-          { "label": "통행료", "text": "총 가치 × 0.5 (땅만) / 0.75 (건물) / 1.5 (랜드마크)", "verbatim": true }
+        "layout": "code",
+        "tab": "구현",
+        "title": {
+          "text": "9.3 돈이 모자랄 때: 까방권 → 급매 → 지불 → 파산",
+          "verbatim": true
+        },
+        "lead": {
+          "text": "통행료처럼 피할 수 없는 지불은 한 함수에서 순서대로 처리합니다.",
+          "verbatim": true
+        },
+        "sectionPath": [
+          "9. 경제와 영토",
+          "9.3 돈이 모자랄 때: 까방권 → 급매 → 지불 → 파산"
         ],
+        "points": [],
         "visuals": [
-          { "kind": "mermaid", "n": 1, "fp": "flowchart TD" },
-          { "kind": "image", "src": "images/territory.gif", "w": 760, "h": 409, "caption": { "text": "영토·랜드마크 구매", "verbatim": true } }
+          {
+            "kind": "code",
+            "n": 1,
+            "lines": [
+              6,
+              24
+            ],
+            "fp": "// EconomyManager.cs — 통행료 등 반드시 내야 하는 금액 (연출과 일부 조건은 생략)"
+          }
         ]
       },
       {
@@ -421,16 +823,67 @@
         "chapter": "econ",
         "layout": "full",
         "tab": "선택",
-        "title": { "text": "9.4 큰 지출 한 번에 게임이 끝나는 문제", "verbatim": true },
-        "lead": { "text": "현금이 부족할 때 영토를 어떻게 처분하고, 크게 잃은 플레이어가 다시 따라올 여지를 어떻게 줄지 정해야 했습니다.", "verbatim": true },
-        "sectionPath": ["9. 경제와 영토", "9.4 큰 지출 한 번에 게임이 끝나는 문제"],
+        "title": {
+          "text": "9.4 큰 지출 한 번에 게임이 끝나는 문제",
+          "verbatim": true
+        },
+        "lead": {
+          "text": "현금이 부족할 때 영토를 어떻게 처분하고, 크게 잃은 플레이어가 다시 따라올 여지를 어떻게 줄지 정해야 했습니다.",
+          "verbatim": true
+        },
+        "sectionPath": [
+          "9. 경제와 영토",
+          "9.4 큰 지출 한 번에 게임이 끝나는 문제"
+        ],
         "points": [
-          { "label": "이유", "text": "선택형 급매는 UI를 새로 만들어야 하는데, 남은 일정에 UI를 하나씩 늘릴 여유가 없었습니다.", "verbatim": true },
-          { "label": "까방권", "text": "현금은 부족하지만 총자산으로는 낼 수 있는 상황에서, 게임당 한 번 지불을 면제해 줍니다(상대는 그대로 통행료를 받습니다).", "verbatim": true },
-          { "label": "", "text": "플레이어가 급매할 영토를 직접 고를 수 없어, 기획서가 의도한 \"어떤 땅을 지킬지\" 고르는 재미는 빠졌습니다.", "verbatim": true }
+          {
+            "label": "",
+            "text": "그래서 모두의 마블의 대출 시스템을 차용해 '까방권'을 만들었습니다.",
+            "verbatim": true
+          }
         ],
         "visuals": [
-          { "kind": "table", "n": 1, "fp": "|[A] 기획서: 플레이어가 영토를 골라 급매, 투자금의 50%|[B] 가치가 낮은 영토부터 자동 매각, 80%" }
+          {
+            "kind": "table",
+            "n": 1,
+            "fp": "|[A] 기획서: 플레이어가 영토를 골라 급매, 투자금의 50%|[B] 가치가 낮은 영토부터 자동 매각, 80%"
+          }
+        ]
+      },
+      {
+        "key": "board-place",
+        "chapter": "builder",
+        "layout": "code",
+        "tab": "구현",
+        "title": {
+          "text": "10.2 방향을 따라 붙이고 코너에서 꺾기",
+          "verbatim": true
+        },
+        "lead": {
+          "text": "새 칸의 위치는 직전 칸과 새 칸의 스프라이트 크기로 계산하므로, 칸마다 좌표를 적을 필요가 없습니다.",
+          "verbatim": true
+        },
+        "sectionPath": [
+          "10. 보드 제작 도구",
+          "10.2 방향을 따라 붙이고 코너에서 꺾기"
+        ],
+        "points": [
+          {
+            "label": "",
+            "text": "`Board.json`에는 칸 순서별로 타일 모양 ID와 지역 ID만 들어 있고, 좌표는 들어 있지 않습니다.",
+            "verbatim": true
+          }
+        ],
+        "visuals": [
+          {
+            "kind": "code",
+            "n": 1,
+            "lines": [
+              13,
+              26
+            ],
+            "fp": "// TileExtensions.cs — 직전 칸 옆에 새 칸을 붙일 위치 계산"
+          }
         ]
       },
       {
@@ -438,16 +891,57 @@
         "chapter": "builder",
         "layout": "full",
         "tab": "선택",
-        "title": { "text": "10.3 보드를 어떻게 만들 것인가", "verbatim": true },
-        "lead": { "text": "보드의 칸 배치를 어디에, 어떤 형태로 둘지 정해야 했습니다.", "verbatim": true },
-        "sectionPath": ["10. 보드 제작 도구", "10.3 보드를 어떻게 만들 것인가"],
+        "title": {
+          "text": "10.3 보드를 어떻게 만들 것인가",
+          "verbatim": true
+        },
+        "lead": {
+          "text": "보드의 칸 배치를 어디에, 어떤 형태로 둘지 정해야 했습니다.",
+          "verbatim": true
+        },
+        "sectionPath": [
+          "10. 보드 제작 도구",
+          "10.3 보드를 어떻게 만들 것인가"
+        ],
         "points": [
-          { "label": "이유", "text": "개발 초기에는 칸 배치를 구체적으로 정하지 않은 상태였기 때문에, 배치를 바꿔 보며 보드를 설계할 수 있어야 했습니다.", "verbatim": true },
-          { "label": "결과", "text": "기획서의 40칸 보드도 빌더로 직접 배치해 보고, 화면에 다 담기지 않거나 칸이 너무 작아진다는 것을 확인한 뒤 36칸으로 조정했습니다.", "verbatim": true },
-          { "label": "", "text": "다만 빌더에서 저장하면 기존 `Board.json`을 덮어씁니다.", "verbatim": true }
+          {
+            "label": "결과",
+            "text": "기획서의 40칸 보드도 빌더로 직접 배치해 보고, 화면에 다 담기지 않거나 칸이 너무 작아진다는 것을 확인한 뒤 36칸으로 조정했습니다.",
+            "verbatim": true
+          }
         ],
         "visuals": [
-          { "kind": "table", "n": 1, "fp": "|[A] 씬에 칸 오브젝트를 직접 배치|[B] 빌더로 순서·종류만 데이터로 저장하고 런타임에 생성" }
+          {
+            "kind": "table",
+            "n": 1,
+            "fp": "|[A] 씬에 칸 오브젝트를 직접 배치|[B] 빌더로 순서·종류만 데이터로 저장하고 런타임에 생성"
+          }
+        ]
+      },
+      {
+        "key": "duel-play",
+        "chapter": "yacha",
+        "layout": "full",
+        "tab": "결과",
+        "title": {
+          "text": "11.1 신청부터 보드 복귀까지",
+          "verbatim": true
+        },
+        "lead": {
+          "text": "상대 영토에서 통행료를 낸 뒤 '야차'를 신청하면, 두 플레이어가 1:1 횡스크롤 전투를 하고 나머지는 관전합니다.",
+          "verbatim": true
+        },
+        "sectionPath": [
+          "11. 결투 '야차'",
+          "11.1 신청부터 보드 복귀까지"
+        ],
+        "points": [],
+        "visuals": [
+          {
+            "kind": "table",
+            "n": 1,
+            "fp": "결투 신청 → 방어자 응답|전투 → 결과 → 보드 복귀 (2배속)"
+          }
         ]
       },
       {
@@ -455,66 +949,36 @@
         "chapter": "yacha",
         "layout": "visual",
         "tab": "흐름",
-        "title": { "text": "11.2 서버가 진행하는 결투", "verbatim": true },
-        "lead": { "text": "신청을 받을지, 언제 시작할지, 누가 이겼는지는 모두 서버가 정합니다.", "verbatim": true },
-        "sectionPath": ["11. 결투 '야차'", "11.2 서버가 진행하는 결투"],
+        "title": {
+          "text": "11.2 서버가 진행하는 결투",
+          "verbatim": true
+        },
+        "lead": {
+          "text": "신청을 받을지, 언제 시작할지, 누가 이겼는지는 모두 서버가 정합니다.",
+          "verbatim": true
+        },
+        "sectionPath": [
+          "11. 결투 '야차'",
+          "11.2 서버가 진행하는 결투"
+        ],
         "points": [
-          { "label": "신청", "text": "확인 조건: 진행 중인 결투 없음 · 신청자가 현재 턴 · 턴 번호 일치 · 대상이 영토 소유자.", "verbatim": true },
-          { "label": "시작", "text": "관전자 포함 전원의 전투 씬 로딩 보고 후 시작 (5장과 같은 방식)", "verbatim": true },
-          { "label": "종료", "text": "HP 0 보고 · 서버 제한 시간 초과 · 당사자 접속 종료 중 먼저 일어난 것으로 판정", "verbatim": true }
+          {
+            "label": "시작",
+            "text": "관전자 포함 전원의 전투 씬 로딩 보고 후 시작 (5장과 같은 방식)",
+            "verbatim": true
+          },
+          {
+            "label": "종료",
+            "text": "HP 0 보고 · 서버 제한 시간 초과 · 당사자 접속 종료 중 먼저 일어난 것으로 판정",
+            "verbatim": true
+          }
         ],
         "visuals": [
-          { "kind": "mermaid", "n": 1, "fp": "sequenceDiagram" }
-        ]
-      },
-      {
-        "key": "reject",
-        "chapter": "yacha",
-        "layout": "full",
-        "tab": "선택",
-        "title": { "text": "11.4 방어자의 거절", "verbatim": true },
-        "lead": { "text": "결투 신청을 받은 방어자에게 어떤 선택권을 줄지는 기획서와 다르게 정했습니다.", "verbatim": true },
-        "sectionPath": ["11. 결투 '야차'", "11.4 방어자의 거절"],
-        "points": [
-          { "label": "이유", "text": "팀 회의에서 기획서 방식은 방어자의 의사가 묵살되는 느낌이라 너무 가혹하다는 의견이 나와, 방어자에게 거절할 기회를 주기로 했습니다.", "verbatim": true },
-          { "label": "성공할수록 절반", "text": "테스트해 보니 거절이 너무 쉬워 결투가 잘 성립하지 않았습니다. 그래서 거절에 성공할 때마다 그 방어자의 확률을 절반으로 줄이고, 현재 확률을 결투 신청 화면에 표시했습니다(09-09).", "verbatim": true },
-          { "label": "", "text": "대신 결투 성립 여부에 운이 끼어듭니다. 거절에 성공하면 공격자는 통행료만 낸 채 턴이 끝납니다.", "verbatim": true }
-        ],
-        "visuals": [
-          { "kind": "table", "n": 1, "fp": "|[A] 기획서: 기권하면 패배|[B] 확률로 거절, 성공할수록 확률 감소" }
-        ]
-      },
-      {
-        "key": "online",
-        "chapter": "yacha",
-        "layout": "full",
-        "tab": "구현",
-        "title": { "text": "11.5 로컬 전투를 온라인으로", "verbatim": true },
-        "lead": { "text": "저는 이 코드를 읽고 네트워크로 바꿔야 할 지점을 정리한 뒤 두 플레이어가 각자의 화면에서 싸우는 온라인 전투로 연결했습니다.", "verbatim": true },
-        "sectionPath": ["11. 결투 '야차'", "11.5 로컬 전투를 온라인으로"],
-        "points": [
-          { "label": "", "text": "전투는 로컬에서 먼저 완성하고, 네트워크 연결은 서버를 맡은 제가 이어받는 순서로 진행했습니다.", "verbatim": true }
-        ],
-        "visuals": [
-          { "kind": "table", "n": 1, "fp": "영역|로컬 전투 (연결 전)|온라인 전투 (연결 후)" }
-        ]
-      },
-      {
-        "key": "ts-timer",
-        "chapter": "yacha",
-        "layout": "problem",
-        "tab": "문제 해결",
-        "title": { "text": "11.7 결투가 화면 타이머보다 일찍 끝난 문제", "verbatim": true },
-        "lead": { "text": "이번에도 \"다음으로 넘어가도 되는가\"를 판단하는 기준이 서버와 클라이언트에서 달랐습니다.", "verbatim": true },
-        "sectionPath": ["11. 결투 '야차'", "11.7 결투가 화면 타이머보다 일찍 끝난 문제"],
-        "points": [
-          { "label": "문제", "text": "결투 화면의 남은 시간이 아직 남았는데, 결투가 시간 초과로 강제 종료됨. 시연 직전에 발견", "verbatim": true },
-          { "label": "원인", "text": "서버는 시작 신호를 보낸 순간부터 시간을 재고, 클라이언트는 연출이 끝난 뒤에 30초 타이머를 시작하므로, 서버가 연출 시간만큼 먼저 끝남", "verbatim": true },
-          { "label": "해결", "text": "코드를 고칠 시간이 없어, 연출 시간을 대략 계산해 서버 제한 시간을 30초 → 34초로 늘림", "verbatim": true },
-          { "label": "배운 점", "text": "서버와 클라이언트가 시간을 재기 시작하는 기준 시점을 하나로 맞춰야 합니다. 숫자로 보정했기 때문에 연출 길이가 바뀌면 다시 어긋나며, 이 부분은 기술 부채로 남았습니다(14.3)", "verbatim": true }
-        ],
-        "visuals": [
-          { "kind": "mermaid", "n": 1, "fp": "sequenceDiagram" }
+          {
+            "kind": "mermaid",
+            "n": 1,
+            "fp": "sequenceDiagram"
+          }
         ]
       },
       {
@@ -522,14 +986,25 @@
         "chapter": "collab",
         "layout": "full",
         "tab": "구조",
-        "title": { "text": "12.1 파트가 만나는 지점", "verbatim": true },
-        "lead": { "text": "각 파트는 서로의 내부 구현을 몰라도 되도록, 이벤트 하나, 또는 결과를 돌려주는 비동기 함수 하나로만 연결했습니다.", "verbatim": true },
-        "sectionPath": ["12. 팀원 파트와 맞춘 것", "12.1 파트가 만나는 지점"],
-        "points": [
-          { "label": "", "text": "보드 쪽은 \"구매 결정을 기다린다\"는 것만 알고, 팝업이 어떻게 생겼는지는 모릅니다.", "verbatim": true }
+        "title": {
+          "text": "12.1 파트가 만나는 지점",
+          "verbatim": true
+        },
+        "lead": {
+          "text": "각 파트는 서로의 내부 구현을 몰라도 되도록, 이벤트 하나, 또는 결과를 돌려주는 비동기 함수 하나로만 연결했습니다.",
+          "verbatim": true
+        },
+        "sectionPath": [
+          "12. 팀원 파트와 맞춘 것",
+          "12.1 파트가 만나는 지점"
         ],
+        "points": [],
         "visuals": [
-          { "kind": "table", "n": 1, "fp": "연결|보드 쪽 (나)|상대 파트|방식" }
+          {
+            "kind": "table",
+            "n": 1,
+            "fp": "연결|보드 쪽 (나)|상대 파트|방식"
+          }
         ]
       },
       {
@@ -537,16 +1012,31 @@
         "chapter": "collab",
         "layout": "full",
         "tab": "선택",
-        "title": { "text": "12.2 장비 스킬을 무엇으로 정의할 것인가", "verbatim": true },
-        "lead": { "text": "구현은 전투 담당 팀원이 했지만, 방식을 바꾸자고 제안한 것이 저여서 여기에 적습니다.", "verbatim": true },
-        "sectionPath": ["12. 팀원 파트와 맞춘 것", "12.2 장비 스킬을 무엇으로 정의할 것인가"],
+        "title": {
+          "text": "12.2 장비 스킬을 무엇으로 정의할 것인가",
+          "verbatim": true
+        },
+        "lead": {
+          "text": "고르는 기준은 남은 기간 안에 완성하고 바로 조정할 수 있는가였습니다.",
+          "verbatim": true
+        },
+        "sectionPath": [
+          "12. 팀원 파트와 맞춘 것",
+          "12.2 장비 스킬을 무엇으로 정의할 것인가"
+        ],
         "points": [
-          { "label": "이유", "text": "보드 쪽에서는 데이터로 확장하는 구조를 지켰지만, 이 부분은 확장성보다 마감 안에 완성하는 것을 우선했습니다.", "verbatim": true },
-          { "label": "결과", "text": "장비 스킬이 시연 전에 들어갔고, 야차는 시연에서 좋은 반응을 얻었습니다.", "verbatim": true },
-          { "label": "", "text": "사거리·속도·범위는 애니메이션 클립이 정하고 TSV 값은 장비 설명 문구에만 쓰입니다. 그래서 장비를 TSV만으로 늘릴 수 없었고, 설명에 적힌 수치와 실제 동작이 어긋날 수 있습니다.", "verbatim": true }
+          {
+            "label": "",
+            "text": "저는 방식 제안과 시연을, 구현은 전투 담당이 맡았습니다.",
+            "verbatim": true
+          }
         ],
         "visuals": [
-          { "kind": "table", "n": 1, "fp": "|[A] 코드 + 데이터로 궤적 계산|[B] 애니메이션 클립으로 궤적을 만들고, 프레임에 맞춰 판정" }
+          {
+            "kind": "table",
+            "n": 1,
+            "fp": "|[A] 코드 + 데이터로 궤적 계산|[B] 애니메이션 클립으로 궤적을 만들고, 프레임에 맞춰 판정"
+          }
         ]
       },
       {
@@ -554,16 +1044,21 @@
         "chapter": "ai",
         "layout": "full",
         "tab": "",
-        "title": { "text": "13. AI와 일한 방식", "verbatim": true },
+        "title": {
+          "text": "13. AI와 일한 방식",
+          "verbatim": true
+        },
         "lead": null,
-        "sectionPath": ["13. AI와 일한 방식"],
-        "points": [
-          { "label": "잘 된 것", "text": "메시지 클래스와 이벤트 연결의 초안을 맡긴 덕에 저는 \"서버가 무엇을 확인하고 누구에게 보내는가\"를 정하는 데 시간을 쓸 수 있었습니다.", "verbatim": true },
-          { "label": "안 된 것 ①", "text": "서버 구조를 물었을 때 AI는 서버가 모든 규칙을 계산·검증하는 방식(4.5의 [A])을 권했습니다. 공개 서비스라면 맞는 답이지만, 3주·서버 첫 경험·반 안의 시연이라는 조건은 AI가 알 수 없었습니다.", "verbatim": true },
-          { "label": "안 된 것 ②", "text": "AI가 써 준 대기 코드는 서버에 보고를 보낸 다음에 대기를 등록했습니다. 클라이언트 하나로 돌릴 때는 문제가 없다가, 여러 개를 띄우자 가끔 한 화면이 칸 효과에서 멈췄습니다.", "verbatim": true }
+        "sectionPath": [
+          "13. AI와 일한 방식"
         ],
+        "points": [],
         "visuals": [
-          { "kind": "table", "n": 1, "fp": "|내용" }
+          {
+            "kind": "table",
+            "n": 1,
+            "fp": "|내용"
+          }
         ]
       }
     ]
