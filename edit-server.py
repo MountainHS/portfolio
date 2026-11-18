@@ -1,4 +1,4 @@
-"""포트폴리오 미리보기 + 상세 문서·포트폴리오 문서 편집 저장 서버 (로컬 전용)
+"""포트폴리오 미리보기 + 상세 문서·포트폴리오 페이지 편집 저장 서버 (로컬 전용)
 
 `python -m http.server 4600` 대신 이렇게 실행합니다.
     python edit-server.py          → http://localhost:4600
@@ -8,10 +8,10 @@
 - 단, 템플릿 파일(index.html·project.html·doc.html)은 보낼 때 메모리에서만 </body> 위에 로더 한 줄(assets/edit-loader.js)을 넣습니다.
   넣는 줄·기준 줄은 .claude/skills/edit-mode-install/edit-mode-patch.py에 있고, 디스크의 파일은 원본 그대로 둡니다(/portfolio-update가 덮어도 그대로 동작).
 - GET  /__edit/ping : 편집 서버가 떠 있다는 신호. assets/edit-loader.js가 이 응답을 받을 때만 편집 파일을 싣고 [편집 모드] 버튼을 보입니다.
-- POST /__edit/save : src/ 아래 기술 문서 md의 줄 범위 하나를 새 글로 바꿔 씁니다.
-- POST /__edit/portfolio : 포트폴리오 문서(index.html)의 글 한 칸을 소스(profile.md·기술 문서·deck-edits.json)와 data/에 씁니다.
+- POST /__edit/save : src/ 아래 프로젝트 문서 md의 줄 범위 하나를 새 글로 바꿔 씁니다.
+- POST /__edit/portfolio : 포트폴리오 페이지(index.html)의 글 한 칸을 소스(profile.md·프로젝트 문서·deck-edits.json)와 data/에 씁니다.
   어디에 쓸지는 .claude/skills/portfolio-build/portfolio-edits.py가 정합니다(assets/portfolio-edit.js가 부름).
-- POST /__edit/deck : 발표 덱(project.html) 장면 글(제목·도입·요점·키워드) 한 칸을 deck-edits.json(+ 기술 문서 줄)과 data/에 씁니다.
+- POST /__edit/deck : 슬라이드(project.html) 장면 글(제목·도입·요점·키워드) 한 칸을 deck-edits.json(+ 프로젝트 문서 줄)과 data/에 씁니다.
   규칙은 같은 portfolio-edits.py의 save_deck_text(assets/deck-edit.js가 부름). 덱의 표·그림·코드는 /__edit/save(md 줄)로 고칩니다.
 127.0.0.1에만 열어 같은 PC에서만 저장할 수 있습니다. GitHub Pages에는 이 서버가 없으므로 편집 버튼이 나오지 않습니다.
 """
@@ -40,9 +40,9 @@ class SaveError(Exception):
 
 
 def resolve_md_path(relative_path):
-    """요청의 경로(src/<폴더>/<기술 문서>.md)를 실제 파일 경로로 바꿉니다.
+    """요청의 경로(src/<폴더>/<프로젝트 문서>.md)를 실제 파일 경로로 바꿉니다.
 
-    src/ 밖의 파일이나 .md가 아닌 파일은 쓰지 않습니다(이 서버는 기술 문서만 고침).
+    src/ 밖의 파일이나 .md가 아닌 파일은 쓰지 않습니다(이 서버는 프로젝트 문서만 고침).
     """
     md_path = (ROOT / relative_path).resolve()
     is_inside_src = SRC.resolve() in md_path.parents
@@ -91,7 +91,7 @@ def replace_lines(md_path, start_line, end_line, expected_text, new_text):
 
 
 def load_portfolio_edits():
-    """포트폴리오 문서 고치기 모듈(portfolio-edits.py)을 읽습니다. 빌드 스킬과 같은 파일을 써서 저장 규칙이 한 곳에만 있게 합니다."""
+    """포트폴리오 페이지 고치기 모듈(portfolio-edits.py)을 읽습니다. 빌드 스킬과 같은 파일을 써서 저장 규칙이 한 곳에만 있게 합니다."""
     spec = importlib.util.spec_from_file_location("portfolio_edits", str(PORTFOLIO_EDITS_SCRIPT))
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
@@ -179,7 +179,7 @@ class EditHandler(SimpleHTTPRequestHandler):
         self.send_json(200, {"ok": True})
 
     def save_portfolio_field(self, request):
-        """포트폴리오 문서의 글 한 칸 저장(또는 dryRun이면 저장 위치만 묻기). 규칙은 portfolio-edits.py의 save."""
+        """포트폴리오 페이지의 글 한 칸 저장(또는 dryRun이면 저장 위치만 묻기). 규칙은 portfolio-edits.py의 save."""
         portfolio_edits = load_portfolio_edits()                  # 요청마다 다시 읽음 → 규칙을 고쳐도 서버를 다시 켜지 않아도 됨
         try:
             answer = portfolio_edits.save(request)
@@ -191,7 +191,7 @@ class EditHandler(SimpleHTTPRequestHandler):
         self.send_json(200, answer)
 
     def save_deck_text(self, request):
-        """발표 덱 장면 글 한 칸 저장(또는 dryRun이면 저장 위치만 묻기). 규칙은 portfolio-edits.py의 save_deck_text."""
+        """슬라이드 장면 글 한 칸 저장(또는 dryRun이면 저장 위치만 묻기). 규칙은 portfolio-edits.py의 save_deck_text."""
         portfolio_edits = load_portfolio_edits()                  # 요청마다 다시 읽음 → 규칙을 고쳐도 서버를 다시 켜지 않아도 됨
         try:
             answer = portfolio_edits.save_deck_text(request)
@@ -199,7 +199,7 @@ class EditHandler(SimpleHTTPRequestHandler):
             self.send_json(error.status, {"ok": False, "error": str(error)})
             return
         if request.get("dryRun") != True:
-            print(f"[edit] 발표 덱 저장: {request.get('slide')} {request.get('field')} → {answer['where']}")
+            print(f"[edit] 슬라이드 저장: {request.get('slide')} {request.get('field')} → {answer['where']}")
         self.send_json(200, answer)
 
     def send_json(self, status, body):
@@ -217,7 +217,7 @@ def main():
     port = int(sys.argv[1]) if len(sys.argv) > 1 else DEFAULT_PORT
     server = ThreadingHTTPServer(("127.0.0.1", port), EditHandler)
     # localhost로 열면 브라우저가 IPv6(::1)를 먼저 찾아, 같은 포트의 다른 서버(python -m http.server 등)로 갈 수 있음 → 127.0.0.1 주소로 안내
-    print(f"미리보기 + 편집 서버: http://127.0.0.1:{port}  (포트폴리오 문서·발표 덱·상세 문서 오른쪽 아래 [편집 모드])  끄기: Ctrl+C")
+    print(f"미리보기 + 편집 서버: http://127.0.0.1:{port}  (포트폴리오 페이지·슬라이드·상세 문서 오른쪽 아래 [편집 모드])  끄기: Ctrl+C")
     print_edit_mode_stops()
     server.serve_forever()
 

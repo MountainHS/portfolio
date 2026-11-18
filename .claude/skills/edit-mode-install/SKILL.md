@@ -1,13 +1,13 @@
 ---
 name: edit-mode-install
-description: MountainHS/portfolio(https://github.com/MountainHS/portfolio)에서 편집 모드(상세 문서·포트폴리오 문서·발표 덱 위 글을 눌러 소스에 저장) 파일을 받아 이 레포에 설치한다. 템플릿 파일(index.html 등)은 고치지 않으므로 /portfolio-update 뒤에도 다시 설치할 필요가 없다. src/·profile.md·data/·custom/·theme/은 건드리지 않는다. 사용자가 /edit-mode-install을 직접 입력했을 때만 실행.
+description: MountainHS/portfolio(https://github.com/MountainHS/portfolio)에서 편집 모드(상세 문서·포트폴리오 페이지·슬라이드 위 글을 눌러 소스에 저장) 파일을 받아 이 레포에 설치한다. 템플릿 파일(index.html 등)은 고치지 않으므로 /portfolio-update 뒤에도 다시 설치할 필요가 없다. src/·profile.md·data/·custom/·theme/은 건드리지 않는다. 사용자가 /edit-mode-install을 직접 입력했을 때만 실행.
 disable-model-invocation: true
 ---
 
 # /edit-mode-install — 편집 모드 설치
 
 이 레포(원본 템플릿 `krKooHoo/portfolio-template`에서 만든 레포)에 **편집 모드**를 넣습니다.
-편집 서버(`edit-server.py`)로 연 세 페이지(상세 문서 `doc.html`·포트폴리오 문서 `index.html`·발표 덱 `project.html`) 오른쪽 아래에 [✎ 편집 모드]가 생기고, 글을 누르면 소스에 저장됩니다.
+편집 서버(`edit-server.py`)로 연 세 페이지(상세 문서 `doc.html`·포트폴리오 페이지 `index.html`·슬라이드 `project.html`) 오른쪽 아래에 [✎ 편집 모드]가 생기고, 글을 누르면 소스에 저장됩니다.
 사용자의 원천과 결과물은 건드리지 않습니다. 여러 번 실행해도 결과가 같습니다(이미 있는 절·구성은 건너뜀).
 템플릿 파일(`doc.html`·`index.html`·`project.html`)은 **디스크에서 고치지 않습니다.** 편집 서버가 그 파일을 브라우저에 보낼 때만 메모리에서 `</body>` 위에 로더 한 줄(`assets/edit-loader.js`)을 넣고, 로더가 편집 서버가 있을 때만 편집 CSS·JS를 싣습니다. 그래서 `/portfolio-update`가 그 파일을 원본으로 바꿔도 편집 모드는 그대로입니다.
 
@@ -44,10 +44,10 @@ git checkout FETCH_HEAD -- .claude/skills/edit-mode-install
 | 묶음 | 파일 | 기준 줄 | 넣는 것 |
 |---|---|---|---|
 | 상세 문서 | `doc.html` | `</body>` **위**(그 줄 전체가 `</body>`인 1곳) | `<script src="assets/edit-loader.js">` 1줄 |
-| 포트폴리오 문서 | `index.html` | `</body>` **위** | 같은 1줄 |
-| 발표 덱 | `project.html` | `</body>` **위** | 같은 1줄 |
+| 포트폴리오 페이지 | `index.html` | `</body>` **위** | 같은 1줄 |
+| 슬라이드 | `project.html` | `</body>` **위** | 같은 1줄 |
 
-- **로더가 하는 일**(`assets/edit-loader.js`): 주소가 localhost·127.0.0.1이고 `/__edit/ping`이 응답할 때만, 전역으로 페이지 종류를 알아봅니다(`PFDoc` = 상세 문서 · `PFPage` = 포트폴리오 문서 · `PFScene.info.page === 'project'` = 발표 덱). 그다음 종류별 편집 CSS를 `<head>` 끝에 붙이고 JS를 싣습니다(상세 문서 `doc-edit.css`·`doc-edit.js` / 포트폴리오 문서 `doc-edit.css`→`portfolio-edit.css`·`portfolio-edit.js` / 발표 덱 `doc-edit.css`→`portfolio-edit.css`→`deck-edit.css`·`doc-edit.js`→`deck-edit.js`). 세 전역이 하나도 없으면 아무것도 하지 않습니다(편집 버튼 없음).
+- **로더가 하는 일**(`assets/edit-loader.js`): 주소가 localhost·127.0.0.1이고 `/__edit/ping`이 응답할 때만, 전역으로 페이지 종류를 알아봅니다(`PFDoc` = 상세 문서 · `PFPage` = 포트폴리오 페이지 · `PFScene.info.page === 'project'` = 슬라이드). 그다음 종류별 편집 CSS를 `<head>` 끝에 붙이고 JS를 싣습니다(상세 문서 `doc-edit.css`·`doc-edit.js` / 포트폴리오 페이지 `doc-edit.css`→`portfolio-edit.css`·`portfolio-edit.js` / 슬라이드 `doc-edit.css`→`portfolio-edit.css`→`deck-edit.css`·`doc-edit.js`→`deck-edit.js`). 세 전역이 하나도 없으면 아무것도 하지 않습니다(편집 버튼 없음).
 - **페이지 단위**: `</body>`를 찾지 못하거나 두 곳 이상이면 편집 서버는 그 **페이지**의 파일만 원본 그대로 보내고, 서버를 켤 때 창에 `[멈춤]`을 찍습니다. 그 페이지는 편집 버튼 없이 정상으로 열리고, 다른 페이지는 그대로 줄이 들어갑니다. `assets/doc.js`·`assets/project-deck.js` 같은 렌더러 파일은 가로채지 않습니다.
 - **이미 있음**: 디스크에 같은 줄이 이미 있으면 두 번 넣지 않습니다(`[있음]`). 한 칸의 넣을 줄 중 일부만 있으면(직접 고친 흔적) 그 페이지를 멈춥니다.
 - 넣는 줄의 들여쓰기는 기준 줄을 따르고, 줄 끝(CRLF/LF)·BOM은 파일마다 원래대로 둡니다.
@@ -159,7 +159,7 @@ git -C "$R" log -1 --format='%h %s'
 2. 다음 할 일:
    1. 편집 서버를 **이미 켜 두었으면** `.\preview.ps1 stop`으로 끈 뒤 다시 켭니다(예전 서버는 새 저장 주소를 모르고, 템플릿 파일에 로더 줄을 넣어 보내지 않습니다).
    2. `preview.cmd`를 더블클릭하거나 PowerShell에서 `.\preview.ps1`을 실행합니다. 세 페이지 오른쪽 아래에 [✎ 편집 모드]가 보이면 설치된 것입니다.
-   3. 발표 덱에 노란 "예전 데이터로 자동 구성" 띠가 보이면 편집 모드가 켜지지 않습니다. `/portfolio-build`를 먼저 실행합니다.
+   3. 슬라이드에 노란 "예전 데이터로 자동 구성" 띠가 보이면 편집 모드가 켜지지 않습니다. `/portfolio-build`를 먼저 실행합니다.
    4. 앞으로 `/portfolio-build`·`/portfolio-edit` 뒤에는 `.claude/CLAUDE.md`에 넣은 절대로 두 스크립트(`deck-edits.py apply --all` → `portfolio-edits.py apply --all`)를 실행합니다.
    - 장 표지 키워드(장 표지 목록의 장면 아래 낱말 한 줄)는 이 설치에 들어 있지 않습니다. 그 줄은 편집 모드에서 누를 수 없을 뿐, 다른 편집은 그대로 됩니다.
 

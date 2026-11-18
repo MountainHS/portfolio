@@ -1,13 +1,13 @@
 ---
 name: local-preview
-description: 로컬 미리보기를 연다 — preview.ps1을 불러 편집 서버(edit-server.py, 127.0.0.1:4600)를 켜고 포트폴리오 문서·발표 덱·상세 문서를 브라우저로 연다. 끄기(stop)·서버만 켜기(server)·report 열기도 같은 명령. 사용자가 /local-preview를 입력하거나 "미리보기 열어 줘", "덱 띄워 줘", "편집 서버 꺼 줘"처럼 로컬 미리보기를 열고 닫아 달라고 할 때 사용.
+description: 로컬 미리보기를 연다 — preview.ps1을 불러 편집 서버(edit-server.py, 127.0.0.1:4600)를 켜고 포트폴리오 페이지·슬라이드·상세 문서를 브라우저로 연다. 끄기(stop)·서버만 켜기(server)·report 열기도 같은 명령. 사용자가 /local-preview를 입력하거나 "미리보기 열어 줘", "덱 띄워 줘", "편집 서버 꺼 줘"처럼 로컬 미리보기를 열고 닫아 달라고 할 때 사용.
 argument-hint: "[portfolio|deck|doc|all|report|server|stop] [프로젝트 폴더]"
 ---
 
 # /local-preview — 로컬 미리보기 열기
 
-인자: `$ARGUMENTS` — `preview.ps1`과 같은 순서입니다(페이지 종류, 프로젝트 폴더). 페이지 종류가 비면 **`portfolio`(포트폴리오 문서만)**, 프로젝트 폴더가 비면 `src/`의 첫 폴더.
-발표 덱·상세 문서는 사용자가 `deck`·`doc`·`all`을 적었을 때만 엽니다.
+인자: `$ARGUMENTS` — `preview.ps1`과 같은 순서입니다(페이지 종류, 프로젝트 폴더). 페이지 종류가 비면 **`portfolio`(포트폴리오 페이지만)**, 프로젝트 폴더가 비면 `src/`의 첫 폴더.
+슬라이드·상세 문서는 사용자가 `deck`·`doc`·`all`을 적었을 때만 엽니다.
 
 이 명령은 레포 루트의 **`preview.ps1`을 그대로 부릅니다.** 서버 켜기·포트 검사·끄기를 여기서 새로 짜지 않습니다.
 `preview.ps1`이 바뀌면 이 명령도 그대로 따라갑니다.
@@ -18,15 +18,15 @@ argument-hint: "[portfolio|deck|doc|all|report|server|stop] [프로젝트 폴더
 
 | 사용자가 친 것 | 부를 명령 |
 |---|---|
-| (없음) | `preview.ps1 portfolio` (포트폴리오 문서만, 첫 프로젝트) |
-| `5-hive-purge` (페이지 종류 없이 폴더만) | `preview.ps1 portfolio 5-hive-purge` (포트폴리오 문서만) |
+| (없음) | `preview.ps1 portfolio` (포트폴리오 페이지만, 첫 프로젝트) |
+| `5-hive-purge` (페이지 종류 없이 폴더만) | `preview.ps1 portfolio 5-hive-purge` (포트폴리오 페이지만) |
 | `deck 5-hive-purge` | `preview.ps1 deck 5-hive-purge` |
 | `all 5-hive-purge` | `preview.ps1 all 5-hive-purge` (세 페이지) |
 | `stop` | `preview.ps1 stop` |
 
 - 페이지 종류: `portfolio`(기본) · `deck` · `doc` · `all`(세 페이지) · `report`(루트 `report.md` + `report/<폴더>.md`) · `server`(서버만) · `stop`(4600 포트 서버 끄기).
 - 인자가 없으면 `preview.ps1`에 `portfolio`를 붙여 부릅니다. `preview.ps1`의 기본값도 `portfolio`라서(더블클릭 `preview.cmd`와 같음) 같은 결과지만, 의도가 분명하도록 페이지 종류를 붙여 부릅니다.
-- 첫 인자가 위 종류가 아니고 `src/<그 이름>/` 폴더가 있으면 프로젝트 폴더로 보고 `portfolio`를 앞에 붙입니다. 명령 패널의 "미리보기 띄우기" 버튼(`/local-preview <고른 폴더>`)도 이 경우라 포트폴리오 문서만 엽니다.
+- 첫 인자가 위 종류가 아니고 `src/<그 이름>/` 폴더가 있으면 프로젝트 폴더로 보고 `portfolio`를 앞에 붙입니다. 명령 패널의 "미리보기 띄우기" 버튼(`/local-preview <고른 폴더>`)도 이 경우라 포트폴리오 페이지만 엽니다.
 - 둘 다 아니면 실행하지 않고, 쓸 수 있는 종류와 `src/`의 폴더 목록(`_`로 시작하는 폴더 제외)을 보여 줍니다.
 
 ## 실행

@@ -1,12 +1,12 @@
 ﻿<#
 .SYNOPSIS
-  로컬 미리보기를 한 번에 엽니다. 편집 서버(edit-server.py)를 띄우고 포트폴리오 문서·발표 덱·상세 문서를 브라우저로 엽니다.
+  로컬 미리보기를 한 번에 엽니다. 편집 서버(edit-server.py)를 띄우고 포트폴리오 페이지·슬라이드·상세 문서를 브라우저로 엽니다.
 
 .EXAMPLE
-  .\preview.ps1                 # 서버 켜고 포트폴리오 문서만 열기 (= .\preview.ps1 portfolio)
+  .\preview.ps1                 # 서버 켜고 포트폴리오 페이지만 열기 (= .\preview.ps1 portfolio)
   .\preview.ps1 all             # 세 페이지 모두 열기 (첫 프로젝트)
   .\preview.ps1 doc             # 상세 문서만
-  .\preview.ps1 deck 3-mini-ftl # 특정 프로젝트의 발표 덱만
+  .\preview.ps1 deck 3-mini-ftl # 특정 프로젝트의 슬라이드만
   .\preview.ps1 report          # 요약판 report.md와 프로젝트 report 열기
   .\preview.ps1 server          # 서버만 켜기(브라우저 안 엶)
   .\preview.ps1 stop            # 4600 포트의 미리보기 서버 끄기

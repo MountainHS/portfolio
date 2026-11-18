@@ -42,8 +42,8 @@ def loader_step(html_path):
 
 GROUPS = [
     ('상세 문서 (doc.html)', [loader_step('doc.html')]),
-    ('포트폴리오 문서 (index.html)', [loader_step('index.html')]),
-    ('발표 덱 (project.html)', [loader_step('project.html')]),
+    ('포트폴리오 페이지 (index.html)', [loader_step('index.html')]),
+    ('슬라이드 (project.html)', [loader_step('project.html')]),
 ]
 
 

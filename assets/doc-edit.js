@@ -1,4 +1,4 @@
-// 상세 문서 편집 모드 — assets/edit-loader.js가 상세 문서·발표 덱에 싣습니다(발표 덱은 mapBlocksToLines만 빌려 씀).
+// 상세 문서 편집 모드 — assets/edit-loader.js가 상세 문서·슬라이드에 싣습니다(슬라이드는 mapBlocksToLines만 빌려 씀).
 //   상세 문서에서는 파일 끝의 startOnDocPage()가 doc.js가 문서를 다 그리길 기다린 뒤 PFDocEdit.attach(...)를 부릅니다.
 //   켜지는 조건: 주소가 localhost·127.0.0.1이고, 로컬 편집 서버(edit-server.py)의 /__edit/ping이 응답할 때만.
 //   GitHub Pages나 python -m http.server에서는 아무것도 하지 않습니다(편집 버튼 없음).
@@ -12,7 +12,7 @@
 
   /**
    * 편집 모드 진입점. startOnDocPage가 문서를 다 그린 뒤 부릅니다.
-   * id: src 폴더 이름, docFile: 그 폴더 안 기술 문서 파일 이름, md: 화면을 그린 md 원문, docElement: 문서 본문(#doc)
+   * id: src 폴더 이름, docFile: 그 폴더 안 프로젝트 문서 파일 이름, md: 화면을 그린 md 원문, docElement: 문서 본문(#doc)
    */
   async function attach({ id, docFile, md, docElement }) {
     const isLocalAddress = ['localhost', '127.0.0.1'].includes(location.hostname);
@@ -271,12 +271,12 @@
     window.scrollTo(0, saved.scrollY);
   }
 
-  // mapBlocksToLines는 발표 덱 편집 모드(assets/deck-edit.js)도 씀: 덱의 표·그림·코드가 md 몇 줄인지 같은 방법으로 잼
+  // mapBlocksToLines는 슬라이드 편집 모드(assets/deck-edit.js)도 씀: 덱의 표·그림·코드가 md 몇 줄인지 같은 방법으로 잼
   window.PFDocEdit = { attach, mapBlocksToLines };
 
   /**
-   * 상세 문서(doc.html)에서만 스스로 켭니다(window.PFDoc가 있을 때. 발표 덱에는 없어 건너뜀).
-   * doc.js가 문서를 다 그린 뒤, doc.js와 같은 값(?p=, data/projects/<id>.json의 doc, 그 기술 문서 md)을 다시 읽어 attach를 부릅니다.
+   * 상세 문서(doc.html)에서만 스스로 켭니다(window.PFDoc가 있을 때. 슬라이드에는 없어 건너뜀).
+   * doc.js가 문서를 다 그린 뒤, doc.js와 같은 값(?p=, data/projects/<id>.json의 doc, 그 프로젝트 문서 md)을 다시 읽어 attach를 부릅니다.
    * 주소에 ?p=가 없거나 data·md를 읽지 못하면 doc.js가 이미 오류 화면을 그린 것이므로 아무것도 하지 않습니다.
    */
   async function startOnDocPage() {

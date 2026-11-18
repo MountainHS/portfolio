@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""포트폴리오 문서 고치기 — 편집 서버(edit-server.py)의 저장과 /portfolio-build 마지막 반영이 함께 씁니다.
+"""포트폴리오 페이지 고치기 — 편집 서버(edit-server.py)의 저장과 /portfolio-build 마지막 반영이 함께 씁니다.
 
-포트폴리오 문서(index.html)에서 사용자가 고친 글은 data/가 아니라 소스에 남깁니다(다시 빌드해도 남게).
+포트폴리오 페이지(index.html)에서 사용자가 고친 글은 data/가 아니라 소스에 남깁니다(다시 빌드해도 남게).
   - 프로필(이름·영문 이름·한 줄 정체성·이메일·GitHub·자기소개)·기술 이름 → profile.md의 그 줄
-  - 기술 문서에 같은 글자가 그대로 한 번만 있는 글 → 그 기술 문서 줄(제목 줄·코드 블록은 빼고)
+  - 프로젝트 문서에 같은 글자가 그대로 한 번만 있는 글 → 그 프로젝트 문서 줄(제목 줄·코드 블록은 빼고)
   - 그 밖의 글(Claude가 줄인 한 줄 소개·기능 설명·기술 근거, 태그 등) → src/<폴더>/deck-edits.json의 "editModePortfolio" 목록
 저장할 때 data/도 같이 고쳐 새로고침하면 바로 보입니다. 다시 빌드한 뒤에는 `apply --all`이 "editModePortfolio" 목록을 data/에 다시 덮습니다.
 
@@ -14,14 +14,14 @@
   자리 이름(label·section·skill)은 다시 빌드해도 그대로인 값이라 번호가 바뀌어도 같은 칸을 찾습니다.
   value를 빌드 글(from)과 같게 고치면 그 줄은 지워집니다(= 되돌리기).
 
-발표 덱(project.html) 편집 모드의 장면 글(제목·도입·요점·키워드)도 여기서 씁니다(save_deck_text).
-  - 고친 글은 늘 src/<폴더>/deck-edits.json의 "deckText" 목록에 남기고, 기술 문서에 같은 글이 한 번만 있으면 그 줄도 고칩니다.
+슬라이드(project.html) 편집 모드의 장면 글(제목·도입·요점·키워드)도 여기서 씁니다(save_deck_text).
+  - 고친 글은 늘 src/<폴더>/deck-edits.json의 "deckText" 목록에 남기고, 프로젝트 문서에 같은 글이 한 번만 있으면 그 줄도 고칩니다.
   - "deckText" 목록 한 줄 = { "slide": 장면 key, "field": title · lead · point · keywords, "n": 요점 번호(point만, 1부터), "value", "from" }
   - data에는 deck.slides와 deck.base(장면 고치기 전 빌드 장면, 있으면) 둘 다에 씁니다 → deck-edits.py apply가 base에서 장면을 다시 만들어도 남음.
     다만 /portfolio-edit로 고정한(pin) 장면은 고치기 파일의 글로 다시 만들어지므로, deck-edits.py apply 뒤에는 늘 이 스크립트의 apply를 실행합니다.
 
 사용(레포 루트에서, Windows에서 python이 없으면 py):
-  python .claude/skills/portfolio-build/portfolio-edits.py apply <폴더>… | --all     고친 글(포트폴리오 문서·발표 덱)을 data/에 반영
+  python .claude/skills/portfolio-build/portfolio-edits.py apply <폴더>… | --all     고친 글(포트폴리오 페이지·슬라이드)을 data/에 반영
 Python 3.8 이상, 표준 라이브러리만.
 """
 import importlib.util
@@ -34,7 +34,7 @@ ROOT = Path(__file__).resolve().parents[3]
 PROFILE_PATH = ROOT / "profile.md"
 PORTFOLIO_DATA_PATH = ROOT / "data" / "portfolio.json"
 EDITS_FILE_NAME = "deck-edits.json"
-PORTFOLIO_TEXT_LIST = "editModePortfolio"                           # 포트폴리오 문서 편집 모드가 고친 글 목록(deck-edits.json 최상위 키). 원본 템플릿이 예약한 "portfolio" 칸과 겹치지 않게 따로 씀
+PORTFOLIO_TEXT_LIST = "editModePortfolio"                           # 포트폴리오 페이지 편집 모드가 고친 글 목록(deck-edits.json 최상위 키). 원본 템플릿이 예약한 "portfolio" 칸과 겹치지 않게 따로 씀
 DECODER = json.JSONDecoder()
 
 # profile.md 「기본 정보」의 줄 이름(`- 이름: 홍산`) ↔ data/portfolio.json profile 칸
@@ -67,8 +67,8 @@ def save(request):
     request: { field, project?, skill?, evidence?, index?, expected, value, portfolioOnly?, dryRun? }
       field·project·skill·evidence·index = 화면의 어느 칸인지(assets/portfolio-edit.js가 data 순서 번호로 보냄)
       expected = 화면을 그릴 때의 값(지금 data와 다르면 저장하지 않음), value = 새 값(tags는 글자 목록)
-      portfolioOnly = true면 기술 문서에 같은 글이 있어도 deck-edits.json에만 저장, dryRun = true면 저장 위치만 알려 줌
-    반환: { ok, where: 저장 위치 설명, canChooseOverride: 기술 문서 대신 포트폴리오에만 저장할 수 있는지 }
+      portfolioOnly = true면 프로젝트 문서에 같은 글이 있어도 deck-edits.json에만 저장, dryRun = true면 저장 위치만 알려 줌
+    반환: { ok, where: 저장 위치 설명, canChooseOverride: 프로젝트 문서 대신 포트폴리오에만 저장할 수 있는지 }
     """
     target = find_target(request)
     is_screen_outdated = target["current"] != request.get("expected")
@@ -210,7 +210,7 @@ def clean_value(target, value):
 
 
 # ════════════════════════════════════════════════════════════════
-# 저장 위치 고르기: profile.md 줄 → 기술 문서 줄 → deck-edits.json
+# 저장 위치 고르기: profile.md 줄 → 프로젝트 문서 줄 → deck-edits.json
 # ════════════════════════════════════════════════════════════════
 
 def choose_destination(target, portfolio_only):
@@ -238,7 +238,7 @@ def choose_destination(target, portfolio_only):
     line = find_doc_line(doc_path, target["current"])
     if line is None:
         return override
-    return {"kind": "doc", "where": f"src/{target['projectId']}/{doc_path.name} {line}줄 (기술 문서)", "path": doc_path, "start": line, "end": line}
+    return {"kind": "doc", "where": f"src/{target['projectId']}/{doc_path.name} {line}줄 (프로젝트 문서)", "path": doc_path, "start": line, "end": line}
 
 
 def find_profile_line(label, current):
@@ -305,10 +305,10 @@ def is_profile_text_line(line):
 
 
 def find_doc_line(doc_path, text):
-    """기술 문서에서 text가 글자 그대로 들어 있는 줄 번호를 찾습니다.
+    """프로젝트 문서에서 text가 글자 그대로 들어 있는 줄 번호를 찾습니다.
 
     문서 전체에 정확히 한 번 있고, 그 줄이 제목 줄(#)·코드 블록 안이 아닐 때만 줄 번호. 아니면 None(→ deck-edits.json에 저장).
-    제목 줄을 빼는 이유: 절 제목은 발표 덱 장면·[발표 덱에서 보기]가 절을 찾는 열쇠라 바뀌면 연결이 끊김.
+    제목 줄을 빼는 이유: 절 제목은 슬라이드 장면·[슬라이드에서 보기]가 절을 찾는 열쇠라 바뀌면 연결이 끊김.
     """
     if text == "" or doc_path.is_file() == False:
         return None
@@ -503,7 +503,7 @@ def describe_entry(entry):
 
 
 # ════════════════════════════════════════════════════════════════
-# 발표 덱 장면 글: 제목 · 도입 · 요점 · 키워드 → deck-edits.json "deckText" (+ 기술 문서 줄)
+# 슬라이드 장면 글: 제목 · 도입 · 요점 · 키워드 → deck-edits.json "deckText" (+ 프로젝트 문서 줄)
 # ════════════════════════════════════════════════════════════════
 
 DECK_TEXT_LIST = "deckText"
@@ -512,13 +512,13 @@ DECK_KEYWORDS_MAX = 3                                              # deck-edits.
 
 
 def save_deck_text(request):
-    """발표 덱 편집 모드의 장면 글 한 칸 저장(또는 저장 위치 묻기). edit-server.py의 /__edit/deck이 부릅니다.
+    """슬라이드 편집 모드의 장면 글 한 칸 저장(또는 저장 위치 묻기). edit-server.py의 /__edit/deck이 부릅니다.
 
     request: { project, slide: 장면 key, field: title | lead | point | caption | keywords,
                n: 요점 번호(point) 또는 visuals 번호(caption, 그림 설명) — 둘 다 1부터,
                expected: 화면을 그릴 때의 값, value: 새 값(keywords는 글자 목록), deckOnly?, dryRun? }
-      deckOnly = true면 기술 문서에 같은 글이 있어도 deck-edits.json에만 저장, dryRun = true면 저장 위치만 알려 줌
-    반환: { ok, where: 저장 위치 설명, canChooseOverride: 기술 문서를 빼고 발표 덱에만 저장할 수 있는지 }
+      deckOnly = true면 프로젝트 문서에 같은 글이 있어도 deck-edits.json에만 저장, dryRun = true면 저장 위치만 알려 줌
+    반환: { ok, where: 저장 위치 설명, canChooseOverride: 프로젝트 문서를 빼고 슬라이드에만 저장할 수 있는지 }
     """
     project_id = request["project"]
     entry_key = deck_text_entry_key(request)
@@ -530,9 +530,9 @@ def save_deck_text(request):
     doc_line = choose_deck_doc_line(project_id, entry_key["field"], current, request.get("deckOnly") == True)
     edits_where = f"src/{project_id}/{EDITS_FILE_NAME}"
     if doc_line is None:
-        where = f"{edits_where} (발표 덱에만)"
+        where = f"{edits_where} (슬라이드에만)"
     else:
-        where = f"src/{project_id}/{project_doc_path(project_id).name} {doc_line}줄 (기술 문서) + {edits_where}"
+        where = f"src/{project_id}/{project_doc_path(project_id).name} {doc_line}줄 (프로젝트 문서) + {edits_where}"
     answer = {"ok": True, "where": where, "canChooseOverride": doc_line is not None}
     if request.get("dryRun") == True:
         return answer
@@ -564,7 +564,7 @@ def deck_text_value(data, entry_key):
     """장면 글의 지금 값(deck.slides 쪽). 장면이나 칸이 없으면 404."""
     slides_path, _ = deck_text_json_paths(data, entry_key)
     if slides_path is None:
-        raise EditError(404, f"발표 덱에서 장면 '{entry_key['slide']}'의 {entry_key['field']} 칸을 찾지 못했습니다. 새로고침해 주세요.")
+        raise EditError(404, f"슬라이드에서 장면 '{entry_key['slide']}'의 {entry_key['field']} 칸을 찾지 못했습니다. 새로고침해 주세요.")
     return value_at(data, slides_path)
 
 
@@ -617,7 +617,7 @@ def slide_text_path(slide, entry_key):
 
 
 def choose_deck_doc_line(project_id, field, current, deck_only):
-    """장면 글을 기술 문서에도 쓸 줄 번호. 키워드·발표 덱에만 저장·문서에 정확히 한 번 없는 글(제목 줄·코드 블록 제외)이면 None."""
+    """장면 글을 프로젝트 문서에도 쓸 줄 번호. 키워드·슬라이드에만 저장·문서에 정확히 한 번 없는 글(제목 줄·코드 블록 제외)이면 None."""
     is_doc_candidate = field != "keywords" and deck_only == False
     if is_doc_candidate == False:
         return None
@@ -696,7 +696,7 @@ def refresh_applied_digest(data_path):
 
 
 def apply_deck_text(project_id):
-    """한 프로젝트의 "deckText" 목록을 data/projects/<폴더>.json의 발표 덱에 덮습니다(멱등). deck-edits.py apply 뒤에 실행합니다.
+    """한 프로젝트의 "deckText" 목록을 data/projects/<폴더>.json의 슬라이드에 덮습니다(멱등). deck-edits.py apply 뒤에 실행합니다.
 
     반환: 보고 줄 목록([참고]·[권장]).
     """
@@ -710,7 +710,7 @@ def apply_deck_text(project_id):
         place = f"장면 {entry.get('slide')} {entry.get('field')}{' ' + str(entry.get('n')) if entry.get('n') else ''}"
         slides_path, base_path = deck_text_json_paths(read_json(data_path), entry)
         if slides_path is None:
-            messages.append(f"[권장] 발표 덱 고친 글({place})의 장면을 찾지 못했습니다(다시 빌드로 장면 key가 바뀌었거나 숨김) → 반영하지 않았습니다. "
+            messages.append(f"[권장] 슬라이드 고친 글({place})의 장면을 찾지 못했습니다(다시 빌드로 장면 key가 바뀌었거나 숨김) → 반영하지 않았습니다. "
                             f"편집 모드에서 다시 고치거나 src/{project_id}/{EDITS_FILE_NAME}의 그 줄을 지우세요")
             continue
         data = read_json(data_path)
@@ -793,7 +793,7 @@ def deck_edits_module():
 
 
 def main():
-    """`apply <폴더>… | --all`: 프로젝트마다 고친 글(포트폴리오 문서 → 발표 덱 순)을 data/에 반영하고 보고 줄을 찍습니다."""
+    """`apply <폴더>… | --all`: 프로젝트마다 고친 글(포트폴리오 페이지 → 슬라이드 순)을 data/에 반영하고 보고 줄을 찍습니다."""
     arguments = sys.argv[1:]
     if arguments[:1] != ["apply"] or len(arguments) < 2:
         print(__doc__)
@@ -805,7 +805,7 @@ def main():
         messages = apply_project(project_id) + apply_deck_text(project_id)
         if messages == []:
             continue
-        print(f"── {project_id} (포트폴리오 문서·발표 덱 고친 글) ──")
+        print(f"── {project_id} (포트폴리오 페이지·슬라이드 고친 글) ──")
         for message in messages:
             print("  " + message)
 

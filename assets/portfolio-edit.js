@@ -1,8 +1,8 @@
-// 포트폴리오 문서 편집 모드 — index.html이 portfolio.js 다음에 싣습니다(이 포크 전용).
+// 포트폴리오 페이지 편집 모드 — index.html이 portfolio.js 다음에 싣습니다(이 포크 전용).
 //   켜지는 조건: 주소가 localhost·127.0.0.1이고, 로컬 편집 서버(edit-server.py)의 /__edit/ping이 응답할 때만.
 //   GitHub Pages나 python -m http.server에서는 아무것도 하지 않습니다(편집 버튼 없음).
 //   흐름: 페이지를 다 그린 뒤 data를 다시 읽어 화면의 글 칸마다 data 칸을 짝짓기 → [편집 모드] 버튼 → 글 누르기
-//         → 아래 입력창(저장 위치를 서버에 물어 보여 줌) → [저장] → 서버가 소스(profile.md·기술 문서·deck-edits.json)와 data를 씀 → 새로고침
+//         → 아래 입력창(저장 위치를 서버에 물어 보여 줌) → [저장] → 서버가 소스(profile.md·프로젝트 문서·deck-edits.json)와 data를 씀 → 새로고침
 //   어디에 쓸지는 서버(.claude/skills/portfolio-build/portfolio-edits.py)가 정합니다. 이 파일은 "화면의 어느 칸이 data의 어느 칸인지"만 압니다.
 (() => {
   const PING_URL = '/__edit/ping';
@@ -183,7 +183,7 @@
 
   /**
    * 화면 아래에 그 칸의 입력창을 엽니다(글 자리를 밀지 않게 떠 있는 창). 한 번에 하나만 열립니다.
-   * 열 때 서버에 저장 위치를 물어 보여 주고, 기술 문서에 저장될 글이면 [포트폴리오에만 저장] 선택을 보입니다.
+   * 열 때 서버에 저장 위치를 물어 보여 주고, 프로젝트 문서에 저장될 글이면 [포트폴리오에만 저장] 선택을 보입니다.
    */
   function openEditor(session, spot) {
     session.openEditor?.close();
@@ -193,7 +193,7 @@
       <p class="pf-edit-head"></p>
       <p class="pf-edit-where">저장 위치를 묻는 중…</p>
       <textarea spellcheck="false"></textarea>
-      <label class="pf-edit-only" hidden><input type="checkbox"> 기술 문서는 그대로 두고 포트폴리오에만 저장 (deck-edits.json)</label>
+      <label class="pf-edit-only" hidden><input type="checkbox"> 프로젝트 문서는 그대로 두고 포트폴리오에만 저장 (deck-edits.json)</label>
       <p class="pf-edit-error" role="alert"></p>
       <div class="pf-edit-actions">
         <button type="submit" class="btn primary">저장 (Ctrl+Enter)</button>
@@ -228,7 +228,7 @@
     textarea.focus();
   }
 
-  /** 서버에 저장 위치만 물어(dryRun) 입력창 위에 보입니다. 기술 문서에 저장될 때만 [포트폴리오에만 저장] 선택이 보입니다. */
+  /** 서버에 저장 위치만 물어(dryRun) 입력창 위에 보입니다. 프로젝트 문서에 저장될 때만 [포트폴리오에만 저장] 선택이 보입니다. */
   async function showDestination(spot, portfolioOnly, form) {
     const result = await postEdit({ ...spot.request, expected: spot.value, portfolioOnly, dryRun: true });
     const whereLine = form.querySelector('.pf-edit-where');

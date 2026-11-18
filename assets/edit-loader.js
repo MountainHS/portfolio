@@ -1,6 +1,6 @@
 // 편집 모드 로더 — doc.html·index.html·project.html이 </body> 위에 이 파일 한 줄만 싣습니다(이 포크 전용. 줄은 편집 서버가 보낼 때만 넣음).
 //   하는 일: 로컬 편집 서버가 있을 때만, 페이지 종류에 맞는 편집 CSS·JS를 붙입니다. GitHub Pages나 python -m http.server에서는 아무것도 받지 않습니다.
-//   페이지 종류는 전역으로 압니다(파일 이름은 루트 `/`로 열면 알 수 없음): PFDoc = 상세 문서 · PFPage = 포트폴리오 문서 · PFScene.info.page === 'project' = 발표 덱.
+//   페이지 종류는 전역으로 압니다(파일 이름은 루트 `/`로 열면 알 수 없음): PFDoc = 상세 문서 · PFPage = 포트폴리오 페이지 · PFScene.info.page === 'project' = 슬라이드.
 //   CSS는 <head> 끝에 이 순서로 붙이고(deck-edit.css가 portfolio-edit.css의 규칙을 덮음), 다 받은 뒤 JS를 차례로 싣습니다(버튼이 모양 없이 보이는 것을 막음).
 //   세 전역이 하나도 없으면 아무것도 하지 않습니다(편집 버튼 없음, 에러 없음).
 (() => {

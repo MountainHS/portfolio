@@ -1,9 +1,9 @@
-// 발표 덱 편집 모드 — project.html이 project-deck.js·doc-edit.js 다음에 싣습니다(이 포크 전용).
+// 슬라이드 편집 모드 — project.html이 project-deck.js·doc-edit.js 다음에 싣습니다(이 포크 전용).
 //   켜지는 조건: 주소가 localhost·127.0.0.1이고, 로컬 편집 서버(edit-server.py)의 /__edit/ping이 응답하고,
-//   덱을 발표 덱 데이터(deck)로 그렸을 때만(예전 데이터 자동 구성 덱은 아님). GitHub Pages나 python -m http.server에서는 아무것도 하지 않습니다.
-//   흐름: 덱이 다 그려지길 기다림 → data·기술 문서 md를 다시 읽음 → [편집 모드] 버튼 → 덱 위 글·그림 누르기 → 아래 입력창
-//         ├ 표·코드·다이어그램 → 그 원문 md 줄 → /__edit/save (상세 문서 편집과 같은 길, 기술 문서만 고침)
-//         └ 장면 제목·도입·요점·장 표지 키워드 → 글 한 칸 → /__edit/deck (deck-edits.json "deckText" + 같은 글이 있으면 기술 문서 줄, data도)
+//   덱을 슬라이드 데이터(deck)로 그렸을 때만(예전 데이터 자동 구성 덱은 아님). GitHub Pages나 python -m http.server에서는 아무것도 하지 않습니다.
+//   흐름: 덱이 다 그려지길 기다림 → data·프로젝트 문서 md를 다시 읽음 → [편집 모드] 버튼 → 덱 위 글·그림 누르기 → 아래 입력창
+//         ├ 표·코드·다이어그램 → 그 원문 md 줄 → /__edit/save (상세 문서 편집과 같은 길, 프로젝트 문서만 고침)
+//         └ 장면 제목·도입·요점·장 표지 키워드 → 글 한 칸 → /__edit/deck (deck-edits.json "deckText" + 같은 글이 있으면 프로젝트 문서 줄, data도)
 //         → 저장하면 새로고침(주소 #s=<장면>이 그대로라 같은 장면으로 돌아옴)
 //   화면의 글·그림이 어느 장면인지는 원본 project-deck.js가 이미 다는 것으로 압니다: 장면 요소 id(d-<key>, slideForSceneId) · figure.vbox의 data-kind와 내용(visualRefForFigure).
 //   표·코드·다이어그램만 고칠 수 있고 그림(image)은 뺐습니다.
@@ -50,7 +50,7 @@
   }
 
   /**
-   * 덱을 그린 것과 같은 data와 기술 문서 md를 다시 읽고, md 블록마다 줄 범위를 잽니다(상세 문서 편집의 mapBlocksToLines).
+   * 덱을 그린 것과 같은 data와 프로젝트 문서 md를 다시 읽고, md 블록마다 줄 범위를 잽니다(상세 문서 편집의 mapBlocksToLines).
    * 반환: { id, project: data, mdPath: 서버에 보낼 md 경로, lines: md 줄 목록, parsed: PF.md.parse 결과, blocks: [{ start, end, elements }] }
    */
   async function loadSource(id) {
@@ -235,7 +235,7 @@
     return {
       kind: 'md',
       element: figure,
-      label: `${name} · ${session.source.mdPath} ${block.start}~${block.end}줄 (기술 문서 원문)`,
+      label: `${name} · ${session.source.mdPath} ${block.start}~${block.end}줄 (프로젝트 문서 원문)`,
       block,
       note: `덱은 ${FINGERPRINT_PARTS[ref.kind] || '첫 줄을'} 보고 이 블록을 찾습니다. 그것을 바꾸면 /portfolio-build를 다시 할 때까지 이 장면에 띠가 뜹니다.`,
     };
@@ -278,7 +278,7 @@
       <p class="pf-edit-head"></p>
       <p class="pf-edit-where"></p>
       <textarea spellcheck="false"></textarea>
-      <label class="pf-edit-only" hidden><input type="checkbox"> 기술 문서는 그대로 두고 발표 덱에만 저장 (deck-edits.json)</label>
+      <label class="pf-edit-only" hidden><input type="checkbox"> 프로젝트 문서는 그대로 두고 슬라이드에만 저장 (deck-edits.json)</label>
       <p class="pf-edit-error" role="alert"></p>
       <div class="pf-edit-actions">
         <button type="submit" class="btn primary">저장 (Ctrl+Enter)</button>
@@ -329,7 +329,7 @@
     textarea.rows = 3;
   }
 
-  /** 서버에 장면 글의 저장 위치만 물어(dryRun) 보여 줍니다. 기술 문서에도 저장될 때만 [발표 덱에만 저장] 선택이 보입니다. */
+  /** 서버에 장면 글의 저장 위치만 물어(dryRun) 보여 줍니다. 프로젝트 문서에도 저장될 때만 [슬라이드에만 저장] 선택이 보입니다. */
   async function showDestination(spot, deckOnly, form) {
     const result = await postJson(TEXT_SAVE_URL, { ...spot.request, expected: spot.value, deckOnly, dryRun: true });
     const whereLine = form.querySelector('.pf-edit-where');
