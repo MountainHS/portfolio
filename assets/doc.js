@@ -7,6 +7,7 @@
 //   내용은 data/projects/<폴더>.json + src/<폴더>/<프로젝트 문서>만 씁니다. UI 문구는 문구 표(PF.t, assets/strings.js + theme/strings.tsv)에서 옵니다.
 //   점검: await PFDoc.whenReady() → PFDoc.report() — errors(못 읽은 파일·그리지 못한 다이어그램) · images(깨진·아직 받는 그림) · diagrams · strings(문구 표).
 //         whenReady는 문서·Mermaid·코드 처리와 글꼴까지만 기다립니다(그림은 기다리지 않음 → images.pending으로 봄)
+//         ?pf-audit=1이면 그림까지 기다린 뒤 #pf-audit에 report()의 base64 JSON(headless용, 슬라이드·포트폴리오 페이지와 같은 형식)
 (async () => {
   const root = document.getElementById('app');
   const html = document.documentElement;
@@ -408,6 +409,23 @@
   }
 
   // 준비 신호(점검 하네스용): 문서·Mermaid·코드 처리와 글꼴이 끝난 뒤
-  function done() { (document.fonts ? document.fonts.ready : Promise.resolve()).then(() => { html.dataset.docReady = '1'; resolveReady(report()); }); }
+  function done() {
+    (document.fonts ? document.fonts.ready : Promise.resolve()).then(() => {
+      html.dataset.docReady = '1'; resolveReady(report());
+      if (new URLSearchParams(location.search).get('pf-audit') === '1') writeAudit();
+    });
+  }
+  // ?pf-audit=1(headless 점검용): 그림까지 받은 뒤(최대 15초) #pf-audit에 report()의 base64 JSON — 슬라이드·포트폴리오 페이지와 같은 형식
+  async function writeAudit() {
+    const imgs = [...document.querySelectorAll('#doc img')];
+    imgs.forEach((i) => { i.loading = 'eager'; });
+    await Promise.race([Promise.all(imgs.map((i) => i.complete ? 0 : new Promise((r) => { i.addEventListener('load', r); i.addEventListener('error', r); }))), sleep(15000)]);
+    let pre = document.getElementById('pf-audit');
+    if (!pre) { pre = document.createElement('pre'); pre.id = 'pf-audit'; pre.hidden = true; pre.style.display = 'none'; document.body.appendChild(pre); }
+    const bytes = new TextEncoder().encode(JSON.stringify(report()));
+    let bin = '';
+    for (let i = 0; i < bytes.length; i += 0x8000) bin += String.fromCharCode(...bytes.subarray(i, i + 0x8000));
+    pre.textContent = btoa(bin);
+  }
   function sleep(ms) { return new Promise((r) => setTimeout(r, ms)); }
 })();
