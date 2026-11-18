@@ -50,7 +50,7 @@
     const text = md.replace(/\r\n?/g, '\n');
     const ranges = topLevelTokenRanges(text);
     const template = document.createElement('template');
-    template.innerHTML = marked.parse(insertLineMarkers(text, ranges), { gfm: true });
+    template.innerHTML = renderMarkdown(insertLineMarkers(text, ranges));
 
     const blocks = [];
     for (const marker of markerComments(template.content)) {
@@ -63,6 +63,18 @@
       else if (elements.length > 0) console.warn(`[doc-edit] ${start}~${end}줄 블록을 화면에서 찾지 못해 편집에서 뺍니다.`);
     }
     return blocks;
+  }
+
+  /**
+   * 줄 범위 표시를 끼운 md를 화면과 같은 규칙으로 그립니다. mapBlocksToLines가 화면 요소와 맞대 보는 그림입니다.
+   * 원본에 PF.mdHtml(한국어 굵은 글씨 보완이 들어간 공용 md 변환)이 있으면 그것을 쓰고, 예전 원본이면 marked를 그대로 부릅니다.
+   * @param {string} md 줄 범위 주석을 끼운 md
+   * @returns {string} HTML 글
+   */
+  function renderMarkdown(md) {
+    const hasSharedRenderer = typeof window.PF?.mdHtml === 'function';
+    if (hasSharedRenderer) return PF.mdHtml(md);
+    return marked.parse(md, { gfm: true });
   }
 
   /**

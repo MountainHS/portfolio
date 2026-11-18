@@ -5,10 +5,10 @@
 포트폴리오 문서(index.html)에서 사용자가 고친 글은 data/가 아니라 소스에 남깁니다(다시 빌드해도 남게).
   - 프로필(이름·영문 이름·한 줄 정체성·이메일·GitHub·자기소개)·기술 이름 → profile.md의 그 줄
   - 기술 문서에 같은 글자가 그대로 한 번만 있는 글 → 그 기술 문서 줄(제목 줄·코드 블록은 빼고)
-  - 그 밖의 글(Claude가 줄인 한 줄 소개·기능 설명·기술 근거, 태그 등) → src/<폴더>/deck-edits.json의 "portfolio" 목록
-저장할 때 data/도 같이 고쳐 새로고침하면 바로 보입니다. 다시 빌드한 뒤에는 `apply --all`이 "portfolio" 목록을 data/에 다시 덮습니다.
+  - 그 밖의 글(Claude가 줄인 한 줄 소개·기능 설명·기술 근거, 태그 등) → src/<폴더>/deck-edits.json의 "editModePortfolio" 목록
+저장할 때 data/도 같이 고쳐 새로고침하면 바로 보입니다. 다시 빌드한 뒤에는 `apply --all`이 "editModePortfolio" 목록을 data/에 다시 덮습니다.
 
-"portfolio" 목록 한 줄 = { "field", (자리 이름), "value": 고친 글, "from": 처음 고칠 때 빌드가 만든 글 }
+"editModePortfolio" 목록 한 줄 = { "field", (자리 이름), "value": 고친 글, "from": 처음 고칠 때 빌드가 만든 글 }
   field: title · tagline · team.role · intent · tags · meta(+label) · highlight.title / highlight.what / highlight.caption(+section)
          · skill.evidence(+skill, n = 그 기술에서 이 프로젝트 근거의 몇 번째인지, 1부터)
   자리 이름(label·section·skill)은 다시 빌드해도 그대로인 값이라 번호가 바뀌어도 같은 칸을 찾습니다.
@@ -34,6 +34,7 @@ ROOT = Path(__file__).resolve().parents[3]
 PROFILE_PATH = ROOT / "profile.md"
 PORTFOLIO_DATA_PATH = ROOT / "data" / "portfolio.json"
 EDITS_FILE_NAME = "deck-edits.json"
+PORTFOLIO_TEXT_LIST = "editModePortfolio"                           # 포트폴리오 문서 편집 모드가 고친 글 목록(deck-edits.json 최상위 키). 원본 템플릿이 예약한 "portfolio" 칸과 겹치지 않게 따로 씀
 DECODER = json.JSONDecoder()
 
 # profile.md 「기본 정보」의 줄 이름(`- 이름: 홍산`) ↔ data/portfolio.json profile 칸
@@ -358,7 +359,7 @@ def rename_skill_in_overrides(old_name, new_name):
     """기술 이름을 바꾸면 모든 프로젝트 deck-edits.json의 그 기술 근거 줄(skill.evidence)도 새 이름을 가리키게 합니다(자리 이름이 기술 이름이라)."""
     for edits_path in sorted((ROOT / "src").glob(f"*/{EDITS_FILE_NAME}")):
         edits = read_json(edits_path)
-        entries = edits.get("portfolio") if isinstance(edits.get("portfolio"), list) else []
+        entries = edits.get(PORTFOLIO_TEXT_LIST) if isinstance(edits.get(PORTFOLIO_TEXT_LIST), list) else []
         renamed = [entry for entry in entries if entry.get("field") == "skill.evidence" and entry.get("skill") == old_name]
         for entry in renamed:
             entry["skill"] = new_name
@@ -367,9 +368,9 @@ def rename_skill_in_overrides(old_name, new_name):
 
 
 def write_override(edits_path, target, new_value):
-    """deck-edits.json의 "portfolio" 목록에 고친 글을 넣습니다. 같은 자리 줄이 있으면 값만 바꾸고, 빌드 글로 되돌렸으면 그 줄을 지웁니다."""
+    """deck-edits.json의 "editModePortfolio" 목록에 고친 글을 넣습니다. 같은 자리 줄이 있으면 값만 바꾸고, 빌드 글로 되돌렸으면 그 줄을 지웁니다."""
     edits = read_json(edits_path) if edits_path.exists() else {"schemaVersion": 1, "pin": [], "hide": []}
-    entries = edits.get("portfolio") if isinstance(edits.get("portfolio"), list) else []
+    entries = edits.get(PORTFOLIO_TEXT_LIST) if isinstance(edits.get(PORTFOLIO_TEXT_LIST), list) else []
     entry = find_entry(entries, target["entryKey"])
     if entry is None:
         entry = dict(target["entryKey"], value=new_value, **{"from": target["current"]})
@@ -378,7 +379,7 @@ def write_override(edits_path, target, new_value):
         entry["value"] = new_value
     if entry["value"] == entry["from"]:
         entries.remove(entry)
-    edits["portfolio"] = entries if entries != [] else None
+    edits[PORTFOLIO_TEXT_LIST] = entries if entries != [] else None
     write_text(edits_path, deck_edits_module().dump(edits) + "\n")
 
 
@@ -459,11 +460,11 @@ def replace_lines(path, start, end, new_lines):
 
 
 # ════════════════════════════════════════════════════════════════
-# 다시 빌드 뒤 반영: deck-edits.json "portfolio" → data/
+# 다시 빌드 뒤 반영: deck-edits.json "editModePortfolio" → data/
 # ════════════════════════════════════════════════════════════════
 
 def apply_project(project_id):
-    """한 프로젝트의 "portfolio" 목록을 data/projects/<폴더>.json·data/portfolio.json에 덮습니다(멱등).
+    """한 프로젝트의 "editModePortfolio" 목록을 data/projects/<폴더>.json·data/portfolio.json에 덮습니다(멱등).
 
     반환: 보고 줄 목록([참고]·[권장]). 빌드 글이 처음 고칠 때(from)와 달라졌거나 자리를 잃은 줄을 알려 줍니다.
     """
@@ -488,7 +489,7 @@ def apply_project(project_id):
 
 
 def entry_location(entry, project_id):
-    """"portfolio" 줄 하나 → (data 파일 경로, JSON 경로). 자리를 잃었으면 JSON 경로가 None."""
+    """"editModePortfolio" 줄 하나 → (data 파일 경로, JSON 경로). 자리를 잃었으면 JSON 경로가 None."""
     if entry.get("field") == "skill.evidence":
         return PORTFOLIO_DATA_PATH, skill_evidence_json_path(entry, project_id, read_json(PORTFOLIO_DATA_PATH))
     data_path = project_data_path(project_id)
@@ -731,10 +732,10 @@ def apply_deck_text(project_id):
 # ════════════════════════════════════════════════════════════════
 
 def read_portfolio_entries(edits_path):
-    """deck-edits.json의 "portfolio" 목록(없거나 null이면 빈 목록)."""
+    """deck-edits.json의 "editModePortfolio" 목록(없거나 null이면 빈 목록)."""
     if edits_path.exists() == False:
         return []
-    entries = read_json(edits_path).get("portfolio")
+    entries = read_json(edits_path).get(PORTFOLIO_TEXT_LIST)
     return entries if isinstance(entries, list) else []
 
 

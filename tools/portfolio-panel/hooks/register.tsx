@@ -34,13 +34,13 @@ const BUTTONS: PanelButton[] = [
   { stage: '쓰기', label: '가이드 기준 점검', kind: 'run', text: 'portfolio-check', withProject: true },
   { stage: '만들기', label: '데이터 다시 만들기', kind: 'run', text: 'portfolio-build', withProject: true },
   { stage: '만들기', label: '미리보기 띄우기', kind: 'run', text: 'local-preview', withProject: true },
-  { stage: '다듬기', label: '발표 덱 장면 바꾸기', kind: 'fill', text: 'portfolio-edit', withProject: true },
+  { stage: '다듬기', label: '슬라이드 장면 바꾸기', kind: 'fill', text: 'portfolio-edit', withProject: true },
   { stage: '다듬기', label: '다른 사이트 느낌(테마)', kind: 'fill', text: 'portfolio-theme', withProject: false },
   { stage: '다듬기', label: '다른 사이트 배치 따라 하기', kind: 'fill', text: 'portfolio-layout', withProject: false },
   { stage: '다듬기', label: '배치까지 새 디자인 ✋', kind: 'fill', text: 'portfolio-custom', withProject: false },
   { stage: '점검', label: '미리보기 배치 점검 결과', kind: 'say', text: '미리보기 배치 점검 결과 알려 줘', withProject: false },
   { stage: '점검', label: '문구 표 점검', kind: 'say', text: '문구 표 점검해 줘', withProject: false },
-  { stage: '유지', label: '템플릿 새 기능 받기 ✋', kind: 'fill', text: 'portfolio-update', withProject: false },
+  { stage: '유지', label: '원 레포 새 기능 받기 (git 머지)', kind: 'say', text: '원 레포(upstream) 최신을 git 머지로 받아 줘. 머지 전에 바뀌는 점과 포크 규칙과 부딪히는 곳을 먼저 정리해서 확인받아 줘', withProject: false },
   { stage: '유지', label: '충돌 해결 도와줘', kind: 'say', text: '충돌 해결 도와줘', withProject: false },
 ]
 
