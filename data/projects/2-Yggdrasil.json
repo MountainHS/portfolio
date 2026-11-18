@@ -662,7 +662,7 @@
           "verbatim": true
         },
         "lead": {
-          "text": "칸에 도착하면 처리가 아래 경로로 넘어갑니다.",
+          "text": "칸에 도착했을 때 처리를 맡는 클래스들의 관계입니다.",
           "verbatim": true
         },
         "sectionPath": [
@@ -690,7 +690,7 @@
           {
             "kind": "mermaid",
             "n": 1,
-            "fp": "flowchart LR"
+            "fp": "classDiagram"
           }
         ]
       },
