@@ -20,3 +20,6 @@ tech-doc-source-old/
 
 # 프로젝트별 report (로컬 전용 — 루트 report.md는 요약판)
 report/
+
+# 원본 녹화 영상 (용량 큼)
+src/*/raw-video/
