@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-17",
+  "generatedAt": "2026-11-20",
   "profile": {
     "name": "홍산",
     "nameEn": "San Hong",
@@ -60,7 +60,7 @@
           "project": "5-hive-purge"
         },
         {
-          "text": "`ITargeting` 주입으로 적 조준 규칙을 무기 발사 코드와 분리",
+          "text": "싱글톤·`DontDestroyOnLoad` 초기화 순서 문제를 겪고, 씬을 넘어 유지할 데이터와 씬 종속 객체를 나누는 기준을 세움",
           "project": "3-mini-ftl"
         }
       ]

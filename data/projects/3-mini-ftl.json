@@ -2,7 +2,7 @@
   "schemaVersion": 2,
   "id": "3-mini-ftl",
   "doc": "기술문서.md",
-  "title": "mini ftl",
+  "title": "Mini FTL",
   "tagline": "탑다운 우주 전략 프로젝트",
   "cover": "images/main.png",
   "team": {
@@ -13,7 +13,7 @@
   "meta": [
     {
       "label": "장르",
-      "value": "탑다운 전략 게임"
+      "value": "2D 전략 게임"
     },
     {
       "label": "기간",
@@ -31,10 +31,10 @@
   "tags": [
     "Unity 6.3",
     "C#",
-    "CrewStatus",
-    "ITargeting 주입",
     "싱글톤",
-    "ScriptableObject"
+    "DontDestroyOnLoad",
+    "ScriptableObject",
+    "책임 분리"
   ],
   "links": {
     "github": "https://github.com/KooHoo-Dev/3rd-2D-Project-MountainHS",
@@ -42,16 +42,16 @@
     "extra": []
   },
   "intent": {
-    "text": "특히 《FTL》의 핵심 시스템만 추려 최소한의 전투 루프로 구현했을 때도, 원작과 유사한 플레이 경험을 제공할 수 있는지 실험하고자 했다.",
+    "text": "《FTL》의 핵심 시스템만 추려 최소한의 전투 루프로 구현했을 때도, 원작과 유사한 플레이 경험을 제공할 수 있는지 실험하고자 했습니다.",
     "verbatim": true
   },
   "highlights": [
     {
       "title": "전력 관리",
-      "what": "제한된 반응로 전력을 무기·엔진·실드에 배분해 전투 중 가동 우선순위를 정한다.",
-      "how": "ReactorController와 FacilityController는 각 전력 값을 관리하고, ShipPowerController가 할당·회수 흐름을 조정한다.",
-      "why": "반응로와 시설의 각 전력 상태 유효성을 검증하는 위치를 나눠 책임을 명확히 분리한다.",
-      "section": "전력 관리 기능 개요",
+      "what": "제한된 반응로 전력을 무기·엔진·실드에 배분하고 회수합니다.",
+      "how": "반응로·시설이 각자 전력 상태를 관리하고, `ShipPowerController`가 할당·회수 가능 여부를 검사해 두 객체의 값을 바꿉니다.",
+      "why": "이온 피해 같은 미래 규칙까지 고려해 처음부터 역할을 분리했지만, 그 규칙은 들어가지 않았고 객체 연결·흐름 추적 비용이 먼저 드러났습니다.",
+      "section": "3.1 전력 관리 — 책임을 나누면 구현도 쉬워질 것이라는 판단",
       "image": {
         "src": "images/power-ui.png",
         "w": 265,
@@ -60,59 +60,57 @@
       }
     },
     {
-      "title": "무기 조준",
-      "what": "활성화된 무기를 선택하고 적 방을 직접 목표로 지정한다.",
-      "how": "투사체는 이동과 충돌 요청 시점을 책임지고, CombatSystem은 도착 순간의 현재 실드·방 상태를 기준으로 피해를 해결한다.",
-      "why": "먼저 도착한 투사체가 실드를 제거하면 뒤이어 도착한 투사체는 현재 상태를 다시 확인해 방에 도달할 수 있다.",
-      "section": "무기 조준 기능 개요",
-      "image": {
-        "src": "images/main-function-3.png",
-        "w": 156,
-        "h": 220,
-        "caption": "Weapon targeting"
-      }
+      "title": "씬 전환과 초기화",
+      "what": "전투 → 상점 → 다음 전투를 반복하는 동안 함선 체력·승무원 상태·반응로 전력을 유지하고 새 전투 씬의 함선에 다시 적용합니다.",
+      "how": "`SceneBinder`가 새 전투 씬의 함선을 찾아 `CombatSystem`에 다시 연결하고, 싱글톤 초기화는 실행 순서 지정으로 앞당겼습니다.",
+      "why": "빠르게 문제를 해결하려고 실행 순서 지정과 초기화 시점 변경을 택했지만, 의존 관계가 실행 순서 설정에 숨는 한계가 남았습니다.",
+      "section": "3.2 씬 전환과 초기화 — 객체가 존재하는 것과 준비된 것은 다르다",
+      "image": null
     },
     {
-      "title": "승무원 관리",
-      "what": "승무원은 방 이동 뒤 시설 상태에 맞춰 수리·보조를 수행하며, 방 피격 시 체력 피해를 받는다.",
-      "how": "CrewSystem이 선택된 승무원에게 목표 방을 전달하고, CrewController는 Vector3.MoveTowards로 목표 방의 배치 위치까지 이동하게 했다.",
-      "why": "전력·무기·적 자동 공격·전투 결과를 연결해야 하는 일정에서는 이동 자체를 전투 루프에 먼저 포함시키는 것이 우선이었다.",
-      "section": "승무원 기능 개요",
-      "image": {
-        "src": "images/main-function-2.png",
-        "w": 342,
-        "h": 116,
-        "caption": "Crew management"
-      }
+      "title": "승무원과 방",
+      "what": "승무원은 지정된 방으로 이동해 그 방 시설의 상태에 따라 수리하거나 보조하고, 방이 공격받으면 함께 피해를 받습니다.",
+      "how": "승무원은 `CurrentRoom`을, 방은 `Crews` 목록을 보관해 서로 참조하고, 이동과 사망은 각각 다른 경로에서 방 목록을 갱신합니다.",
+      "why": "서로 참조하면 별도 객체를 거치지 않아 구현이 직관적이었지만, 이동·사망 경로의 후처리가 달라 방이 빈 뒤의 정리가 빠질 수 있었습니다.",
+      "section": "3.3 승무원과 방 — 상태를 변경하는 책임이 여러 곳에 흩어진 문제",
+      "image": null
+    },
+    {
+      "title": "투사체 피해 판정 시점",
+      "what": "먼저 도착한 투사체가 실드를 없애면 뒤의 투사체는 방에 닿습니다.",
+      "how": "`ProjectileController`가 실드에 부딪히거나 목표 방에 닿을 때 `CombatSystem`에 현재 상태 판정을 요청합니다.",
+      "why": "발사 시점에 확정하면 날아가는 동안 바뀐 실드 상태를 반영하지 못합니다.",
+      "section": "투사체 피해 판정 시점 — 통합 테스트가 필요한 이유",
+      "image": null
     }
   ],
   "troubleshooting": [
     {
-      "title": "조준 중 일시정지하면 마우스 커서가 사라짐",
-      "problem": "조준 중 메인 메뉴 키를 눌러 게임 상태가 멈출 때, 커서 UI와 무기 조준 UI가 제대로 초기화되지 않는 문제가 있었다.",
-      "cause": "일시정지할 때 가지고 있는 무기 정보만 초기화할 것이 아니라, 연결된 UI(무기 조준점 스프라이트, 커서 스프라이트 등)도 같이 초기화했어야 했는데 관련 지점이 누락됐다.",
-      "solution": "무기 조준 정보와 더불어 UI 초기화 로직도 추가하니 해결됐다.",
-      "result": "고친 뒤에는 Esc처럼 조준을 해제하는 동작을 했을 때 커서 상태와 조준 스프라이트 상태가 함께 맞춰지는 것을 확인했다.",
-      "lesson": "",
-      "section": "트러블슈팅: 조준 중 일시정지하면 마우스 커서가 사라짐"
+      "title": "초기화 순서에 따라 적 함선 로직이 중단됨",
+      "problem": "초기화 순서가 꼬이면 적 함선의 일부 로직에서 오류가 발생해 게임이 정상적으로 진행되지 않았습니다.",
+      "cause": "`EnemyController.Start`가 `InitCombatSystem`보다 먼저 돌면 `ships`가 비어 있어 조준 초기화가 깨집니다.",
+      "solution": "싱글톤의 초기화 순서를 먼저 실행하도록 지정하고, 다른 객체의 초기화 결과에 의존하는 일부 코드를 `Awake`에서 `Start`로 옮겼습니다.",
+      "result": "수정 후에는 전투에서 상점으로 이동하고 다음 전투에 진입하는 루프를 반복하며 문제가 재발하지 않는지 확인했습니다.",
+      "lesson": "실행 순서 설정은 간단한 해결책이지만 의존 관계를 감출 수 있습니다.",
+      "section": "실제 문제 1 — 초기화 순서에 따라 적 함선 로직이 중단됨"
     },
     {
-      "title": "씬 로드 시 싱글톤이 이전 데이터를 받지 못함",
-      "problem": "싱글톤 클래스 간 Awake 순서, 즉 초기화 순서가 제대로 보장되지 않아 문제가 발생했다.",
-      "cause": "초기화 중 의존 관계가 있는 클래스 간에 명시적인 순서 지정을 해 놓지 않았다.",
-      "solution": "일단 빠르게 해결하기 위해 `DefaultExecutionOrder`를 지정해 해결했다.",
-      "result": "고친 뒤에는 핵심 플레이 루프(전투 → 상점 → 다음 전투)를 반복해 이상이 없는 것을 확인했다.",
-      "lesson": "다만 나중에 싱글톤 간 의존 관계가 더 생긴다면 의존 순서가 복잡해질 수 있다. 의존 순서를 클래스 간 호출이 아니라 각 클래스의 `DefaultExecutionOrder`를 보고 확인해야 해서다. 또한 자주 반복되는 Update 류의 실행 순서를 고정하는 것이 아니라 초기화할 때의 의존 순서를 고정하는 것이라 좋은 해결 방식은 아니다. 이 일로, 초기화 순서를 실행 순서 설정에 맡기기보다 코루틴이나 비동기 호출로 의존 관계가 코드에 명확히 드러나도록 작업하는 것이 좋다는 것을 깨달았다.",
-      "section": "트러블슈팅: 씬 로드 시 싱글톤이 이전 데이터를 받지 못함"
+      "title": "완전히 파괴된 시설이 회색으로 표시됨",
+      "problem": "완전히 파괴되어 빨간색이어야 할 시설이 회색으로 표시되었습니다.",
+      "cause": "하나의 시설이 동시에 여러 조건을 만족할 수 있다는 점을 고려하지 않아, '전력 0 → 비활성' 조건이 '완전 파괴'를 가렸습니다.",
+      "solution": "조건 판정의 우선순위를 조정해, 파괴 → 피해 → 비활성 → 정상 순서로 시설 상태를 판정하게 했습니다.",
+      "result": "",
+      "lesson": "상태를 화면에 표시하기 전에 상태의 의미와 우선순위를 먼저 정의합니다.",
+      "section": "시설 상태 UI — 상태의 의미를 명확히 정하지 않고 UI를 구현"
     },
     {
-      "title": "투사체 발사 방향과 회전이 어긋남",
-      "problem": "적 함선의 가운데가 아닌 방을 조준하면, 투사체가 목표 방으로 날아가면서도 머리는 함선 가운데를 향해 비스듬히 날아가는 현상이 있었다.",
-      "cause": "공격하는 방의 목표 지점(`targetPos`)을 향하게 했어야 했는데, 함선의 중심 지점을 바라볼 지점으로 착각해 문제가 발생했다.",
-      "solution": "함선 중심 지점 대신, 투사체가 가지고 있던 이동할 방의 목표 지점을 바라보도록 회전 방향을 바꾸니 문제가 해결되었다.",
-      "result": "고친 뒤에는 투사체 스프라이트가 바라보는 방향이 목표 지점과 일치하는 것을 확인했다.",
+      "title": "함선 사망 코루틴 중복 실행",
+      "problem": "게임오버 뒤 사망 코루틴이 여러 번 실행되어, 씬을 불러올 때 콘솔이 에러 로그로 도배되었습니다.",
+      "cause": "승무원 전멸과 함선 파괴를 각각 검사해 코루틴을 시작했고, 코루틴이 한 번만 실행되도록 보장하는 처리가 빠져 있었습니다.",
+      "solution": "코루틴 실행 상태를 저장하는 멤버를 추가해 한 번만 실행되도록 했습니다.",
+      "result": "고친 뒤 결과 화면이 한 번만 뜨는 것을 확인했습니다.",
       "lesson": "",
-      "section": "트러블슈팅: 투사체 발사 방향과 회전이 어긋남"
+      "section": "함선 사망 코루틴 중복 실행"
     }
   ],
   "screenshots": [
@@ -135,41 +133,32 @@
       "caption": "승무원 관리"
     },
     {
-      "src": "images/battle-loop.png",
-      "w": 1105,
-      "h": 1501,
-      "caption": "Battle loop"
-    },
-    {
-      "src": "images/asteroid-environment.png",
-      "w": 252,
-      "h": 265,
-      "caption": "Asteroid environment"
-    },
-    {
-      "src": "images/solar-flare-environment.png",
-      "w": 989,
-      "h": 554,
-      "caption": "Solar flare environment"
+      "src": "images/power-ui.png",
+      "w": 265,
+      "h": 229,
+      "caption": "Power UI"
     }
   ],
   "retro": {
     "achieved": [
-      "승무원의 BFS 이동을 제외하고, 전력·무기·승무원 기능을 적 자동 공격과 전투 결과까지 연결했다."
+      "전투·정비 루프의 최소 동작을 구현하는 목표는 달성했습니다.",
+      "원작과 유사한 전략적 경험을 제공했는지는 검증하지 못했습니다 — 기능 간 상호작용과 선택지·정보 전달이 부족했습니다.",
+      "30분 안에 결론을 내리지 못하면 가장 단순한 구현으로 먼저 검증하는 규칙으로 전력→무기→승무원 순으로 핵심 기능을 연결했습니다.",
+      "기능 단위로 커밋을 나눠 실수가 생겼을 때 변경을 되돌리고 다시 시도하기 쉬웠습니다."
     ],
     "regrets": [
-      "상태가 바뀌는 순간 한 번 해야 할 일(보조 해제·수리 진행도 초기화)이 매 프레임 호출과 `SetTargetRoom`에 나뉘어, 어디서 처리되는지 찾기 어렵다.",
-      "사망 경로는 목록에서 빼기만 하고 보조 해제·수리 진행도 초기화를 부르지 않는다.",
-      "의존 순서가 클래스 사이의 호출이 아니라 각 클래스에 붙은 실행 순서 값에 숨어 있다.",
-      "익숙하지 않은 ScriptableObject 기반 데이터베이스 설정, UI 오브젝트 계층 구성·연결, 프리팹·컴포넌트 주입 확인에 코드 작성보다 많은 시간이 소요됐다."
+      "객체 책임을 미리 분리했지만, 현재 규모에서는 객체 연결·호출 추적·검증 비용도 증가했습니다.",
+      "싱글톤과 실행 순서 지정으로 씬 초기화를 풀려 했지만, 초기화 순서와 씬에 종속된 참조의 생명주기는 별도 문제였습니다.",
+      "승무원 이동·사망 경로에서 후처리가 달랐고 위치와 소속 정보도 어긋났습니다.",
+      "핵심 테스트케이스에 집중하다 전력 UI 상태처럼 경계값 검증을 빠뜨린 경우가 있었습니다."
     ],
     "plans": [
-      "상태마다 진입·갱신·이탈을 나누는 상태 패턴을 쓴다. 한 번 할 일은 진입·이탈에, 매 프레임 할 일은 갱신에 둔다.",
-      "방 목록에서 빠지는 일을 Room의 메서드 하나로 모으고, 방이 비었을 때의 정리도 그 안에서 한다.",
-      "코루틴이나 비동기 초기화로, 의존하는 객체가 준비된 뒤 이어서 초기화되는 흐름이 코드에 드러나게 한다.",
-      "기능 단위를 코드만으로 잡지 않는다. 데이터 설정, 씬 설정, UI, 시각 효과, 통합 테스트까지 한 작업 단위에 포함한다."
+      "실제 변경 요구에 맞춰 분리하고 공통 상태 변경 경로를 검증하겠습니다.",
+      "지속 데이터, 씬 객체, 초기화 의존 관계를 구분하겠습니다.",
+      "공통 상태 전이와 후처리를 한 책임 경계에서 보장하겠습니다.",
+      "기능별 최소 테스트 목록에 정상·오류·경계값을 함께 포함하겠습니다."
     ],
-    "section": "5. 결과 및 배운 점"
+    "section": "4. 결과와 회고"
   },
   "deck": {
     "chapters": [
@@ -188,24 +177,17 @@
         ]
       },
       {
-        "key": "features",
-        "title": "핵심 기능",
+        "key": "cases",
+        "title": "개발 과정의 주요 사례",
         "sectionPath": [
-          "3. 핵심 기능"
-        ]
-      },
-      {
-        "key": "decisions",
-        "title": "고민과 선택",
-        "sectionPath": [
-          "4. 고민과 선택"
+          "3. 개발 과정의 주요 사례"
         ]
       },
       {
         "key": "results",
-        "title": "결과 및 배운 점",
+        "title": "결과와 회고",
         "sectionPath": [
-          "5. 결과 및 배운 점"
+          "4. 결과와 회고"
         ]
       }
     ],
@@ -220,12 +202,12 @@
           "verbatim": true
         },
         "lead": {
-          "text": "이 프로젝트는 'FTL: Faster Than Light'에서 영감을 받은 탑다운 전략 게임으로, 전력 관리·무기 조준·승무원 이동 세 시스템을 핵심으로 개발했다.",
+          "text": "플레이어가 함선과 승무원을 직접 조작해 상대 우주선과 전투하는 1인 제작 PC 게임",
           "verbatim": true
         },
         "keywords": [
-          "탑다운 전략 게임",
-          "학습용 프로젝트",
+          "우주 전략",
+          "함선 전투",
           "1인 제작"
         ],
         "sectionPath": [
@@ -235,17 +217,7 @@
         "points": [
           {
             "label": "",
-            "text": "플레이어는 함선의 전력을 무기·엔진·실드에 나누어 공급하고, 승무원을 방으로 이동시켜 시설 수리와 시설 보조를 지시한다.",
-            "verbatim": true
-          },
-          {
-            "label": "",
-            "text": "전력이 공급된 무기를 선택한 뒤 적 함선의 방을 직접 조준하면, 충전이 끝난 무기가 목표 방을 향해 투사체를 발사한다.",
-            "verbatim": true
-          },
-          {
-            "label": "",
-            "text": "전투가 끝나면 상점에서 반응로 업그레이드, 함선 수리, 승무원 치료를 진행하고 다음 전투를 준비한다.",
+            "text": "《FTL: Faster Than Light》를 참고해, 플레이어가 함선 전력을 배분하고 승무원을 지휘하며 적 함선의 방을 직접 조준해 싸우는 2D 전략 게임을 제작했습니다.",
             "verbatim": true
           }
         ],
@@ -260,7 +232,7 @@
               "verbatim": true
             },
             "sectionPath": [
-              "mini ftl 기술 문서"
+              "Mini FTL — 첫 Unity 프로젝트에서 배운 설계와 검증의 기준"
             ]
           }
         ]
@@ -277,8 +249,7 @@
         "lead": null,
         "keywords": [
           "재현 가능성 검증",
-          "객체지향 설계",
-          "디자인 패턴"
+          "객체지향 설계"
         ],
         "sectionPath": [
           "1. 개요",
@@ -287,33 +258,146 @@
         "points": [
           {
             "label": "핵심 플레이 경험의 재현 가능성 검증",
-            "text": "특히 《FTL》의 핵심 시스템만 추려 최소한의 전투 루프로 구현했을 때도, 원작과 유사한 플레이 경험을 제공할 수 있는지 실험하고자 했다.",
+            "text": "《FTL》의 핵심 시스템만 추려 최소한의 전투 루프로 구현했을 때도, 원작과 유사한 플레이 경험을 제공할 수 있는지 실험하고자 했습니다.",
             "verbatim": true
           },
           {
             "label": "직접 부딪히며 객체지향 설계의 필요성 깨닫기",
-            "text": "처음 만드는 Unity 프로젝트라 디자인 패턴을 미리 적용하기보다, 할 수 있는 만큼 거칠게 먼저 구현했다.",
+            "text": "익숙하지 않았던 객체지향 설계를 실제 게임 개발에 적용하고, 여러 시스템의 역할과 상호작용을 직접 설계하는 경험을 쌓고자 했습니다.",
             "verbatim": true
           },
           {
             "label": "",
-            "text": "구현하면서 드러난 구조적 문제를 기록하고 \"이래서 이런 디자인 패턴과 객체지향 원칙을 쓰는구나\"를 직접 확인하는 것을 목표로 했다",
+            "text": "구현하면서 드러난 구조적 문제를 기록하고 \"이래서 이런 디자인 패턴과 객체지향 원칙을 쓰는구나\"를 직접 확인하는 것을 목표로 했습니다.",
             "verbatim": true
           }
         ],
         "visuals": []
       },
       {
-        "key": "three-systems",
+        "key": "experience",
+        "chapter": "overview",
+        "layout": "overview",
+        "tab": "개요",
+        "title": {
+          "text": "1.3 핵심 경험 — 함장으로서 내리는 전략적 판단",
+          "verbatim": true
+        },
+        "lead": {
+          "text": "플레이어가 함장이 되어 함선을 지휘하고, 피해를 최소화하면서 적의 약점을 공략하는 전략적 판단을 핵심 경험으로 삼았습니다.",
+          "verbatim": true
+        },
+        "keywords": [
+          "함장의 판단",
+          "피해 최소화",
+          "약점 공략"
+        ],
+        "sectionPath": [
+          "1. 개요",
+          "1.3 핵심 경험 — 함장으로서 내리는 전략적 판단"
+        ],
+        "points": [
+          {
+            "label": "피해 최소화",
+            "text": "적의 공격을 실드로 막고, 피해 입은 시설은 승무원을 보내 수리합니다.",
+            "verbatim": true
+          },
+          {
+            "label": "약점 공략",
+            "text": "적 함선의 어느 방을 먼저 무너뜨릴지 골라 무기로 노립니다.",
+            "verbatim": true
+          },
+          {
+            "label": "한정된 자원의 배분",
+            "text": "반응로 전력은 모든 시설을 동시에 최대로 가동할 만큼 넉넉하지 않습니다. 공격과 방어 중 어디에 힘을 실을지 계속 고릅니다.",
+            "verbatim": true
+          }
+        ],
+        "visuals": []
+      },
+      {
+        "key": "loop",
+        "chapter": "overview",
+        "layout": "visual",
+        "tab": "흐름",
+        "title": {
+          "text": "1.4 핵심 루프",
+          "verbatim": true
+        },
+        "lead": {
+          "text": "플레이어는 적 함선과 전투하고, 이기면 상점에서 함선을 정비한 뒤 다음 전투로 나아갑니다.",
+          "verbatim": true
+        },
+        "keywords": [
+          "전투",
+          "상점 정비"
+        ],
+        "sectionPath": [
+          "1. 개요",
+          "1.4 핵심 루프"
+        ],
+        "points": [
+          {
+            "label": "적 함선과 전투",
+            "text": "플레이어 함선과 적 함선이 실시간으로 서로의 방을 공격합니다. 적은 자동으로 조준해 공격하고, 플레이어는 전력·무기·승무원을 직접 관리합니다.",
+            "verbatim": true
+          },
+          {
+            "label": "상점에서 정비",
+            "text": "반응로를 강화하고, 함선을 수리하고, 승무원을 치료해 다음 전투에 대비합니다.",
+            "verbatim": true
+          }
+        ],
+        "visuals": [
+          {
+            "kind": "mermaid",
+            "n": 1,
+            "fp": "flowchart LR"
+          }
+        ]
+      },
+      {
+        "key": "win-lose",
+        "chapter": "overview",
+        "layout": "full",
+        "tab": "흐름",
+        "title": {
+          "text": "게임 승패",
+          "verbatim": true
+        },
+        "lead": {
+          "text": "전투를 거칠수록 더 강한 적 함선과 소행성·태양 플레어 같은 환경 위험이 더해집니다.",
+          "verbatim": true
+        },
+        "keywords": [
+          "승리·패배",
+          "환경 위험",
+          "고철 보상"
+        ],
+        "sectionPath": [
+          "1. 개요",
+          "1.4 핵심 루프"
+        ],
+        "points": [],
+        "visuals": [
+          {
+            "kind": "table",
+            "n": 1,
+            "fp": "게임 승패|언제"
+          }
+        ]
+      },
+      {
+        "key": "three-decisions",
         "chapter": "overview",
         "layout": "screens",
         "tab": "개요",
         "title": {
-          "text": "1.3 전투 중 관리하는 세 시스템",
+          "text": "1.5 전투에서 플레이어가 하는 세 가지 판단",
           "verbatim": true
         },
         "lead": {
-          "text": "세 기능은 같은 전투 상황에서 서로 다른 플레이어 판단을 요구한다.",
+          "text": "한정된 전력을 어디에 쓸지, 적 함선의 어느 방을 노릴지, 승무원을 어디로 보낼지입니다.",
           "verbatim": true
         },
         "keywords": [
@@ -323,7 +407,7 @@
         ],
         "sectionPath": [
           "1. 개요",
-          "1.3 전투 중 관리하는 세 시스템"
+          "1.5 전투에서 플레이어가 하는 세 가지 판단"
         ],
         "points": [],
         "visuals": [
@@ -360,69 +444,39 @@
         ]
       },
       {
-        "key": "loop",
-        "chapter": "overview",
-        "layout": "visual",
-        "tab": "흐름",
-        "title": {
-          "text": "1.4 핵심 루프",
-          "verbatim": true
-        },
-        "lead": {
-          "text": "플레이어의 행동과 적 자동 공격이 반복되고, 결과에 따라 다음 전투 준비 상태로 전환된다.",
-          "verbatim": true
-        },
-        "keywords": [
-          "적 자동 공격",
-          "다음 전투 준비",
-          "상점"
-        ],
-        "sectionPath": [
-          "1. 개요",
-          "1.4 핵심 루프"
-        ],
-        "points": [],
-        "visuals": [
-          {
-            "kind": "image",
-            "src": "images/battle-loop.png",
-            "w": 1105,
-            "h": 1501,
-            "caption": {
-              "text": "Battle loop",
-              "verbatim": true
-            }
-          }
-        ]
-      },
-      {
         "key": "system-map",
         "chapter": "structure",
         "layout": "visual",
         "tab": "구조",
         "title": {
-          "text": "2.1 전체 시스템 구조 (초안)",
+          "text": "2. 시스템 구조",
           "verbatim": true
         },
-        "lead": null,
+        "lead": {
+          "text": "이 조작은 모두 함선(ShipController)을 거쳐 각 시스템에 전달됩니다.",
+          "verbatim": true
+        },
         "keywords": [
-          "핵심 루프",
           "ShipController",
-          "전투 씬"
+          "시스템 나누기"
         ],
         "sectionPath": [
-          "2. 시스템 구조",
-          "2.1 전체 시스템 구조 (초안)"
+          "2. 시스템 구조"
         ],
         "points": [
           {
-            "label": "나눈 이유",
-            "text": "게임의 핵심 루프에 맞춰 나눴다.",
+            "label": "",
+            "text": "전투에 들어가면 플레이어는 전력을 조절하고(전력 조절), 승무원을 움직이고(승무원), 무기를 상대 함선의 방에 조준해(무기·전투) 전투를 진행합니다.",
             "verbatim": true
           },
           {
-            "label": "나눈 이유",
-            "text": "이 조작은 모두 함선(ShipController)을 거쳐 각 시스템에 전달된다.",
+            "label": "",
+            "text": "전투에서 살아남으면 결과가 게임 진행(GameManager)에 보고되고, 상점에서 함선 체력 회복·전력 강화 같은 준비를 한 뒤 다음 전투 씬이 조립됩니다.",
+            "verbatim": true
+          },
+          {
+            "label": "",
+            "text": "개발하며 가장 크게 부딪힌 곳은 이 그림의 전력 조절, 전투 씬을 다시 조립하는 게임 진행, 승무원이었습니다.",
             "verbatim": true
           }
         ],
@@ -435,89 +489,165 @@
         ]
       },
       {
-        "key": "scene-bind",
-        "chapter": "structure",
-        "layout": "visual",
-        "tab": "구조",
+        "key": "power-choice",
+        "chapter": "cases",
+        "layout": "full",
+        "tab": "선택",
         "title": {
-          "text": "2.2 전투 씬의 시스템 조립 구조",
+          "text": "문제와 첫 설계",
           "verbatim": true
         },
         "lead": {
-          "text": "GameContext가 저장한 상태를 SceneBinder가 읽어 전투 씬의 플레이어·적·전투 시스템을 조립한다.",
+          "text": "프로젝트에서 실제로 구현할 범위보다 미래에 추가할 수 있는 규칙을 더 크게 고려해, 처음부터 역할을 분리하는 방식을 선택했습니다.",
           "verbatim": true
         },
         "keywords": [
-          "GameContext",
-          "SceneBinder",
-          "상점 씬"
+          "전력 관리자",
+          "책임 분리",
+          "미래 규칙"
         ],
         "sectionPath": [
-          "2. 시스템 구조",
-          "2.2 전투 씬의 시스템 조립 구조"
+          "3. 개발 과정의 주요 사례",
+          "3.1 전력 관리 — 책임을 나누면 구현도 쉬워질 것이라는 판단",
+          "문제와 첫 설계"
+        ],
+        "points": [],
+        "visuals": [
+          {
+            "kind": "table",
+            "n": 1,
+            "fp": "대안|생각했던 장점|예상한 부담"
+          }
+        ]
+      },
+      {
+        "key": "power-code",
+        "chapter": "cases",
+        "layout": "code",
+        "tab": "구현",
+        "title": {
+          "text": "실제 구현 — 상태는 각자, 전력 이동은 중간 관리자가 처리",
+          "verbatim": true
+        },
+        "lead": {
+          "text": "클래스의 역할을 구분하는 것과, 하나의 동작을 이해하기 쉽게 만드는 것은 같은 문제가 아니었습니다.",
+          "verbatim": true
+        },
+        "keywords": [
+          "AllocatePower",
+          "세 객체의 역할"
+        ],
+        "sectionPath": [
+          "3. 개발 과정의 주요 사례",
+          "3.1 전력 관리 — 책임을 나누면 구현도 쉬워질 것이라는 판단",
+          "실제 구현 — 상태는 각자, 전력 이동은 중간 관리자가 처리"
         ],
         "points": [
           {
-            "label": "GameContext",
-            "text": "Rooms, FacilityStates, CrewStates와 함선 HP·반응로 용량·보유 전력을 저장한다.",
+            "label": "",
+            "text": "`ReactorController`: 반응로의 최대 전력과 가용 전력 관리",
             "verbatim": true
           },
           {
-            "label": "SceneBinder",
-            "text": "플레이어의 HP·전력·시설·승무원·무기 상태를 복원하고, EnemyType에 맞는 적 프리팹을 생성하거나 씬의 적을 찾는다.",
+            "label": "",
+            "text": "`FacilityController`: 시설별 할당 전력, 피해량, 사용 가능한 최대 전력 및 상태 관리",
             "verbatim": true
           },
           {
-            "label": "상점 씬 → 전투 씬",
-            "text": "갱신된 GameContext를 SceneBinder가 받아 플레이어 상태를 적용하고 적·CombatSystem·스테이지 환경을 초기화한다.",
+            "label": "",
+            "text": "`ShipPowerController`: 전력 할당·회수 가능 여부를 검사하고, 두 객체의 값을 변경",
             "verbatim": true
           }
         ],
         "visuals": [
           {
-            "kind": "mermaid",
+            "kind": "code",
             "n": 1,
-            "fp": "classDiagram"
+            "fp": "// ShipPowerController.AllocatePower — 핵심 부분"
           }
         ]
       },
       {
-        "key": "power-overview",
-        "chapter": "features",
-        "layout": "visual",
-        "tab": "개요",
+        "key": "power-cost",
+        "chapter": "cases",
+        "layout": "problem",
+        "tab": "문제 해결",
         "title": {
-          "text": "전력 관리 기능 개요",
+          "text": "실제 겪은 문제 — 설계의 복잡성이 테스트 비용으로 돌아옴",
           "verbatim": true
         },
-        "lead": {
-          "text": "제한된 반응로 전력을 무기·엔진·실드에 배분해 전투 중 가동 우선순위를 정한다.",
-          "verbatim": true
-        },
+        "lead": null,
         "keywords": [
-          "반응로 전력",
-          "A·S·D",
-          "시설 강화"
+          "테스트 비용",
+          "중복 감소 버그"
         ],
         "sectionPath": [
-          "3. 핵심 기능",
-          "3.1 전력 관리",
-          "전력 관리 기능 개요"
+          "3. 개발 과정의 주요 사례",
+          "3.1 전력 관리 — 책임을 나누면 구현도 쉬워질 것이라는 판단",
+          "실제 겪은 문제 — 설계의 복잡성이 테스트 비용으로 돌아옴"
         ],
         "points": [
           {
-            "label": "입력",
-            "text": "키보드 A·S·D로 전력을 공급한다.",
+            "label": "문제",
+            "text": "전력 기능을 테스트하려면 Unity에서 반응로와 무기·실드·엔진 등 관련 컴포넌트를 준비하고 참조를 연결해야 했습니다.",
             "verbatim": true
           },
           {
-            "label": "시설 활성화 조건",
-            "text": "무기·엔진·실드는 전력이 1 이상 할당되었을 때 가동한다.",
+            "label": "원인",
+            "text": "시설 피해 처리 과정에서 `FacilityController.TakeDamage()`가 초과 전력을 직접 줄인 뒤 `ShipPowerController.DeallocatePower()`를 호출해, 시설 전력이 중복 감소했습니다.",
+            "verbatim": false
+          },
+          {
+            "label": "해결",
+            "text": "중복된 `ReducePower()` 호출을 제거하고, `DeallocatePower()`가 전력 회수를 한 번만 처리하도록 수정했습니다.",
             "verbatim": true
           },
           {
-            "label": "시설 강화",
-            "text": "무기는 전력 단계에 따라 충전 속도 배율이 높아진다.",
+            "label": "결과",
+            "text": "개발을 마치고 보니 처음 예상했던 이온 피해 등 추가 규칙은 실제 프로젝트에 들어가지 않았습니다.",
+            "verbatim": true
+          }
+        ],
+        "visuals": []
+      },
+      {
+        "key": "power-ui",
+        "chapter": "cases",
+        "layout": "problem",
+        "tab": "문제 해결",
+        "title": {
+          "text": "시설 상태 UI — 상태의 의미를 명확히 정하지 않고 UI를 구현",
+          "verbatim": true
+        },
+        "lead": null,
+        "keywords": [
+          "상태 우선순위",
+          "회색 표시 버그"
+        ],
+        "sectionPath": [
+          "3. 개발 과정의 주요 사례",
+          "3.1 전력 관리 — 책임을 나누면 구현도 쉬워질 것이라는 판단",
+          "시설 상태 UI — 상태의 의미를 명확히 정하지 않고 UI를 구현"
+        ],
+        "points": [
+          {
+            "label": "문제",
+            "text": "완전히 파괴되어 빨간색이어야 할 시설이 회색으로 표시되는 문제를 겪었습니다.",
+            "verbatim": false
+          },
+          {
+            "label": "원인",
+            "text": "원인은 하나의 시설이 동시에 여러 조건을 만족할 수 있다는 사실을 충분히 고려하지 않은 데 있었습니다.",
+            "verbatim": true
+          },
+          {
+            "label": "해결",
+            "text": "조건 판정의 우선순위를 조정해 수정했습니다.",
+            "verbatim": false
+          },
+          {
+            "label": "배운 점",
+            "text": "이 UI 문제는 상태 조건의 중첩과 표시 우선순위를 먼저 정의하지 않은 실수였습니다.",
             "verbatim": true
           }
         ],
@@ -531,409 +661,124 @@
               "text": "Power UI",
               "verbatim": true
             }
+          },
+          {
+            "kind": "code",
+            "n": 1,
+            "fp": "// FacilityController.UpdateFacilityStatus — 최종 코드"
           }
         ]
       },
       {
-        "key": "power-structure",
-        "chapter": "features",
-        "layout": "visual",
+        "key": "power-lessons",
+        "chapter": "cases",
+        "layout": "overview",
+        "tab": "결과",
+        "title": {
+          "text": "결과와 배운 점",
+          "verbatim": true
+        },
+        "lead": {
+          "text": "다시 같은 규모의 프로토타입을 만든다면 우선 한곳에서 전력 이동을 추적하고 테스트할 수 있는 단순한 구조로 시작하겠습니다.",
+          "verbatim": true
+        },
+        "keywords": [
+          "현재 규칙 기준",
+          "일관성 검증",
+          "상태 정의"
+        ],
+        "sectionPath": [
+          "3. 개발 과정의 주요 사례",
+          "3.1 전력 관리 — 책임을 나누면 구현도 쉬워질 것이라는 판단",
+          "결과와 배운 점"
+        ],
+        "points": [
+          {
+            "label": "배운 점",
+            "text": "책임 분리는 미래에 추가할지 모르는 기능보다 현재 존재하는 규칙과 변경 요구를 기준으로 합니다.",
+            "verbatim": true
+          },
+          {
+            "label": "배운 점",
+            "text": "여러 객체의 상태가 함께 변하는 기능은 개별 값의 유효성뿐 아니라 객체 사이의 일관성까지 검증합니다.",
+            "verbatim": true
+          },
+          {
+            "label": "배운 점",
+            "text": "상태를 화면에 표시하기 전에 상태의 의미와 우선순위를 먼저 정의합니다.",
+            "verbatim": true
+          }
+        ],
+        "visuals": []
+      },
+      {
+        "key": "init-design",
+        "chapter": "cases",
+        "layout": "overview",
         "tab": "구조",
         "title": {
-          "text": "전력 관리 시스템 구조",
+          "text": "문제와 초기 설계",
           "verbatim": true
         },
         "lead": {
-          "text": "반응로의 가용 전력, 시설 상태, 양쪽 값을 함께 바꾸는 요청 처리를 클래스 단위로 분리했다.",
+          "text": "이 프로젝트의 전투 루프는 `전투 → 상점 → 다음 전투` 순서로 반복됩니다.",
           "verbatim": true
         },
         "keywords": [
-          "반응로",
-          "가용 전력",
-          "클래스 단위"
+          "싱글톤",
+          "DontDestroyOnLoad",
+          "상태 유지"
         ],
         "sectionPath": [
-          "3. 핵심 기능",
-          "3.1 전력 관리",
-          "전력 관리 시스템 구조"
+          "3. 개발 과정의 주요 사례",
+          "3.2 씬 전환과 초기화 — 객체가 존재하는 것과 준비된 것은 다르다",
+          "문제와 초기 설계"
         ],
         "points": [
           {
-            "label": "ReactorController",
-            "text": "maxPower와 현재 power를 보관한다.",
+            "label": "",
+            "text": "처음에는 `GameManager`, `CombatSystem`처럼 여러 시스템에서 사용하는 객체를 싱글톤으로 관리하고, `DontDestroyOnLoad`를 이용해 씬 전환 후에도 유지하는 방식을 사용했습니다.",
             "verbatim": true
           },
           {
-            "label": "ShipPowerController",
-            "text": "시설 종류별 assignedPowers를 기록하고 AllocatePower·DeallocatePower 요청에서 반응로와 시설을 같은 양만큼 갱신한다.",
+            "label": "문제",
+            "text": "씬을 구성하는 객체들이 서로의 초기화 결과에 의존했지만, 어떤 객체가 먼저 준비되어야 하는지 명확하게 보장하지 않았습니다.",
             "verbatim": true
           },
           {
-            "label": "FacilityController",
-            "text": "피해로 최대 전력이 줄어 현재 전력이 넘치면 초과분을 반응로로 되돌린다.",
+            "label": "문제",
+            "text": "`CombatSystem`은 씬을 넘어 유지되지만, 내부에서 참조하는 플레이어·적 함선은 씬이 바뀔 때 파괴되고 다시 생성됩니다.",
             "verbatim": true
           }
         ],
-        "visuals": [
-          {
-            "kind": "mermaid",
-            "n": 1,
-            "fp": "classDiagram"
-          }
-        ]
+        "visuals": []
       },
       {
-        "key": "power-status",
-        "chapter": "features",
-        "layout": "screens",
-        "tab": "구조",
-        "title": {
-          "text": "시설 상태와 전력 바 상태",
-          "verbatim": true
-        },
-        "lead": {
-          "text": "각 상태의 실제 전력 바 이미지와 상태 조건을 카드마다 함께 비교한다.",
-          "verbatim": true
-        },
-        "keywords": [
-          "Available",
-          "UnAvailable",
-          "전력 바"
-        ],
-        "sectionPath": [
-          "3. 핵심 기능",
-          "3.1 전력 관리",
-          "시설 상태와 전력 바 상태"
-        ],
-        "points": [
-          {
-            "label": "활성화 · Available",
-            "text": "시설이 정상이고 전력이 1 이상이면 활성화된다.",
-            "verbatim": true
-          },
-          {
-            "label": "비활성화 · UnAvailable",
-            "text": "Power가 0이면 시설은 비활성화된다.",
-            "verbatim": true
-          }
-        ],
-        "visuals": [
-          {
-            "kind": "image",
-            "src": "images/power-ui-status-2.png",
-            "w": 50,
-            "h": 130,
-            "caption": {
-              "text": "활성화 · Available",
-              "verbatim": true
-            }
-          },
-          {
-            "kind": "image",
-            "src": "images/power-ui-status-1.png",
-            "w": 54,
-            "h": 139,
-            "caption": {
-              "text": "비활성화 · UnAvailable",
-              "verbatim": true
-            }
-          }
-        ]
-      },
-      {
-        "key": "power-status-damage",
-        "chapter": "features",
-        "layout": "screens",
-        "tab": "구조",
-        "title": {
-          "text": "시설 상태와 전력 바 상태 (피해)",
-          "verbatim": false
-        },
-        "lead": null,
-        "keywords": [
-          "Broken",
-          "Broked",
-          "피해"
-        ],
-        "sectionPath": [
-          "3. 핵심 기능",
-          "3.1 전력 관리",
-          "시설 상태와 전력 바 상태"
-        ],
-        "points": [
-          {
-            "label": "고장 · Broken",
-            "text": "피해 수만큼 전력 바 칸의 상태가 Broken으로 바뀐다.",
-            "verbatim": true
-          },
-          {
-            "label": "파괴 · Broked",
-            "text": "시설 기능은 실행하지 않고 전력 칸 전체를 사용할 수 없다.",
-            "verbatim": true
-          }
-        ],
-        "visuals": [
-          {
-            "kind": "image",
-            "src": "images/power-ui-status-3.png",
-            "w": 55,
-            "h": 136,
-            "caption": {
-              "text": "고장 · Broken",
-              "verbatim": true
-            }
-          },
-          {
-            "kind": "image",
-            "src": "images/power-ui-status-4.png",
-            "w": 52,
-            "h": 137,
-            "caption": {
-              "text": "파괴 · Broked",
-              "verbatim": true
-            }
-          }
-        ]
-      },
-      {
-        "key": "power-code",
-        "chapter": "features",
-        "layout": "code",
-        "tab": "구현",
-        "title": {
-          "text": "전력 상호작용 코드: 반응로 ↔ 시설",
-          "verbatim": true
-        },
-        "lead": {
-          "text": "할당과 회수는 ShipPowerController가 한 요청 안에서 시설 전력·기록값·반응로 가용 전력을 함께 갱신한다.",
-          "verbatim": true
-        },
-        "keywords": [
-          "전력 할당",
-          "전력 회수",
-          "AllocatePower"
-        ],
-        "sectionPath": [
-          "3. 핵심 기능",
-          "3.1 전력 관리",
-          "전력 상호작용 코드: 반응로 ↔ 시설"
-        ],
-        "points": [
-          {
-            "label": "전력 할당",
-            "text": "반응로 가용 전력이 1 이상이고 시설 전력 추가가 가능할 때 시설에 전력을 추가한다.",
-            "verbatim": true
-          },
-          {
-            "label": "전력 회수",
-            "text": "시설에 전력이 1 이상 할당되어 있는지 확인한다.",
-            "verbatim": true
-          }
-        ],
-        "visuals": [
-          {
-            "kind": "code",
-            "n": 1,
-            "fp": "public void AllocatePower(RoomType facilityType, int amount "
-          },
-          {
-            "kind": "code",
-            "n": 2,
-            "lines": [
-              3,
-              12
-            ],
-            "fp": "public void DeallocatePower(RoomType facilityType, int amoun"
-          }
-        ]
-      },
-      {
-        "key": "power-guard",
-        "chapter": "features",
-        "layout": "code",
-        "tab": "구현",
-        "title": {
-          "text": "전력 유효 상태 보장 책임",
-          "verbatim": true
-        },
-        "lead": {
-          "text": "전력이 범위를 벗어나지 않도록 반응로·시설의 상태 보장과 두 객체 사이의 전력 이동 책임을 분리했다.",
-          "verbatim": true
-        },
-        "keywords": [
-          "상태 유효성 검증",
-          "간접 상호작용"
-        ],
-        "sectionPath": [
-          "3. 핵심 기능",
-          "3.1 전력 관리",
-          "전력 유효 상태 보장 책임"
-        ],
-        "points": [
-          {
-            "label": "상태 유효성 검증",
-            "text": "ReactorController와 FacilityController에서는 각각 반응로 전력, 시설 전력 상태가 유효한지 검증한다.",
-            "verbatim": true
-          },
-          {
-            "label": "간접 상호작용",
-            "text": "전력 회수,할당 같은 상호작용이 필요하면 ShipPowerController를 통해 간접적으로 상호작용한다.",
-            "verbatim": true
-          }
-        ],
-        "visuals": [
-          {
-            "kind": "code",
-            "n": 1,
-            "fp": "public virtual void TakeDamage(int amount)"
-          },
-          {
-            "kind": "code",
-            "n": 2,
-            "fp": "public void AddPower(int amount)"
-          }
-        ]
-      },
-      {
-        "key": "power-ui",
-        "chapter": "features",
-        "layout": "code",
-        "tab": "구현",
-        "title": {
-          "text": "전력 UI: 데이터 참조와 갱신",
-          "verbatim": true
-        },
-        "lead": {
-          "text": "반응로·시설 뷰어는 매 프레임 참조 중인 컨트롤러의 현재 값을 읽어 UI를 갱신한다.",
-          "verbatim": true
-        },
-        "keywords": [
-          "데이터 참조",
-          "ReactorViewer",
-          "매 프레임"
-        ],
-        "sectionPath": [
-          "3. 핵심 기능",
-          "3.1 전력 관리",
-          "전력 UI: 데이터 참조와 갱신"
-        ],
-        "points": [
-          {
-            "label": "시설 데이터 참조",
-            "text": "FacilityPowerViewer는 FacilityController의 power, maxPower, maxPowerLimit, totalDamage를 매 프레임 읽는다.",
-            "verbatim": true
-          },
-          {
-            "label": "반응로 데이터 참조",
-            "text": "ReactorViewer는 ReactorController의 maxPower와 power를 읽는다.",
-            "verbatim": true
-          },
-          {
-            "label": "UI 갱신",
-            "text": "상태 변경을 전력 로직에서 직접 UI로 호출하지 않는다.",
-            "verbatim": true
-          }
-        ],
-        "visuals": [
-          {
-            "kind": "code",
-            "n": 1,
-            "fp": "protected override void UpdateViewer()"
-          },
-          {
-            "kind": "code",
-            "n": 2,
-            "fp": "int totalPower = reactorController.MaxPower;"
-          }
-        ]
-      },
-      {
-        "key": "weapon-overview",
-        "chapter": "features",
-        "layout": "visual",
-        "tab": "개요",
-        "title": {
-          "text": "무기 조준 기능 개요",
-          "verbatim": true
-        },
-        "lead": null,
-        "keywords": [
-          "무기 선택",
-          "공격 목표 지정",
-          "피해 처리"
-        ],
-        "sectionPath": [
-          "3. 핵심 기능",
-          "3.2 무기 조준",
-          "무기 조준 기능 개요"
-        ],
-        "points": [
-          {
-            "label": "01 무기 선택",
-            "text": "플레이어는 전력이 공급되어 활성화된 무기를 선택한다.",
-            "verbatim": true
-          },
-          {
-            "label": "02 공격 목표 지정",
-            "text": "적 함선의 방을 클릭하면 목표 좌표와 RoomId를 만든다.",
-            "verbatim": true
-          },
-          {
-            "label": "03 투사체 발사",
-            "text": "활성화된 무기는 충전이 완료되고 유효한 목표가 있을 때 발사한다.",
-            "verbatim": true
-          },
-          {
-            "label": "04 피해 처리",
-            "text": "CombatSystem이 두 피해 경로를 구분해 처리한다.",
-            "verbatim": true
-          }
-        ],
-        "visuals": [
-          {
-            "kind": "image",
-            "src": "images/main-function-3.png",
-            "w": 156,
-            "h": 220,
-            "caption": {
-              "text": "Weapon targeting",
-              "verbatim": true
-            }
-          }
-        ]
-      },
-      {
-        "key": "weapon-fire",
-        "chapter": "features",
+        "key": "init-order",
+        "chapter": "cases",
         "layout": "visual",
         "tab": "흐름",
         "title": {
-          "text": "무기 활성화 · 충전 · 투사체 발사",
+          "text": "실제 문제 1 — 초기화 순서에 따라 적 함선 로직이 중단됨",
           "verbatim": true
         },
         "lead": {
-          "text": "무기 활성화부터 목표 데이터 전달과 투사체 발사까지의 핵심 로직만 시퀀스로 정리했다.",
+          "text": "새 전투 씬이 열리면 아래 순서로 준비돼야 적 함선이 플레이어 방을 조준할 수 있습니다.",
           "verbatim": true
         },
         "keywords": [
-          "무기 활성화",
-          "충전",
-          "투사체 발사"
+          "초기화 순서",
+          "InitCombatSystem"
         ],
         "sectionPath": [
-          "3. 핵심 기능",
-          "3.2 무기 조준",
-          "무기 활성화 · 충전 · 투사체 발사"
+          "3. 개발 과정의 주요 사례",
+          "3.2 씬 전환과 초기화 — 객체가 존재하는 것과 준비된 것은 다르다",
+          "실제 문제 1 — 초기화 순서에 따라 적 함선 로직이 중단됨"
         ],
         "points": [
           {
-            "label": "무기 활성화 조건",
-            "text": "WeaponSystem은 시설에 전력이 1 이상 공급되면 소속 WeaponController의 IsPowered를 켠다.",
-            "verbatim": true
-          },
-          {
-            "label": "무기 충전 및 투사체 발사",
-            "text": "WeaponController는 충전 완료와 유효한 TargetData를 모두 확인한다.",
+            "label": "문제",
+            "text": "`EnemyController.Start`가 `InitCombatSystem`보다 먼저 돌면 `ships`가 비어 있어 조준 초기화가 깨집니다.",
             "verbatim": true
           }
         ],
@@ -946,85 +791,80 @@
         ]
       },
       {
-        "key": "projectile-damage",
-        "chapter": "features",
-        "layout": "visual",
-        "tab": "흐름",
+        "key": "init-code",
+        "chapter": "cases",
+        "layout": "code",
+        "tab": "구현",
         "title": {
-          "text": "투사체 피해 처리 흐름",
+          "text": "실제 문제 1 — 초기화 순서에 따라 적 함선 로직이 중단됨",
           "verbatim": true
         },
         "lead": {
-          "text": "발사 과정은 제외하고, 실드 충돌과 목표 방 도달 뒤 피해 판정이 해결되는 경로에만 집중한다.",
+          "text": "최종 코드에서도 객체 사이의 초기화 의존 관계를 확인할 수 있습니다.",
           "verbatim": true
         },
         "keywords": [
-          "실드 충돌",
-          "목표 방 도달",
-          "방 피해"
+          "GetPlayerRooms",
+          "초기화 의존"
         ],
         "sectionPath": [
-          "3. 핵심 기능",
-          "3.2 무기 조준",
-          "투사체 피해 처리 흐름"
+          "3. 개발 과정의 주요 사례",
+          "3.2 씬 전환과 초기화 — 객체가 존재하는 것과 준비된 것은 다르다",
+          "실제 문제 1 — 초기화 순서에 따라 적 함선 로직이 중단됨"
         ],
         "points": [
           {
-            "label": "실드 충돌 요청",
-            "text": "실드가 남아 있으면 ShieldDamage를 적용하고 투사체는 제거된다.",
+            "label": "",
+            "text": "`EnemyController`는 적의 자동 조준을 초기화하면서 `CombatSystem`에서 플레이어 방 목록을 가져옵니다.",
             "verbatim": true
           },
           {
-            "label": "목표 방 도달 요청",
-            "text": "실드에 막히지 않은 투사체가 TargetPos에 도달하면 CombatSystem.HandleRoomCollision에 자신과 저장한 RoomId를 전달한다.",
-            "verbatim": true
-          },
-          {
-            "label": "방 피해 해결",
-            "text": "함선은 해당 Room의 승무원·시설에 피해를 전달하고 선체 HP를 줄인 뒤 전투 종료 조건을 확인한다.",
-            "verbatim": true
+            "label": "원인",
+            "text": "`ships`는 `CombatSystem.InitCombatSystem()`에서 설정되므로, 해당 초기화가 끝나기 전에 접근하면 정상적으로 동작할 수 없습니다.",
+            "verbatim": false
           }
         ],
         "visuals": [
           {
-            "kind": "mermaid",
+            "kind": "code",
             "n": 1,
-            "fp": "sequenceDiagram"
+            "fp": "// EnemyController.Start()"
           }
         ]
       },
       {
-        "key": "weapon-code",
-        "chapter": "features",
+        "key": "init-fix",
+        "chapter": "cases",
         "layout": "code",
-        "tab": "구현",
+        "tab": "문제 해결",
         "title": {
-          "text": "무기 핵심 코드: 선택 · 충전 · 발사 조건",
+          "text": "당시 해결 — 실행 순서 지정과 초기화 시점 변경",
           "verbatim": true
         },
-        "lead": {
-          "text": "WeaponSystem은 선택과 목표 전달을, WeaponController는 개별 무기의 충전과 발사 가능 상태를 맡는다.",
-          "verbatim": true
-        },
+        "lead": null,
         "keywords": [
-          "목표 저장",
-          "충전과 보조",
-          "발사 조건"
+          "DefaultExecutionOrder",
+          "Awake → Start"
         ],
         "sectionPath": [
-          "3. 핵심 기능",
-          "3.2 무기 조준",
-          "무기 핵심 코드: 선택 · 충전 · 발사 조건"
+          "3. 개발 과정의 주요 사례",
+          "3.2 씬 전환과 초기화 — 객체가 존재하는 것과 준비된 것은 다르다",
+          "당시 해결 — 실행 순서 지정과 초기화 시점 변경"
         ],
         "points": [
           {
-            "label": "목표 저장",
-            "text": "TargetPosition은 투사체가 이동할 좌표이고 RoomId는 도착 뒤 피해를 줄 방을 식별한다.",
+            "label": "해결",
+            "text": "첫째, 싱글톤의 초기화 순서를 먼저 실행하도록 지정했습니다.",
             "verbatim": true
           },
           {
-            "label": "충전과 보조",
-            "text": "전력이 공급되면 chargeProgress가 증가한다.",
+            "label": "해결",
+            "text": "둘째, 다른 객체의 초기화 결과에 의존하는 일부 코드를 `Awake`에서 `Start`로 이동했습니다.",
+            "verbatim": true
+          },
+          {
+            "label": "결과",
+            "text": "수정 후에는 전투에서 상점으로 이동하고 다음 전투에 진입하는 루프를 반복하며 문제가 재발하지 않는지 확인했습니다.",
             "verbatim": true
           }
         ],
@@ -1032,47 +872,207 @@
           {
             "kind": "code",
             "n": 1,
-            "fp": "public void SetRoomTarget(ProjectileTargetData targetData)"
+            "fp": "[DefaultExecutionOrder(-1000)]"
           },
           {
             "kind": "code",
             "n": 2,
-            "fp": "GameObject projectile = Instantiate(projectilePrefab, transf"
+            "fp": "// ShipController"
           }
         ]
       },
       {
-        "key": "collision",
-        "chapter": "features",
-        "layout": "code",
-        "tab": "구현",
+        "key": "init-limit",
+        "chapter": "cases",
+        "layout": "overview",
+        "tab": "선택",
         "title": {
-          "text": "CombatSystem의 실드 · 방 충돌 해결",
+          "text": "다만 이 해결책에는 한계가 있었습니다.",
           "verbatim": true
         },
-        "lead": {
-          "text": "피격 판정은 CombatSystem에 모으고, 실드와 방 충돌은 각각의 메서드가 피격 함선·방 객체로 피해를 전달한다.",
-          "verbatim": true
-        },
+        "lead": null,
         "keywords": [
-          "실드 충돌 해결",
-          "방 충돌 해결",
-          "CombatSystem"
+          "실행 순서 설정",
+          "숨은 의존"
         ],
         "sectionPath": [
-          "3. 핵심 기능",
-          "3.2 무기 조준",
-          "CombatSystem의 실드 · 방 충돌 해결"
+          "3. 개발 과정의 주요 사례",
+          "3.2 씬 전환과 초기화 — 객체가 존재하는 것과 준비된 것은 다르다",
+          "당시 해결 — 실행 순서 지정과 초기화 시점 변경"
         ],
         "points": [
           {
-            "label": "실드 충돌 해결",
-            "text": "ShieldCount가 1 이상일 때만 실드 피해를 적용하고 투사체를 막는다.",
+            "label": "",
+            "text": "`DefaultExecutionOrder`는 Unity가 실행 순서를 관리하도록 설정하는 방법이지, 객체가 필요한 데이터를 모두 갖췄는지 보장하는 명시적인 초기화 절차는 아닙니다.",
             "verbatim": true
           },
           {
-            "label": "방 충돌 해결",
-            "text": "CombatSystem은 피격된 ShipController를 찾고 RoomId를 넘긴다.",
+            "label": "",
+            "text": "클래스 사이의 의존 관계가 코드의 호출 순서에 직접 드러나지 않고 실행 순서 설정에 숨게 되었습니다.",
+            "verbatim": true
+          },
+          {
+            "label": "",
+            "text": "당시에는 문제를 해결하는 데 효과적이었지만, 시스템이 늘어날수록 어떤 객체가 먼저 초기화되어야 하는지 추적하기 어려워질 수 있다고 판단했습니다.",
+            "verbatim": true
+          }
+        ],
+        "visuals": []
+      },
+      {
+        "key": "combat-lifetime",
+        "chapter": "cases",
+        "layout": "problem",
+        "tab": "문제 해결",
+        "title": {
+          "text": "관련 문제 — 씬을 넘어 유지되는 CombatSystem의 참조",
+          "verbatim": true
+        },
+        "lead": null,
+        "keywords": [
+          "씬 종속 참조",
+          "SceneBinder"
+        ],
+        "sectionPath": [
+          "3. 개발 과정의 주요 사례",
+          "3.2 씬 전환과 초기화 — 객체가 존재하는 것과 준비된 것은 다르다",
+          "관련 문제 — 씬을 넘어 유지되는 CombatSystem의 참조"
+        ],
+        "points": [
+          {
+            "label": "문제",
+            "text": "`CombatSystem`은 `DontDestroyOnLoad`로 유지되지만 내부의 `ships`, `shipAreas` 등은 전투 씬의 객체를 참조합니다.",
+            "verbatim": true
+          },
+          {
+            "label": "해결",
+            "text": "이를 해결하기 위해 `GameManager`가 씬 로드 완료를 감지하고, `SceneBinder`가 새로 생성된 함선 객체들을 찾아 `CombatSystem.InitCombatSystem()`으로 다시 연결하도록 구현했습니다.",
+            "verbatim": true
+          },
+          {
+            "label": "배운 점",
+            "text": "`CombatSystem`의 주요 참조는 전투 씬의 함선과 콜라이더에 종속되어 있었습니다.",
+            "verbatim": true
+          }
+        ],
+        "visuals": []
+      },
+      {
+        "key": "init-lessons",
+        "chapter": "cases",
+        "layout": "overview",
+        "tab": "결과",
+        "title": {
+          "text": "결과와 배운 점",
+          "verbatim": true
+        },
+        "lead": {
+          "text": "다시 구현한다면 `GameContext`처럼 씬 사이에 유지해야 할 상태와 `CombatSystem`처럼 전투 씬에서 사용하는 객체를 먼저 분류하겠습니다.",
+          "verbatim": true
+        },
+        "keywords": [
+          "생성과 준비",
+          "지속 데이터",
+          "명시적 초기화"
+        ],
+        "sectionPath": [
+          "3. 개발 과정의 주요 사례",
+          "3.2 씬 전환과 초기화 — 객체가 존재하는 것과 준비된 것은 다르다",
+          "결과와 배운 점"
+        ],
+        "points": [
+          {
+            "label": "배운 점",
+            "text": "객체의 생성과 사용 가능한 상태를 구분해야 합니다.",
+            "verbatim": true
+          },
+          {
+            "label": "배운 점",
+            "text": "씬을 넘어 유지할 데이터와 씬에 종속된 객체를 구분해야 합니다.",
+            "verbatim": true
+          },
+          {
+            "label": "배운 점",
+            "text": "실행 순서 설정은 간단한 해결책이지만 의존 관계를 감출 수 있습니다.",
+            "verbatim": true
+          }
+        ],
+        "visuals": []
+      },
+      {
+        "key": "crew-room",
+        "chapter": "cases",
+        "layout": "overview",
+        "tab": "구조",
+        "title": {
+          "text": "초기 설계 — 승무원과 방이 서로를 참조",
+          "verbatim": true
+        },
+        "lead": {
+          "text": "이를 구현하기 위해 승무원은 자신의 `CurrentRoom`을, 방은 소속된 승무원의 `Crews` 목록을 보관하도록 했습니다.",
+          "verbatim": true
+        },
+        "keywords": [
+          "CurrentRoom",
+          "Crews 목록",
+          "서로 참조"
+        ],
+        "sectionPath": [
+          "3. 개발 과정의 주요 사례",
+          "3.3 승무원과 방 — 상태를 변경하는 책임이 여러 곳에 흩어진 문제",
+          "초기 설계 — 승무원과 방이 서로를 참조"
+        ],
+        "points": [
+          {
+            "label": "",
+            "text": "승무원은 지정된 방으로 이동하고, 그 방에 있는 시설의 상태에 따라 수리하거나 보조하는 기능이 필요했습니다.",
+            "verbatim": true
+          },
+          {
+            "label": "",
+            "text": "이 방식은 구현이 직관적이었습니다.",
+            "verbatim": true
+          },
+          {
+            "label": "",
+            "text": "승무원이 방의 시설에 접근하거나, 방에서 승무원들에게 피해를 전달하기 위해 별도의 객체를 거칠 필요가 없었습니다.",
+            "verbatim": true
+          }
+        ],
+        "visuals": []
+      },
+      {
+        "key": "crew-paths",
+        "chapter": "cases",
+        "layout": "code",
+        "tab": "구현",
+        "title": {
+          "text": "실제 구현 — 승무원 이동과 사망의 처리 경로",
+          "verbatim": true
+        },
+        "lead": {
+          "text": "이동과 사망 모두 승무원이 방에서 빠지는 동작이지만, 후처리 방식이 달랐습니다.",
+          "verbatim": true
+        },
+        "keywords": [
+          "이동 경로",
+          "사망 경로",
+          "후처리 차이"
+        ],
+        "sectionPath": [
+          "3. 개발 과정의 주요 사례",
+          "3.3 승무원과 방 — 상태를 변경하는 책임이 여러 곳에 흩어진 문제",
+          "실제 구현 — 승무원 이동과 사망의 처리 경로"
+        ],
+        "points": [
+          {
+            "label": "",
+            "text": "이동 시: 승무원을 제거하고 방이 비었으면 시설 보조를 해제하고 수리 진행도를 초기화합니다.",
+            "verbatim": true
+          },
+          {
+            "label": "",
+            "text": "사망 시: 승무원을 목록에서 제거하지만 같은 후처리는 호출하지 않습니다.",
             "verbatim": true
           }
         ],
@@ -1080,118 +1080,86 @@
           {
             "kind": "code",
             "n": 1,
-            "lines": [
-              1,
-              13
-            ],
-            "fp": "public bool HandleShieldCollision(ProjectileController proje"
+            "fp": "TargetRoom = room;"
           },
           {
             "kind": "code",
             "n": 2,
-            "lines": [
-              1,
-              11
-            ],
-            "fp": "public bool HandleRoomCollision(ProjectileController project"
+            "fp": "// CrewSystem.HandleCrewDeath — 핵심 부분"
           }
         ]
       },
       {
-        "key": "crew-overview",
-        "chapter": "features",
-        "layout": "visual",
-        "tab": "개요",
+        "key": "crew-bugs",
+        "chapter": "cases",
+        "layout": "problem",
+        "tab": "문제 해결",
         "title": {
-          "text": "승무원 기능 개요",
+          "text": "개발 후 검토에서 발견한 문제",
           "verbatim": true
         },
-        "lead": {
-          "text": "승무원은 방 이동 뒤 시설 상태에 맞춰 수리·보조를 수행하며, 방 피격 시 체력 피해를 받는다.",
-          "verbatim": true
-        },
+        "lead": null,
         "keywords": [
-          "승무원 이동",
-          "승무원 작업",
-          "승무원 피해"
+          "후처리 누락",
+          "위치 불일치"
         ],
         "sectionPath": [
-          "3. 핵심 기능",
-          "3.3 승무원 관리",
-          "승무원 기능 개요"
+          "3. 개발 과정의 주요 사례",
+          "3.3 승무원과 방 — 상태를 변경하는 책임이 여러 곳에 흩어진 문제",
+          "개발 후 검토에서 발견한 문제"
         ],
         "points": [
           {
-            "label": "승무원 이동",
-            "text": "플레이어 방을 우클릭하면 CrewSystem이 각 CrewController에 목표 방을 전달한다.",
+            "label": "문제",
+            "text": "첫째, 승무원 사망 시 시설 상태의 후처리가 누락될 수 있습니다.",
             "verbatim": true
           },
           {
-            "label": "승무원 작업",
-            "text": "목표 방 도착 뒤 시설이 Damaged 또는 Broked이면 수리한다.",
+            "label": "원인",
+            "text": "이는 이동과 사망의 처리 경로가 분리되어 있기 때문에 발생하는 문제입니다.",
             "verbatim": true
           },
           {
-            "label": "승무원 피해",
-            "text": "방이 피격되면 Room이 내부 Crews에 피해를 전달한다.",
+            "label": "문제",
+            "text": "둘째, 승무원의 실제 위치와 소속 방 정보가 일치하지 않을 수 있습니다.",
+            "verbatim": true
+          },
+          {
+            "label": "결과",
+            "text": "방을 기준으로 승무원 피해를 판정해 실제 위치와 다르게 처리되는 버그가 있었습니다.",
             "verbatim": true
           }
         ],
-        "visuals": [
-          {
-            "kind": "image",
-            "src": "images/main-function-2.png",
-            "w": 342,
-            "h": 116,
-            "caption": {
-              "text": "Crew management",
-              "verbatim": true
-            }
-          }
-        ]
+        "visuals": []
       },
       {
         "key": "crew-state",
-        "chapter": "features",
+        "chapter": "cases",
         "layout": "visual",
         "tab": "구조",
         "title": {
-          "text": "CrewStatus 상태 전이와 상태별 작업",
+          "text": "원인 분석 — 데이터의 책임과 상태 변경의 책임을 구별하지 않음",
           "verbatim": true
         },
-        "lead": {
-          "text": "CrewController.UpdateCrewStatus가 현재 방의 시설 상태를 읽고, HandleStatus가 상태별 메서드를 실행한다.",
-          "verbatim": true
-        },
+        "lead": null,
         "keywords": [
           "CrewStatus",
-          "상태 전이",
-          "HandleStatus"
+          "상태 변경 세 곳"
         ],
         "sectionPath": [
-          "3. 핵심 기능",
-          "3.3 승무원 관리",
-          "CrewStatus 상태 전이와 상태별 작업"
+          "3. 개발 과정의 주요 사례",
+          "3.3 승무원과 방 — 상태를 변경하는 책임이 여러 곳에 흩어진 문제",
+          "원인 분석 — 데이터의 책임과 상태 변경의 책임을 구별하지 않음"
         ],
         "points": [
           {
-            "label": "Moving",
-            "text": "이동 명령을 받으면 SetTargetRoom이 승무원을 지금 방의 목록에서 뺀다.",
+            "label": "원인",
+            "text": "문제는 상태를 참조하는 책임과 상태 변경의 일관성을 보장하는 책임을 구분하지 않았다는 점이었습니다.",
             "verbatim": true
           },
           {
-            "label": "Idle",
-            "text": "시설이 비활성화된 경우에도 Idle을 유지한다.",
-            "verbatim": true
-          },
-          {
-            "label": "Repair",
-            "text": "수리 진행도가 RepairDuration에 도달할 때 시설 피해를 1만큼 복구한다.",
-            "verbatim": true
-          },
-          {
-            "label": "Assisting",
-            "text": "엔진·실드·무기별 보조 효과가 충전 속도에 반영된다.",
+            "label": "",
+            "text": "이 그림에서 볼 것은 상태를 바꾸는 곳이 `SetTargetRoom`·`UpdateCrewStatus`·`MoveToTargetRoom` 세 군데라는 점입니다.",
             "verbatim": true
           }
         ],
@@ -1204,818 +1172,320 @@
         ]
       },
       {
-        "key": "crew-input",
-        "chapter": "features",
-        "layout": "code",
-        "tab": "구현",
+        "key": "crew-redo",
+        "chapter": "cases",
+        "layout": "overview",
+        "tab": "선택",
         "title": {
-          "text": "플레이어 입력과 개별 CrewController 사이의 상호작용 관리",
-          "verbatim": true
-        },
-        "lead": {
-          "text": "PlayerController가 클릭 대상을 판별하고, CrewSystem이 선택 목록과 목표 방을 관리해 개별 CrewController에 명령을 중계한다.",
-          "verbatim": true
-        },
-        "keywords": [
-          "입력 수집과 선택",
-          "SetTargetRoom",
-          "선택 목록"
-        ],
-        "sectionPath": [
-          "3. 핵심 기능",
-          "3.3 승무원 관리",
-          "플레이어 입력과 개별 CrewController 사이의 상호작용 관리"
-        ],
-        "points": [
-          {
-            "label": "입력 수집과 선택",
-            "text": "PlayerController는 좌클릭한 플레이어 승무원을 찾아 CrewSystem.AddSelectedCrew로 전달한다.",
-            "verbatim": true
-          },
-          {
-            "label": "이동 명령 전달",
-            "text": "방 우클릭 시 PlayerController가 Room을 찾아 CrewSystem.SetTargetRoom을 호출한다.",
-            "verbatim": true
-          }
-        ],
-        "visuals": [
-          {
-            "kind": "code",
-            "n": 1,
-            "fp": "public void AddSelectedCrew(CrewController crew)"
-          },
-          {
-            "kind": "code",
-            "n": 2,
-            "fp": "if (isPlayerCrewSelected)"
-          }
-        ]
-      },
-      {
-        "key": "crew-conditions",
-        "chapter": "features",
-        "layout": "visual",
-        "tab": "구조",
-        "title": {
-          "text": "CrewStatus 전환 조건",
+          "text": "다시 구현한다면",
           "verbatim": true
         },
         "lead": null,
         "keywords": [
-          "Moving",
-          "Repair",
-          "Assisting"
+          "Room 단일 메서드",
+          "TargetRoom 의미"
         ],
         "sectionPath": [
-          "3. 핵심 기능",
-          "3.3 승무원 관리",
-          "CrewStatus 전환 조건"
+          "3. 개발 과정의 주요 사례",
+          "3.3 승무원과 방 — 상태를 변경하는 책임이 여러 곳에 흩어진 문제",
+          "다시 구현한다면"
         ],
         "points": [
           {
-            "label": "Moving",
-            "text": "SetTargetRoom이 목표 방을 저장하고 crewStatus를 Moving으로 바꾼다.",
+            "label": "",
+            "text": "승무원이 현재 위치한 방에서 나갈때 이루어지는 작업을 `Room`의 단일 메서드로 모을 것입니다.",
             "verbatim": true
           },
           {
-            "label": "Idle",
-            "text": "MoveToTargetRoom이 목표 위치에 도착하면 Idle이 된다.",
+            "label": "",
+            "text": "실제 이동 중 어느 방에 속한 것으로 취급할지 게임 규칙을 먼저 정의한 뒤 데이터 갱신 시점을 결정할 것입니다.",
             "verbatim": true
           },
           {
-            "label": "Repair",
-            "text": "이동이 아닌 상태에서 현재 방 시설이 Damaged 또는 Broked이면 UpdateCrewStatus가 Repair로 전환한다.",
-            "verbatim": true
-          },
-          {
-            "label": "Assisting",
-            "text": "현재 방 시설이 Normal이면 Assisting으로 전환한다.",
-            "verbatim": true
-          }
-        ],
-        "visuals": [
-          {
-            "kind": "mermaid",
-            "n": 1,
-            "fp": "stateDiagram-v2",
-            "sectionPath": [
-              "3. 핵심 기능",
-              "3.3 승무원 관리",
-              "CrewStatus 상태 전이와 상태별 작업"
-            ]
-          }
-        ]
-      },
-      {
-        "key": "crew-room-ship",
-        "chapter": "features",
-        "layout": "code",
-        "tab": "구현",
-        "title": {
-          "text": "방 · 승무원 · 함선의 상호작용 코드",
-          "verbatim": true
-        },
-        "lead": {
-          "text": "Room은 작업 단위, CrewController는 상태별 실행자, ShipController는 방 피격 뒤 함선 전체 피해를 처리하는 경계다.",
-          "verbatim": true
-        },
-        "keywords": [
-          "시설 수리",
-          "방 피해",
-          "선체 HP"
-        ],
-        "sectionPath": [
-          "3. 핵심 기능",
-          "3.3 승무원 관리",
-          "방 · 승무원 · 함선의 상호작용 코드"
-        ],
-        "points": [
-          {
-            "label": "Room",
-            "text": "승무원이 수리할 때 진행도를 누적하고 완료 시 FacilityController.Repair를 호출한다.",
-            "verbatim": true
-          },
-          {
-            "label": "ShipController",
-            "text": "RoomId로 피격 방을 찾고 승무원·시설 피해, 선체 HP 감소, 게임 종료 확인을 한 흐름으로 처리한다.",
-            "verbatim": true
-          }
-        ],
-        "visuals": [
-          {
-            "kind": "code",
-            "n": 1,
-            "fp": "public void RepairFacility()"
-          }
-        ]
-      },
-      {
-        "key": "crew-handle-status",
-        "chapter": "features",
-        "layout": "code",
-        "tab": "구현",
-        "title": {
-          "text": "CrewController.cs · 상태별 작업",
-          "verbatim": true
-        },
-        "lead": null,
-        "keywords": [
-          "HandleStatus",
-          "상태별 작업"
-        ],
-        "sectionPath": [
-          "3. 핵심 기능",
-          "3.3 승무원 관리",
-          "방 · 승무원 · 함선의 상호작용 코드"
-        ],
-        "points": [
-          {
-            "label": "CrewController",
-            "text": "Moving·Idle·Repair·Assisting에 따라 이동, 보조 해제, 수리, 보조 적용 메서드를 나눠 실행한다.",
-            "verbatim": true
-          }
-        ],
-        "visuals": [
-          {
-            "kind": "code",
-            "n": 2,
-            "fp": "private void HandleStatus()"
-          }
-        ]
-      },
-      {
-        "key": "crew-flow",
-        "chapter": "features",
-        "layout": "visual",
-        "tab": "흐름",
-        "title": {
-          "text": "승무원 선택 · 이동 · 작업 · 피해 흐름",
-          "verbatim": true
-        },
-        "lead": {
-          "text": "CombatSystem은 제외하고, 플레이어 입력부터 CrewSystem·CrewController·Room 사이의 순서만 표현했다.",
-          "verbatim": true
-        },
-        "keywords": [
-          "승무원 선택",
-          "이동",
-          "피해"
-        ],
-        "sectionPath": [
-          "3. 핵심 기능",
-          "3.3 승무원 관리",
-          "승무원 선택 · 이동 · 작업 · 피해 흐름"
-        ],
-        "points": [
-          {
-            "label": "이동",
-            "text": "좌클릭으로 승무원을 선택한 뒤 플레이어 방을 우클릭하면 CrewSystem이 선택 목록을 순회해 각 CrewController의 목표 방을 설정한다.",
-            "verbatim": true
-          },
-          {
-            "label": "작업",
-            "text": "도착 뒤 CrewController는 Room의 FacilityStatus를 확인한다.",
-            "verbatim": true
-          },
-          {
-            "label": "피해",
-            "text": "방 피격 시 Room.TakeDamageToCrews가 내부 승무원에게 피해를 전달한다.",
-            "verbatim": true
-          }
-        ],
-        "visuals": [
-          {
-            "kind": "mermaid",
-            "n": 1,
-            "fp": "sequenceDiagram"
-          }
-        ]
-      },
-      {
-        "key": "environment",
-        "chapter": "features",
-        "layout": "screens",
-        "tab": "개요",
-        "title": {
-          "text": "환경 효과",
-          "verbatim": true
-        },
-        "lead": {
-          "text": "소행성과 태양 플레어 이벤트가 전투 중 임의의 방에 피해를 주는 상황을 만든다.",
-          "verbatim": true
-        },
-        "keywords": [
-          "소행성",
-          "태양 플레어",
-          "역동성"
-        ],
-        "sectionPath": [
-          "3. 핵심 기능",
-          "3.4 환경 효과와 공통 입력",
-          "환경 효과"
-        ],
-        "points": [
-          {
-            "label": "환경 효과를 넣은 이유",
-            "text": "전투가 벌어지는 환경을 다양하게 연출하고, 플레이에 역동성을 더하기 위해서다.",
-            "verbatim": true
-          }
-        ],
-        "visuals": [
-          {
-            "kind": "image",
-            "src": "images/asteroid-environment.png",
-            "w": 252,
-            "h": 265,
-            "caption": {
-              "text": "Asteroid environment",
-              "verbatim": true
-            }
-          },
-          {
-            "kind": "image",
-            "src": "images/solar-flare-environment.png",
-            "w": 989,
-            "h": 554,
-            "caption": {
-              "text": "Solar flare environment",
-              "verbatim": true
-            }
-          }
-        ]
-      },
-      {
-        "key": "env-code",
-        "chapter": "features",
-        "layout": "code",
-        "tab": "구현",
-        "title": {
-          "text": "환경 효과 핵심 코드",
-          "verbatim": true
-        },
-        "lead": {
-          "text": "환경 코루틴은 전투 상태와 스테이지 유형을 확인한 뒤, 일정 시간마다 소행성 또는 태양 플레어 효과를 실행한다.",
-          "verbatim": true
-        },
-        "keywords": [
-          "환경 코루틴",
-          "전투 상태 확인",
-          "피해 경로"
-        ],
-        "sectionPath": [
-          "3. 핵심 기능",
-          "3.4 환경 효과와 공통 입력",
-          "환경 효과 핵심 코드"
-        ],
-        "points": [
-          {
-            "label": "전투 상태 확인",
-            "text": "GameManager.Instance.CanRunCombat이 false가 되면 코루틴을 중단한다.",
-            "verbatim": true
-          },
-          {
-            "label": "피해 처리",
-            "text": "소행성은 투사체로 이동한 뒤 충돌 처리를 요청한다. 태양 플레어는 ShipController.TakeDamageToRoom을 직접 호출한다.",
-            "verbatim": true
-          }
-        ],
-        "visuals": [
-          {
-            "kind": "code",
-            "n": 1,
-            "fp": "private IEnumerator EnvironmentCoroutine()"
-          }
-        ]
-      },
-      {
-        "key": "common-input",
-        "chapter": "features",
-        "layout": "code",
-        "tab": "구현",
-        "title": {
-          "text": "공통 입력: 승무원 선택과 적 방 조준",
-          "verbatim": true
-        },
-        "lead": {
-          "text": "PlayerController는 클릭 위치의 방·함선 소속·승무원 콜라이더를 판별해 무기 조준 또는 승무원 명령으로 전달한다.",
-          "verbatim": true
-        },
-        "keywords": [
-          "입력 대상 판별",
-          "레이어",
-          "명령 경계"
-        ],
-        "sectionPath": [
-          "3. 핵심 기능",
-          "3.4 환경 효과와 공통 입력",
-          "공통 입력: 승무원 선택과 적 방 조준"
-        ],
-        "points": [
-          {
-            "label": "레이어 기반 판별",
-            "text": "같은 마우스 위치의 콜라이더를 수집한 뒤 Room·Ship·Crew 레이어와 소속 ShipSide를 확인한다.",
-            "verbatim": true
-          },
-          {
-            "label": "명령 경계",
-            "text": "무기 조준은 적 방의 좌표·RoomId를 WeaponSystem에 전달한다.",
-            "verbatim": true
-          }
-        ],
-        "visuals": [
-          {
-            "kind": "code",
-            "n": 1,
-            "fp": "Collider2D[] clickCols ="
-          },
-          {
-            "kind": "code",
-            "n": 2,
-            "fp": "// 좌클릭: 적 방 → WeaponSystem, 플레이어 승무원 → CrewSystem"
-          }
-        ]
-      },
-      {
-        "key": "power-decision",
-        "chapter": "decisions",
-        "layout": "full",
-        "tab": "선택",
-        "title": {
-          "text": "4.1 설계 고민: 전력 상태 유효성 보장 위치",
-          "verbatim": true
-        },
-        "lead": {
-          "text": "반응로에서 시설 전력을 할당·회수하거나, 시설 피해로 최대 전력보다 현재 할당량이 커질 때 유효성을 어디에서 보장할지 정해야 했다.",
-          "verbatim": true
-        },
-        "keywords": [
-          "단일 전력 관리자",
-          "상태,상호작용 분리"
-        ],
-        "sectionPath": [
-          "4. 고민과 선택",
-          "4.1 설계 고민: 전력 상태 유효성 보장 위치"
-        ],
-        "points": [],
-        "visuals": [
-          {
-            "kind": "table",
-            "n": 1,
-            "fp": "선택지|전력 유효성 보장|할당,회수 책임|규칙 추가 시 수정 범위|흐름 확인"
-          }
-        ]
-      },
-      {
-        "key": "power-solution",
-        "chapter": "decisions",
-        "layout": "overview",
-        "tab": "선택",
-        "title": {
-          "text": "4.2 현재 구조: 상태와 전력 이동 분리",
-          "verbatim": true
-        },
-        "lead": {
-          "text": "ReactorController와 FacilityController는 각 전력 값을 관리하고, ShipPowerController가 할당·회수 흐름을 조정한다.",
-          "verbatim": true
-        },
-        "keywords": [
-          "전력 이동 분리",
-          "강한 결합",
-          "리팩터링"
-        ],
-        "sectionPath": [
-          "4. 고민과 선택",
-          "4.2 현재 구조: 상태와 전력 이동 분리"
-        ],
-        "points": [
-          {
-            "label": "장점",
-            "text": "반응로와 시설의 각 전력 상태 유효성을 검증하는 위치를 나눠 책임을 명확히 분리한다.",
-            "verbatim": true
-          },
-          {
-            "label": "단점",
-            "text": "작은 규칙만 있는 현재 범위에서는 한 객체 안에서 값을 확인하는 방식보다 초기 구현과 호출 흐름 파악에 시간이 더 든다.",
-            "verbatim": true
-          },
-          {
-            "label": "다시 만든다면",
-            "text": "확장 가능성만 예상해 미리 분리하기보다 실제 규칙 증가로 책임이 갈라지는 시점에 리팩터링한다.",
+            "label": "",
+            "text": "승무원의 상태 처리 역시 무조건 별도 상태 패턴 클래스로 분리하기보다는, 우선 기존 enum과 switch를 유지하면서 상태 진입·갱신·이탈 시의 책임을 구분하는 방법을 검토하겠습니다.",
             "verbatim": true
           }
         ],
         "visuals": []
       },
       {
-        "key": "ui-decision",
-        "chapter": "decisions",
-        "layout": "full",
-        "tab": "선택",
-        "title": {
-          "text": "4.3 설계 고민: 전력 UI 갱신 책임",
-          "verbatim": true
-        },
-        "lead": {
-          "text": "전력 할당·회수, 피해로 인한 한계 변화가 화면에 반영될 때 UI 호출을 어느 위치에 둘지 비교했다.",
-          "verbatim": true
-        },
-        "keywords": [
-          "직접 갱신",
-          "상태를 조회",
-          "이벤트"
-        ],
-        "sectionPath": [
-          "4. 고민과 선택",
-          "4.3 설계 고민: 전력 UI 갱신 책임"
-        ],
-        "points": [],
-        "visuals": [
-          {
-            "kind": "table",
-            "n": 1,
-            "fp": "선택지|UI 갱신 누락 가능성|전력 로직과 UI 결합|변경 시 수정 범위|조회 비용과 확장성"
-          }
-        ]
-      },
-      {
-        "key": "ui-solution",
-        "chapter": "decisions",
+        "key": "crew-lessons",
+        "chapter": "cases",
         "layout": "overview",
-        "tab": "선택",
-        "title": {
-          "text": "4.4 현재 구현: 뷰어의 매 프레임 갱신",
-          "verbatim": true
-        },
-        "lead": {
-          "text": "FacilityPowerViewer와 ReactorViewer는 LateUpdate에서 현재 전력·피해 값을 읽어 전력 바를 다시 표시한다.",
-          "verbatim": true
-        },
-        "keywords": [
-          "매 프레임 갱신",
-          "LateUpdate",
-          "Refresh 호출"
-        ],
-        "sectionPath": [
-          "4. 고민과 선택",
-          "4.4 현재 구현: 뷰어의 매 프레임 갱신"
-        ],
-        "points": [
-          {
-            "label": "장점",
-            "text": "직접 호출 방식과 달리 각 상태 변경 메서드에서 Refresh 호출을 기억할 필요가 없다.",
-            "verbatim": true
-          },
-          {
-            "label": "단점",
-            "text": "상태가 변하지 않아도 매 프레임 주요 필드를 조회하고 전력 바의 색상과 활성 상태를 다시 설정한다.",
-            "verbatim": true
-          },
-          {
-            "label": "다시 만든다면",
-            "text": "현재처럼 시설 수가 적고 상태 변화를 보는 대상이 UI 하나라면, 매 프레임 조회 방식을 다시 사용한다.",
-            "verbatim": true
-          }
-        ],
-        "visuals": []
-      },
-      {
-        "key": "target-decision",
-        "chapter": "decisions",
-        "layout": "full",
-        "tab": "선택",
-        "title": {
-          "text": "4.5 설계 고민: 적 무기가 공격할 플레이어 방 정보 제공자 선정 문제",
-          "verbatim": true
-        },
-        "lead": {
-          "text": "적 무기가 어떤 플레이어 방을 목표로 삼을지 결정하는 규칙을 무기 시스템 내부에 둘지, 별도 제공자로 분리할지 비교했다.",
-          "verbatim": true
-        },
-        "keywords": [
-          "목표 지점",
-          "방 정보",
-          "ITargeting"
-        ],
-        "sectionPath": [
-          "4. 고민과 선택",
-          "4.5 설계 고민: 적 무기가 공격할 플레이어 방 정보 제공자 선정 문제"
-        ],
-        "points": [],
-        "visuals": [
-          {
-            "kind": "table",
-            "n": 1,
-            "fp": "선택지|목표 정보 유효성|조준 책임 위치|공격 규칙 추가 시 수정|요청 흐름"
-          }
-        ]
-      },
-      {
-        "key": "target-solution",
-        "chapter": "decisions",
-        "layout": "overview",
-        "tab": "선택",
-        "title": {
-          "text": "4.6 선택한 해결책: ITargeting 주입",
-          "verbatim": true
-        },
-        "lead": {
-          "text": "무기 시스템은 조준 규칙을 직접 알지 않고, 초기화 시 연결된 ITargeting 구현체에서 목표 방 정보를 받는다.",
-          "verbatim": true
-        },
-        "keywords": [
-          "ITargeting 주입",
-          "RandomTargeter",
-          "조준 규칙"
-        ],
-        "sectionPath": [
-          "4. 고민과 선택",
-          "4.6 선택한 해결책: ITargeting 주입"
-        ],
-        "points": [
-          {
-            "label": "장점",
-            "text": "무기 충전, 발사 조건, 조준 규칙의 수정 위치가 나뉘므로 조준 규칙을 추가해도 WeaponSystem의 발사 코드를 함께 바꾸지 않아도 된다.",
-            "verbatim": true
-          },
-          {
-            "label": "단점",
-            "text": "WeaponSystem이 방 정보를 직접 보관하는 방식보다 EnemyController의 초기화와 ITargeting 주입 흐름을 추가로 확인해야 한다.",
-            "verbatim": true
-          }
-        ],
-        "visuals": []
-      },
-      {
-        "key": "damage-decision",
-        "chapter": "decisions",
-        "layout": "full",
-        "tab": "선택",
-        "title": {
-          "text": "4.7 설계 고민: 투사체 피해 판정 시점 고민",
-          "verbatim": true
-        },
-        "lead": {
-          "text": "투사체가 발사된 뒤 실드 상태가 바뀔 수 있으므로, 발사 시점과 도착 시점 중 언제 피해를 확정할지 정해야 했다.",
-          "verbatim": true
-        },
-        "keywords": [
-          "발사 직후 확정",
-          "도착 시점 판정"
-        ],
-        "sectionPath": [
-          "4. 고민과 선택",
-          "4.7 설계 고민: 투사체 피해 판정 시점 고민"
-        ],
-        "points": [],
-        "visuals": [
-          {
-            "kind": "table",
-            "n": 1,
-            "fp": "선택지|현재 실드,방 상태 반영|피해 판정 책임|규칙 변경 시 수정 범위|흐름 확인"
-          }
-        ]
-      },
-      {
-        "key": "damage-solution",
-        "chapter": "decisions",
-        "layout": "overview",
-        "tab": "선택",
-        "title": {
-          "text": "4.8 선택한 해결책: 투사체 도착 시 피해 판정",
-          "verbatim": true
-        },
-        "lead": {
-          "text": "투사체는 이동과 충돌 요청 시점을 책임지고, CombatSystem은 도착 순간의 현재 실드·방 상태를 기준으로 피해를 해결한다.",
-          "verbatim": true
-        },
-        "keywords": [
-          "도착 순간",
-          "현재 상태",
-          "통합 테스트"
-        ],
-        "sectionPath": [
-          "4. 고민과 선택",
-          "4.8 선택한 해결책: 투사체 도착 시 피해 판정"
-        ],
-        "points": [
-          {
-            "label": "장점",
-            "text": "먼저 도착한 투사체가 실드를 제거하면 뒤이어 도착한 투사체는 현재 상태를 다시 확인해 방에 도달할 수 있다.",
-            "verbatim": true
-          },
-          {
-            "label": "단점",
-            "text": "이동, 트리거, 도착 순서 오류가 피해 판정 오류로 이어질 수 있어 시간 경과와 여러 투사체 순서를 포함한 통합 테스트가 필요하다.",
-            "verbatim": true
-          }
-        ],
-        "visuals": []
-      },
-      {
-        "key": "crew-scope",
-        "chapter": "decisions",
-        "layout": "full",
-        "tab": "선택",
-        "title": {
-          "text": "4.9 승무원 이동 범위: 직접 이동으로 최소 루프를 완성한 이유",
-          "verbatim": true
-        },
-        "lead": {
-          "text": "그래프 기반 최단 경로는 후순위로 두고, 선택·이동·수리·보조·피해가 이어지는 최소 기능을 먼저 구현했다.",
-          "verbatim": true
-        },
-        "keywords": [
-          "직접 이동",
-          "BFS 최단 경로",
-          "최소 루프"
-        ],
-        "sectionPath": [
-          "4. 고민과 선택",
-          "4.9 승무원 이동 범위: 직접 이동으로 최소 루프를 완성한 이유"
-        ],
-        "points": [
-          {
-            "label": "결과와 개선 방향",
-            "text": "직접 이동으로 선택→이동→작업→피해·사망 흐름을 기간 내 연결할 수 있었다.",
-            "verbatim": true
-          }
-        ],
-        "visuals": [
-          {
-            "kind": "table",
-            "n": 1,
-            "fp": "문제 정의|적용한 범위"
-          }
-        ]
-      },
-      {
-        "key": "crew-room-state",
-        "chapter": "decisions",
-        "layout": "full",
-        "tab": "선택",
-        "title": {
-          "text": "4.10 승무원과 방의 상태를 함께 관리한 이유",
-          "verbatim": true
-        },
-        "lead": {
-          "text": "승무원의 위치·작업과 방의 정원·피해·시설 상호작용을 현재 상태를 기준으로 연결했다.",
-          "verbatim": true
-        },
-        "keywords": [
-          "CurrentRoom",
-          "Crews 목록",
-          "명령 중계"
-        ],
-        "sectionPath": [
-          "4. 고민과 선택",
-          "4.10 승무원과 방의 상태를 함께 관리한 이유"
-        ],
-        "points": [
-          {
-            "label": "결과와 설계 판단",
-            "text": "필요한 연결은 유지하면서 결합이 지나치게 높아지는 것을 막는 구조로 정리했다.",
-            "verbatim": true
-          }
-        ],
-        "visuals": [
-          {
-            "kind": "table",
-            "n": 1,
-            "fp": "상태가 필요한 이유|현재 적용 구조"
-          }
-        ]
-      },
-      {
-        "key": "final-scope",
-        "chapter": "results",
-        "layout": "full",
         "tab": "결과",
         "title": {
-          "text": "5.1 최소 전투 루프와 실제 제작 범위",
+          "text": "배운 점",
           "verbatim": true
         },
         "lead": {
-          "text": "핵심 기능을 하나의 전투 루프로 연결하고, 실제 작업에서 소요된 설정·UI·시각 피드백까지 제작 범위로 다시 정의했다.",
+          "text": "이 사례에서 얻은 기준은 객체 사이의 참조 관계뿐 아니라 상태를 변경하는 모든 경로에서 같은 규칙이 적용되는지 확인해야 한다는 것입니다.",
           "verbatim": true
         },
         "keywords": [
-          "핵심 전투 루프",
-          "BFS 이동",
-          "시각 피드백"
+          "모든 변경 경로",
+          "공통 후처리"
         ],
         "sectionPath": [
-          "5. 결과 및 배운 점",
-          "5.1 최소 전투 루프와 실제 제작 범위"
+          "3. 개발 과정의 주요 사례",
+          "3.3 승무원과 방 — 상태를 변경하는 책임이 여러 곳에 흩어진 문제",
+          "배운 점"
         ],
         "points": [
           {
-            "label": "완성한 결과",
-            "text": "승무원의 BFS 이동을 제외하고, 전력·무기·승무원 기능을 적 자동 공격과 전투 결과까지 연결했다.",
+            "label": "",
+            "text": "데이터를 소유한 객체와 상태 변경을 요청하는 객체의 책임을 구분하고, 여러 경로에서 공통으로 수행해야 하는 후처리는 한곳에서 보장해야 합니다.",
+            "verbatim": true
+          },
+          {
+            "label": "",
+            "text": "이렇게 하면 새로운 상태 변경 경로가 추가되더라도 동일한 정리 작업을 빠뜨릴 가능성을 줄일 수 있습니다.",
             "verbatim": true
           }
         ],
-        "visuals": [
-          {
-            "kind": "table",
-            "n": 1,
-            "fp": "구분|최종 구현과 확인 범위"
-          }
-        ]
+        "visuals": []
       },
       {
-        "key": "ts-singleton",
-        "chapter": "results",
-        "layout": "problem",
-        "tab": "문제 해결",
+        "key": "loop-goal",
+        "chapter": "cases",
+        "layout": "overview",
+        "tab": "개요",
         "title": {
-          "text": "트러블슈팅: 씬 로드 시 싱글톤이 이전 데이터를 받지 못함",
+          "text": "목표 — FTL의 핵심 시스템만으로 전투 경험 재현",
           "verbatim": true
         },
-        "lead": null,
+        "lead": {
+          "text": "《FTL: Faster Than Light》에서 전력 배분, 무기 조준, 승무원 관리라는 세 가지 조작을 추려 최소 전투 루프를 구성했습니다.",
+          "verbatim": true
+        },
         "keywords": [
-          "초기화 순서",
-          "싱글톤",
-          "실행 순서 지정"
+          "세 가지 조작",
+          "최소 전투 루프"
         ],
         "sectionPath": [
-          "5. 결과 및 배운 점",
-          "5.2 트러블슈팅",
-          "트러블슈팅: 씬 로드 시 싱글톤이 이전 데이터를 받지 못함"
+          "3. 개발 과정의 주요 사례",
+          "3.4 핵심 루프 구현과 플레이 경험 — 기능을 줄이는 것만으로는 핵심 재미를 남길 수 없었다",
+          "목표 — FTL의 핵심 시스템만으로 전투 경험 재현"
         ],
         "points": [
           {
-            "label": "문제",
-            "text": "싱글톤 클래스 간 Awake 순서, 즉 초기화 순서가 제대로 보장되지 않아 문제가 발생했다.",
+            "label": "",
+            "text": "이를 위해 전력 배분 → 공격·수리 → 전투 결과 → 상점에서 정비 → 다음 전투가 이어지는 반복 구조를 우선 구현하기로 했습니다.",
+            "verbatim": true
+          }
+        ],
+        "visuals": []
+      },
+      {
+        "key": "loop-result",
+        "chapter": "cases",
+        "layout": "overview",
+        "tab": "결과",
+        "title": {
+          "text": "실제 구현 결과 — 루프는 완성했지만 선택의 폭이 좁았다",
+          "verbatim": true
+        },
+        "lead": {
+          "text": "기능을 재현한 것과 기능들이 결합해 만드는 플레이 경험을 재현한 것은 다른 목표였습니다.",
+          "verbatim": true
+        },
+        "keywords": [
+          "좁은 선택지",
+          "상호작용"
+        ],
+        "sectionPath": [
+          "3. 개발 과정의 주요 사례",
+          "3.4 핵심 루프 구현과 플레이 경험 — 기능을 줄이는 것만으로는 핵심 재미를 남길 수 없었다",
+          "실제 구현 결과 — 루프는 완성했지만 선택의 폭이 좁았다"
+        ],
+        "points": [
+          {
+            "label": "",
+            "text": "다양한 무기·시설이 만들어 내는 전투별 선택지",
             "verbatim": true
           },
           {
-            "label": "원인",
-            "text": "초기화 중 의존 관계가 있는 클래스 간에 명시적인 순서 지정을 해 놓지 않았다.",
+            "label": "",
+            "text": "화재·산소 고갈·강습 등 예기치 못한 함선 내부 상황",
             "verbatim": true
           },
           {
-            "label": "해결",
-            "text": "일단 빠르게 해결하기 위해 DefaultExecutionOrder를 지정해 해결했다.",
+            "label": "",
+            "text": "텍스트 이벤트와 선택지가 제공하는 항해 맥락과 몰입",
+            "verbatim": true
+          },
+          {
+            "label": "",
+            "text": "내 프로젝트에서는 이러한 선택의 폭과 사건의 변화가 제한적이었습니다.",
+            "verbatim": true
+          }
+        ],
+        "visuals": []
+      },
+      {
+        "key": "scope-misjudge",
+        "chapter": "cases",
+        "layout": "overview",
+        "tab": "결과",
+        "title": {
+          "text": "또 다른 판단 오류 — 구현해야 할 일의 범위를 코드 중심으로 추정",
+          "verbatim": true
+        },
+        "lead": {
+          "text": "최초 일정은 핵심 기능을 순서대로 구현하는 7단계 계획이었습니다.",
+          "verbatim": true
+        },
+        "keywords": [
+          "7단계 계획",
+          "에디터 작업",
+          "약 3주"
+        ],
+        "sectionPath": [
+          "3. 개발 과정의 주요 사례",
+          "3.4 핵심 루프 구현과 플레이 경험 — 기능을 줄이는 것만으로는 핵심 재미를 남길 수 없었다",
+          "또 다른 판단 오류 — 구현해야 할 일의 범위를 코드 중심으로 추정"
+        ],
+        "points": [
+          {
+            "label": "",
+            "text": "하지만 실제 작업은 약 3주가 걸렸고, 전력·시설 단계는 4일, 최종 통합·피드백 단계는 6일이 걸렸습니다.",
+            "verbatim": true
+          },
+          {
+            "label": "",
+            "text": "처음 접하는 Unity 에디터 작업과 데이터 연결에 예상보다 많은 시간을 사용했습니다.",
+            "verbatim": true
+          },
+          {
+            "label": "",
+            "text": "작은 기능도 메인 전투 씬에서 바로 테스트했기 때문에 프로젝트 후반으로 갈수록 재현과 확인에 걸리는 시간도 증가했습니다.",
+            "verbatim": true
+          }
+        ],
+        "visuals": []
+      },
+      {
+        "key": "loop-next",
+        "chapter": "cases",
+        "layout": "overview",
+        "tab": "결과",
+        "title": {
+          "text": "결과와 다음 프로젝트에서 적용할 기준",
+          "verbatim": true
+        },
+        "lead": {
+          "text": "다음에는 기능 목록을 줄이기 전에 남길 핵심 경험과 그 경험을 만드는 상호작용을 먼저 정의하겠습니다.",
+          "verbatim": true
+        },
+        "keywords": [
+          "핵심 경험 먼저",
+          "완료 기준"
+        ],
+        "sectionPath": [
+          "3. 개발 과정의 주요 사례",
+          "3.4 핵심 루프 구현과 플레이 경험 — 기능을 줄이는 것만으로는 핵심 재미를 남길 수 없었다",
+          "결과와 다음 프로젝트에서 적용할 기준"
+        ],
+        "points": [
+          {
+            "label": "결과",
+            "text": "프로젝트를 통해 전투·정비 루프의 최소 동작을 구현하는 목표는 달성했습니다.",
             "verbatim": true
           },
           {
             "label": "결과",
-            "text": "고친 뒤에는 핵심 플레이 루프(전투 → 상점 → 다음 전투)를 반복해 이상이 없는 것을 확인했다.",
+            "text": "반면 원작과 유사한 전략적 경험을 제공했는지는 검증하지 못했습니다.",
+            "verbatim": true
+          },
+          {
+            "label": "",
+            "text": "새로운 시스템을 넓게 추가하기 전에 이미 구현한 한 사이클을 실제 플레이어가 이해하고 판단할 수 있는 수준으로 완성하는 것이 우선입니다.",
             "verbatim": true
           }
         ],
-        "visuals": [
+        "visuals": []
+      },
+      {
+        "key": "targeting",
+        "chapter": "results",
+        "layout": "overview",
+        "tab": "선택",
+        "title": {
+          "text": "적 조준 규칙 분리 — 기획한 범위보다 큰 설계",
+          "verbatim": true
+        },
+        "lead": {
+          "text": "적 무기가 공격할 플레이어 방을 고르는 규칙을 무기 시스템 밖으로 빼기 위해 `ITargeting` 인터페이스를 두었습니다.",
+          "verbatim": true
+        },
+        "keywords": [
+          "ITargeting",
+          "과한 분리"
+        ],
+        "sectionPath": [
+          "4. 결과와 회고",
+          "4.2 무기 쪽에서 겪은 시행착오",
+          "적 조준 규칙 분리 — 기획한 범위보다 큰 설계"
+        ],
+        "points": [
           {
-            "kind": "code",
-            "n": 1,
-            "fp": "namespace Utilities"
+            "label": "실제로 만든 것",
+            "text": "조준 규칙은 랜덤으로 방 하나를 고르는 `RandomTargeter` 하나였습니다.",
+            "verbatim": true
           },
           {
-            "kind": "code",
-            "n": 2,
-            "fp": "namespace Utilities"
+            "label": "남은 비용",
+            "text": "`EnemyController`가 Targeter를 만들어 `WeaponSystem`에 주입하는 초기화 흐름을 따로 따라가야 했습니다.",
+            "verbatim": true
+          },
+          {
+            "label": "배운 점",
+            "text": "인터페이스는 두 번째 규칙이 실제로 필요해질 때 나눠도 늦지 않습니다.",
+            "verbatim": true
           }
-        ]
+        ],
+        "visuals": []
+      },
+      {
+        "key": "damage-timing",
+        "chapter": "results",
+        "layout": "overview",
+        "tab": "선택",
+        "title": {
+          "text": "투사체 피해 판정 시점 — 통합 테스트가 필요한 이유",
+          "verbatim": true
+        },
+        "lead": {
+          "text": "투사체가 날아가는 동안 실드 상태가 바뀔 수 있어, 발사 시점과 도착 시점 중 언제 피해를 확정할지 정해야 했습니다.",
+          "verbatim": true
+        },
+        "keywords": [
+          "도착 시 판정",
+          "통합 테스트"
+        ],
+        "sectionPath": [
+          "4. 결과와 회고",
+          "4.2 무기 쪽에서 겪은 시행착오",
+          "투사체 피해 판정 시점 — 통합 테스트가 필요한 이유"
+        ],
+        "points": [
+          {
+            "label": "선택",
+            "text": "`ProjectileController`가 실드에 부딪히거나 목표 방에 닿을 때 `CombatSystem`에 현재 상태 판정을 요청하게 했습니다.",
+            "verbatim": true
+          },
+          {
+            "label": "대가",
+            "text": "호출 흐름이 `WeaponController` → `ProjectileController` → `CombatSystem` → 실드·방으로 길어졌습니다.",
+            "verbatim": true
+          },
+          {
+            "label": "배운 점",
+            "text": "여러 투사체의 도착 순서를 포함한 통합 테스트가 필요합니다.",
+            "verbatim": true
+          }
+        ],
+        "visuals": []
       },
       {
         "key": "ts-dead-coroutine",
@@ -2023,7 +1493,7 @@
         "layout": "problem",
         "tab": "문제 해결",
         "title": {
-          "text": "트러블슈팅: 함선 사망 코루틴 중복 실행",
+          "text": "함선 사망 코루틴 중복 실행",
           "verbatim": true
         },
         "lead": null,
@@ -2032,39 +1502,33 @@
           "한 번만 실행"
         ],
         "sectionPath": [
-          "5. 결과 및 배운 점",
-          "5.2 트러블슈팅",
-          "트러블슈팅: 함선 사망 코루틴 중복 실행"
+          "4. 결과와 회고",
+          "4.3 그 밖에 겪은 문제",
+          "함선 사망 코루틴 중복 실행"
         ],
         "points": [
           {
             "label": "문제",
-            "text": "게임오버 뒤 사망 코루틴이 비정상적으로 여러 번 실행되어, 씬을 불러올 때 콘솔이 에러 로그로 도배되었다.",
+            "text": "게임오버 뒤 사망 코루틴이 여러 번 실행되어, 씬을 불러올 때 콘솔이 에러 로그로 도배되었습니다.",
             "verbatim": true
           },
           {
             "label": "원인",
-            "text": "코루틴이 한 번만 실행되도록 보장해야 하는데, 해당 처리가 빠져 있었다.",
+            "text": "승무원 전멸과 함선 파괴를 각각 검사해 코루틴을 시작했고, 코루틴이 한 번만 실행되도록 보장하는 처리가 빠져 있었습니다.",
             "verbatim": true
           },
           {
             "label": "해결",
-            "text": "코루틴 실행 상태를 저장하는 클래스 멤버를 추가해 한 번만 실행되도록 보장했다.",
+            "text": "코루틴 실행 상태를 저장하는 멤버를 추가해 한 번만 실행되도록 했습니다.",
             "verbatim": true
           },
           {
             "label": "결과",
-            "text": "고친 뒤에는 결과 화면이 한 번만 뜨는 것을 확인했다.",
+            "text": "고친 뒤 결과 화면이 한 번만 뜨는 것을 확인했습니다.",
             "verbatim": true
           }
         ],
-        "visuals": [
-          {
-            "kind": "code",
-            "n": 2,
-            "fp": "EBattleResult battleResult = EBattleResult.None;"
-          }
-        ]
+        "visuals": []
       },
       {
         "key": "ts-projectile",
@@ -2072,54 +1536,42 @@
         "layout": "problem",
         "tab": "문제 해결",
         "title": {
-          "text": "트러블슈팅: 투사체 발사 방향과 회전이 어긋남",
+          "text": "투사체 발사 방향과 회전이 어긋남",
           "verbatim": true
         },
         "lead": null,
         "keywords": [
-          "발사 방향",
-          "목표 지점",
-          "회전"
+          "targetPos",
+          "회전 방향"
         ],
         "sectionPath": [
-          "5. 결과 및 배운 점",
-          "5.2 트러블슈팅",
-          "트러블슈팅: 투사체 발사 방향과 회전이 어긋남"
+          "4. 결과와 회고",
+          "4.3 그 밖에 겪은 문제",
+          "투사체 발사 방향과 회전이 어긋남"
         ],
         "points": [
           {
             "label": "문제",
-            "text": "적 함선의 가운데가 아닌 방을 조준하면, 투사체가 목표 방으로 날아가면서도 머리는 함선 가운데를 향해 비스듬히 날아가는 현상이 있었다.",
+            "text": "적 함선의 가운데가 아닌 방을 조준하면, 투사체가 목표 방으로 날아가면서도 머리는 함선 가운데를 향해 비스듬히 날아갔습니다.",
             "verbatim": true
           },
           {
             "label": "원인",
-            "text": "공격하는 방의 목표 지점(targetPos)을 향하게 했어야 했는데, 함선의 중심 지점을 바라볼 지점으로 착각해 문제가 발생했다.",
+            "text": "회전 방향을 공격하는 방의 목표 지점(`targetPos`)이 아니라 함선의 중심 지점으로 계산했습니다.",
             "verbatim": true
           },
           {
             "label": "해결",
-            "text": "함선 중심 지점 대신, 투사체가 가지고 있던 이동할 방의 목표 지점을 바라보도록 회전 방향을 바꾸니 문제가 해결되었다.",
+            "text": "투사체가 가진 목표 지점을 바라보도록 회전 방향을 바꿨습니다.",
             "verbatim": true
           },
           {
             "label": "결과",
-            "text": "고친 뒤에는 투사체 스프라이트가 바라보는 방향이 목표 지점과 일치하는 것을 확인했다.",
+            "text": "고친 뒤 스프라이트가 바라보는 방향이 목표 지점과 일치하는 것을 확인했습니다.",
             "verbatim": true
           }
         ],
-        "visuals": [
-          {
-            "kind": "code",
-            "n": 1,
-            "fp": "Vector3 spawnPos = GetRandomPositionOnColliderEdge("
-          },
-          {
-            "kind": "code",
-            "n": 2,
-            "fp": "Vector3 spawnPos = GetRandomPositionOnColliderEdge("
-          }
-        ]
+        "visuals": []
       },
       {
         "key": "ts-cursor",
@@ -2127,171 +1579,71 @@
         "layout": "problem",
         "tab": "문제 해결",
         "title": {
-          "text": "트러블슈팅: 조준 중 일시정지하면 마우스 커서가 사라짐",
+          "text": "조준 중 일시정지하면 마우스 커서가 사라짐",
           "verbatim": true
         },
         "lead": null,
         "keywords": [
           "일시정지",
-          "커서 UI",
-          "UI 초기화"
+          "조준 UI 초기화"
         ],
         "sectionPath": [
-          "5. 결과 및 배운 점",
-          "5.2 트러블슈팅",
-          "트러블슈팅: 조준 중 일시정지하면 마우스 커서가 사라짐"
+          "4. 결과와 회고",
+          "4.3 그 밖에 겪은 문제",
+          "조준 중 일시정지하면 마우스 커서가 사라짐"
         ],
         "points": [
           {
             "label": "문제",
-            "text": "조준 중 메인 메뉴 키를 눌러 게임 상태가 멈출 때, 커서 UI와 무기 조준 UI가 제대로 초기화되지 않는 문제가 있었다.",
+            "text": "조준 중 메뉴를 열어 게임이 멈출 때, 커서 UI와 무기 조준 UI가 초기화되지 않았습니다.",
             "verbatim": true
           },
           {
             "label": "원인",
-            "text": "일시정지할 때 가지고 있는 무기 정보만 초기화할 것이 아니라, 연결된 UI(무기 조준점 스프라이트, 커서 스프라이트 등)도 같이 초기화했어야 했는데 관련 지점이 누락됐다.",
+            "text": "선택 해제(`ResetSelectedWeapon`)가 무기 정보만 비우고, 연결된 커서 스프라이트·조준점 스프라이트·무기에 저장된 목표는 되돌리지 않았습니다.",
             "verbatim": true
           },
           {
             "label": "해결",
-            "text": "무기 조준 정보와 더불어 UI 초기화 로직도 추가하니 해결됐다.",
+            "text": "선택 해제에서 조준점·커서 스프라이트와 무기의 목표를 함께 되돌리고, Esc 입력 처리를 조작 가능 검사보다 앞으로 옮겼습니다.",
             "verbatim": true
           },
           {
             "label": "결과",
-            "text": "고친 뒤에는 Esc처럼 조준을 해제하는 동작을 했을 때 커서 상태와 조준 스프라이트 상태가 함께 맞춰지는 것을 확인했다.",
-            "verbatim": true
-          }
-        ],
-        "visuals": [
-          {
-            "kind": "code",
-            "n": 1,
-            "fp": "public void ResetSelectedWeapon()"
-          },
-          {
-            "kind": "code",
-            "n": 2,
-            "fp": "public void ResetSelectedWeapon()"
-          }
-        ]
-      },
-      {
-        "key": "schedule",
-        "chapter": "results",
-        "layout": "full",
-        "tab": "결과",
-        "title": {
-          "text": "5.3 일정 추정과 실제 진행",
-          "verbatim": true
-        },
-        "lead": {
-          "text": "실제 제작 기간은 기획·설계·에셋 준비 1주를 포함해 2026-06-16부터 07-06까지였고, 후반부에는 통합 테스트·UI 대응·시각 피드백 작업이 많았다.",
-          "verbatim": true
-        },
-        "keywords": [
-          "계획한 1~7일차",
-          "21일",
-          "통합 테스트"
-        ],
-        "sectionPath": [
-          "5. 결과 및 배운 점",
-          "5.3 일정 추정과 실제 진행"
-        ],
-        "points": [
-          {
-            "label": "실제 기록",
-            "text": "전력·시설 연결은 1일 계획에 비해 4일이 걸렸다.",
-            "verbatim": true
-          },
-          {
-            "label": "느낀점",
-            "text": "기능 단위를 코드만으로 잡지 않는다.",
-            "verbatim": true
-          }
-        ],
-        "visuals": [
-          {
-            "kind": "table",
-            "n": 2,
-            "fp": "단계|실제 일수"
-          }
-        ]
-      },
-      {
-        "key": "patterns",
-        "chapter": "results",
-        "layout": "overview",
-        "tab": "결과",
-        "title": {
-          "text": "5.4 반복된 판단 패턴과 다음 개발 기준",
-          "verbatim": true
-        },
-        "lead": {
-          "text": "속도와 설계 안정성 사이의 기준을 세우고, 최소 루프를 완성하는 방식으로 개발 과정을 조정했다.",
-          "verbatim": true
-        },
-        "keywords": [
-          "30분 구현 규칙",
-          "사용자 기준 테스트",
-          "속도와 안정성"
-        ],
-        "sectionPath": [
-          "5. 결과 및 배운 점",
-          "5.4 반복된 판단 패턴과 다음 개발 기준"
-        ],
-        "points": [
-          {
-            "label": "30분 구현 규칙",
-            "text": "완벽한 설계를 찾기 위해 오래 고민하기보다, 30분 안에 결론을 내리지 못하면 가장 단순한 구현으로 먼저 검증했다.",
-            "verbatim": true
-          },
-          {
-            "label": "사용자 기준 테스트",
-            "text": "테스트 범위를 조절해 구현 속도를 유지할 수 있었다.",
-            "verbatim": true
-          },
-          {
-            "label": "속도와 안정성의 절충",
-            "text": "확장 가능성만으로 구조를 늘리기보다, 현재 루프를 완성하는 데 필요한 안정성을 우선했다.",
-            "verbatim": true
-          },
-          {
-            "label": "기본 테스트케이스 보완",
-            "text": "다음에는 기능별 최소 테스트 목록에 정상·오류·경계값을 함께 포함한다.",
+            "text": "고친 뒤 조준을 해제하면 커서와 조준 스프라이트 상태가 함께 맞춰지는 것을 확인했습니다.",
             "verbatim": true
           }
         ],
         "visuals": []
       },
       {
-        "key": "next-structure",
+        "key": "assumptions",
         "chapter": "results",
         "layout": "full",
         "tab": "결과",
         "title": {
-          "text": "5.5 구현하며 드러난 구조 문제와 다음 구현 방향",
+          "text": "4.4 처음 가정과 실제, 이후 기준",
           "verbatim": true
         },
         "lead": {
-          "text": "게임 루프에 필요한 기능을 먼저 동작하게 만든 뒤, 실제 코드에서 드러난 구조 문제와 다음에 바꿀 방향을 정리했다.",
+          "text": "네 사례를 통해 처음 세웠던 네 가지 가정을 수정했습니다.",
           "verbatim": true
         },
         "keywords": [
-          "구조 문제",
-          "상태 패턴",
-          "비동기 초기화"
+          "처음 가정",
+          "확인한 점",
+          "이후 기준"
         ],
         "sectionPath": [
-          "5. 결과 및 배운 점",
-          "5.5 구현하며 드러난 구조 문제와 다음 구현 방향"
+          "4. 결과와 회고",
+          "4.4 처음 가정과 실제, 이후 기준"
         ],
         "points": [],
         "visuals": [
           {
             "kind": "table",
             "n": 1,
-            "fp": "기능|게임 루프에서 필요했던 것|실제 구현|드러난 구조 문제|다음에 만든다면"
+            "fp": "초기 가정|실제로 확인한 점|이후 적용할 기준"
           }
         ]
       }

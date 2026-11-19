@@ -12,7 +12,7 @@
         "verbatim": true
       },
       "lead": {
-        "text": "공격 클래스는 템플릿 메서드 형태로 되어 있다.",
+        "text": "공격 클래스는 템플릿 메서드 형태로 되어 있습니다.",
         "verbatim": true
       },
       "keywords": [
@@ -27,22 +27,22 @@
       "points": [
         {
           "label": "Windup 예고",
-          "text": "매 틱 대상 쪽으로 몸을 돌리고, 예고 시간(TelegraphTime)이 지나면 Active로 넘어간다.",
+          "text": "매 틱 대상 쪽으로 몸을 돌리고, 예고 시간(TelegraphTime)이 지나면 Active로 넘어갑니다.",
           "verbatim": true
         },
         {
           "label": "Active 공격",
-          "text": "판정 시각(Active 시작 + Active 길이 × HitTimeRatio)부터 OnActive를 매 틱 부른다.",
+          "text": "판정 시각(Active 시작 + Active 길이 × HitTimeRatio)부터 OnActive를 매 틱 부릅니다.",
           "verbatim": true
         },
         {
           "label": "Recover 회복",
-          "text": "회복 시간(RecoveryTime) 동안 멈춰, 플레이어에게 반격 기회를 준다.",
+          "text": "회복 시간(RecoveryTime) 동안 멈춰, 플레이어에게 반격 기회를 줍니다.",
           "verbatim": true
         },
         {
           "label": "Cooldown 대기",
-          "text": "회복이 끝나는 순간 nextReadyTime을 정하고 공격을 끝낸다.",
+          "text": "회복이 끝나는 순간 nextReadyTime을 정하고 공격을 끝냅니다.",
           "verbatim": true
         }
       ],
@@ -86,22 +86,22 @@
       "points": [
         {
           "label": "이유",
-          "text": "한 라운드 안에서도 시간대마다 위협을 바꿔, 플레이어가 한 자리에 머물지 않고 계속 움직이게 하고 싶었다.",
+          "text": "한 라운드 안에서도 시간대마다 위협을 바꿔, 플레이어가 한 자리에 머물지 않고 계속 움직이게 하고 싶었습니다.",
           "verbatim": true
         },
         {
           "label": "",
-          "text": "초반에는 사방에서 근접 몬스터가 몰려오고, 중반에는 독안개로 한 자리에 버티기 어렵게 만든 뒤 측면·공중 몬스터와 보급으로 이동을 유도한다.",
+          "text": "초반에는 사방에서 근접 몬스터가 몰려오고, 중반에는 독안개로 한 자리에 버티기 어렵게 만든 뒤 측면·공중 몬스터와 보급으로 이동을 유도합니다.",
           "verbatim": true
         },
         {
           "label": "",
-          "text": "후반에는 돌진형이 합류해 수류탄으로 포위를 뚫고 나가게 한다.",
+          "text": "후반에는 돌진형이 합류해 수류탄으로 포위를 뚫고 나가게 합니다.",
           "verbatim": true
         },
         {
           "label": "구현",
-          "text": "이렇게 시간대별 몬스터 묶음을 나누려고 라운드와 웨이브 사이에 스테이지를 하나 더 두었다.",
+          "text": "이렇게 시간대별 몬스터 묶음을 나누려고 라운드와 웨이브 사이에 스테이지를 하나 더 두었습니다.",
           "verbatim": true
         }
       ],
