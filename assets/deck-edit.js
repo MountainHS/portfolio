@@ -208,7 +208,9 @@
     const matching = candidates.filter((ref) => {
       const picked = PF.md.pick(session.source.parsed, ref, slide.sectionPath || []);
       if (picked.el === undefined) return false;
-      if (kind === 'code') return normalizedText(picked.el.querySelector('pre') || picked.el).includes(figureText);
+      // 슬라이드 코드는 괄호 절 번호 참조를 숨기고 그리므로(project-deck.js) 원문 쪽도 같이 지운 뒤 견줌
+      const sourceText = PF.md.dropRefs(normalizedText(picked.el.querySelector('pre') || picked.el), PF.md.sectionNumbers(session.source.parsed));
+      if (kind === 'code') return sourceText.includes(figureText);
       return normalizedText(picked.el.querySelector('thead')) === figureText;
     });
     return matching.length === 1 ? matching[0] : null;

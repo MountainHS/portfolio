@@ -13,7 +13,11 @@
   const deck = document.getElementById('deck');
   const info = (PFScene.info = { page: 'project', id, t: {}, summary: {}, overflow: [], errors: [], unresolved: [], notes: [], mode: '' });
   const mark = (k) => { info.t[k] = Math.round(performance.now()); };
-  const { esc, inline, shortUrl, DOT, link } = PF;
+  const { esc, shortUrl, DOT, link } = PF;
+  // 절 번호·파일:줄 괄호 참조는 슬라이드에서 숨김(이 포크 전용, PF.md.dropRefs). 번호 → 제목 id는 문서를 읽은 뒤 채움
+  let refNumbers;
+  const dropRefs = (text) => PF.md.dropRefs(text, refNumbers);
+  const inline = (s) => dropRefs(PF.inline(s));
   const MAXL = 24;                                                     // 코드 한 장면 24줄까지(이 포크: 20 → 24), 넘으면 "계속" 장면
 
   // ── 옛 주소(결정 G3) ──
@@ -65,6 +69,7 @@
     }
     const P = PF.md.parse(md, p.id);
     info.headings = P.headings.length;
+    refNumbers = PF.md.sectionNumbers(P);
     await strings;
     mark('data');
     const render = () => renderAll(pf, p, P);
@@ -148,7 +153,7 @@
     const code = document.createElement('code');
     code.textContent = text;
     if (lang && window.hljs && hljs.getLanguage(lang)) { code.className = `language-${lang}`; try { hljs.highlightElement(code); } catch { /* 강조 없이 */ } }
-    return code.outerHTML;
+    return dropRefs(code.outerHTML);
   }
   function vboxHtml(v, chunk) {
     if (v.status === 'missing' || v.status === 'ambiguous') return `<figure class="vbox err">${PF.vband(`visual-${v.status}`, v.detail, v.edited)}</figure>`;
@@ -179,13 +184,13 @@
         i.loading = 'lazy'; i.decoding = 'async';
       });
       if (chunk) { const rows = [...t.querySelectorAll('tbody tr')]; rows.forEach((r, i) => { if (i < chunk[0] || i >= chunk[1]) r.remove(); }); }
-      return `<figure class="vbox" data-kind="table"><div class="vmedia"><div class="fit-in">${t.outerHTML}</div></div>${cap(v.ref.caption?.text ? inline(v.ref.caption.text) : '')}${warn}</figure>`;
+      return `<figure class="vbox" data-kind="table"><div class="vmedia"><div class="fit-in">${dropRefs(t.outerHTML)}</div></div>${cap(v.ref.caption?.text ? inline(v.ref.caption.text) : '')}${warn}</figure>`;
     }
     return '';
   }
 
   // ── 장면 틀(deck.slides[].layout) ──
-  const txt = (t) => (t && typeof t === 'object' ? t.text : t) || '';
+  const txt = (t) => dropRefs((t && typeof t === 'object' ? t.text : t) || '');
   const ncards = (points, { row = false, num = true, two = false } = {}) => (points.length
     ? `<div class="cards${row ? ' row' : ''}${two ? ' two' : ''}" style="--n:${Math.min(points.length, 4)}">${points.map((pt, i) =>
       `<div class="ncard${num ? '' : ' nonum'}">${num ? `<span class="num" aria-hidden="true">${i + 1}</span>` : ''}<div>${pt.label ? `<span class="lb">${esc(PF.label(pt.label))}</span>` : ''}<p>${inline(txt(pt))}</p></div></div>`).join('')}</div>` : '');

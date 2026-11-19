@@ -55,6 +55,14 @@ paths:
 - `/portfolio-update`가 템플릿 원본으로 덮으면 다시 고칠 곳(원본은 15~30장·30장 초과 시 빼기): `.claude/skills/portfolio-build/SKILL.md` §6 분량·§7 `many-scenes` 행, `schema.md` 「분량」, `deck-edits.py`의 `n1 > 40` 안내, `.claude/skills/portfolio-edit/SKILL.md`의 "40장 넘으면 알림", `assets/project-deck.js`의 `all.length > 40` `many-scenes` 알림, `assets/deck-common.js` 주석, `format/01-portfolio.md`·`format/02-tech-document.md`·`README.md`의 숫자.
 - 코드 한 장면 상한은 **24줄**입니다(원본 20줄, 2026-11-11 Hive Purge `MonsterAttack.Tick` 세 단계를 한 장에 띄우려고 바꿈). `/portfolio-update`가 덮으면 `assets/project-deck.js`의 `const MAXL = 24;`와 그 아래 `slideScenes` 위 주석을 다시 고칩니다. 스킬·`schema.md`·`.claude/rules/portfolio-writing.md` 규칙 3의 "20줄" 글은 아직 그대로입니다.
 
+## 절 번호 참조 링크·숨김 (이 포크 전용)
+
+- 프로젝트 문서 본문의 절 번호 참조(`(3.2)`·`(4.1~4.4)`·`(5.2-1)`·`3.7절`·`4.1에서`)와 파일:줄 참조(`` (`code/X.cs:44`) ``)는 md에 그대로 둡니다(2026-11-19 사용자 결정). 렌더러가 처리합니다.
+  - 상세 문서(`doc.html`): 그 번호로 시작하는 제목의 slug 링크, `code/X.cs`는 `src/<폴더>/code/X.cs` 새 탭 링크. 제목에 없는 번호(버전 `17.3.0`·`0.25초`)와 코드 블록·제목 안은 그대로.
+  - 슬라이드(`project.html`): 괄호째 참조를 숨김(장면 글·카드·캡션·표·코드 주석, 다이어그램 SVG 제외). 문장형("3.7에서 다룬다.")은 숨기지 않습니다.
+- 코드 위치: `assets/md-blocks.js`의 `sectionNumbers`·`dropRefs`(공용), `assets/doc.js`의 `linkRefs`(renderDoc ③-2에서 부름), `assets/project-deck.js` 위쪽 `refNumbers`·`dropRefs`·`inline` 재정의와 `txt`·`codeHtml`·표 `outerHTML`의 `dropRefs`, `assets/deck-edit.js` 코드 그림 대조의 `dropRefs`.
+- 원 레포를 머지할 때 위 네 파일의 이 부분이 충돌하거나 사라질 수 있습니다. 머지 뒤 `doc.html?p=<id>`에서 참조가 링크인지, `project.html?p=<id>&pf-audit=1` dump에 괄호 참조가 없는지 확인합니다.
+
 ## 명령 패널 (이 포크 전용)
 
 - Claude 데스크톱 앱의 채팅 옆 패널 "포트폴리오 명령"(mod `portfolio-panel`). 이 레포를 연 세션에서 자동으로 뜨고, 닫았으면 `/portfolio-panel`로 다시 엽니다. README 「도구 한눈에」의 명령을 단계별 버튼으로 보여 주고, 맨 위에서 고른 프로젝트(`src/` 폴더, `_`로 시작하는 폴더 제외)를 명령 뒤에 붙입니다.

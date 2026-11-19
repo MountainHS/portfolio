@@ -136,6 +136,8 @@
 
     // ③ 링크 분류(§5-2)
     frag.querySelectorAll('a[href]').forEach((a) => classifyMdLink(a, isRelative, decode));
+    // ③-2 절 번호·파일:줄 참조 → 링크(이 포크 전용). 코드 블록·제목·기존 링크 안은 그대로
+    linkRefs(frag, PF.md.sectionNumbers({ headings: hs }));
     doc.replaceChildren(frag);
 
     // ④ 제목 찾기(#sec=<절 제목> 딥링크용, PF.resolveHeading: 정확히 일치 → 앞부분 양방향 일치, 여럿이면 문서 순서상 첫 번째)
@@ -286,6 +288,66 @@
     if (other) { a.setAttribute('href', `${PF.docUrl(other[1])}${frag}`); return markNewTab(a); }   // 다른 프로젝트의 문서 → 그 상세 문서
     a.setAttribute('href', srcPath(path) + frag);                      // 그 밖의 상대 파일: 원문 파일
     markNewTab(a);
+  }
+
+  /**
+   * 본문의 절 번호(3.2·5.2-1·4.1~4.4의 양끝·3.7절의 3.7)를 그 번호로 시작하는 제목(#slug) 링크로,
+   * `code/X.cs:44`(인라인 코드·맨 글자)를 src/<폴더>/code/X.cs 링크(새 탭)로 바꿈. 번호에 맞는 제목이 없으면 글 그대로.
+   * renderDoc이 링크 분류 직후, 문서에 붙이기 전의 frag에 부름. numbers = PF.md.sectionNumbers 결과(번호 → 제목 id).
+   */
+  function linkRefs(frag, numbers) {
+    const SKIP = 'pre, a, h1, h2, h3, h4, h5, h6';
+    const FILE_ONLY = new RegExp(`^${PF.md.FILE_PATH}$`);
+    // 앞이 숫자·점·글자가 아니고, 뒤가 조사·괄호·구분 기호·공백·문장 끝인 번호만(17.3.0 버전·0.25초·1.5배는 제외)
+    const AFTER = String.raw`(?=절|장|에서|의|에|과|와|을|를|은|는|이|가|로|까지|부터|[)\],·~∼\s/]|\.(?!\d)|$)`;
+    const PATTERN = new RegExp(String.raw`(?<![\w.])(${PF.md.SECTION_NUMBER})${AFTER}|(?<![\w/])(${PF.md.FILE_PATH})`, 'g');
+    const fileLink = (path, label) => {
+      const a = document.createElement('a');
+      a.href = srcPath(path.replace(/:.*$/, ''));
+      a.className = 'pf-ref';
+      a.textContent = label;
+      markNewTab(a);
+      return a;
+    };
+
+    frag.querySelectorAll('code').forEach((code) => {
+      if (code.closest(SKIP)) return;
+      const text = code.textContent.trim();
+      if (FILE_ONLY.test(text) === false) return;
+      const a = fileLink(text, '');
+      code.replaceWith(a);
+      a.prepend(code);
+    });
+
+    const walker = document.createTreeWalker(frag, NodeFilter.SHOW_TEXT);
+    const textNodes = [];
+    for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+      if (node.parentElement?.closest(`${SKIP}, code, .mmd`)) continue;
+      textNodes.push(node);
+    }
+    textNodes.forEach((node) => {
+      const text = node.nodeValue;
+      const pieces = [];
+      let last = 0;
+      for (const m of text.matchAll(PATTERN)) {
+        const [whole, number, path] = m;
+        const isKnownSection = number !== undefined && numbers.has(number);
+        if (isKnownSection === false && path === undefined) continue;
+        pieces.push(text.slice(last, m.index));
+        if (path !== undefined) pieces.push(fileLink(path, path));
+        else {
+          const a = document.createElement('a');
+          a.href = `#${numbers.get(number)}`;
+          a.className = 'pf-ref';
+          a.textContent = whole;
+          pieces.push(a);
+        }
+        last = m.index + whole.length;
+      }
+      if (pieces.length === 0) return;
+      pieces.push(text.slice(last));
+      node.replaceWith(...pieces.filter((x) => x !== ''));
+    });
   }
 
   function trackSection(list) {

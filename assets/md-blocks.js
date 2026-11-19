@@ -112,5 +112,42 @@
     return null;
   }
 
-  PF.md = { parse, index, findSection, pick, fpOf, firstVisual, isRelative, decode };
+  // ── 절 번호 참조 (이 포크 전용, 2026-11-19) ──
+  //   프로젝트 문서 본문의 (3.2)·(4.1~4.4)·(5.2-1)·(4.2의 2단계, 3.4)·3.7절 같은 절 번호와 (`code/X.cs:44`) 같은 파일:줄 참조.
+  //   상세 문서(doc.js)는 링크로 바꾸고, 슬라이드(project-deck.js)는 괄호째 숨깁니다. 문서 md는 그대로 둡니다.
+  const SECTION_NUMBER = String.raw`\d+(?:\.\d+)+(?:-\d+)?`;
+  const SECTION_RANGE = String.raw`${SECTION_NUMBER}(?:\s*\\?[~∼〜]\s*${SECTION_NUMBER})?`;
+  const SECTION_ITEM = String.raw`${SECTION_RANGE}(?:절|장)?(?:의\s*[^()<>,·]{1,15}?)?`;
+  const LINE_RANGE = String.raw`\d+(?:[-~]\d+)?`;
+  const FILE_PATH = String.raw`code\/[\w.\/-]+?\.\w+(?::${LINE_RANGE}(?:,\s?${LINE_RANGE})*)?`;
+  const FILE_ITEM = String.raw`(?:\x60|<code[^>]*>)?${FILE_PATH}(?:\x60|<\/code>)?`;
+  const REF_ITEM = `(?:${SECTION_ITEM}|${FILE_ITEM})`;
+  const REF_SEPARATOR = String.raw`\s*(?:,|·|&middot;|\/)\s*`;
+  const PAREN_REF = new RegExp(String.raw`\s*\(\s*${REF_ITEM}(?:${REF_SEPARATOR}${REF_ITEM})*\s*\)`, 'g');
+  const SECTION_NUMBER_GLOBAL = new RegExp(SECTION_NUMBER, 'g');
+
+  /** 제목 앞 번호(3.2·1.2.1·5.2-1) → 제목 id. 점이나 하이픈이 없는 번호(장 "1. 개요")는 넣지 않음. 참조 링크·숨김이 실제 절인지 가릴 때 씀. */
+  function sectionNumbers(P) {
+    const numbers = new Map();
+    for (const heading of P.headings) {
+      const number = /^(\d+(?:[.-]\d+)+)\.?\s/.exec(heading.text)?.[1];
+      if (number === undefined) continue;
+      if (numbers.has(number)) continue;
+      numbers.set(number, heading.id);
+    }
+    return numbers;
+  }
+
+  /** 글(md 원문·HTML 모두)에서 괄호째 참조를 지움. 괄호 안 절 번호가 하나라도 numbers에 없으면(버전 17.3.0 등) 그대로 둠. */
+  function dropRefs(text, numbers) {
+    if (!text || numbers === undefined) return text;
+    return String(text).replace(PAREN_REF, (found) => {
+      const withoutFiles = found.replace(new RegExp(FILE_ITEM, 'g'), '');
+      const cited = withoutFiles.match(SECTION_NUMBER_GLOBAL) || [];
+      const isEveryCitedSection = cited.every((number) => numbers.has(number));
+      return isEveryCitedSection ? '' : found;
+    });
+  }
+
+  PF.md = { parse, index, findSection, pick, fpOf, firstVisual, isRelative, decode, sectionNumbers, dropRefs, SECTION_NUMBER, FILE_PATH };
 })();
