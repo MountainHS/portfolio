@@ -190,8 +190,8 @@
 
 ### 글 조각 `{ "text", "verbatim" }`
 
-- `verbatim: true`는 **원문 그 절 범위 안에 같은 글자가 그대로 있을 때만**(굵게·기울임·백틱 기호와 공백 차이는 무시). 빌드가 이것을 검사합니다.
-- 그 밖에 줄이거나 합치거나 바꾼 글은 모두 `verbatim: false` → 리포트 **"확인해 주세요"**에 장면별로 넣습니다.
+- `verbatim: true`는 **원문 그 절 범위의 문장이나 표 칸을 통째로 옮겼을 때만**(굵게·기울임·백틱 기호와 공백 차이는 무시). 빌드가 이것을 검사합니다.
+- 그 밖에는 모두 `verbatim: false` → 리포트 **"확인해 주세요"**에 장면별로 넣습니다. 줄이거나 합치거나 바꾼 글, 그리고 문장의 앞이나 뒤를 떼어 낸 글(접속어 "그런데"·"그래서" 하나라도)이 여기입니다 — 남은 글자가 원문에 그대로 있어도 `false`.
 - 글자 수: `title` 40자, `lead` 80자, `points[].text` 90자 안팎. 넘치면 렌더러가 줄이고 그래도 넘치면 장면을 나눕니다.
 
 ### 절 경로 `sectionPath`
@@ -265,12 +265,12 @@
 | `portfolio` | 포트폴리오 페이지 고치기 자리(2차, 지금은 `null`). 식별자는 `highlights[].section` |
 | `editModePortfolio` | 포트폴리오 페이지 **편집 모드**에서 고친 글(이 포크 전용, 없으면 `null` 또는 키 없음). 원본 템플릿이 예약한 `portfolio` 칸과 겹치지 않게 따로 둔 키입니다. 편집 서버(`edit-server.py` → `portfolio-edits.py`)가 쓰고, 빌드 마지막에 `portfolio-edits.py apply --all`이 data에 덮습니다. 줄마다 `{ "field", 자리 이름, "value", "from" }` — `field`: `title`·`tagline`·`team.role`·`intent`·`tags`·`meta`(+`label`)·`highlight.title`/`highlight.what`/`highlight.caption`(+`section` = `highlights[].section`)·`skill.evidence`(+`skill`·`n`). `from` = 처음 고칠 때 빌드 글. 형식과 저장 위치 규칙은 `portfolio-edits.py` 머리말 |
 
-- **글 조각**은 둘뿐입니다: `verbatim: true`(그 절 원문 또는 절 경로의 제목에 같은 글자가 있음 — 스크립트가 검사) · `verbatim: false`(Claude가 줄임 → 리포트 "확인해 주세요").
+- **글 조각**은 둘뿐입니다: `verbatim: true`(그 절 원문의 문장이나 표 칸, 또는 절 경로의 제목을 통째로 옮김 — 같은 글자가 있는지는 스크립트가 검사) · `verbatim: false`(Claude가 줄이거나 합치거나, 문장의 앞이나 뒤를 떼어 냄 — 접속어 하나라도 → 리포트 "확인해 주세요").
   원문에 없는 새 문장·수치는 넣지 않습니다(수강생이 직접 쓰고 싶은 문장은 프로젝트 문서에 먼저 쓰고 다시 빌드).
 - **다른 절의 원문 블록**도 가리킬 수 있습니다(수강생이 요청할 때). 참조마다 자기 `sectionPath`를 적고, "확인해 주세요"에 기록됩니다.
 - 장 제목(원문 H2)과 렌더러 장면(표지·목차·장 표지·회고·맺음)은 고치지 않습니다.
 
-**반영**: `python .claude/skills/portfolio-build/deck-edits.py apply <폴더>|--all` (결정적·멱등, Python 3.8 이상·표준 라이브러리만). `data/projects/<폴더>.json`의 `deck`에 다음을 씁니다
+**반영**: `python .claude/skills/portfolio-build/deck-edits.py apply <폴더>|--all` (`/portfolio-build <폴더>`로 하나만 빌드하면 `<폴더>`. 결정적·멱등, Python 3.8 이상·표준 라이브러리만). `data/projects/<폴더>.json`의 `deck`에 다음을 씁니다
 (deck 값만 바꿔 끼우므로 나머지 글자는 그대로지만, deck 블록은 스크립트의 줄 모양으로 바뀌고 되돌린 뒤에도 그 모양이 남습니다 — 내용은 같음).
 스크립트는 원문 블록 지문(코드·mermaid·표·그림 경로)도 미리 대조해 다르면 `[권장]`으로 알립니다(최종 판정은 미리보기 감사).
 명령은 `apply`·`check`·`show`·`pin [--as]`·`add --after`·`hide [--into]`·`undo [--all]`(스크립트 머리말).
