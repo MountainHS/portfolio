@@ -23,3 +23,6 @@ report/
 
 # 원본 녹화 영상 (용량 큼)
 src/*/raw-video/
+
+# 소개 영상 렌더 결과 (용량 큼)
+video/out/

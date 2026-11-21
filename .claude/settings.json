@@ -1,5 +1,15 @@
 {
   "enabledPlugins": {
     "portfolio-panel@portfolio-tools": true
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write|MultiEdit",
+        "hooks": [
+          { "type": "command", "command": "python .claude/hooks/subtitle-revise-reminder.py" }
+        ]
+      }
+    ]
   }
 }
