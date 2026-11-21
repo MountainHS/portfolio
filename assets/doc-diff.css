@@ -1,0 +1,30 @@
+/* 상세 문서 [± 바뀐 점](assets/doc-diff.js) — 로컬 편집 서버가 있을 때만 쓰임. 인쇄에는 나오지 않음 */
+
+/* 오른쪽 아래 버튼([편집 모드] 위) */
+.pf-diff-toggle { position: fixed; right: 16px; bottom: 120px; z-index: 50; padding: 8px 14px; border-radius: 999px;
+  border: 1px solid var(--accent-line, #999); background: var(--paper, #fff); color: inherit; font: inherit; font-size: 13.5px; font-weight: 700; cursor: pointer; }
+.pf-diffing .pf-diff-toggle { background: #2c7a3f; border-color: #2c7a3f; color: #fff; }
+
+/* 위쪽 띠: 기준·개수·다음 변경 */
+.pf-diff-bar { position: fixed; top: 8px; left: 50%; transform: translateX(-50%); z-index: 60; display: flex; gap: 12px; align-items: center;
+  padding: 6px 14px; border-radius: 999px; background: var(--paper, #fff); border: 1px solid var(--accent-line, #999);
+  box-shadow: 0 2px 8px rgba(0,0,0,.12); font-size: 13px; }
+.pf-diff-count { font-weight: 700; }
+.pf-diff-count.add { color: #1f883d; }
+.pf-diff-count.del { color: #cf222e; }
+.pf-diff-count.mod { color: #9a6700; }
+.pf-diff-next { border: 0; background: none; font: inherit; font-weight: 700; cursor: pointer; color: inherit; }
+
+/* 블록 색칠 (git diff 느낌, 알파 낮춘 배경) */
+.pf-diff-add { background: rgba(46, 160, 67, .15); box-shadow: -4px 0 0 rgba(46, 160, 67, .6); border-radius: 2px; }
+.pf-diff-del { background: rgba(248, 81, 73, .13); box-shadow: -4px 0 0 rgba(248, 81, 73, .6); border-radius: 2px; text-decoration: line-through; text-decoration-color: rgba(207, 34, 46, .55); }
+.pf-diff-del > :first-child { margin-top: 0; }
+.pf-diff-mod { box-shadow: -4px 0 0 rgba(212, 167, 44, .7); }
+
+/* 블록 안 낱말 */
+.pf-diffing #doc ins { background: rgba(46, 160, 67, .25); text-decoration: none; border-radius: 2px; }
+.pf-diffing #doc del { background: rgba(248, 81, 73, .22); text-decoration: line-through; text-decoration-color: rgba(207, 34, 46, .6); border-radius: 2px; }
+
+@media print {
+  .pf-diff-toggle, .pf-diff-bar, .pf-diff-del { display: none !important; }
+}
