@@ -4,7 +4,7 @@
   "doc": "기술문서.md",
   "title": "Hive Purge",
   "tagline": "쏟아지는 몬스터 물량을 헤쳐 나가는 1·3인칭 전환 PvE 호드 FPS — 몬스터 AI·웨이브 담당",
-  "cover": "images/cover.png",
+  "cover": "images/cover-main.png",
   "team": {
     "type": "team",
     "size": "4인",
@@ -190,9 +190,9 @@
         "visuals": [
           {
             "kind": "image",
-            "src": "images/cover.png",
-            "w": 2236,
-            "h": 1231,
+            "src": "images/cover-main.png",
+            "w": 1920,
+            "h": 1080,
             "caption": {"text": "Hive Purge 플레이 장면", "verbatim": true},
             "sectionPath": ["Hive Purge 기술 문서"]
           }
@@ -1099,9 +1099,9 @@
         "visuals": [
           {
             "kind": "image",
-            "src": "images/cover.png",
-            "w": 2236,
-            "h": 1231,
+            "src": "images/cover-main.png",
+            "w": 1920,
+            "h": 1080,
             "caption": {"text": "Hive Purge 플레이 장면", "verbatim": true},
             "sectionPath": ["Hive Purge 기술 문서"]
           }

@@ -4,7 +4,7 @@
   "doc": "기술문서.md",
   "title": "We Got One",
   "tagline": "서로 붙잡고 자원을 모아 다리를 짓는 4인 협동 물리 탐험 게임",
-  "cover": "images/cover.png",
+  "cover": "images/start-scene.png",
   "team": {
     "type": "team",
     "size": "4인",
@@ -157,10 +157,10 @@
         "visuals": [
           {
             "kind": "image",
-            "src": "images/cover.png",
-            "w": 1345,
-            "h": 1038,
-            "caption": {"text": "We Got One 시연 장면", "verbatim": true},
+            "src": "images/start-scene.png",
+            "w": 1908,
+            "h": 1072,
+            "caption": {"text": "We Got One 메인 메뉴", "verbatim": true},
             "sectionPath": ["We Got One 기술 문서"]
           }
         ]
@@ -1368,10 +1368,10 @@
         "visuals": [
           {
             "kind": "image",
-            "src": "images/cover.png",
-            "w": 1345,
-            "h": 1038,
-            "caption": {"text": "We Got One 시연 장면", "verbatim": true},
+            "src": "images/start-scene.png",
+            "w": 1908,
+            "h": 1072,
+            "caption": {"text": "We Got One 메인 메뉴", "verbatim": true},
             "sectionPath": ["We Got One 기술 문서"]
           }
         ]
@@ -1767,7 +1767,7 @@
           {"label": "", "text": "호스트 스냅샷이 오면 서버는 직접 보내지 않고, 호스트를 뺀 멤버마다 있는 채널에 넣기만 합니다.", "verbatim": true},
           {"label": "", "text": "채널 크기는 1이고, 꽉 차면 오래된 것을 버립니다. 느린 멤버에게는 밀린 스냅샷이 쌓이지 않고 가장 최신 것만 갑니다.", "verbatim": true}
         ],
-        "visuals": [{"kind": "code", "n": 1, "lines": [1, 21], "fp": "// Member 안: 멤버마다 크기 1짜리 채널"}]
+        "visuals": [{"kind": "code", "n": 1, "lines": [1, 20], "fp": "// Member 안: 멤버마다 크기 1짜리 채널"}]
       },
       {
         "key": "snapshot-send-loop",
@@ -1796,7 +1796,7 @@
         "tab": "구현",
         "title": {"text": "3.4 방 수명과 연결 예외 처리 — 방 입장과 인원 제한", "verbatim": false},
         "lead": null,
-        "keywords": ["인원 제한", "호스트 결정", "호스트 승계"],
+        "keywords": ["인원 제한", "호스트 결정"],
         "sectionPath": ["3. 핵심 기능", "3.4 방 수명과 연결 예외 처리"],
         "points": [
           {"label": "", "text": "호스트 결정: 방이 비어 있을 때 들어온 사람이 호스트입니다.", "verbatim": true},
@@ -1838,7 +1838,7 @@
         "tab": "구현",
         "title": {"text": "3.4 방 수명과 연결 예외 처리 — 송신 타임아웃과 실패 표시", "verbatim": false},
         "lead": null,
-        "keywords": ["9초 제한", "SendLock", "송신 실패"],
+        "keywords": ["9초 제한", "송신 실패"],
         "sectionPath": ["3. 핵심 기능", "3.4 방 수명과 연결 예외 처리"],
         "points": [
           {
@@ -1851,7 +1851,7 @@
           {
             "kind": "code",
             "n": 2,
-            "lines": [1, 20],
+            "lines": [1, 28],
             "fp": "private async Task SendRawAsync(Member member, string json)"
           }
         ]
@@ -2384,13 +2384,17 @@
           {"label": "문제", "text": "방에 처음 들어온 직후 가끔 이유 없이 연결이 끊겼습니다.", "verbatim": true},
           {
             "label": "원인",
-            "text": "호스트는 hello를 받은 뒤에야 정해지는데, 그 전에 타이머가 먼저 방에 들어가 호스트가 없는 상태로 송신을 시도했습니다.",
+            "text": "입력 중계 타이머(RoomHub)와 접속 처리(hello)가 서로 다른 흐름으로 동시에 돕니다. 호스트는 hello를 받은 뒤에야 정해지는데, 그 전에 타이머가 먼저 방에 들어가 호스트가 없는 상태로 송신을 시도했습니다.",
             "verbatim": true
           },
-          {"label": "해결", "text": "두 흐름의 순서를 강제로 맞추는 대신, 순서가 어긋나도 안전하게 만들었습니다.", "verbatim": true},
           {
             "label": "해결",
-            "text": "타이머 쪽 SendGuestInputsToHostAsync와 입력 처리 HandleInputAsync는 둘 다 GetHost()가 null이면 그 틱·그 입력을 버립니다.",
+            "text": "두 흐름의 순서를 강제로 맞추는 대신, 순서가 어긋나도 안전하게 만들었습니다. 멤버는 gate 안에서 호스트 여부가 정해진 뒤에야 멤버 목록에 들어가고, 타이머·입력 처리는 GetHost()가 null이면 그 틱·그 입력을 버립니다.",
+            "verbatim": false
+          },
+          {
+            "label": "배운 점",
+            "text": "방 입장·퇴장, 공유 데이터 읽기·쓰기처럼 여러 흐름이 같은 자원을 만지는 곳은 race condition을 먼저 의심해야 합니다.",
             "verbatim": true
           }
         ],
@@ -2556,6 +2560,6 @@
         "visuals": []
       }
     ],
-    "applied": "5fefdcc1b8c78958"
+    "applied": "982e17d1bf4d7192"
   }
 }
