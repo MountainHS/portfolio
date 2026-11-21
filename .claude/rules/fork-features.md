@@ -49,6 +49,12 @@ paths:
   - 그림 설명 칸은 `figure.vbox[data-kind="image"] > figcaption.cap`(원본 `project-deck.js`의 `vboxHtml`)과 그림 `<img src>`를 읽습니다. 원본이 클래스 `cap`이나 그 구조를 바꾸면 캡션만 **조용히** 안 눌립니다.
   - 남는 것(이 포크에만 있는 파일): `assets/edit-loader.js`·`assets/deck-edit.js`·`assets/deck-edit.css`·`assets/doc-edit.js`(덱이 `PFDocEdit.mapBlocksToLines`를 빌려 씀)·`assets/doc-edit.css`·`assets/portfolio-edit.css`·`edit-server.py`(`/__edit/deck`)·`portfolio-edits.py`(`save_deck_text`·`apply_deck_text`).
 
+## 상세 문서 [± 바뀐 점] (이 포크 전용)
+
+- 편집 서버로 연 상세 문서(`doc.html?p=<폴더>`) 오른쪽 아래 [± 바뀐 점] → 프로젝트 문서의 git 기준판(기본 `HEAD` = 커밋 안 한 변경)과 지금 글을 맨 위 블록 단위로 비교해 색칠합니다. 새 블록 초록, 지운 블록은 그 자리에 빨간 배경으로 끼움, 고친 문단·제목·목록은 낱말 단위 `<del>`/`<ins>`. 표·코드·다이어그램은 블록째 지움+추가. 위쪽 띠에 개수와 [다음 변경 ▼].
+- 주소 옵션: `&diff-base=HEAD~1`(기준 바꾸기), `&pf-diff=1`(열자마자 켬). 켜면 편집 모드는 꺼지고, 끄면 새로고침 없이 원래 화면.
+- 파일: `assets/doc-diff.js`·`assets/doc-diff.css`(로더 `edit-loader.js`의 doc 묶음), `edit-server.py`의 `GET /__edit/base?path=&base=`(`git show <base>:<경로>`, base는 영문·숫자·`~^._/-`만).
+
 ## 슬라이드 장면 수 (이 포크 전용)
 
 - 슬라이드는 **30~40장 권장**이고, 필요하면 넘겨도 됩니다. `/portfolio-build`는 장면 수를 맞추려고 장면(두 번째 코드·보조 표·겹치는 화면)을 **빼지 않습니다.** 40장을 넘을 때만 리포트에 [참고]로 장면 수를 알리고, 줄일지는 사용자가 `/portfolio-edit`로 정합니다.

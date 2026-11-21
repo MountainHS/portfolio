@@ -6,7 +6,7 @@
 (() => {
   const PING_URL = '/__edit/ping';
   const FILES_BY_PAGE = {
-    doc: { css: ['doc-edit.css'], js: ['doc-edit.js'] },
+    doc: { css: ['doc-edit.css', 'doc-diff.css'], js: ['doc-edit.js', 'doc-diff.js'] },   // doc-diff = [± 바뀐 점](git 기준판과 비교)
     portfolio: { css: ['doc-edit.css', 'portfolio-edit.css'], js: ['portfolio-edit.js'] },
     deck: { css: ['doc-edit.css', 'portfolio-edit.css', 'deck-edit.css'], js: ['doc-edit.js', 'deck-edit.js'] },
   };
