@@ -2,7 +2,7 @@
 
 사용법:  python video/check_subtitles.py hive              (video/hive-subtitles.tsv 검사)
          python video/check_subtitles.py hive <자막.tsv>   (다른 자막 파일 검사, 예: 초안)
-퇴고:    .claude/skills/video-subtitle-revise/SKILL.md (자막 작업 끝에 쓰는 스킬)
+퇴고:    .claude/skills/video-subtitle-revise/SKILL.md (자막을 고칠 때마다 렌더 전에 쓰는 스킬)
 단어표:  video/subtitle-words.tsv (금지 / 주의 / 허용 — 사용자가 고침)
 
 오류가 하나라도 있으면 종료 코드 1을 돌려줍니다. render.py는 이때 렌더를 멈춥니다.
