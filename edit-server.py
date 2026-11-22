@@ -157,6 +157,19 @@ class EditHandler(SimpleHTTPRequestHandler):
         self.send_header("Cache-Control", "no-store")
         super().end_headers()
 
+    def guess_type(self, path):
+        """글 파일(text/*·.cs·.md·.js·.json)에 charset=utf-8을 붙입니다.
+
+        charset이 없으면 한국어 Windows 브라우저가 .cs 같은 파일을 EUC-KR로 읽어 한글 주석이 깨집니다(2026-11-22 Hive 상세 문서 코드 링크).
+        """
+        content_type = super().guess_type(path)
+        is_text_file = content_type.startswith("text/") or str(path).lower().endswith((".cs", ".md", ".js", ".json", ".tsv"))
+        if is_text_file and "charset" not in content_type:
+            if content_type == "application/octet-stream":
+                content_type = "text/plain"
+            content_type += "; charset=utf-8"
+        return content_type
+
     def do_GET(self):
         if self.path == "/__edit/ping":
             self.send_json(200, {"ok": True, "root": str(ROOT)})   # preview.ps1이 다른 폴더의 서버를 재사용하지 않도록 폴더를 알려 줌
