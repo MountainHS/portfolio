@@ -8,7 +8,7 @@
       "layout": "code",
       "tab": "구현",
       "title": {
-        "text": "3.3 공격 사이클: `MonsterAttack.Tick`",
+        "text": "몬스터 공격 진행 흐름과 단계별 동작",
         "verbatim": true
       },
       "lead": {
@@ -22,7 +22,9 @@
       ],
       "sectionPath": [
         "3. 핵심 기능",
-        "3.3 공격 사이클: `MonsterAttack.Tick`"
+        "3.1 몬스터 구조",
+        "3.1.4 역할과 공격",
+        "몬스터 공격 진행 흐름과 단계별 동작"
       ],
       "points": [
         {
@@ -56,17 +58,7 @@
             29
           ]
         }
-      ],
-      "from": {
-        "key": "attack-cycle",
-        "sectionPath": [
-          "3. 핵심 기능",
-          "3.3 공격 사이클: `MonsterAttack.Tick`"
-        ],
-        "sig": [
-          "3.3 공격 사이클: MonsterAttack.Tick|code|1|// code/MonsterAttack.cs:197-228"
-        ]
-      }
+      ]
     },
     {
       "key": "wave-hierarchy",
@@ -74,8 +66,8 @@
       "layout": "visual",
       "tab": "구조",
       "title": {
-        "text": "3.7 웨이브와 풀 — 왜 라운드 안에 스테이지를 뒀나",
-        "verbatim": false
+        "text": "왜 라운드 안에 스테이지를 뒀나",
+        "verbatim": true
       },
       "lead": null,
       "keywords": [
@@ -86,17 +78,12 @@
       "points": [
         {
           "label": "이유",
-          "text": "한 라운드 안에서도 시간대마다 위협을 바꿔, 플레이어가 한 자리에 머물지 않고 계속 움직이게 하고 싶었습니다.",
+          "text": "한 라운드 안에서도 시간대마다 몬스터 구성과 밀도를 바꿔, 플레이어가 한 자리에 머물지 않고 한 가지 대응만 반복하지 않게 하고 싶었습니다.",
           "verbatim": true
         },
         {
           "label": "",
-          "text": "초반에는 사방에서 근접 몬스터가 몰려오고, 중반에는 독안개로 한 자리에 버티기 어렵게 만든 뒤 측면·공중 몬스터와 보급으로 이동을 유도합니다.",
-          "verbatim": true
-        },
-        {
-          "label": "",
-          "text": "후반에는 돌진형이 합류해 수류탄으로 포위를 뚫고 나가게 합니다.",
+          "text": "플레이어는 몬스터를 처치하거나 이동하면서 일시적으로 주도권을 회복하지만, 새로운 위협이 추가되면 대응 방식을 다시 바꿔야 합니다.",
           "verbatim": true
         },
         {
@@ -107,26 +94,16 @@
       ],
       "sectionPath": [
         "3. 핵심 기능",
-        "3.7 웨이브와 풀"
+        "3.2 몬스터 관리",
+        "3.2.1 개요"
       ],
       "visuals": [
         {
           "kind": "mermaid",
-          "n": 1,
+          "n": 2,
           "fp": "flowchart LR"
         }
-      ],
-      "from": {
-        "key": "wave-hierarchy",
-        "sectionPath": [
-          "3. 핵심 기능",
-          "3.7 웨이브와 풀"
-        ],
-        "sig": [
-          "3.7 웨이브와 풀|mermaid|1|flowchart LR"
-        ]
-      },
-      "group": "merge-wave-hierarchy"
+      ]
     }
   ],
   "hide": [
@@ -136,24 +113,13 @@
         "key": "animator-state",
         "sectionPath": [
           "3. 핵심 기능",
-          "3.5 상태·공격 단계를 Animator에 잇기"
+          "3.1 몬스터 구조",
+          "3.1.5 Animator 연동"
         ],
         "sig": [
-          "3.5 상태·공격 단계를 Animator에 잇기|code|1|// code/MonsterController.cs:330-352, 364-372"
+          "3.1.5 Animator 연동|code|1|// code/MonsterController.cs:330-352, 364-372"
         ]
       }
-    },
-    {
-      "key": "wave-threat",
-      "from": {
-        "key": "wave-threat",
-        "sectionPath": [
-          "3. 핵심 기능",
-          "3.7 웨이브와 풀"
-        ],
-        "sig": []
-      },
-      "group": "merge-wave-hierarchy"
     }
   ]
 }
