@@ -27,7 +27,7 @@
   /* 공통 틀: 목차 260 · 간격 40 · 본문 칸 · 간격 40 · 레일 300(≥1800px), 바깥 패딩 clamp(16px, 2.5vw, 48px) */
   --toc-w: 260px; --rail-w: 300px; --gap: 40px; --pad: clamp(16px, 2.5vw, 48px);
   /* ① 가운데: 최대 폭 1840, 글줄 40rem(rem인 이유: em이면 h2에서 요소마다 다르게 풀림), 도식·그림 최대 1200 */
-  --measure: 40rem; --page-max: 1840px; --fig-max: 1200px;
+  --measure: 44rem; --page-max: 1840px; --fig-max: 1120px;   /* [포크] Engineering Editorial: 글줄 40rem→44rem(약 704px), 그림 1200→1120 */
   color-scheme: var(--t-scheme, dark);
 }
 

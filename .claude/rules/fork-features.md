@@ -78,3 +78,13 @@ paths:
 - 확인: `claude plugin validate tools/portfolio-panel` · `claude plugin test tools/portfolio-panel`(버튼 run·fill·say가 각각 `command.run`·`prompt.fill`·`prompt.submit`으로 넘어가는지).
 - `/portfolio-update`는 `tools/`·`.claude/settings.json`을 건드리지 않습니다.
 - 「유지」 단계의 원 레포 받기 버튼은 `/portfolio-update`가 아니라 **git 머지**를 부탁하는 say 버튼입니다(2026-11-18). `/portfolio-update`는 루트 `CLAUDE.md`·`format/`·`portfolio-*` 스킬을 원본으로 덮어 keywords·장면 수 30~40·편집 모드 연결 같은 포크 수정을 지울 수 있어서입니다. 이 포크는 `git fetch upstream` 뒤 `git merge upstream/main`으로 받고, 머지 전에 바뀌는 점과 포크 규칙 충돌을 정리해 확인받습니다.
+
+## Engineering Editorial 배치 (이 포크 전용)
+
+- 2026-11-22 디자인 핸드오프(흰 바탕 Engineering Editorial)를 적용했습니다. 색·모양·영문 글꼴(Sora)은 `theme/theme.css`에만 있어 업데이트·머지와 상관없습니다. 아래 렌더러 수정만 원본이 덮거나 머지 충돌이 날 수 있습니다(줄마다 `[포크]` 주석).
+  - `assets/portfolio.css`: 맨 아래 `@media screen and (min-width: 760px)`의 `.pi:not(.nocover)` 블록 — 프로젝트 소개 Hero를 게임 화면 약 68% : 메타 32%로(`.pi-r`를 `display: contents`로 풀어 메타·태그·버튼은 오른쪽, 개발 의도는 아래 폭 전체). 인쇄(A4)는 원본 5fr:6fr 그대로. `--mono`를 `'JetBrains Mono', 'D2Coding', …`로.
+  - `assets/doc.css`: `--measure: 44rem`(원본 40rem), `--fig-max: 1120px`(원본 1200px).
+  - `index.html`: JetBrains Mono `latin-400` 링크 한 줄. `doc.html`: JetBrains Mono·D2Coding 링크 두 줄(원본은 `--mono` 첫 순위가 JetBrains Mono인데 글꼴을 싣지 않았음).
+- 슬라이드(`project.html`·`deck-theme.css`)는 고치지 않았습니다. 장면마다 글자 폭을 재서 배치하므로 코드 글꼴·크기를 바꾸면 배치 점검이 달라집니다.
+- 되돌리기: 색은 `/portfolio-theme 되돌리기`, 배치는 위 `[포크]` 줄을 원본 값으로(또는 그 커밋 `git revert`).
+- 원 레포 머지 뒤 확인: `index.html`에서 프로젝트 소개 그림이 왼쪽 넓은 칸인지, `doc.html?p=<id>` 본문 폭이 약 704px인지.

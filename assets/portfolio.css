@@ -21,7 +21,7 @@
   --fx: var(--t-glow, 1);                                        /* 배경 광채 세기 0~1 */
   --sans: 'Pretendard', 'Noto Sans KR', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   --display: var(--t-display, 'Montserrat'), var(--sans);
-  --mono: 'D2Coding', Consolas, monospace;
+  --mono: 'JetBrains Mono', 'D2Coding', Consolas, monospace;   /* [포크] 영문 코드는 JetBrains Mono, 한글은 D2Coding */
   --wrap: 1120px; --pad: clamp(16px, 4vw, 40px); --radius: var(--t-radius, 20px); --pill: var(--t-pill, 999px); --top-h: 60px;
   color-scheme: var(--t-scheme, dark);
 }
@@ -207,6 +207,17 @@ code { font-family: var(--mono); font-size: .88em; background: var(--accent-soft
   .glance > li { grid-template-columns: 220px minmax(0, 1fr) 200px; gap: 32px; }
   .g-l { justify-content: flex-end; }
   .ct { grid-template-columns: minmax(0, 4fr) minmax(0, 7fr); gap: 56px; }
+}
+/* [포크] 프로젝트 소개 Hero — 게임 화면 약 68% : 메타 32%(Engineering Editorial). 화면 전용: 인쇄(A4)는 위 5fr:6fr 규칙 그대로.
+   .pi-r를 풀어(display: contents) 메타·태그·버튼은 오른쪽 좁은 칸, 개발 의도는 아래 폭 전체로. 되돌리려면 이 블록을 지움 */
+@media screen and (min-width: 760px) {
+  .pi:not(.nocover) { grid-template-columns: minmax(0, 2.125fr) minmax(260px, 1fr); column-gap: 40px; row-gap: 0; }
+  .pi:not(.nocover) > .cover { grid-column: 1; grid-row: 1 / span 3; height: clamp(280px, 36vw, 460px); }
+  .pi:not(.nocover) > .pi-r { display: contents; }
+  .pi:not(.nocover) > .pi-r > .meta { grid-column: 2; grid-row: 1; grid-template-columns: 1fr; align-self: start; }
+  .pi:not(.nocover) > .pi-r > .tags { grid-column: 2; grid-row: 2; align-self: start; }
+  .pi:not(.nocover) > .pi-r > .btns { grid-column: 2; grid-row: 3; align-self: end; }
+  .pi:not(.nocover) > .pi-r > .intent { grid-column: 1 / -1; grid-row: 4; max-width: 46rem; }
 }
 /* 좁은 화면: 머리 막대의 절 이동은 숨기고(내용은 위에서 아래로 그대로) 이름 · [PDF로 저장]만 */
 @media (max-width: 759px) {
