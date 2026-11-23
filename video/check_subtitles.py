@@ -12,10 +12,11 @@ import re
 import sys
 from pathlib import Path
 
-from render import ROOT, build_cuts, parse_time, read_tsv
+from render import ROOT, build_cuts, is_short, parse_time, read_tsv
 
 # ── 기준값 (바꾸려면 여기만) ──
 MAX_CHARACTERS_PER_LINE = 32          # 이보다 길면 화면에서 두 줄로 넘어감
+MAX_CHARACTERS_PER_LINE_SHORT = 16    # 쇼츠(세로 1080 폭, 60px) 한 줄 — 넘으면 \N으로 나누기
 MAX_CHARACTERS_PER_SECOND = 10        # 공백 뺀 글자 수 / 실제 표시 초
 MIN_DISPLAY_SECONDS = 1.5             # 배속 반영한 실제 표시 시간
 NEEDS_SCREEN_CHECK = "화면 확인 필요"
@@ -62,7 +63,8 @@ def check_project(project: str, subtitle_path: Path) -> int:
         if timing_problem:
             errors.append(f"{label}: {timing_problem}")
             continue
-        warnings += [f"{label}: {problem}" for problem in find_length_warnings(text, display_seconds)]
+        max_per_line = MAX_CHARACTERS_PER_LINE_SHORT if is_short(project) else MAX_CHARACTERS_PER_LINE
+        warnings += [f"{label}: {problem}" for problem in find_length_warnings(text, display_seconds, max_per_line)]
         if NEEDS_SCREEN_CHECK in status:
             screen_checks.append(f"{label} ({subtitle['start']}~{subtitle['end']}): {text}")
             if subtitle["cut"].strip() not in reviewed_cut_ids:
@@ -120,14 +122,18 @@ def measure_display_time(subtitle: dict, cut: dict) -> tuple[str, float]:
     return "", (end - start) / cut["spd"]
 
 
-def find_length_warnings(text: str, display_seconds: float) -> list[str]:
-    """글자 수·읽기 속도·표시 시간을 기준값과 비교합니다. 반환: 문제 설명 목록."""
+def find_length_warnings(text: str, display_seconds: float, max_per_line: int) -> list[str]:
+    """글자 수·읽기 속도·표시 시간을 기준값과 비교합니다.
+
+    max_per_line: 한 줄 최대 글자 수 (가로 영상 32, 쇼츠 16).
+    반환: 문제 설명 목록.
+    """
     problems = []
     lines = text.split("\\N")  # \N = ASS 줄바꿈 (자막을 두 줄로)
     character_count = len("".join(lines).replace(" ", ""))
     longest = max(len(line) for line in lines)
-    if longest > MAX_CHARACTERS_PER_LINE:
-        problems.append(f"{longest}자 — 한 줄 {MAX_CHARACTERS_PER_LINE}자 넘음, 줄이기")
+    if longest > max_per_line:
+        problems.append(f"{longest}자 — 한 줄 {max_per_line}자 넘음, 줄이기")
     if display_seconds < MIN_DISPLAY_SECONDS:
         problems.append(f"표시 {display_seconds:.1f}초 — {MIN_DISPLAY_SECONDS}초 미만, 시각 늘리거나 생략")
     elif character_count / display_seconds > MAX_CHARACTERS_PER_SECOND:

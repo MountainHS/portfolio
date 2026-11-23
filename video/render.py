@@ -1,6 +1,7 @@
 """프로젝트 소개 영상 렌더러.
 
 사용법:  python video/render.py hive   (또는 wgo)
+         python video/render.py hive-short   (쇼츠: 세로 1080×1920, 가운데 게임 화면 + 위 게임 이름 + 아래 자막)
 읽는 것: video/<proj>-cuts.tsv (자르기·배속·루프 배지·강조 박스·mute=Y 소리 끔)
          video/<proj>-subtitles.tsv (자막 — 원본 영상 시각 기준, 사용자가 고침)
 결과:    video/out/<proj>.mp4
@@ -27,6 +28,24 @@ W, H, FPS = 1920, 1080, 30
 CROPS = {"hive": "crop=1920:1080:1:31:exact=1"}  # exact=1: 홀수 좌표(1·31)를 짝수로 내리지 않게 (안 쓰면 제목 표시줄 1줄·왼쪽 선이 남음)
 FONT = "Malgun Gothic"
 FADE = 0.25  # 컷마다 앞뒤 페이드(초) — 배속 대신 컷 사이를 자연스럽게 잇기
+
+# ── 쇼츠(세로) ──
+# 프로젝트 이름 끝이 -short면 같은 원본(hive·wgo)을 세로 화면으로 렌더. 컷·자막 표는 <proj>-short-*.tsv
+SHORT_SUFFIX = "-short"
+SHORT_W, SHORT_H = 1080, 1920
+SHORT_GAME_H = 608  # 가운데 게임 화면 높이 = 1080 × 9/16 (짝수로 올림)
+SHORT_GAME_TOP = (SHORT_H - SHORT_GAME_H) // 2
+SHORT_TITLES = {"hive": "Hive Purge", "wgo": "We Got One"}  # 위 띠에 영상 내내 보이는 게임 이름
+
+
+def base_project(proj: str) -> str:
+    """쇼츠 이름(wgo-short)에서 원본 프로젝트 이름(wgo)을 돌려줍니다. 쇼츠가 아니면 그대로."""
+    return proj.removesuffix(SHORT_SUFFIX)
+
+
+def is_short(proj: str) -> bool:
+    """세로 쇼츠로 렌더할 프로젝트인지 돌려줍니다."""
+    return proj.endswith(SHORT_SUFFIX)
 
 
 def parse_time(text: str) -> float:
@@ -59,13 +78,15 @@ def build_cuts(proj: str) -> list[dict]:
     return cuts
 
 
-def render_segment(cut: dict, src: Path, out: Path, crop: str) -> None:
+def render_segment(cut: dict, src: Path, out: Path, crop: str, short: bool) -> None:
     fade_out = max(cut["dur"] - FADE, 0)
+    # 게임 화면 크기: 가로 영상은 화면 전체, 쇼츠는 가운데 띠 (강조 박스도 이 크기 기준)
+    game_w, game_h = (SHORT_W, SHORT_GAME_H) if short else (W, H)
     filters = [crop] if crop else []
     filters += [
         f"setpts=(PTS-STARTPTS)/{cut['spd']}",
-        f"scale={W}:{H}:force_original_aspect_ratio=decrease",
-        f"pad={W}:{H}:(ow-iw)/2:(oh-ih)/2",
+        f"scale={game_w}:{game_h}:force_original_aspect_ratio=decrease",
+        f"pad={game_w}:{game_h}:(ow-iw)/2:(oh-ih)/2",
         f"fps={FPS}",
     ]
     filters += [f"fade=t=in:d={FADE}", f"fade=t=out:st={fade_out:.3f}:d={FADE}"]
@@ -79,7 +100,12 @@ def render_segment(cut: dict, src: Path, out: Path, crop: str) -> None:
         audio += ",volume=0"  # 타이틀(메인 메뉴) 슬로만 소리 끔. 게임 장면 슬로는 인게임 소리 유지 (사용자 결정 11-21)
     if cut.get("box", "").strip():
         x, y, w, h = (float(v) for v in cut["box"].split(","))
-        filters.append(f"drawbox=x={x * W:.0f}:y={y * H:.0f}:w={w * W:.0f}:h={h * H:.0f}:color=yellow@0.9:t=6")
+        thickness = 4 if short else 6
+        filters.append(
+            f"drawbox=x={x * game_w:.0f}:y={y * game_h:.0f}:w={w * game_w:.0f}:h={h * game_h:.0f}:color=yellow@0.9:t={thickness}"
+        )
+    if short:
+        filters.append(f"pad={SHORT_W}:{SHORT_H}:0:{SHORT_GAME_TOP}:color=black")  # 게임 띠 위아래를 검은 바탕으로
     subprocess.run([
         "ffmpeg", "-y", "-v", "error", "-ss", str(cut["t0"]), "-to", str(cut["t1"]), "-i", str(src),
         "-vf", ",".join(filters), "-af", audio, "-c:a", "aac", "-b:a", "160k", "-ar", "48000", "-c:v", "libx264", "-preset", "veryfast", "-crf", "20",
@@ -88,16 +114,30 @@ def render_segment(cut: dict, src: Path, out: Path, crop: str) -> None:
 
 
 def write_ass(proj: str, cuts: list[dict], path: Path) -> None:
+    short = is_short(proj)
+    play_w, play_h = (SHORT_W, SHORT_H) if short else (W, H)
+    if short:
+        # 쇼츠: 자막은 게임 띠 바로 아래(위 정렬 8), 게임 이름은 게임 띠 위 검은 바탕 가운데
+        sub_style = f"Style: Sub,{FONT},60,&H00FFFFFF,&H00000000,&H00000000,1,8,50,50,{SHORT_GAME_TOP + SHORT_GAME_H + 70},1,4,0"
+        title_style = f"Style: Title,{FONT},96,&H0000E6FF,&H00000000,&H00000000,1,8,40,40,{SHORT_GAME_TOP - 230},1,5,0"
+    else:
+        sub_style = f"Style: Sub,{FONT},52,&H00FFFFFF,&H00000000,&H99000000,1,2,120,120,70,3,8,0"
+        title_style = ""
     lines = [
-        "[Script Info]", "ScriptType: v4.00+", f"PlayResX: {W}", f"PlayResY: {H}", "",
+        "[Script Info]", "ScriptType: v4.00+", f"PlayResX: {play_w}", f"PlayResY: {play_h}", "",
         "[V4+ Styles]",
         "Format: Name, Fontname, Fontsize, PrimaryColour, OutlineColour, BackColour, Bold, Alignment, "
         "MarginL, MarginR, MarginV, BorderStyle, Outline, Shadow",
-        f"Style: Sub,{FONT},52,&H00FFFFFF,&H00000000,&H99000000,1,2,120,120,70,3,8,0",
+        sub_style,
         f"Style: Loop,{FONT},38,&H0000E6FF,&H00000000,&H99000000,1,7,40,40,36,3,6,0",
         f"Style: Speed,{FONT},34,&H00FFFFFF,&H00000000,&H99000000,1,9,40,40,36,3,6,0",
-        "", "[Events]", "Format: Layer, Start, End, Style, Text",
     ]
+    if title_style:
+        lines.append(title_style)
+    lines += ["", "[Events]", "Format: Layer, Start, End, Style, Text"]
+    if short:
+        total = sum(cut["dur"] for cut in cuts)
+        lines.append(f"Dialogue: 0,{ass_time(0)},{ass_time(total)},Title,{SHORT_TITLES[base_project(proj)]}")
     # 왼쪽 위 루프 배지(라운드 전투 등)·오른쪽 위 배속 표시는 그리지 않음 (사용자 결정 11-21). cuts 표 loop 칸은 메모로만 남음
     by_id = {cut["id"]: cut for cut in cuts}
     for sub in read_tsv(ROOT / f"{proj}-subtitles.tsv"):
@@ -120,8 +160,9 @@ def write_ass(proj: str, cuts: list[dict], path: Path) -> None:
 
 def main() -> None:
     proj = sys.argv[1] if len(sys.argv) > 1 else ""
-    if proj not in SOURCES:
-        sys.exit(f"사용법: python video/render.py [{'|'.join(SOURCES)}]")
+    base = base_project(proj)
+    if base not in SOURCES:
+        sys.exit(f"사용법: python video/render.py [{'|'.join(SOURCES)}] (쇼츠는 이름 뒤에 {SHORT_SUFFIX})")
     from check_subtitles import check_project  # 서로 import하므로 여기서 불러옴
     if check_project(proj, ROOT / f"{proj}-subtitles.tsv") > 0:
         sys.exit("자막 검사 오류가 있어 렌더를 멈춥니다. 위 [오류]를 고친 뒤 다시 실행하세요.")
@@ -132,7 +173,7 @@ def main() -> None:
     for cut in cuts:
         seg = seg_dir / f"{cut['id']}.mp4"
         print(f"{cut['id']}  {cut['start']}~{cut['end']}  x{cut['spd']:g}  -> {cut['dur']:.1f}s")
-        render_segment(cut, SOURCES[proj][cut["src"].strip()], seg, CROPS.get(proj, ""))
+        render_segment(cut, SOURCES[base][cut["src"].strip()], seg, CROPS.get(base, ""), is_short(proj))
     (seg_dir / "list.txt").write_text("".join(f"file '{c['id']}.mp4'\n" for c in cuts), encoding="utf-8")
     write_ass(proj, cuts, out_dir / f"{proj}.ass")
     subprocess.run([
