@@ -84,6 +84,7 @@ paths:
 
 - 2026-11-22 디자인 핸드오프(흰 바탕 Engineering Editorial)를 적용했습니다. 색·모양·영문 글꼴(Sora)은 `theme/theme.css`에만 있어 업데이트·머지와 상관없습니다. 아래 렌더러 수정만 원본이 덮거나 머지 충돌이 날 수 있습니다(줄마다 `[포크]` 주석).
   - `assets/portfolio.css`: 맨 아래 `@media screen and (min-width: 760px)`의 `.pi:not(.nocover)` 블록 — 프로젝트 소개 Hero를 게임 화면 약 68% : 메타 32%로(`.pi-r`를 `display: contents`로 풀어 메타·태그·버튼은 오른쪽, 개발 의도는 아래 폭 전체). 인쇄(A4)는 원본 5fr:6fr 그대로. `--mono`를 `'JetBrains Mono', 'D2Coding', …`로.
+  - `assets/portfolio.css`: 위 블록 다음 `[포크] Engineering Editorial 배치` 블록(2026-11-23, `@media screen` 두 개) — 띠 배경 없음·절 간격 96/128px, 글자 단계(이름 44~60·절 제목 28~32·프로젝트 제목 Sora 36~44·본문 17px), 설명 글 720px, Hero 판 상자 없이 16:9 게임 화면(오른쪽 32% 칸은 메타만, 태그·버튼은 Hero 아래 폭 전체 한 줄씩 → 그 아래 개발 의도), 기능 소개는 화면 위 한 줄 + 기능 2열 카드. 인쇄는 원래 규칙. 되돌리려면 그 블록을 지웁니다.
   - `assets/doc.css`: `--measure: 44rem`(원본 40rem), `--fig-max: 1120px`(원본 1200px).
   - `index.html`: JetBrains Mono `latin-400` 링크 한 줄. `doc.html`: JetBrains Mono·D2Coding 링크 두 줄(원본은 `--mono` 첫 순위가 JetBrains Mono인데 글꼴을 싣지 않았음).
 - 슬라이드(`project.html`·`deck-theme.css`)는 고치지 않았습니다. 장면마다 글자 폭을 재서 배치하므로 코드 글꼴·크기를 바꾸면 배치 점검이 달라집니다.

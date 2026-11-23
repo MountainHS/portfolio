@@ -219,6 +219,63 @@ code { font-family: var(--mono); font-size: .88em; background: var(--accent-soft
   .pi:not(.nocover) > .pi-r > .btns { grid-column: 2; grid-row: 3; align-self: end; }
   .pi:not(.nocover) > .pi-r > .intent { grid-column: 1 / -1; grid-row: 4; max-width: 46rem; }
 }
+/* [포크] Engineering Editorial 배치 — "게임은 크게 → 설명은 좁게 → 기술 그림은 다시 크게"(2026-11-23 디자인 핸드오프).
+   화면 전용(@media screen): 인쇄(A4 제출 PDF)는 원래 규칙 그대로. 되돌리려면 이 블록을 지움.
+   ① 띠 배경 없이 흰 바탕 + 얇은 선, 절 간격 96px · 프로젝트 사이 128px
+   ② 글자 단계: 이름 44~60px · 절 제목 28~32px · 프로젝트 제목 Sora 36~44px · 본문 16~17px
+   ③ 설명 글(자기소개·한 줄 소개·개발 의도)은 좁게 720px
+   ④ 프로젝트 Hero: 판 상자를 없애고 게임 화면을 바로 크게
+   ⑤ 기능 소개: 화면은 위에 넓게 한 줄, 기능은 아래에 2열 Engineering Card(1px 선·그림자 없음) */
+@media screen {
+  /* ① 띠 배경·간격 */
+  .sec.tint { background: none; }
+  .sec { padding: 96px 0; }
+  .sec.proj { padding-top: 128px; }
+  .sec.core { border-top: 0; padding-top: 48px; }
+  .sec-head { margin-bottom: 48px; }
+  /* ② 글자 단계 */
+  body { font-size: 17px; line-height: 1.7; }
+  .hero h1 { font-size: clamp(44px, 5vw, 60px); letter-spacing: -.03em; }
+  .headline { max-width: 720px; font-size: clamp(19px, 2vw, 22px); font-weight: 600; color: var(--body); }
+  .sec-head h2 { font-size: clamp(28px, 3vw, 32px); letter-spacing: -.02em; }
+  .sec.proj .sec-head h2, .sec.core .sec-head h2 { font-family: var(--display); font-size: clamp(36px, 4vw, 44px); font-weight: 700; letter-spacing: -.02em; }
+  .sec.core .sec-head h2 { font-size: clamp(24px, 2.6vw, 28px); }
+  /* ③ 좁은 설명 글 */
+  .about { max-width: 720px; padding-left: 24px; border-left-width: 2px; }
+  .about p { font-size: 18px; font-weight: 500; color: var(--body); }
+  .tagline { max-width: 720px; margin: -28px 0 40px; font-size: 19px; color: var(--body); }
+  /* ④ 프로젝트 Hero — 판 상자 없이 */
+  .pi { padding: 0; background: none; border: 0; border-radius: 0; }
+  .cover { padding: 0; background: var(--surface); border-radius: var(--radius); }
+  .cover img { width: 100%; height: 100%; max-height: none; object-fit: cover; border-radius: 0; }
+  .meta dd { font-size: 16px; }
+  .intent { max-width: 720px; margin-top: 40px; padding-left: 20px; border-left-width: 2px; }
+  .intent p + p { font-size: 17px; }
+  /* ⑤ 기능 소개 — 화면은 위에 넓게, 기능은 아래 2열 카드 */
+  .fe, .fe.noshot { grid-template-columns: minmax(0, 1fr); gap: 32px; }
+  .shots { position: static; }
+  .shot { border-radius: var(--radius); }
+  .flist { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; background: none; border: 0; border-radius: 0; overflow: visible; }
+  .flist li, .flist li:first-child { grid-template-columns: minmax(0, 1fr); align-items: start; align-content: space-between; gap: 20px;
+                                     padding: 24px; background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius); }
+  .flist li.on { background: var(--paper); border-color: var(--accent); box-shadow: none; }
+  .flist h3 { font-size: 20px; }
+  .flist .fr-t p:not(.fk) { font-size: 16px; }
+}
+@media screen and (min-width: 760px) {
+  .fe .shots, .fe[style*="--shots:3"] .shots, .fe[style*="--shots:4"] .shots { grid-template-columns: repeat(auto-fit, minmax(0, 1fr)); }
+  .pi:not(.nocover) > .cover { grid-row: 1; height: auto; aspect-ratio: 16 / 9; align-self: start; }   /* 16:9 게임 화면은 잘리지 않게 */
+  /* 오른쪽 32% 칸은 범위 정보(장르·기간·인원·환경·역할)만. 태그·버튼은 Hero 아래 폭 전체 한 줄씩, 그 아래 개발 의도 */
+  .pi:not(.nocover) > .pi-r > .tags { grid-column: 1 / -1; grid-row: 2; margin-top: 32px; }
+  .pi:not(.nocover) > .pi-r > .btns { grid-column: 1 / -1; grid-row: 3; align-self: start; margin-top: 16px; }
+  .pi:not(.nocover) > .pi-r > .intent { grid-row: 4; }
+  .fe[style*="--shots:1"] .shot-m img { max-height: 520px; }
+  .fe[style*="--shots:2"] .shot-m img { max-height: 360px; }
+  .fe[style*="--shots:3"] .shot-m img, .fe[style*="--shots:4"] .shot-m img { max-height: 260px; }
+  .flist { grid-template-columns: 1fr 1fr; }
+  .flist li { grid-template-columns: minmax(0, 1fr); }
+  .fe-r .btns { margin-top: 24px; }
+}
 /* 좁은 화면: 머리 막대의 절 이동은 숨기고(내용은 위에서 아래로 그대로) 이름 · [PDF로 저장]만 */
 @media (max-width: 759px) {
   .top nav { display: none; }
