@@ -133,7 +133,7 @@
           ${isUrl(prof.github) ? `<p>${link({ href: prof.github, label: `<span class="url">${esc(shortUrl(prof.github))}</span>` })}</p>` : ''}
           ${profLinks.map((l) => `<p><span class="k">${esc(l.label)}</span> ${link({ href: l.url, label: `<span class="url">${esc(shortUrl(l.url))}</span>` })}</p>`).join('')}
           <p class="print-only"><span class="url">${esc(PF.visibleUrl(''))}</span></p></div>
-        <div class="ct-lk">${projects.map((p) => `<div><b>${esc(p.title)}</b><span class="row">${projLinks(p)}</span>${(p.links?.extra || []).filter((l) => isUrl(l.url))
+        <div class="ct-lk">${projects.map((p) => `<div><b>${esc(p.title)}</b><span class="row">${projLinks(p)}</span>${(p.links?.extra || []).filter((l) => isUrl(l.url) && !ghExtra(p).includes(l))
           .map((l) => `<span class="ex">${esc(l.label)} ${link({ href: l.url, label: `<span class="url">${esc(shortUrl(l.url))}</span>` })}</span>`).join('')}</div>`).join('')}</div>
       </div></div></footer>`);
 
@@ -190,9 +190,13 @@
     return sec(`p-${p.id}-core`, `${no} · ${t('page.features')}`, p.title, PF.teamLabel(p.team), body, 'tint core');
   }
 
+  const ghExtra = (p) => (p.links?.extra || []).filter((l) => isUrl(l.url) && /github\.com/i.test(l.url));
   function projLinks(p) {
     return [link({ href: PF.projectUrl(p.id), label: T('name.deck'), kind: 'page' }), link({ href: PF.docUrl(p.id), label: T('name.doc-short'), kind: 'page' }),
-      isUrl(p.links?.github) && link({ href: p.links.github, label: 'GitHub' }), isUrl(p.links?.video) && link({ href: p.links.video, label: T('name.video') })].filter(Boolean).join('');
+      // [포크] GitHub 저장소가 여럿이면(extra에 github.com) 프로젝트 문서 링크 줄처럼 GitHub(클라이언트) · GitHub(서버)로 한 줄에
+      isUrl(p.links?.github) && link({ href: p.links.github, label: ghExtra(p).length ? 'GitHub(클라이언트)' : 'GitHub' }),
+      ...ghExtra(p).map((l) => link({ href: l.url, label: esc(l.label) })),
+      isUrl(p.links?.video) && link({ href: p.links.video, label: T('name.video') })].filter(Boolean).join('');
   }
 
   // 화면과 설명 짝 강조(마우스·키보드 포커스) + [PDF로 저장]
