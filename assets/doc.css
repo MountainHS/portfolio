@@ -95,6 +95,7 @@ code { font-family: var(--mono); font-size: .88em; background: var(--accent-soft
 .toc-links { position: relative; }
 .toc-links a { display: block; text-decoration: none; color: var(--muted); padding: 4px 10px; line-height: 1.45; border-left: 2px solid var(--line); }
 .toc-links a.h3 { padding-left: 22px; font-size: 13px; }
+.toc-links a.h4 { padding-left: 36px; font-size: 12.5px; }
 .toc-links a:hover { color: var(--ink); }
 .toc-links a.active { color: var(--accent-ink); border-left-color: var(--accent-ink); font-weight: 700; background: var(--accent-soft); }
 
@@ -193,6 +194,7 @@ dialog.toc-dialog::backdrop { background: rgba(0, 0, 0, .7); }
 .toc-dialog-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
 .toc-dialog .toc-links a { padding: 8px 10px; font-size: 15px; }
 .toc-dialog .toc-links a.h3 { padding-left: 24px; font-size: 14px; }
+.toc-dialog .toc-links a.h4 { padding-left: 40px; font-size: 13px; }
 
 /* 라이트박스 (같은 페이지 dialog) */
 dialog.lightbox { border: 0; padding: 0; background: transparent; max-width: 96vw; max-height: 96vh; margin: auto; overflow: visible; }

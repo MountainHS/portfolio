@@ -382,23 +382,54 @@
 
   // 장 표지: 장면이 적으면(4개 이하) 넉넉한 변형 — 목차 크기 목록 + 장면마다 키워드 한 줄(결정 I7). 안 들어가면 보통 → 촘촘
   // → 두 단(이 포크: 장면 수 제한을 없애 한 장에 장면이 많을 때, 목록을 위→아래 두 줄기로 나누고 목록 쪽을 넓힘)
+  // → 그래도 넘치면 장면 대신 절 묶음 목록(이 포크: sectionGroupRows)
   const ROOMY_MAX = 4;
   // 장면의 키워드(deck.slides[].keywords, 문자열 배열)를 장 표지 한 줄로 이음. 배열이 아니거나 비면 ''
   const keywordLine = (sl) => (Array.isArray(sl.keywords) ? sl.keywords.filter(Boolean).join(' · ') : '');
   function chapterScene(c, ci, chId, slides, foot, auto, ptitle) {
-    const make = (mode) => {
+    // rows = 목록 줄 [번호, 제목, 설명, 이동할 장면 id, 키워드 줄]
+    const make = (mode, rows) => {
       const s = PF.scene({ id: chId, tpl: 'CH', kind: 'bare', cls: mode === 'compact' ? 'compact' : '', foot, sec: c.title, group: c.title, stitle: c.title });
       const roomy = mode === 'roomy';
       const cols = mode === 'cols';
-      const list = slides.map((x, i) => item(String(i + 1), txt(x.sl.title) || c.title, PF.tab(x.sl.tab), x.scenes[0].id, roomy ? keywordLine(x.sl) : '')).join('');
+      const list = rows.map((r) => item(r[0], r[1], r[2], r[3], roomy ? r[4] : '')).join('');
       PF.body(s).innerHTML = `<div class="toprow"><span class="pf-eyebrow long">${esc(ptitle)}</span><span class="rl">${esc(PF.t('deck.ch-count', { n: slides.length }))}</span></div>
         <div class="ch-mid${cols ? ' wide' : ''}"><div><p class="ch-no">${esc(PF.t('en.chapter'))} ${String(ci + 1).padStart(2, '0')}</p><h2 class="ch-t">${esc(c.title)}</h2>${DOT}</div>
-        <div class="ch-list t-P2${mode === 'normal' ? '' : cols ? ' compact cols' : ' ' + mode}"><ol class="toc-list${roomy ? '' : ' sub'}"${cols ? ` style="grid-template-rows: repeat(${Math.ceil(slides.length / 2)}, auto)"` : ''}>${list}</ol></div></div>`;
+        <div class="ch-list t-P2${mode === 'normal' ? '' : cols ? ' compact cols' : ' ' + mode}"><ol class="toc-list${roomy ? '' : ' sub'}"${cols ? ` style="grid-template-rows: repeat(${Math.ceil(rows.length / 2)}, auto)"` : ''}>${list}</ol></div></div>`;
       return band(s, auto);
     };
+    const sceneRows = slides.map((x, i) => [String(i + 1), txt(x.sl.title) || c.title, PF.tab(x.sl.tab), x.scenes[0].id, keywordLine(x.sl)]);
     const modes = slides.length <= ROOMY_MAX ? ['roomy', 'normal', 'compact'] : ['normal', 'compact', 'cols'];
-    for (const m of modes) { const s = make(m); if (PF.fitsM(s)) return s; }
-    return PF.shrinkOrClip(make(modes[modes.length - 1]), PFScene.refUrl(chId), info.overflow);
+    let last = null;
+    for (const m of modes) { last = make(m, sceneRows); if (PF.fitsM(last)) return last; }
+    // 장면 목록이 두 단으로도 안 들어가면 절로 묶어 보여 줌(이 포크, 2026-11-22). 깊은 절부터 얕은 절 순서로 시도
+    for (const groupRows of sectionGroupRows(slides)) {
+      for (const m of ['normal', 'compact', 'cols']) { last = make(m, groupRows); if (PF.fitsM(last)) return last; }
+    }
+    return PF.shrinkOrClip(last, PFScene.refUrl(chId), info.overflow);
+  }
+
+  // 장 표지의 절 묶음 목록들. 깊이(sectionPath 칸 번호)마다 이웃한 장면을 같은 절끼리 한 줄로 묶음
+  //   깊이는 맨 마지막 칸(장면 자기 절) 바로 위부터 장(0) 바로 아래(1)까지. 묶어도 줄이 줄지 않는 깊이는 뺌
+  //   한 줄 = [절 번호 순서, 절 제목, 장면 수, 그 절 첫 장면 id, '']
+  function sectionGroupRows(slides) {
+    const deepest = Math.max(...slides.map((x) => (x.sl.sectionPath || []).length)) - 2;
+    const result = [];
+    for (let depth = deepest; depth >= 1; depth--) {
+      const groups = [];
+      slides.forEach((x) => {
+        const path = x.sl.sectionPath || [];
+        const title = path[Math.min(depth, path.length - 1)] || '';
+        const prev = groups[groups.length - 1];
+        const sameAsPrev = prev && prev.title === title;
+        if (sameAsPrev) { prev.scenes += x.scenes.length; return; }
+        groups.push({ title, ref: x.scenes[0].id, scenes: x.scenes.length });
+      });
+      const fewerLines = groups.length < slides.length;
+      if (fewerLines == false) continue;
+      result.push(groups.map((g, i) => [String(i + 1), g.title, PF.t('deck.toc-count', { n: g.scenes }), g.ref, '']));
+    }
+    return result;
   }
 
   function tocScene(p, foot, items, retro, auto) {
