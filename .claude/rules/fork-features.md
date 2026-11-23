@@ -86,8 +86,6 @@ paths:
   - `assets/portfolio.css`: 맨 아래 `@media screen and (min-width: 760px)`의 `.pi:not(.nocover)` 블록 — 프로젝트 소개 Hero를 게임 화면 약 68% : 메타 32%로(`.pi-r`를 `display: contents`로 풀어 메타·태그·버튼은 오른쪽, 개발 의도는 아래 폭 전체). 인쇄(A4)는 원본 5fr:6fr 그대로. `--mono`를 `'JetBrains Mono', 'D2Coding', …`로.
   - `assets/doc.css`: `--measure: 44rem`(원본 40rem), `--fig-max: 1120px`(원본 1200px).
   - `index.html`: JetBrains Mono `latin-400` 링크 한 줄. `doc.html`: JetBrains Mono·D2Coding 링크 두 줄(원본은 `--mono` 첫 순위가 JetBrains Mono인데 글꼴을 싣지 않았음).
-  - 고민과 결과 절(2026-11-23, 핸드오프의 Challenge·Decision·Result): `assets/portfolio.js`의 `caseStudy`와 프로젝트 반복문의 `caseStudy(p, no, sec)` 두 줄, `assets/portfolio.css` 맨 아래 `.cases`~`.results` 블록, `assets/strings.js`의 `page.case`·`page.problem`·`page.cause`·`page.solution`·`page.result`·`page.achieved`·`page.regrets`·`en.challenge`·`en.result` 줄. data의 `troubleshooting`(앞 3건)·`retro.achieved`·`retro.regrets`를 그대로 그리므로 빌드가 필요 없습니다. 절 id `p-<폴더>-case`, 화면 전용(`no-print`) — A4 제출 PDF는 그대로입니다.
-  - Architecture 그림·Evidence 코드(2단계)는 아직 없습니다. data에 "어느 원문 블록" 칸을 더하고(schema·빌드) `md-blocks.js`로 꺼내 그려야 합니다.
 - 슬라이드(`project.html`·`deck-theme.css`)는 고치지 않았습니다. 장면마다 글자 폭을 재서 배치하므로 코드 글꼴·크기를 바꾸면 배치 점검이 달라집니다.
 - 되돌리기: 색은 `/portfolio-theme 되돌리기`, 배치는 위 `[포크]` 줄을 원본 값으로(또는 그 커밋 `git revert`).
 - 원 레포 머지 뒤 확인: `index.html`에서 프로젝트 소개 그림이 왼쪽 넓은 칸인지, `doc.html?p=<id>` 본문 폭이 약 704px인지.
