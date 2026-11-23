@@ -309,3 +309,19 @@ code { font-family: var(--mono); font-size: .88em; background: var(--accent-soft
   .ct-lk b { font-size: 11pt; }
   a { text-decoration: none; }
 }
+
+/* [포크] 고민과 결과(Engineering Editorial C·E·G) — portfolio.js caseStudy. 화면 전용(절에 no-print): 인쇄(A4)에는 나오지 않음 */
+.cases { display: grid; gap: 16px; }
+.case { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 22px 24px; }
+.case h3 { margin-top: 4px; font-size: 18px; font-weight: 800; line-height: 1.35; }
+.case .steps { display: grid; gap: 10px; margin-top: 14px; max-width: 46rem; }
+.case .steps > div { display: grid; grid-template-columns: 3.5em minmax(0, 1fr); gap: 12px; }
+.case dt { padding-top: 2px; font-size: 13px; font-weight: 700; color: var(--accent-ink); }
+.case dd { font-size: 15px; line-height: 1.65; color: var(--body); }
+.case .fr-a { margin-top: 16px; }
+.results { margin-top: 40px; padding-top: 24px; border-top: 1px solid var(--line); }
+.results .rg { display: grid; gap: 24px; margin-top: 12px; }
+.results .rk { font-size: 15px; font-weight: 800; color: var(--ink); }
+.results ul { margin-top: 8px; padding-left: 1.1em; list-style: disc; }
+.results li { margin-top: 6px; font-size: 15px; line-height: 1.65; color: var(--body); }
+@media (min-width: 760px) { .results .rg { grid-template-columns: 1fr 1fr; column-gap: 40px; } }

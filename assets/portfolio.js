@@ -115,6 +115,8 @@
       out.push(projectIntro(p, no, sec, btn, printUrls));
       const fe = features(p, no, sec, btn);
       if (fe) out.push(fe);
+      const cs = caseStudy(p, no, sec);                                // [포크] 고민과 결과(Engineering Editorial)
+      if (cs) out.push(cs);
     });
 
     // ⑤ 한눈에 보기(format/01 §1 프로젝트 요약 표) — 좁은 화면에서도 가로 스크롤이 없도록 표 대신 행 목록
@@ -188,6 +190,26 @@
       <div class="fe-r"><ol class="flist">${rows}</ol>
         <div class="btns end no-print">${btn(PF.projectUrl(p.id), T('page.deck-all'), 'page', 'btn primary')}${btn(PF.docUrl(p.id), T('name.doc'), 'page')}</div></div></div>`;
     return sec(`p-${p.id}-core`, `${no} · ${t('page.features')}`, p.title, PF.teamLabel(p.team), body, 'tint core');
+  }
+
+  // [포크] 고민과 결과(Engineering Editorial의 Challenge·Decision·Result): 문제 해결 사례(troubleshooting, 앞 3건)를 문제 → 원인 → 해결 → 결과 카드로,
+  //   회고(retro)의 달성·아쉬운 점을 "확인한 결과 / 남은 한계" 두 칸으로 보여 줍니다. 글은 data 값 그대로(빌드 없이 지금 data로 그림).
+  //   화면 전용(no-print): A4 제출 PDF 쪽수는 그대로입니다.
+  function caseStudy(p, no, sec) {
+    const cases = (p.troubleshooting || []).slice(0, 3);
+    const achieved = p.retro?.achieved || [];
+    const regrets = p.retro?.regrets || [];
+    const hasResults = achieved.length > 0 || regrets.length > 0;
+    if (cases.length === 0 && hasResults === false) return '';
+    const step = (key, text) => (text ? `<div><dt>${T(key)}</dt><dd>${inline(text)}</dd></div>` : '');
+    const cards = cases.map((c, i) => `<li class="case"><p class="fk">${T('en.challenge')} ${pad2(i + 1)}</p><h3>${inline(c.title)}</h3>
+      <dl class="steps">${step('page.problem', c.problem)}${step('page.cause', c.cause)}${step('page.solution', c.solution)}${step('page.result', c.result)}</dl>
+      <div class="fr-a">${link({ href: PF.projectUrl(p.id, PF.deckSceneFor(p, c.section)), label: T('page.see-in-deck'), kind: 'page', cls: 'pill',
+        attrs: `aria-label="${esc(PF.normTitle(c.title))} — ${T('page.see-in-deck')} (새 탭)"` })}</div></li>`).join('');
+    const list = (key, items) => (items.length ? `<div class="rl"><p class="rk">${T(key)}</p><ul>${items.map((x) => `<li>${inline(x)}</li>`).join('')}</ul></div>` : '');
+    const results = hasResults ? `<div class="results"><p class="fk">${T('en.result')}</p><div class="rg">${list('page.achieved', achieved)}${list('page.regrets', regrets)}</div></div>` : '';
+    const body = `${cards ? `<ol class="cases">${cards}</ol>` : ''}${results}`;
+    return sec(`p-${p.id}-case`, `${no} · ${t('page.case')}`, p.title, PF.teamLabel(p.team), body, 'case-sec no-print');
   }
 
   function projLinks(p) {
