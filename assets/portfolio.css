@@ -249,6 +249,9 @@ code { font-family: var(--mono); font-size: .88em; background: var(--accent-soft
   .cover { padding: 0; background: var(--surface); border-radius: var(--radius); }
   .cover img { width: 100%; height: 100%; max-height: none; object-fit: cover; border-radius: 0; }
   .meta dd { font-size: 16px; }
+  /* 메타는 상자 대신 구분선: 위 굵은 선 하나 + 항목마다 아래 얇은 선 */
+  .meta { row-gap: 0; border-top: 2px solid var(--ink); }
+  .meta > div { padding: 12px 0; border-bottom: 1px solid var(--line); }
   .intent { max-width: 720px; margin-top: 40px; padding-left: 20px; border-left-width: 2px; }
   .intent p + p { font-size: 17px; }
   /* ⑤ 기능 소개 — 화면은 위에 넓게, 기능은 아래 2열 카드 */
