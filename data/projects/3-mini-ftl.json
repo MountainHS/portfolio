@@ -238,6 +238,63 @@
         ]
       },
       {
+        "key": "ftl-intro",
+        "chapter": "overview",
+        "layout": "visual",
+        "tab": "개요",
+        "title": {
+          "text": "《FTL: Faster Than Light》 소개",
+          "verbatim": true
+        },
+        "lead": {
+          "text": "《FTL: Faster Than Light》는 플레이어가 우주선의 함장이 되어 은하계를 탐험하며 생존을 목표로 하는 2D 전략 로그라이크 게임입니다.",
+          "verbatim": true
+        },
+        "keywords": [
+          "원작 FTL",
+          "함선 전투 화면"
+        ],
+        "sectionPath": [
+          "1. 개요",
+          "1.1 프로젝트 소개",
+          "《FTL: Faster Than Light》 소개"
+        ],
+        "points": [
+          {
+            "label": "",
+            "text": "왼쪽 내 함선: 방마다 시설과 승무원이 있습니다.",
+            "verbatim": true
+          },
+          {
+            "label": "",
+            "text": "오른쪽 적 함선(TARGET): 무기로 노릴 방을 고릅니다.",
+            "verbatim": true
+          },
+          {
+            "label": "",
+            "text": "왼쪽 아래 전력 바: 반응로 전력을 시설마다 나눠 줍니다.",
+            "verbatim": true
+          },
+          {
+            "label": "",
+            "text": "원작은 은하 탐험·무작위 이벤트·자원 수집까지 담고 있습니다. Mini FTL은 그중 이 화면의 함선 전투만 추려 만들었습니다.",
+            "verbatim": true
+          }
+        ],
+        "visuals": [
+          {
+            "kind": "image",
+            "src": "images/reference-image.png",
+            "w": 1823,
+            "h": 1014,
+            "caption": {
+              "text": "《FTL》 전투 화면 — 왼쪽 내 함선, 오른쪽 적 함선(TARGET), 왼쪽 아래 시설별 전력 바, 가운데 아래 무기 칸",
+              "verbatim": true
+            }
+          }
+        ]
+      },
+      {
         "key": "why",
         "chapter": "overview",
         "layout": "overview",
@@ -473,10 +530,210 @@
             "label": "",
             "text": "전투에서 살아남으면 결과가 게임 진행(GameManager)에 보고되고, 상점에서 함선 체력 회복·전력 강화 같은 준비를 한 뒤 다음 전투 씬이 조립됩니다.",
             "verbatim": true
+          }
+        ],
+        "visuals": [
+          {
+            "kind": "mermaid",
+            "n": 1,
+            "fp": "flowchart LR"
+          }
+        ]
+      },
+      {
+        "key": "game-flow",
+        "chapter": "structure",
+        "layout": "visual",
+        "tab": "구조",
+        "title": {
+          "text": "2.1 게임 진행",
+          "verbatim": true
+        },
+        "lead": {
+          "text": "`GameManager`는 씬이 바뀌어도 남아 전투 결과를 받고 다음 씬을 고릅니다.",
+          "verbatim": true
+        },
+        "keywords": [
+          "GameContext",
+          "SceneBinder"
+        ],
+        "sectionPath": [
+          "2. 시스템 구조",
+          "2.1 게임 진행"
+        ],
+        "points": [
+          {
+            "label": "",
+            "text": "함선 체력·전력·시설·승무원·무기 상태는 `GameContext`에 담아 전투 씬과 상점 씬 사이로 넘깁니다.",
+            "verbatim": true
           },
           {
             "label": "",
-            "text": "개발하며 가장 크게 부딪힌 곳은 이 그림의 전력 조절, 전투 씬을 다시 조립하는 게임 진행, 승무원이었습니다.",
+            "text": "새 전투 씬이 열리면 `SceneBinder`가 이 상태를 플레이어 함선에 되돌리고, 적 함선과 `CombatSystem`을 준비합니다.",
+            "verbatim": true
+          }
+        ],
+        "visuals": [
+          {
+            "kind": "mermaid",
+            "n": 1,
+            "fp": "classDiagram"
+          }
+        ]
+      },
+      {
+        "key": "ship",
+        "chapter": "structure",
+        "layout": "visual",
+        "tab": "구조",
+        "title": {
+          "text": "2.2 함선",
+          "verbatim": true
+        },
+        "lead": {
+          "text": "`ShipController`는 한 함선의 방·체력·시설·승무원·무기를 한곳에 모은 기준점입니다.",
+          "verbatim": true
+        },
+        "keywords": [
+          "ShipController",
+          "상속"
+        ],
+        "sectionPath": [
+          "2. 시스템 구조",
+          "2.2 함선"
+        ],
+        "points": [
+          {
+            "label": "",
+            "text": "플레이어 함선(`PlayerController`)과 적 함선(`EnemyController`)이 같은 부모를 물려받아 방 피해와 사망 처리를 함께 씁니다.",
+            "verbatim": true
+          },
+          {
+            "label": "",
+            "text": "플레이어 함선은 상점에서 바뀐 상태를 받아들이고, 적 함선은 `RandomTargeter`로 노릴 방을 고릅니다.",
+            "verbatim": true
+          }
+        ],
+        "visuals": [
+          {
+            "kind": "mermaid",
+            "n": 1,
+            "fp": "classDiagram"
+          }
+        ]
+      },
+      {
+        "key": "crew-system",
+        "chapter": "structure",
+        "layout": "visual",
+        "tab": "구조",
+        "title": {
+          "text": "2.3 승무원",
+          "verbatim": true
+        },
+        "lead": {
+          "text": "`CrewSystem`은 선택한 승무원 목록을 들고 이동 명령을 각 승무원에게 나눠 줍니다.",
+          "verbatim": true
+        },
+        "keywords": [
+          "CrewSystem",
+          "Room"
+        ],
+        "sectionPath": [
+          "2. 시스템 구조",
+          "2.3 승무원"
+        ],
+        "points": [
+          {
+            "label": "",
+            "text": "`CrewController`는 승무원 한 명의 체력과 지금 있는 방(`CurrentRoom`)을 갖고, 도착한 방의 시설 상태에 맞춰 수리하거나 보조합니다.",
+            "verbatim": true
+          },
+          {
+            "label": "",
+            "text": "`Room`은 그 방에 있는 승무원 목록과 시설을 함께 갖고 있어, 수리와 방 피해가 이곳을 거칩니다.",
+            "verbatim": true
+          }
+        ],
+        "visuals": [
+          {
+            "kind": "mermaid",
+            "n": 1,
+            "fp": "classDiagram"
+          }
+        ]
+      },
+      {
+        "key": "power-system",
+        "chapter": "structure",
+        "layout": "visual",
+        "tab": "구조",
+        "title": {
+          "text": "2.4 전력 조절",
+          "verbatim": true
+        },
+        "lead": {
+          "text": "반응로의 남은 전력과 시설마다 받은 전력을 다른 클래스가 갖습니다.",
+          "verbatim": true
+        },
+        "keywords": [
+          "ShipPowerController",
+          "배분·회수"
+        ],
+        "sectionPath": [
+          "2. 시스템 구조",
+          "2.4 전력 조절"
+        ],
+        "points": [
+          {
+            "label": "",
+            "text": "`ReactorController`는 쓸 수 있는 전력을, `FacilityController`는 시설의 전력·최대 전력·피해를 맡습니다.",
+            "verbatim": true
+          },
+          {
+            "label": "",
+            "text": "두 값을 함께 바꾸는 배분·회수 요청은 `ShipPowerController`가 처리합니다.",
+            "verbatim": true
+          }
+        ],
+        "visuals": [
+          {
+            "kind": "mermaid",
+            "n": 1,
+            "fp": "classDiagram"
+          }
+        ]
+      },
+      {
+        "key": "combat-system",
+        "chapter": "structure",
+        "layout": "visual",
+        "tab": "구조",
+        "title": {
+          "text": "2.5 무기·전투",
+          "verbatim": true
+        },
+        "lead": {
+          "text": "무기실 시설인 `WeaponSystem`이 무기(`WeaponController`)들을 들고, 충전이 끝난 무기가 투사체(`ProjectileController`)를 쏩니다.",
+          "verbatim": true
+        },
+        "keywords": [
+          "WeaponSystem",
+          "CombatSystem"
+        ],
+        "sectionPath": [
+          "2. 시스템 구조",
+          "2.5 무기·전투"
+        ],
+        "points": [
+          {
+            "label": "",
+            "text": "투사체가 실드에 닿거나 목표 방에 도착하면 `CombatSystem`이 두 함선 중 맞은 쪽을 찾아 실드 피해나 방 피해를 넘깁니다.",
+            "verbatim": true
+          },
+          {
+            "label": "",
+            "text": "이 구조에서 개발하며 가장 크게 부딪힌 곳은 전력 조절, 전투 씬을 다시 조립하는 게임 진행, 승무원이었습니다.",
             "verbatim": true
           }
         ],
