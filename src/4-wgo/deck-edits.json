@@ -137,10 +137,10 @@
       "chapter": "results",
       "layout": "problem",
       "tab": "문제 해결",
-      "title": {"text": "5.2-2 접속 직후 가끔 원인 모를 끊김 (서버)", "verbatim": true},
+      "title": {"text": "5.2.2 접속 직후 가끔 원인 모를 끊김 (서버)", "verbatim": true},
       "lead": null,
       "keywords": ["hello", "타이머", "race condition"],
-      "sectionPath": ["5. 결과 및 배운 점", "5.2 문제 해결 경험", "5.2-2 접속 직후 가끔 원인 모를 끊김 (서버)"],
+      "sectionPath": ["5. 결과 및 배운 점", "5.2 문제 해결 경험", "5.2.2 접속 직후 가끔 원인 모를 끊김 (서버)"],
       "points": [
         {"label": "문제", "text": "방에 처음 들어온 직후 가끔 이유 없이 연결이 끊겼습니다.", "verbatim": true},
         {
@@ -160,7 +160,7 @@
         }
       ],
       "visuals": [],
-      "from": {"key": "ts-hello", "sectionPath": ["5. 결과 및 배운 점", "5.2 문제 해결 경험", "5.2-2 접속 직후 가끔 원인 모를 끊김 (서버)"], "sig": []}
+      "from": {"key": "ts-hello", "sectionPath": ["5. 결과 및 배운 점", "5.2 문제 해결 경험", "5.2.2 접속 직후 가끔 원인 모를 끊김 (서버)"], "sig": []}
     }
   ],
   "hide": []
