@@ -57,8 +57,10 @@ def check_project(project: str, subtitle_path: Path) -> int:
             errors.append(f"{label}: cut이 컷 표에 없음")
             continue
 
-        errors += [f"{label}: {problem}" for problem in find_word_errors(text, words)]
-        warnings += [f"{label}: {problem}" for problem in find_word_warnings(text, words)]
+        # 쇼츠는 뒷부분에 기술·내 담당을 넣으므로(2026-11-24 사용자 결정) 단어표의 금지·주의 낱말을 보지 않음
+        checked_words = [] if is_short(project) else words
+        errors += [f"{label}: {problem}" for problem in find_word_errors(text, checked_words, words)]
+        warnings += [f"{label}: {problem}" for problem in find_word_warnings(text, checked_words)]
         timing_problem, display_seconds = measure_display_time(subtitle, cut)
         if timing_problem:
             errors.append(f"{label}: {timing_problem}")
@@ -85,13 +87,17 @@ def read_reviewed_cut_ids(project: str) -> set[str]:
     return {row["cut"].strip() for row in read_tsv(review_path)}
 
 
-def find_word_errors(text: str, words: list[dict]) -> list[str]:
-    """금지어와 허용 목록 밖의 영문 단어를 찾습니다. 반환: 문제 설명 목록(없으면 빈 목록)."""
+def find_word_errors(text: str, words: list[dict], all_words: list[dict]) -> list[str]:
+    """금지어와 허용 목록 밖의 영문 단어를 찾습니다.
+
+    words: 금지어를 볼 단어표 줄(쇼츠면 빈 목록). all_words: 허용 영문을 찾을 전체 단어표.
+    반환: 문제 설명 목록(없으면 빈 목록).
+    """
     problems = []
     for word in words:
         if word["kind"].strip() == "금지" and word["word"] in text:
             problems.append(f"금지어 '{word['word']}' — {word['reason']}")
-    allowed_english = {word["word"] for word in words if word["kind"].strip() == "허용"}
+    allowed_english = {word["word"] for word in all_words if word["kind"].strip() == "허용"}
     for english_word in re.findall(r"[A-Za-z]+", text.replace("\\N", " ")):
         if english_word not in allowed_english:
             problems.append(f"영문 '{english_word}' — 비개발자가 바로 읽는 한국어로, 필요 없으면 문장째 삭제")
