@@ -72,3 +72,9 @@
 - `src/**`·`report/고민-분류/**`를 다룰 때만 자동으로 실립니다(`paths`). 직접 불러도 첫 인자가 `src/` 프로젝트 폴더가 아니면 실행하지 않습니다.
 - 이름이 `portfolio-`로 시작하지 않아 `/portfolio-update`의 교체 목록 밖입니다.
 - 고민 분류 파일(`report/고민-분류/*.md`)은 §1 상태표를 먼저 읽고, 필요한 고민은 `### <고민 ID>` 제목 줄을 Grep으로 찾아 그 절만 Read합니다. 파일 전체를 처음부터 읽지 않습니다.
+
+## 지원서·자기소개서 (이 포크 전용)
+
+- 회사 지원서(자소서 문항·프로젝트 이력 칸)는 `/application-draft <회사>`(`.claude/skills/application-draft/`)로 씁니다. 작업 파일은 `report/<회사>-자소서.md`, 글자 수는 같은 폴더의 `count.py`입니다.
+- 문체·형식 규칙은 `.claude/rules/application-writing.md`입니다(2026-11-24 넷마블네오 제출본에서 뽑음). 지원서에서는 "쉬운 말로 풀어 쓴다" 대신 표준 기술 용어를 씁니다.
+- 전후 본보기는 `report/지원서-형식-비교.md`, 최근 제출 전문은 `report/넷마블네오-자소서.md` 「제출본」입니다. 이름이 `portfolio-`로 시작하지 않아 `/portfolio-update`의 교체 목록 밖입니다.
