@@ -155,11 +155,16 @@
     if (p.team?.role) meta.push(`<div class="wide"><dt>${T('name.role')}</dt><dd>${inline(p.team.role)}</dd></div>`);
     const extra = (p.links?.extra || []).filter((l) => isUrl(l.url));
     const btns = [btn(PF.projectUrl(p.id), T('name.deck'), 'page', 'btn primary'), btn(PF.docUrl(p.id), T('name.doc'), 'page'),
-      isUrl(p.links?.github) && btn(p.links.github, 'GitHub', 'external'), isUrl(p.links?.video) && btn(p.links.video, T('name.video'), 'external'),
-      ...extra.map((l) => btn(l.url, esc(l.label), 'external'))].filter(Boolean);
+      // [포크] GitHub 저장소가 여럿이면(extra에 github.com) GitHub 버튼 바로 뒤에 나란히
+      isUrl(p.links?.github) && btn(p.links.github, ghExtra(p).length ? 'GitHub(클라이언트)' : 'GitHub', 'external'),
+      ...ghExtra(p).map((l) => btn(l.url, esc(l.label), 'external')),
+      isUrl(p.links?.video) && btn(p.links.video, T('name.video'), 'external'),
+      ...extra.filter((l) => !ghExtra(p).includes(l)).map((l) => btn(l.url, esc(l.label), 'external'))].filter(Boolean);
     const urls = [[t('name.deck'), PF.visibleUrl(PF.projectUrl(p.id)), PF.projectUrl(p.id), 'page'], [t('name.doc'), PF.visibleUrl(PF.docUrl(p.id)), PF.docUrl(p.id), 'page'],
-      isUrl(p.links?.github) && ['GitHub', shortUrl(p.links.github), p.links.github, 'external'], isUrl(p.links?.video) && [t('name.video'), shortUrl(p.links.video), p.links.video, 'external'],
-      ...extra.map((l) => [l.label, shortUrl(l.url), l.url, 'external'])].filter(Boolean);
+      isUrl(p.links?.github) && [ghExtra(p).length ? 'GitHub(클라이언트)' : 'GitHub', shortUrl(p.links.github), p.links.github, 'external'],
+      ...ghExtra(p).map((l) => [l.label, shortUrl(l.url), l.url, 'external']),
+      isUrl(p.links?.video) && [t('name.video'), shortUrl(p.links.video), p.links.video, 'external'],
+      ...extra.filter((l) => !ghExtra(p).includes(l)).map((l) => [l.label, shortUrl(l.url), l.url, 'external'])].filter(Boolean);
     const cover = p.cover ? `<figure class="cover"><img src="${esc(PF.srcPath(p.id, p.cover))}" alt="${esc(p.title)} 대표 화면"></figure>` : '';
     const body = `${p.tagline ? `<p class="tagline">${inline(p.tagline)}</p>` : ''}
       <div class="pi${cover ? '' : ' nocover'}">${cover}<div class="pi-r">
