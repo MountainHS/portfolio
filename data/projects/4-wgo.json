@@ -39,8 +39,12 @@
   ],
   "links": {
     "github": "https://github.com/KooHoo-Dev/3rd-TeamProject-HS",
-    "video": "https://www.youtube.com/watch?v=8Kuv8hg5q3Y",
+    "video": "https://youtu.be/FIbzJOO5Ahc",
     "extra": [
+      {
+        "label": "쇼츠",
+        "url": "https://youtube.com/shorts/MQfqdbiIR6I"
+      },
       {
         "label": "GitHub(서버)",
         "url": "https://github.com/KooHoo-Dev/3rd-TeamProject-HS-Server"

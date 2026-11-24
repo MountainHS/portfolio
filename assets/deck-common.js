@@ -170,8 +170,10 @@
   // 프로젝트 외부 링크(시연 영상 · GitHub · 그 밖의 링크) — data 순서 그대로. type으로 영문 라벨을 고름(보이는 이름은 문구 표에서 바뀔 수 있음)
   const extLinks = (p) => [
     PF.isUrl(p.links?.video) && { type: 'video', label: PF.t('name.video'), url: p.links.video },
+    // [포크] 쇼츠 같은 GitHub 밖 링크는 시연 영상 바로 뒤에, GitHub 링크는 그다음에 모음
+    ...(p.links?.extra || []).filter((l) => PF.isUrl(l.url) && /github\.com/i.test(l.url) === false).map((l) => ({ type: 'extra', label: l.label, url: l.url, extra: true })),
     PF.isUrl(p.links?.github) && { type: 'github', label: 'GitHub', url: p.links.github },
-    ...(p.links?.extra || []).filter((l) => PF.isUrl(l.url)).map((l) => ({ type: 'extra', label: l.label, url: l.url, extra: true })),
+    ...(p.links?.extra || []).filter((l) => PF.isUrl(l.url) && /github\.com/i.test(l.url)).map((l) => ({ type: 'extra', label: l.label, url: l.url, extra: true })),
   ].filter(Boolean);
   const EXT_EN = { video: 'en.gameplay', github: 'en.repo' };
   const extEn = (l) => PF.t(EXT_EN[l.type] || 'en.link');

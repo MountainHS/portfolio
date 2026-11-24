@@ -40,7 +40,12 @@
   "links": {
     "github": "https://github.com/KooHoo-Dev/3rd_3D_1-3D-Project-team_even",
     "video": "https://youtu.be/cZSxjdhHFfA",
-    "extra": []
+    "extra": [
+      {
+        "label": "쇼츠",
+        "url": "https://youtube.com/shorts/KHwjLXVvaJo"
+      }
+    ]
   },
   "intent": {
     "text": "이 프로젝트의 핵심 경험은 압도적인 수의 몬스터에 밀리는 상황에서, 플레이어가 다양한 위협에 대응하며 물량을 극복하는 성취감입니다.",
