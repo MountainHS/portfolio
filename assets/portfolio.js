@@ -153,7 +153,8 @@
     const meta = (p.meta || []).map((m) => `<div><dt>${esc(m.label)}</dt><dd>${inline(m.value)}</dd></div>`);
     if (p.team?.role) meta.push(`<div class="wide"><dt>${T('name.role')}</dt><dd>${inline(p.team.role)}</dd></div>`);
     const extra = (p.links?.extra || []).filter((l) => isUrl(l.url));
-    const btns = [btn(PF.projectUrl(p.id), T('name.deck'), 'page', 'btn primary'), btn(PF.docUrl(p.id), T('name.doc'), 'page'),
+    // [포크] primary(파란 칠)는 상세 문서 하나 — 나머지는 화면에서 글자 링크(2026-11-24 Indexed Engineering Editorial)
+    const btns = [btn(PF.docUrl(p.id), T('name.doc'), 'page', 'btn primary'), btn(PF.projectUrl(p.id), T('name.deck'), 'page'),
       // [포크] GitHub 저장소가 여럿이면(extra에 github.com) GitHub 버튼 바로 뒤에 나란히
       isUrl(p.links?.github) && btn(p.links.github, ghExtra(p).length ? 'GitHub(클라이언트)' : 'GitHub', 'external'),
       ...ghExtra(p).map((l) => btn(l.url, esc(l.label), 'external')),

@@ -279,6 +279,39 @@ code { font-family: var(--mono); font-size: .88em; background: var(--accent-soft
   .flist li { grid-template-columns: minmax(0, 1fr); }
   .fe-r .btns { margin-top: 24px; }
 }
+/* [포크] Indexed Engineering Editorial — 카드·버튼 대신 선·번호·참조 링크로 "문서답게"(2026-11-24 deep-research-report P0).
+   화면 전용(@media screen): 인쇄(A4 제출 PDF)는 원래 규칙 그대로. 되돌리려면 이 블록을 지움.
+   ① 링크 위계: 파란 칠 버튼은 primary 하나만, 나머지 버튼·[슬라이드에서 보기]는 밑줄 글자 링크
+   ② 세로 강조선(자기소개·개발 의도) 제거 → 위 구분선 + 절 머리
+   ③ 기술 스택 근거 프로젝트는 테두리 배지 대신 "→ 프로젝트" 참조, 인라인 코드는 옅은 회청색 판
+   ④ 프로젝트 태그는 테두리 없이 " · "로 이은 한 줄 메타
+   ⑤ 기능 소개 2열 카드 → 위 1px 선만 있는 문서 항목 */
+@media screen {
+  /* ① 링크 위계 */
+  .hero .btns, .pi .btns { gap: 8px 24px; align-items: center; }
+  .hero .btns .btn, .pi .btns .btn:not(.primary), .pill {
+    padding: 0; border: 0; border-radius: 0; background: none; color: var(--accent-fill);
+    font-weight: 600; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
+  .hero .btns .btn:hover, .pi .btns .btn:not(.primary):hover, .pill:hover, li.on .pill {
+    background: none; border: 0; color: var(--ink); }
+  /* ② 세로 강조선 제거 */
+  .about { max-width: 680px; padding-left: 0; border-left: 0; border-image: none; }
+  .intent { padding: 20px 0 0; border-left: 0; border-image: none; border-top: 1px solid var(--line); }
+  .intent .k { font-size: 16px; font-weight: 800; letter-spacing: 0; color: var(--ink); margin-bottom: 6px; }
+  /* ③ 기술 근거 참조 · 인라인 코드 */
+  .chip { padding: 0; border: 0; border-radius: 0; background: none; font-size: 14px; font-weight: 600; color: var(--accent-fill); }
+  .chip::before { content: "→ "; }
+  .chip:hover { border: 0; text-decoration: underline; text-underline-offset: 3px; }
+  code { font-size: .92em; background: #F1F4F8; color: #2457A6; padding: .08em .28em; border-radius: 3px; }
+  /* ④ 태그 = 한 줄 메타 */
+  .tags { gap: 0; }
+  .tags li { padding: 0; border: 0; border-radius: 0; color: var(--muted); font-size: 14px; font-weight: 600; }
+  .tags li + li::before { content: "·"; margin: 0 10px; color: var(--line-2); }
+  /* ⑤ 기능 소개 = 문서 항목 */
+  .flist { column-gap: 40px; row-gap: 0; }
+  .flist li, .flist li:first-child { padding: 24px 0 28px; background: none; border: 0; border-top: 1px solid var(--line); border-radius: 0; }
+  .flist li.on { background: none; border-top-color: var(--accent); box-shadow: none; }
+}
 /* 좁은 화면: 머리 막대의 절 이동은 숨기고(내용은 위에서 아래로 그대로) 이름 · [PDF로 저장]만 */
 @media (max-width: 759px) {
   .top nav { display: none; }
