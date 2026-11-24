@@ -7,10 +7,12 @@
   - 포트폴리오 페이지(`index.html`): 입력창에 `저장 위치: …`를 먼저 보여 줍니다. 저장 위치는 `.claude/skills/portfolio-build/portfolio-edits.py`가 정합니다(프로필·기술 이름 → `profile.md`, 프로젝트 문서에 한 번만 그대로 있는 글 → 그 프로젝트 문서 줄, 그 밖 → `src/<폴더>/deck-edits.json`의 `"editModePortfolio"` 목록).
   - 슬라이드(`project.html`): 표·코드·다이어그램(그림 자체는 제외) → 프로젝트 문서의 원문 줄. 장면 제목·도입·요점 카드·그림 설명(캡션) → `deck-edits.json`의 `"deckText"` 목록(프로젝트 문서에 같은 글이 한 번만 그대로 있으면 그 줄도). 장면 배치(틀·나누기·합치기·숨기기·순서)는 편집 모드가 아니라 `/portfolio-edit`로 고칩니다.
   - GitHub Pages나 `python -m http.server`로 열면 버튼이 없습니다(배포된 페이지는 그대로).
+- **[± 바뀐 점]**: 편집 서버로 연 상세 문서(`doc.html?p=<폴더>`) 오른쪽 아래 버튼입니다. 프로젝트 문서의 git 기준판(기본 `HEAD` = 커밋 안 한 변경)과 지금 글을 비교해 새 블록은 초록, 지운 블록은 빨강, 고친 문단은 낱말 단위로 색칠합니다.
+  - 주소 옵션: `&diff-base=HEAD~1`(직전 커밋과 비교) · `&pf-diff=1`(열자마자 켬). 켜는 동안 편집 모드는 꺼지고, 끄면 원래 화면으로 돌아옵니다.
 - **빌드 뒤 반영**: `/portfolio-build`와 `/portfolio-edit`가 끝나면 **반드시** 이 순서로 실행합니다(여러 번 실행해도 결과가 같음). 빠뜨리면 다시 만든 `data/`에서 편집 모드로 고친 글이 빠집니다.
   1. `python .claude/skills/portfolio-build/deck-edits.py apply --all`
   2. `python .claude/skills/portfolio-build/portfolio-edits.py apply --all`
   - `python`이 없으면 `py`로 실행합니다. 1이 "portfolio(포트폴리오 페이지 고치기)는 아직 지원하지 않아 무시했습니다"라고 알려도 2가 반영하므로 괜찮습니다.
 - **미리보기**: `preview.cmd`(더블클릭) 또는 `.\preview.ps1 [all|portfolio|deck|doc|server|stop] [프로젝트 폴더]`로 엽니다. 편집 서버를 켜고 페이지를 브라우저로 엽니다. 스킬이 미리보기로 `python -m http.server 4600`을 띄우라고 해도 `python edit-server.py`를 띄웁니다.
 - **편집 버튼이 안 보이면**: 4600 포트를 `python -m http.server`가 쓰고 있는 것입니다. `.\preview.ps1 stop`으로 끈 뒤 다시 켭니다. 저장할 때 "편집 서버가 이 기능 전의 것입니다"가 떠도 같은 방법입니다.
-- **템플릿 업데이트 뒤**: 업데이트해도 편집 모드는 그대로입니다. 편집 서버가 `index.html`·`project.html`·`doc.html`을 보낼 때만 메모리에서 `</body>` 위에 로더 한 줄(`assets/edit-loader.js`)을 넣고(`.claude/skills/edit-mode-install/edit-mode-patch.py`), 디스크 파일은 원본 그대로라 업데이트가 이 파일들을 "직접 고친 흔적"으로 묻지 않습니다. 원본이 기준 줄을 바꿔 서버 창에 `[멈춤]`이 뜨면 그 페이지만 편집 버튼이 없습니다. 새 파일(`edit-server.py`·`preview.*`·`assets/edit-loader.js`·`assets/*-edit.*`·`portfolio-edits.py`)과 이 절은 업데이트 뒤에도 남습니다.
+- **템플릿 업데이트 뒤**: 업데이트해도 편집 모드는 그대로입니다. 편집 서버가 `index.html`·`project.html`·`doc.html`을 보낼 때만 메모리에서 `</body>` 위에 로더 한 줄(`assets/edit-loader.js`)을 넣고(`.claude/skills/edit-mode-install/edit-mode-patch.py`), 디스크 파일은 원본 그대로라 업데이트가 이 파일들을 "직접 고친 흔적"으로 묻지 않습니다. 원본이 기준 줄을 바꿔 서버 창에 `[멈춤]`이 뜨면 그 페이지만 편집 버튼이 없습니다. 새 파일(`edit-server.py`·`preview.*`·`assets/edit-loader.js`·`assets/*-edit.*`·`assets/doc-diff.*`·`portfolio-edits.py`)과 이 절은 업데이트 뒤에도 남습니다.
