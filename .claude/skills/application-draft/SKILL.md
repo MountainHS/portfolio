@@ -1,6 +1,6 @@
 ---
 name: application-draft
-description: 회사 지원서(자기소개서 문항·프로젝트 이력 담당 업무 칸)를 넷마블네오 제출본 형식으로 쓴다 — 공고·문항 수집, report/<회사>-자소서.md 작업 파일, 질문 라운드, .claude/rules/application-writing.md 규칙으로 초안, 글자 수(count.py), 사실 확인, 사용자 수정본과 비교해 규칙 갱신. 사용자 프롬프트에 "자소서"라는 낱말이 있거나 /application-draft를 입력했을 때만 사용(UserPromptSubmit 훅이 알림). "자소서"가 없으면 지원서·자기소개서 이야기여도 스스로 실행하지 않는다. 포트폴리오 페이지·프로젝트 문서 작업에는 쓰지 않는다.
+description: 회사 지원서(자기소개서 문항·프로젝트 이력 담당 업무 칸)를 넷마블네오 제출본 형식으로 쓴다 — 공고·문항 수집, report/<회사>-자소서.md 작업 파일, 질문 라운드, .claude/rules/application-writing.md 규칙으로 초안, 글자 수(count.py), 사실 확인, 사용자 수정본과 비교해 규칙 갱신. 사용자 프롬프트에 "자소서", "지원서 초안", "자기소개서 문항", "프로젝트 이력 칸" 중 하나가 있거나 /application-draft를 입력했을 때만 사용(UserPromptSubmit 훅이 알림). 이 키워드가 없으면 지원서 이야기여도 스스로 실행하지 않는다. 포트폴리오 페이지·프로젝트 문서 작업에는 쓰지 않는다.
 argument-hint: "<회사 이름> [시작|답 반영|점검|수정본 비교]"
 ---
 
