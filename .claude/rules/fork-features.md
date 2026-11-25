@@ -83,13 +83,13 @@ paths:
 ## Engineering Editorial 배치 (이 포크 전용)
 
 - 2026-11-22 디자인 핸드오프(흰 바탕 Engineering Editorial)를 적용했습니다. 색·모양·영문 글꼴(Sora)은 `theme/theme.css`에만 있어 업데이트·머지와 상관없습니다. 아래 렌더러 수정만 원본이 덮거나 머지 충돌이 날 수 있습니다(줄마다 `[포크]` 주석).
-  - `assets/portfolio.css`: 맨 아래 `@media screen and (min-width: 760px)`의 `.pi:not(.nocover)` 블록 — 프로젝트 소개 Hero를 게임 화면 약 68% : 메타 32%로(`.pi-r`를 `display: contents`로 풀어 메타·태그·버튼은 오른쪽, 개발 의도는 아래 폭 전체). 인쇄(A4)는 원본 5fr:6fr 그대로. `--mono`를 `'JetBrains Mono', 'D2Coding', …`로.
-  - `assets/portfolio.css`: 위 블록 다음 `[포크] Engineering Editorial 배치` 블록(2026-11-23, `@media screen` 두 개) — 띠 배경 없음·절 간격 96/128px, 글자 단계(이름 44~60·절 제목 28~32·프로젝트 제목 Sora 36~44·본문 17px), 설명 글 720px, Hero 판 상자 없이 16:9 게임 화면(오른쪽 32% 칸은 메타만 — 상자 대신 위 2px 선 + 항목마다 1px 구분선, 태그·버튼은 Hero 아래 폭 전체 한 줄씩 → 그 아래 개발 의도), 기능 소개는 화면 위 한 줄 + 기능 2열 카드. 인쇄는 원래 규칙. 되돌리려면 그 블록을 지웁니다.
-  - `assets/portfolio.css`: 그다음 `[포크] Indexed Engineering Editorial` 블록(2026-11-24, `@media screen`) — 표지·프로젝트 소개 버튼은 primary 하나만 칠하고 나머지와 기능 `.pill`은 밑줄 글자 링크, 자기소개·개발 의도 세로선 제거(개발 의도는 위 구분선 + 절 머리), 기술 스택 `.chip`은 `→ 프로젝트` 참조, 인라인 `code`는 옅은 회청색 판, `.tags`는 ` · ` 한 줄, 기능 `.flist li`는 카드 대신 위 1px 선. 인쇄는 원래 규칙. `theme/theme.css` 모서리도 같은 날 `--t-radius` 4px·`--t-pill` 4px로.
-  - `assets/portfolio.css`: 그다음 `[포크] 프로젝트 타임라인` 블록(2026-11-25, `@media screen`) — 프로젝트 소개·기능 소개 절 왼쪽 세로선(강조 둘째→첫째 그러데이션), 프로젝트 소개 절 제목 왼쪽에 번호 원 노드(CSS 카운터 `pf-proj`, 01·02·03), 노드→제목 연결선, 프로젝트 제목 그러데이션 글자. 거터·노드 크기 48/36px(<760) · 80/56px(760~1099) · 120/80px(≥1100). JS 변경 없음, 인쇄는 원래 규칙. 같은 날 `theme/theme.css`도 밝은 인디고→청록 테마로.
-  - `assets/portfolio.js` `projectIntro`의 `btns`: primary를 슬라이드 대신 상세 문서로(상세 문서가 앞). 인쇄 주소 목록 순서는 그대로.
+  - **2026-11-25 B안 카드형 배치로 교체**(사용자가 고른 시안 패키지 `B_layout_agent_package.zip`). 아래 예전 [포크] 블록(68:32 Hero·Engineering Editorial·Indexed·타임라인·Hive 3열)은 모두 지웠습니다.
+    - `assets/portfolio.js` `render()`·`card()`·`detail()`·`linkRows()`·`byRecent()`·`cardFacts()`: nav → 머리(인사·자기소개 | 개발 분야 상자) → 카드 3열(`#projects`) → 상세 패널(`#p-<폴더>`, 기능마다 그림·설명·[슬라이드 열기]) → 기술 스택(`#stack`) → 연락처. 프로젝트는 '기간' 시작일 최근 순. 한눈에 보기·자기소개 절 없음(예전 주소 `#intro`·`#glance`·`#p-<폴더>-core`는 `legacyTarget`이 넘김).
+    - `assets/portfolio.css`: 파일 전체가 B안 값(`--b-*`: #F8FAFC·#17628B·#D7E2E9, 1150px, 800px 경계). `theme/theme.css` 색은 이 페이지에 안 쓰고 슬라이드·상세 문서에만 들어갑니다.
+    - `assets/strings.js`: `page.brand`·`en.hero`·`page.hello`·`page.hello-name`·`en.focus`·`page.focus-count`·`en.projects`·`page.games`·`en.details`·`page.details`·`en.capabilities`·`page.view`·`page.card-*` 키 추가.
+    - `assets/portfolio-edit.js`: 글 칸 선택자를 새 DOM(`#cover h1 .nm`·`.card .title/.role/.intent`·`.detail h3/.d-role/.tagline/.meta/.tags`·`.features li h4/.what`)으로.
   - `assets/doc.css`: `--measure: 44rem`(원본 40rem), `--fig-max: 1120px`(원본 1200px).
   - `index.html`: JetBrains Mono `latin-400` 링크 한 줄. `doc.html`: JetBrains Mono·D2Coding 링크 두 줄(원본은 `--mono` 첫 순위가 JetBrains Mono인데 글꼴을 싣지 않았음).
 - 슬라이드(`project.html`·`deck-theme.css`)는 고치지 않았습니다. 장면마다 글자 폭을 재서 배치하므로 코드 글꼴·크기를 바꾸면 배치 점검이 달라집니다.
 - 되돌리기: 색은 `/portfolio-theme 되돌리기`, 배치는 위 `[포크]` 줄을 원본 값으로(또는 그 커밋 `git revert`).
-- 원 레포 머지 뒤 확인: `index.html`에서 프로젝트 소개 그림이 왼쪽 넓은 칸인지, 프로젝트마다 번호 노드와 세로선이 보이는지, `doc.html?p=<id>` 본문 폭이 약 704px인지.
+- 원 레포 머지 뒤 확인: `index.html`이 B안 카드 3열·상세 패널 구조인지, `doc.html?p=<id>` 본문 폭이 약 704px인지.

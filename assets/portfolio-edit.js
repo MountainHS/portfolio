@@ -66,16 +66,15 @@
     const cover = document.getElementById('cover');
     const contact = document.getElementById('contact');
 
-    // ① 머리 · 자기소개 · 연락처 → profile.md
-    add(cover?.querySelector('h1 .en') ?? null, '영문 이름', { field: 'profile.nameEn' }, profile.nameEn);
-    add(cover?.querySelector('h1') ?? null, '이름', { field: 'profile.name' }, profile.name);
+    // ① 머리 · 자기소개 · 연락처 → profile.md  ([포크] B안 배치: 인사 문구는 문구 표라 이름만 .nm 칸)
+    add(contact?.querySelector('.ct-name [lang="en"]') ?? null, '영문 이름', { field: 'profile.nameEn' }, profile.nameEn);
+    add(cover?.querySelector('h1 .nm') ?? null, '이름', { field: 'profile.name' }, profile.name);
     add(cover?.querySelector('.headline') ?? null, '한 줄 정체성', { field: 'profile.headline' }, profile.headline);
-    add(contact?.querySelector('.ct-name') ?? null, '이름', { field: 'profile.name' }, profile.name);
     document.querySelectorAll('#cover a[href^="mailto:"], #contact .em a').forEach((element) => add(element, '이메일', { field: 'profile.email' }, profile.email));
-    document.querySelectorAll('#cover .btns a, #contact .ct-me a').forEach((element) => {
+    document.querySelectorAll('#cover .links a, #contact > a').forEach((element) => {
       if (element.getAttribute('href') === profile.github) add(element, 'GitHub 주소', { field: 'profile.github' }, profile.github);
     });
-    add(document.querySelector('#intro .about'), '자기소개', { field: 'profile.intro' }, profile.intro, 'lines');
+    add(document.querySelector('#cover .about'), '자기소개', { field: 'profile.intro' }, profile.intro, 'lines');
 
     // ② 기술 스택: 기술 이름(profile.md 메모) · 근거 문장
     document.querySelectorAll('#stack .skill').forEach((skillElement, skillIndex) => {
@@ -86,61 +85,37 @@
       });
     });
 
-    // ③ 프로젝트마다 소개 · 기능 소개 · 한눈에 보기 · 연락처의 프로젝트 이름
-    const glanceItems = document.querySelectorAll('#glance .glance > li');
-    const contactItems = document.querySelectorAll('#contact .ct-lk > div');
-    projects.forEach((project, projectIndex) => {
-      addProjectSpots(add, project, document.getElementById(`p-${project.id}`), document.getElementById(`p-${project.id}-core`));
-      addGlanceSpots(add, project, glanceItems[projectIndex] ?? null);
-      add(contactItems[projectIndex]?.querySelector('b') ?? null, '프로젝트 이름', { field: 'title', project: project.id }, project.title);
+    // ③ 프로젝트마다 카드 · 상세 패널(카드는 상세 패널의 View Project 링크로 짝지음)
+    projects.forEach((project) => {
+      const card = document.querySelector(`#projects .card a.more[href="#p-${CSS.escape(project.id)}"]`)?.closest('.card') ?? null;
+      addProjectSpots(add, project, card, document.getElementById(`p-${project.id}`));
     });
     return spots;
   }
 
-  /** 프로젝트 소개 절(#p-<폴더>)과 기능 소개 절(#p-<폴더>-core)의 글 칸 */
-  function addProjectSpots(add, project, introSection, featureSection) {
+  /** 프로젝트 카드(.card)와 상세 패널(#p-<폴더>)의 글 칸. 카드 메타(연도·개발 기간·엔진)는 잘라 보인 값이라 편집 대상이 아님 */
+  function addProjectSpots(add, project, card, detail) {
     const ask = (field, extra = {}) => ({ field, project: project.id, ...extra });
-    if (introSection !== null) {
-      add(introSection.querySelector('.sec-head h2'), '프로젝트 이름', ask('title'), project.title);
-      add(introSection.querySelector('.tagline'), '한 줄 소개', ask('tagline'), project.tagline);
-      introSection.querySelectorAll('.meta > div:not(.wide)').forEach((row, index) => {
-        add(row.querySelector('dd'), project.meta[index].label, ask('meta', { index }), project.meta[index].value);
-      });
-      add(introSection.querySelector('.meta > .wide dd'), '내 역할', ask('team.role'), project.team?.role);
-      add(introSection.querySelector('.intent p:not(.k)'), '개발 의도', ask('intent'), project.intent?.text);
-      add(introSection.querySelector('.tags'), '태그', ask('tags'), project.tags, 'tags');
+    if (card !== null) {
+      add(card.querySelector('.title'), '프로젝트 이름', ask('title'), project.title);
+      add(card.querySelector('.role'), '내 역할', ask('team.role'), project.team?.role);
+      add(card.querySelector('.intent'), '개발 의도', ask('intent'), project.intent?.text);
     }
-    if (featureSection !== null) {
-      add(featureSection.querySelector('.sec-head h2'), '프로젝트 이름', ask('title'), project.title);
-      featureSection.querySelectorAll('.flist > li[data-fi]').forEach((row) => {
-        const index = Number(row.dataset.fi);
-        const highlight = project.highlights[index];
-        add(row.querySelector('h3'), `기능 ${index + 1} 제목`, ask('highlight.title', { index }), highlight.title);
-        add(row.querySelector('.fr-t > p:not(.fk)'), `기능 ${index + 1} 설명`, ask('highlight.what', { index }), highlight.what);
-      });
-      featureSection.querySelectorAll('figure.shot[data-fi]').forEach((figure) => {
-        const index = Number(figure.dataset.fi);
-        add(figure.querySelector('figcaption span:last-child'), `기능 ${index + 1} 화면 설명`, ask('highlight.caption', { index }), captionText(project.highlights[index].image?.caption));
-      });
-    }
+    if (detail === null) return;
+    add(detail.querySelector('h3'), '프로젝트 이름', ask('title'), project.title);
+    add(detail.querySelector('.d-role'), '내 역할', ask('team.role'), project.team?.role);
+    add(detail.querySelector('.tagline'), '한 줄 소개', ask('tagline'), project.tagline);
+    detail.querySelectorAll('.meta > div').forEach((row, index) => {
+      add(row.querySelector('dd'), project.meta[index].label, ask('meta', { index }), project.meta[index].value);
+    });
+    add(detail.querySelector('.tags'), '태그', ask('tags'), project.tags, 'tags');
+    detail.querySelectorAll('.features > li[data-fi]').forEach((row) => {
+      const index = Number(row.dataset.fi);
+      const highlight = project.highlights[index];
+      add(row.querySelector('h4'), `기능 ${index + 1} 제목`, ask('highlight.title', { index }), highlight.title);
+      add(row.querySelector('.what'), `기능 ${index + 1} 설명`, ask('highlight.what', { index }), highlight.what);
+    });
   }
-
-  /** 한눈에 보기의 프로젝트 한 줄(이름 · 한 줄 소개 · 태그 · 역할) */
-  function addGlanceSpots(add, project, item) {
-    if (item === null) return;
-    const ask = (field) => ({ field, project: project.id });
-    add(item.querySelector('.g-t a'), '프로젝트 이름', ask('title'), project.title);
-    add(item.querySelector('.g-b > p:not(.g-tags):not(.g-role)'), '한 줄 소개', ask('tagline'), project.tagline);
-    add(item.querySelector('.g-tags'), '태그', ask('tags'), project.tags, 'tags');
-    add(item.querySelector('.g-role'), '내 역할', ask('team.role'), project.team?.role);
-  }
-
-  /** 기능 화면 설명은 글자 또는 { text, verbatim }(schema.md 「글 조각」). 설명이 없으면 ''(화면은 기능 제목을 대신 보임 → 고칠 칸 아님). */
-  function captionText(caption) {
-    if (typeof caption === 'string') return caption;
-    return caption?.text || '';
-  }
-
   // ── 화면 ──
 
   /** 고칠 칸에 표시를 달고, 편집 모드에서 누르면 입력창을 엽니다(링크 이동보다 먼저 받음). */
