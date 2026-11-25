@@ -1,44 +1,44 @@
 /* ─────────────────────────────────────────────────────────────
-   테마 (theme/theme.css) — /portfolio-theme 규칙으로 만듦 · 2026-11-22
-   참고한 화면: 없음 — 디자인 핸드오프 문서(화이트 기반 Engineering Editorial)의 확정 팔레트를 그대로 옮김
-   뽑은 인상: 오프화이트 바탕 · 강조 파랑 한 색(#2F6FEB) · 그러데이션·광채·큰 장식 글자 없음 · 작은 모서리 · 각진 테크 영문(Sora)
+   테마 (theme/theme.css) — /portfolio-theme가 만듦 · 2026-11-25
+   참고한 화면: 밝은 바탕의 게임 개발자 포트폴리오 — 왼쪽 세로 타임라인에 원 노드, 흰 카드 격자
+   뽑은 인상: 옅은 회백 바탕 · 흰 카드 · 인디고→청록 그러데이션(제목·노드) · 16px 둥근 카드 · 8px 버튼 · 각진 테크 영문
    값을 고쳐도 됩니다(저장 → 새로고침). 손잡이 설명: .claude/skills/portfolio-theme/rules.md
    이 파일은 /portfolio-update가 건드리지 않습니다. 기본 테마로 되돌리기: /portfolio-theme 되돌리기
    ───────────────────────────────────────────────────────────── */
-@import url("https://cdn.jsdelivr.net/npm/@fontsource/sora@5.3.0/latin-700.css");   /* 영문 라벨 글꼴 */
+@import url("https://cdn.jsdelivr.net/npm/@fontsource/sora@5.3.0/latin-700.css");   /* 영문 라벨 글꼴 — 레퍼런스 Space Grotesk는 목록 밖이라 같은 인상의 Sora */
 @import url("https://cdn.jsdelivr.net/npm/@fontsource/sora@5.3.0/latin-800.css");
 
 :root {
   /* ① 바탕과 글자 — 바탕 대비: 제목 12 · 본문 7 · 보조 4.5 이상(check-theme.py가 확인) */
   --t-scheme: light;
-  --t-bg: #FCFCFB;              /* 페이지·장면 바탕 */
-  --t-surface: #F6F7F9;         /* 카드·판 */
-  --t-ink: #202327;             /* 제목·강한 글자 */
-  --t-body: #3A3F46;            /* 본문 */
-  --t-muted: #6B7078;           /* 보조 글자(날짜·캡션) */
-  --t-line: #D9DDE3;            /* 얇은 구분선·카드 테두리 */
-  --t-line-2: #B8BEC7;          /* 버튼·태그 테두리 */
+  --t-bg: #FAFAFA;              /* 페이지·장면 바탕 */
+  --t-surface: #FFFFFF;         /* 카드·판 */
+  --t-ink: #18181B;             /* 제목·강한 글자 */
+  --t-body: #3F3F46;            /* 본문 */
+  --t-muted: #71717A;           /* 보조 글자(날짜·캡션) */
+  --t-line: #E4E4E7;            /* 얇은 구분선·카드 테두리 */
+  --t-line-2: #D4D4D8;          /* 버튼·태그 테두리 */
 
-  /* ② 강조색 — 한 색만. 둘째·셋째도 같은 값(지우면 보랏빛 짝 색이 자동으로 생김) */
-  --t-accent: #2F6FEB;
-  --t-accent-2: #2F6FEB;
-  --t-accent-3: #2F6FEB;
+  /* ② 강조색 — 인디고 → 청록 그러데이션, 셋째는 틸 */
+  --t-accent: #4F46E5;
+  --t-accent-2: #06B6D4;
+  --t-accent-3: #14B8A6;
 
   /* ③ 모양 */
-  --t-radius: 4px;              /* 카드 모서리 — 문서처럼 작게(2026-11-24 Indexed Engineering Editorial, 원래 10px) */
-  --t-pill: 4px;                /* 버튼·태그 — 거의 각진 네모(원래 6px) */
-  --t-shadow: rgb(20 22 30 / .08);   /* 그림자 거의 없음(테두리 위주) */
+  --t-radius: 16px;             /* 카드 모서리 */
+  --t-pill: 8px;                /* 버튼·태그 — 둥근 네모 */
+  --t-shadow: rgb(20 22 30 / .08);   /* 평소엔 테두리 위주, 그림자 옅게 */
 
   /* ④ 영문 라벨 글꼴 — 한글은 늘 Pretendard */
   --t-display: 'Sora';
 
-  /* ⑤ 효과 — 그러데이션·광채·장식 글자 없음 */
-  --t-grad: linear-gradient(var(--accent-ink), var(--accent-ink));
-  --t-badge: var(--accent-fill);
+  /* ⑤ 효과 — 제목·노드 그러데이션, 바탕 광채·장식 글자 없음 */
+  --t-grad: linear-gradient(90deg, var(--accent-ink), var(--accent-2-ink));
+  --t-badge: linear-gradient(160deg, var(--accent-fill) 0%, var(--accent-2-fill) 62%, var(--accent-3) 130%);
   --t-glow: 0;
   --t-mark: 0;
 
   /* ⑥ 코드 판(어둡게) · 다이어그램 판(밝은 바탕이라 카드 색과 같게) */
   --t-code-bg: #1E2430;
-  --t-diagram: #F6F7F9;
+  --t-diagram: #FFFFFF;
 }

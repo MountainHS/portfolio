@@ -312,6 +312,43 @@ code { font-family: var(--mono); font-size: .88em; background: var(--accent-soft
   .flist li, .flist li:first-child { padding: 24px 0 28px; background: none; border: 0; border-top: 1px solid var(--line); border-radius: 0; }
   .flist li.on { background: none; border-top-color: var(--accent); box-shadow: none; }
 }
+/* [포크] 프로젝트 타임라인 — 왼쪽 세로선 + 프로젝트마다 번호 원 노드(01·02·03), 제목은 그러데이션 글자(2026-11-25 레퍼런스 타임라인).
+   연도 자리에 프로젝트 번호를 둠. 기능 소개 절(.core)은 노드 없이 선만 이어짐. JS 변경 없음(번호는 CSS 카운터).
+   화면 전용(@media screen): 인쇄(A4 제출 PDF)는 원래 규칙 그대로. 되돌리려면 이 블록을 지움 */
+@media screen {
+  main { counter-reset: pf-proj; }
+  .sec.proj { counter-increment: pf-proj; }
+  .sec.proj, .sec.core { position: relative; --tl-gutter: 48px; --tl-node: 36px; }
+  .sec.proj > .wrap, .sec.core > .wrap { padding-left: calc(var(--pad) + var(--tl-gutter)); }
+  /* 세로선: wrap 왼쪽 가장자리 + 거터 가운데 */
+  .sec.proj::before, .sec.core::before {
+    content: ""; position: absolute; top: 0; bottom: 0; width: 4px; border-radius: 2px; opacity: .4; pointer-events: none;
+    left: calc(max(0px, (100% - var(--wrap)) / 2) + var(--pad) + var(--tl-gutter) / 2 - 2px);
+    background: linear-gradient(180deg, var(--accent-2-fill) 0%, var(--accent-fill) 100%); }
+  /* 번호 노드: 제목 줄 왼쪽, 거터 가운데 */
+  .sec.proj .sec-head { position: relative; }
+  .sec.proj .sec-head::before {
+    content: counter(pf-proj, decimal-leading-zero); position: absolute; z-index: 1; top: 0;
+    left: calc(0px - (var(--tl-gutter) + var(--tl-node)) / 2); width: var(--tl-node); height: var(--tl-node);
+    display: flex; align-items: center; justify-content: center; border-radius: 50%; box-sizing: border-box;
+    border: calc(var(--tl-node) / 20) solid var(--bg); color: #fff;
+    background: linear-gradient(135deg, var(--accent-fill) 0%, var(--accent-2-fill) 100%);
+    box-shadow: 0 0 calc(var(--tl-node) * .4) color-mix(in srgb, var(--accent-fill) 40%, transparent);
+    font-family: var(--display); font-weight: 800; font-size: calc(var(--tl-node) * .3); letter-spacing: -.02em; }
+  /* 노드 → 제목 연결선 */
+  .sec.proj .sec-head::after {
+    content: ""; position: absolute; top: calc(var(--tl-node) / 2 - 1px); height: 2px; opacity: .3; pointer-events: none;
+    left: calc(0px - (var(--tl-gutter) - var(--tl-node)) / 2); width: calc((var(--tl-gutter) - var(--tl-node)) / 2);
+    background: linear-gradient(90deg, var(--accent-2-fill), transparent); }
+  /* 프로젝트 제목 = 그러데이션 글자 */
+  .sec.proj .sec-head h2 { background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
+}
+@media screen and (min-width: 760px) {
+  .sec.proj, .sec.core { --tl-gutter: 80px; --tl-node: 56px; }
+}
+@media screen and (min-width: 1100px) {
+  .sec.proj, .sec.core { --tl-gutter: 120px; --tl-node: 80px; }
+}
 /* 좁은 화면: 머리 막대의 절 이동은 숨기고(내용은 위에서 아래로 그대로) 이름 · [PDF로 저장]만 */
 @media (max-width: 759px) {
   .top nav { display: none; }
