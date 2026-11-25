@@ -52,6 +52,7 @@ code { font-family: var(--mono); font-size: .88em; background: var(--b-soft); pa
 .links a { display: inline-flex; align-items: center; font-size: 12px; font-weight: 700; text-decoration: none; padding: 7px 11px;
            border: 1px solid var(--b-line); border-radius: 4px; background: var(--b-card); }
 .links a:hover, .pill:hover { border-color: var(--b-accent); color: var(--b-accent); }
+.links a.featured { border-color: var(--b-accent); background: var(--b-accent); color: #fff; }
 
 /* ── 맨 위 메뉴 ── */
 .top { display: flex; justify-content: space-between; align-items: center; gap: 20px; flex-wrap: wrap; padding: 23px 0; border-bottom: 1px solid var(--b-line); font-size: 13px; }

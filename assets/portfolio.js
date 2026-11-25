@@ -1,6 +1,6 @@
 // 포트폴리오 페이지(index.html) — 아래로 읽는 한 페이지 + A4 인쇄(제출 PDF)
 //   [포크] B안 순서: 머리(인사·자기소개·개발 분야) → 프로젝트 카드 3열 → 프로젝트 상세 패널(기능마다 그림·설명·[슬라이드 열기]) → 기술 스택 → 연락처
-//   프로젝트는 '기간' 시작일이 최근인 것부터(data 순서는 그대로)
+//   프로젝트는 data/portfolio.json의 projects 순서대로 표시합니다.
 //   모든 글은 data/portfolio.json·data/projects/*.json 값 그대로입니다. 절 이름·버튼 같은 UI 문구는 문구 표(PF.t, assets/strings.js + theme/strings.tsv)에서 옵니다.
 //   주소: #<절 id>(cover · projects · p-<폴더> · stack · contact, 예전 intro · glance · p-<폴더>-core도 받음). 예전 포트폴리오 슬라이드 주소(#s=<장면 id> · #<번호>)는 같은 절로 넘깁니다.
 //   점검: PFPage.whenReady() → PFPage.report() · ?pf-audit=1이면 #pf-audit에 report()의 base64 JSON(headless용, 슬라이드와 같은 형식)
@@ -41,7 +41,6 @@
         return null;
       })))).filter(Boolean);
     await strings;
-    projects.splice(0, projects.length, ...byRecent(projects));   // [포크] B안: 최근 프로젝트부터
     render(pf, projects);
     bind();
     arrived = go(projects);                                            // 내용을 그린 뒤라 브라우저가 처음 주소의 절로 스스로 가지 못함
@@ -123,7 +122,8 @@
     // ④ 기술 역량: 키워드 목록과 중복 없는 근거 프로젝트 링크
     if (skills.length) out.push(`<section id="stack" class="sec"><p class="eyebrow">${T('en.capabilities')}</p><h2 class="sec-t">${T('page.stack')}</h2>
       <ul class="skills">${skills.map((s) => {
-        const related = [...new Set((s.evidence || []).map((e) => e.project))].filter((id) => byId[id]);
+        const evidenceIds = new Set((s.evidence || []).map((e) => e.project));
+        const related = projects.map((p) => p.id).filter((id) => evidenceIds.has(id));
         return `<li class="skill"><h3>${esc(s.name)}</h3><ul class="skill-keywords">${(s.evidence || []).map((e) => `<li><span>${esc(e.text)}</span></li>`).join('')}</ul>
           <div class="skill-projects"><span>관련 프로젝트</span>${related.map((id) => link({ href: `#p-${id}`, label: esc(byId[id].title), kind: 'anchor' })).join('')}</div></li>`;
       }).join('')}</ul></section>`);
@@ -144,12 +144,6 @@
     root.querySelectorAll('img').forEach((i) => { if (!i.hasAttribute('loading')) i.loading = 'lazy'; i.decoding = 'async'; });
     info.sections = [...root.querySelectorAll('main > section[id], main > footer[id], .details > article[id]')].map((s) => s.id);
     info.projects = projects.length;
-  }
-
-  // 최근 프로젝트 먼저: '기간' 값의 시작일(YYYY.MM.DD) 내림차순. data 순서·id는 그대로
-  function byRecent(projects) {
-    const start = (p) => (/(\d{4})\.(\d{2})\.(\d{2})/.exec(PF.metaValue(p, '기간')) || []).slice(1).join('');
-    return [...projects].sort((a, b) => start(b).localeCompare(start(a)));
   }
 
   // 카드 메타 칸 값: '기간'(2026.10.15 — 11.03 …) → 연도 2026 · 개발 기간 10.15–11.03, 엔진 = 태그 중 Unity로 시작하는 것
@@ -194,17 +188,19 @@
       ${p.tagline ? `<p class="tagline">${inline(p.tagline)}</p>` : ''}
       ${meta ? `<dl class="meta">${meta}</dl>` : ''}
       ${(p.tags || []).length ? `<ul class="tags">${p.tags.map((x) => `<li>${esc(x)}</li>`).join('')}</ul>` : ''}
-      <div class="links no-print">${urls.map(([label, href, kind]) => link({ href, label: esc(label), kind })).join('')}</div>
+      <div class="links no-print">${urls.map(([label, href, kind, featured]) => link({ href, label: esc(label), kind, cls: featured ? 'featured' : '' })).join('')}</div>
       ${printUrls(urls.map(([label, href, kind]) => [label, kind === 'page' ? PF.visibleUrl(href) : shortUrl(href), href, kind]))}
       ${feats ? `<ol class="features" style="--feature-cols:${Math.min(4, highlights.length)}">${feats}</ol>` : ''}</article>`;
   }
 
-  // 링크 행 [이름, 주소, 종류]: 시연 영상 · 슬라이드 · 상세 문서 · GitHub(여럿이면 클라이언트·서버) · 그 밖(쇼츠 등)
+  // 링크 행 [이름, 주소, 종류, 강조]: 쇼츠 · 시연 영상 · 슬라이드 · 상세 문서 · GitHub(여럿이면 클라이언트·서버)
   const ghExtra = (p) => (p.links?.extra || []).filter((l) => isUrl(l.url) && /github\.com/i.test(l.url));
-  const otherExtra = (p) => (p.links?.extra || []).filter((l) => isUrl(l.url) && ghExtra(p).includes(l) === false);
+  const shortsExtra = (p) => (p.links?.extra || []).filter((l) => isUrl(l.url) && (l.label === '쇼츠' || /youtube\.com\/shorts\//i.test(l.url)));
+  const otherExtra = (p) => (p.links?.extra || []).filter((l) => isUrl(l.url) && !ghExtra(p).includes(l) && !shortsExtra(p).includes(l));
   function linkRows(p) {
-    return [isUrl(p.links?.video) && [t('name.video'), p.links.video, 'external'],
-      [t('name.deck'), PF.projectUrl(p.id), 'page'], [t('name.doc-short'), PF.docUrl(p.id), 'page'],
+    return [...shortsExtra(p).map((l) => [l.label, l.url, 'external', true]),
+      isUrl(p.links?.video) && [t('name.video'), p.links.video, 'external', true],
+      [t('name.deck'), PF.projectUrl(p.id), 'page', true], [t('name.doc-short'), PF.docUrl(p.id), 'page'],
       isUrl(p.links?.github) && [ghExtra(p).length ? 'GitHub(클라이언트)' : 'GitHub', p.links.github, 'external'],
       ...ghExtra(p).map((l) => [l.label, l.url, 'external']),
       ...otherExtra(p).map((l) => [l.label, l.url, 'external'])].filter(Boolean);
