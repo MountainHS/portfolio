@@ -272,7 +272,7 @@
 | `pin[].group`·`hide[].group` | 묶음: 나누기(`pin --as`)·합치기(`hide --into`)로 함께 생긴 항목. `undo`는 같은 묶음을 함께 지움. 스크립트가 채우며 손대지 않습니다 |
 | `hide[]` | 숨길 장면. `{ "key", "from" }` 또는 key 글자. 합칠 때 선택 `into`는 남길 장면 key이며 `hide --into`가 저장합니다. 적용 후 `deck.aliases`에 옛 key → 남은 key를 저장하여 옛 주소도 합친 장면으로 이어집니다 |
 | `chapterOptions` | 선택 장 표시 설정. `{ "장 key": { "hideSceneTabs": true } }` 형식으로 실제 `deck.chapters[]`에 있는 장마다 지정합니다(예: `overview`·`core`). 없는 장 key는 오류입니다. 해당 장의 표시 설정만 적용하고 다른 속성은 보존합니다. `false`는 표시, 설정을 지우면 원래 표시로 돌아옵니다 |
-| `retro` | 선택 표시 설정 `{ "hideAchieved": true }`. 렌더러 회고 장면에서 성과 열을 숨깁니다. `data.retro`의 원문 내용은 바꾸지 않고 `deck.retro`에 설정만 반영합니다. 설정을 지우면 원래 표시로 돌아옵니다 |
+| `retro` | 선택 표시 설정 `{ "hideAchieved": true, "omitPairs": [4] }`. 성과 열 또는 1부터 센 아쉬운 점·계획의 대응 행을 발표 장면에서 숨깁니다. `data.retro`의 원문 내용은 보존합니다. 설정을 지우면 원래 표시로 돌아옵니다 |
 | `portfolio` | 포트폴리오 페이지 고치기 자리(2차, 지금은 `null`). 식별자는 `highlights[].section` |
 | `editModePortfolio` | 포트폴리오 페이지 **편집 모드**에서 고친 글(이 포크 전용, 없으면 `null` 또는 키 없음). 원본 템플릿이 예약한 `portfolio` 칸과 겹치지 않게 따로 둔 키입니다. 편집 서버(`edit-server.py` → `portfolio-edits.py`)가 쓰고, 빌드 마지막에 `portfolio-edits.py apply --all`이 data에 덮습니다. 줄마다 `{ "field", 자리 이름, "value", "from" }` — `field`: `title`·`tagline`·`team.role`·`intent`·`tags`·`meta`(+`label`)·`highlight.title`/`highlight.what`/`highlight.caption`(+`section` = `highlights[].section`)·`skill.evidence`(+`skill`·`n`). `from` = 처음 고칠 때 빌드 글. 형식과 저장 위치 규칙은 `portfolio-edits.py` 머리말 |
 
@@ -294,7 +294,7 @@
 | `deck.slides[].edited` | `true` = 고친 장면(빨간 띠 문구가 "/portfolio-edit로 고치세요", 미리보기 개요에 ✎) |
 | `deck.chapters[].hideSceneTabs` | `chapterOptions[장 key].hideSceneTabs`로 생성한 해당 장 표지의 장면 탭 숨김 설정. 설정을 지우면 제거됩니다 |
 | `deck.aliases` | `hide[].into`에서 생성한 옛 장면 key → 남아 있는 장면 key 객체. 합치기 설정을 되돌리면 함께 제거됩니다 |
-| `deck.retro.hideAchieved` | 회고 성과 열 숨김 설정. 원문 회고 내용은 최상위 `retro`에 그대로 남습니다 |
+| `deck.retro.hideAchieved`·`omitPairs` | 회고 성과 열과 선택한 아쉬운 점·계획 대응 행의 숨김 설정. 원문 회고 내용은 최상위 `retro`에 그대로 남습니다 |
 
 `/portfolio-build`는 `base`·`applied`·`edited`를 직접 쓰지 않습니다(스크립트 몫). 스크립트 출력의 `[필수]`·`[권장]`·`[참고]`는 리포트의 같은 등급으로, "확인해 주세요" 줄은 리포트 "확인해 주세요"로 옮깁니다.
 고아(다시 빌드로 원래 장면을 잃은 고친 장면)는 반영하지 않고 **권장**으로 알리며, 깨진 원문 참조는 지금처럼 빨간 띠(`visual-*`)로 보입니다.

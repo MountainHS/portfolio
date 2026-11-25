@@ -596,10 +596,13 @@
   // 결과와 회고: ✓ 달성 카드 │ 아쉬운 점 → 개선 계획 표. 안 들어가면 두 장으로
   function buildRetro(r, p, foot, auto) {
     const ach = p.deck?.retro?.hideAchieved ? [] : r.achieved || [], reg = r.regrets || [], plan = r.plans || [];
-    if (!ach.length && !reg.length && !plan.length) return [];
     const n = Math.max(reg.length, plan.length);
+    const omitted = new Set(p.deck?.retro?.omitPairs || []);
+    const pairs = Array.from({ length: n }, (_, i) => ({ regret: reg[i] || '', plan: plan[i] || '' }))
+      .filter((_, i) => !omitted.has(i + 1));
+    if (!ach.length && !pairs.length) return [];
     const achHtml = ach.length ? `<div class="rt-ach card"><p class="rt-h ok">✓ ${esc(PF.t('deck.achieved'))}</p><ul>${ach.map((x) => `<li>${inline(x)}</li>`).join('')}</ul></div>` : '';
-    const pairHtml = n ? `<table class="mini"><thead><tr><th scope="col">△ ${esc(PF.t('deck.regrets'))}</th><th scope="col">→ ${esc(PF.t('deck.plans'))}</th></tr></thead><tbody>${Array.from({ length: n }, (_, i) => `<tr><td>${inline(reg[i] || '')}</td><td class="p">${inline(plan[i] || '')}</td></tr>`).join('')}</tbody></table>` : '';
+    const pairHtml = pairs.length ? `<table class="mini"><thead><tr><th scope="col">△ ${esc(PF.t('deck.regrets'))}</th><th scope="col">→ ${esc(PF.t('deck.plans'))}</th></tr></thead><tbody>${pairs.map(({ regret, plan }) => `<tr><td>${inline(regret)}</td><td class="p">${inline(plan)}</td></tr>`).join('')}</tbody></table>` : '';
     const make = (html, one, i, cnt) => {
       const s = PF.scene({ id: i === 0 ? 'retro' : `retro-${i + 1}`, tpl: 'P6', eyebrow: PF.t('deck.retro-eyebrow'), rlabel: p.title, title: PF.t('deck.retro'), sub: cnt > 1 ? `${i + 1}/${cnt}` : '', foot,
         sec: PF.t('deck.retro'), group: PF.t('deck.retro') });

@@ -667,8 +667,10 @@ def validate(p, chapters, doc):
 def scene_count(chapters, slides, data):
     used = {s.get('chapter') for s in slides}
     retro = data.get('retro') or {}
-    retro_fields = ('regrets', 'plans') if ((data.get('deck') or {}).get('retro') or {}).get('hideAchieved') else ('achieved', 'regrets', 'plans')
-    has_retro = any(retro.get(x) for x in retro_fields)
+    settings = ((data.get('deck') or {}).get('retro') or {})
+    pairs = max(len(retro.get('regrets') or []), len(retro.get('plans') or []))
+    remaining = any(i not in settings.get('omitPairs', []) for i in range(1, pairs + 1))
+    has_retro = remaining or (not settings.get('hideAchieved') and bool(retro.get('achieved')))
     return len(slides) + len([c for c in chapters if c in used]) + 3 + (1 if has_retro else 0)
 
 
@@ -934,11 +936,16 @@ def _run_apply(pid, write, rep):
         chapter.update(chapter_options.get(chapter.get('key'), {}))
     retro = copy.deepcopy(deck.get('retro') or {})
     retro.pop('hideAchieved', None)
+    retro.pop('omitPairs', None)
     if edits and 'retro' in edits:
         requested = edits['retro']
-        if not (isinstance(requested, dict) and set(requested) <= {'hideAchieved'} and
-                ('hideAchieved' not in requested or isinstance(requested['hideAchieved'], bool))):
-            rep.add('필수', 'retro는 {"hideAchieved": true/false}여야 합니다 → 반영하지 않았습니다')
+        omitted = requested.get('omitPairs', []) if isinstance(requested, dict) else None
+        if not (isinstance(requested, dict) and set(requested) <= {'hideAchieved', 'omitPairs'} and
+                ('hideAchieved' not in requested or isinstance(requested['hideAchieved'], bool)) and
+                isinstance(omitted, list) and
+                all(isinstance(n, int) and not isinstance(n, bool) and n >= 1 for n in omitted) and
+                len(omitted) == len(set(omitted))):
+            rep.add('필수', 'retro는 hideAchieved(bool)와 omitPairs(중복 없는 1부터의 행 번호 배열)여야 합니다 → 반영하지 않았습니다')
             return
         retro.update(requested)
     if retro:

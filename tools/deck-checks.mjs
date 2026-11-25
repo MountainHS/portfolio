@@ -126,6 +126,7 @@ export async function checkDeckPage(projectId, probe) {
   const retroIds = report.ids.filter((id) => /^retro(?:-\d+)?$/.test(id));
   const achieved = deck?.retro?.hideAchieved ? [] : project.retro?.achieved || [];
   const regrets = project.retro?.regrets || [], plans = project.retro?.plans || [];
+  const omittedPairs = new Set(deck?.retro?.omitPairs || []);
   const retroReview = {
     section: project.retro?.section || '', sceneIds: retroIds,
     achieved: retroIds.flatMap((id) => all(scene(id), '.rt-ach li').map((item) => normalize(item.textContent))),
@@ -136,7 +137,7 @@ export async function checkDeckPage(projectId, probe) {
   };
   const expectedPairs = Array.from({ length: Math.max(regrets.length, plans.length) }, (_, i) => ({
     regret: inlineText(regrets[i]), plan: inlineText(plans[i])
-  }));
+  })).filter((_, i) => !omittedPairs.has(i + 1));
   add('retrospective follows source order and display settings',
     Boolean(retroIds.length) === Boolean(achieved.length || expectedPairs.length) &&
     json(achieved.map(inlineText)) === json(retroReview.achieved) &&
