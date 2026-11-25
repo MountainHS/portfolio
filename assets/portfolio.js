@@ -96,7 +96,7 @@
     const teamCount = projects.filter((p) => p.team?.type === 'team').length;
     const focus = skills.length ? `<aside class="hero-side"><p class="eyebrow">${T('en.focus')}</p>
         <strong>${esc(skills.slice(0, 2).map((s) => s.name).join(' / '))}</strong>
-        ${skills.length > 2 ? `<p>${esc(skills.slice(2).map((s) => s.name).join(' · '))}</p>` : ''}
+        ${skills.length > 2 ? `<p>${esc(skills.slice(2).filter((s) => s.name !== '개발 워크플로').map((s) => s.name).join(' · '))}</p>` : ''}
         <p class="meta">${T('page.focus-count', { team: teamCount, solo: projects.length - teamCount })}</p></aside>` : '';
     out.push(`<section id="cover" class="hero"><div class="hero-l">
         <p class="eyebrow">${T('en.hero')}</p>
