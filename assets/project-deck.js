@@ -190,13 +190,16 @@
       const gutter = [], rendered = [], marked = new Set();
       for (let n = a; n <= b; n++) {
         const active = highlights.filter((h) => n >= h.start && n <= h.end);
+        const previous = highlights.filter((h) => n - 1 >= h.start && n - 1 <= h.end);
+        const boundary = active.length && previous.length &&
+          active.map((h) => h.point).join(' ') !== previous.map((h) => h.point).join(' ');
         const marks = active.filter((h) => {
           if (n !== Math.max(a, h.start) || marked.has(h.point)) return false;
           marked.add(h.point); return true;
         });
-        gutter.push(`<span class="code-gutter-line" data-source-line="${n}">${marks.map((h) => `<span class="code-marker" data-point="${h.point}">${h.point}</span>`).join('')}</span>`);
+        gutter.push(`<span class="code-gutter-line${boundary ? ' code-group-start' : ''}" data-source-line="${n}">${marks.map((h) => `<span class="code-marker" data-point="${h.point}">${h.point}</span>`).join('')}</span>`);
         const one = document.createElement('div'); one.innerHTML = codeHtml(el, n, n);
-        rendered.push(`<span class="code-line${active.length ? ' highlighted' : ''}" data-source-line="${n}"${active.length ? ` data-highlight-points="${[...new Set(active.map((h) => h.point))].join(' ')}"` : ''}>${one.querySelector('code').innerHTML}</span>`);
+        rendered.push(`<span class="code-line${active.length ? ' highlighted' : ''}${boundary ? ' code-group-start' : ''}" data-source-line="${n}"${active.length ? ` data-highlight-points="${[...new Set(active.map((h) => h.point))].join(' ')}"` : ''}>${one.querySelector('code').innerHTML}</span>`);
       }
       return `<span class="code-gutter" aria-hidden="true">${gutter.join('')}</span><code class="code-with-highlights" data-source-start="${a}" data-source-end="${b}">${rendered.join('\n')}</code>`;
     }

@@ -414,7 +414,11 @@ export async function checkDeckPage(projectId, probe) {
         const highlightsMatch = rows.every((row, i) => {
           const n = first + i;
           const active = highlights.filter((item) => n >= item.start && n <= item.end).map((item) => item.point);
-          return +row.dataset.sourceLine === n && (row.dataset.highlightPoints || '') === active.join(' ');
+          const previous = highlights.filter((item) => n - 1 >= item.start && n - 1 <= item.end).map((item) => item.point);
+          const boundary = i > 0 && active.length > 0 && previous.length > 0 && active.join(' ') !== previous.join(' ');
+          return +row.dataset.sourceLine === n && (row.dataset.highlightPoints || '') === active.join(' ') &&
+            row.classList.contains('code-group-start') === boundary &&
+            gutters[i].classList.contains('code-group-start') === boundary;
         });
         marksIntact &&= rows.length === last - first + 1 && aligned && highlightsMatch &&
           wanted.every(({ point }) => cards.includes(point)) && json(sort(markers)) === json(sort(wanted));

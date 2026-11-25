@@ -652,7 +652,6 @@
         "key": "animator-override",
         "chapter": "core",
         "layout": "screens",
-        "presentation": "columns",
         "tab": "결과",
         "title": {"text": "공용 상태 전이에 몬스터별 클립을 끼우기", "verbatim": false},
         "lead": {"text": "새 몬스터는 Placeholder 자리에 자기 클립을 넣으면 됩니다.", "verbatim": true},
@@ -660,8 +659,7 @@
         "sectionPath": ["3. 핵심 기능", "3.1 몬스터 구조", "3.1.5 Animator 연동"],
         "points": [
           {"label": "공통", "text": "Base Controller의 상태·전이는 공유합니다.", "verbatim": false},
-          {"label": "교체", "text": "몬스터별 Override Controller에서 클립을 바꿉니다.", "verbatim": false},
-          {"label": "공중형", "text": "Densoptere는 같은 Base Controller에 비행 클립을 끼웁니다.", "verbatim": false}
+          {"label": "교체", "text": "몬스터별 Override Controller에서 클립을 바꿉니다.", "verbatim": false}
         ],
         "visuals": [
           {
@@ -677,13 +675,6 @@
             "w": 591,
             "h": 294,
             "caption": {"text": "Giant Slug의 Override Controller — Placeholder 클립 자리에 자기 클립만 끼움", "verbatim": true}
-          },
-          {
-            "kind": "image",
-            "src": "images/animator-override-ex2.png",
-            "w": 589,
-            "h": 295,
-            "caption": {"text": "Densoptere(공중)의 Override Controller — 같은 Base Controller에 비행 클립을 끼움", "verbatim": true}
           }
         ],
         "edited": true
@@ -2488,7 +2479,7 @@
         "visuals": [{"kind": "table", "n": 1, "fp": "부채|내용"}]
       }
     ],
-    "applied": "364ed3d3178e7f0e",
+    "applied": "f76bf44c03ad696a",
     "aliases": {
       "why": "intro",
       "core-exp": "intro",
