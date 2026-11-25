@@ -102,6 +102,7 @@ argument-hint: "[프로젝트 폴더] [장면 — #s= 주소·제목 일부·번
 `audit`(잘림·`visual-*`)과 `info.notes`(채움률·다이어그램 글자)를 봅니다. 브라우저 도구가 있으면 장면 캡처를 보여 줍니다.
 - `visual-missing`·`visual-ambiguous`·`visual-changed`가 그 장면에 있으면 참조(`sectionPath`·`n`·`fp`)를 고쳐 다시 `apply` → 0건이 될 때까지.
 - `clipped`면 시각 자료·요점을 줄이거나 나누기를 제안합니다.
+- [슬라이드 회귀 검사](../../rules/fork-features.md#슬라이드-회귀-검사-이-포크-전용)를 실행하고 코드·다이어그램·회고의 원문 대응 근거와 판정을 보고서에 기록합니다.
 
 ## 7. report.md 기록과 마무리
 
