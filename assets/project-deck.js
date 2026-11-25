@@ -323,6 +323,10 @@
       return `<div class="dk dk-paired${tight}">${sl.panels.map((panel, i) => `<section class="paired-panel" data-panel="${i + 1}"><header class="panel-header"><h3>${inline(txt(panel.title))}</h3>${panel.lead ? `<p class="panel-lead">${inline(txt(panel.lead))}</p>` : ''}</header>${vs.length ? `${vis([vs[i]])}${ncards(panel.points || [], { num: false })}` : flowHtml(panel.points || [], 'col')}</section>`).join('')}</div>`;
     }
     if (sl.presentation === 'visual-notes') return `<div class="dk dk-visual-notes${tight}">${vis(vs)}${ncards(points)}</div>`;
+    if (sl.presentation === 'result-rows') return `<div class="dk dk-result-rows${tight}">${points.map((point) => `<section class="result-row"><h3>${esc(PF.label(point.label))}</h3><p>${inline(txt(point))}</p></section>`).join('')}</div>`;
+    if (sl.presentation === 'feature-rows') return `<div class="dk dk-feature-rows${tight}">${points.map((point, i) => `<section class="feature-row"><div class="feature-row-note"><span class="fe-k">${esc(PF.t('en.feature'))} ${String(i + 1).padStart(2, '0')}</span><h3>${esc(PF.label(point.label))}</h3><p>${inline(txt(point))}</p></div><div class="feature-row-media">${(i ? vs.slice(2) : vs.slice(0, 2)).join('')}</div></section>`).join('')}</div>`;
+    if (sl.presentation === 'phase-timeline') return `<div class="dk dk-phase-timeline"><div class="phase-notes">${ncards(points, { num: false })}</div><div class="phase-compare"><section><h3>이전 · Before</h3><div class="phase-line"><span class="windup">예고</span><span class="active">공격</span><span class="recover">회복</span></div><p>Cooldown 전체에서 예고·회복을 빼서 공격 시간을 결정</p></section><section><h3>지금 · After</h3><div class="phase-line current"><span class="windup">예고</span><span class="active">공격</span><span class="recover">회복</span><span class="cooldown">쿨다운</span></div><p>네 구간의 시간을 각각 독립 값으로 설정</p></section><small>선 길이는 구조를 보여 주는 예시이며 실제 측정 시간은 아닙니다.</small></div></div>`;
+    if (sl.presentation === 'visual-pair-table') return `<div class="dk dk-visual-pair-table"><div class="visual-pair-row">${vs.slice(0, 2).map((v) => vis([v])).join('')}</div>${vis(vs.slice(2))}</div>`;
     if (sl.presentation === 'steps') return stepsHtml(sl);
     if (sl.presentation === 'cycle') return cycleHtml(sl);
     if (sl.presentation === 'stage-table') return stageTableHtml(sl, vs);
@@ -333,7 +337,7 @@
     }
     if (sl.presentation === 'comparison') return comparisonHtml(vs);
     if (sl.presentation === 'pair') return `<div class="dk dk-pair${tight}">${vs.map((v) => vis([v])).join('')}</div>`;
-    if (sl.presentation === 'columns') return `<div class="dk dk-columns${tight}" style="--n:${vs.length}">${vs.map((v, i) => `<section class="dk-column">${vis([v])}${points[i]?.label ? `<h3>${esc(PF.label(points[i].label))}</h3>` : ''}${points[i] ? `<p>${inline(txt(points[i]))}</p>` : ''}</section>`).join('')}</div>`;
+    if (sl.presentation === 'columns') return `<div class="dk dk-columns${tight}" style="--n:${vs.length}">${vs.map((v, i) => `<section class="dk-column" style="--column:${i + 1}">${vis([v])}${points[i]?.label ? `<h3>${esc(PF.label(points[i].label))}</h3>` : ''}${points[i] ? `<p>${inline(txt(points[i]))}</p>` : ''}</section>`).join('')}</div>`;
     if (sl.presentation === 'stack') return `<div class="dk dk-stack${tight}">${vis(vs)}${ncards(points, { row: true, num: false })}</div>`;
     if (!vs.length) {
       if (sl.layout === 'problem') return `<div class="dk dk-text${tight}">${flowHtml(points, variant.stack || variant.tight ? 'row' : 'col')}</div>`;

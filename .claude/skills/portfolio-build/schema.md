@@ -180,9 +180,12 @@
 | `key` | 장면 주소(`#s=d-<key>`)가 됩니다. 「key 규칙」 |
 | `chapter` | 속한 장의 `key` |
 | `layout` | 장면 틀. `"overview"` 개요(글 + 메타·그림) · `"visual"` 그림 + 번호 카드 · `"code"` 코드 + 설명 · `"full"` 큰 그림·표 한 장 가득(비교 표·As-Is/To-Be 표도 여기) · `"screens"` 화면 2~3열 · `"problem"` 문제 해결(문제 → 원인 → 해결 → 결과 + 근거 그림 — 원문 사례가 표면 그 표를 `visuals`로 그대로 보이고 `points`는 비움, 글이면 `points`로) 중 하나. 표지·목차·장 표지·회고·맺음 장면은 렌더러가 만듭니다 |
-| `presentation` | 선택 배치 조정. 기존 `layout`을 유지하며 `"steps"`(Mermaid 1개 + 요점 4개), `"stack"`(시각 자료와 요점을 위아래로), `"comparison"`(원문 표 1개 + Mermaid 하위 그래프 3개), `"columns"`(Mermaid 3개와 요점 3개를 대응시켜 각 열에 다이어그램을 먼저 표시), `"pair"`(그림 Mermaid·이미지 1개 다음 표 1개), `"cycle"`(Mermaid 1개), `"side-notes"`(요점 3개 + Mermaid 0~1개), `"stage-table"`(Mermaid 3개 + 단계 요점 3개), `"paired"`(패널 2개와 표 2개 또는 시각 자료 없음), `"visual-notes"`(Mermaid 1개 + 요점 1~4개)을 지정합니다. `side-notes`는 시각 자료 없이도 기존 `visual`·`code`·`full` 틀에 사용할 수 있습니다. 고정 장면을 복사·적용할 때도 유지됩니다 |
+| `presentation` | 선택 배치 조정. 기존 `layout`을 유지하며 `"steps"`(Mermaid 1개 + 요점 4개), `"stack"`(시각 자료와 요점을 위아래로), `"comparison"`(원문 표 1개 + Mermaid 하위 그래프 3개), `"columns"`(Mermaid·이미지 3개와 요점 3개를 대응시켜 각 열에 시각 자료를 먼저 표시), `"pair"`(그림 Mermaid·이미지 1개 다음 표 1개), `"cycle"`(Mermaid 1개), `"side-notes"`(요점 3개 + Mermaid 0~1개), `"stage-table"`(Mermaid 3개 + 단계 요점 3개), `"paired"`(패널 2개와 표 2개 또는 시각 자료 없음), `"visual-notes"`(Mermaid 1개 + 요점 1~4개), "feature-rows"(이미지 3개를 두 기능에 위 2개·아래 1개로 대응), "visual-pair-table"(그림 2개를 좌우에, 표 1개를 아래에 배치)을 지정합니다. `side-notes`는 시각 자료 없이도 기존 `visual`·`code`·`full` 틀에 사용할 수 있습니다. 고정 장면을 복사·적용할 때도 유지됩니다 |
+
+`result-rows`는 시각 자료 없이 요점 2개를 같은 폭의 위아래 행에 놓습니다. 각 행은 왼쪽 라벨과 오른쪽 설명을 같은 열 위치에 맞춥니다.
 | `panels` | `presentation: "paired"` 전용 패널 2개. 각 패널은 `{ "title": 글 조각, "lead": 글 조각 또는 null, "points": 글 조각 0~5개, "sectionPath": 선택 절 경로 }`. 경로를 생략하면 장면 경로를 쓰고 제목·도입·요점은 각 패널 절 범위로 검사합니다. 상위 `points`는 비웁니다. 표가 있으면 `visuals`의 같은 인덱스 표를 각 패널에 붙입니다(각 표 출처는 기존 `visuals[].sectionPath` 규칙). 패널이 없는 다른 배치에는 사용하지 않습니다 |
 | `tab` | 장면 머리 오른쪽 작은 라벨. `"개요"` `"구조"` `"흐름"` `"구현"` `"선택"` `"문제 해결"` `"결과"` 중 하나, 또는 `""` |
+| `codeEvidence` | 코드 설명 카드의 실행 줄 강조를 모두 요구할 때 `"all-points"`. `visuals[].view.highlights`의 번호가 `points`의 1부터 끝 번호까지 빠짐없이 있어야 하며, 분할 장면은 이어지는 코드까지 합쳐 검사합니다 |
 | `title` | 글 조각. 기본은 `sectionPath` 마지막 제목 그대로(`verbatim: true`). 짧게 줄였으면 `verbatim: false` |
 | `lead` | 글 조각 하나(도입 1~2문장, 80자 안팎) 또는 `null` |
 | `keywords` | 장 표지 목록에 이 장면 아래 한 줄로 보이는 낱말 2~3개(각 10자 안팎, 문자열 배열). 그 절 원문의 핵심 낱말에서 고름. 장면마다 빠짐없이 채움(없으면 `[]` — 장 표지에 설명 줄이 안 나옴). Claude가 고른 것이라 늘 "확인해 주세요" |
