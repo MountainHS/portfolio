@@ -120,10 +120,13 @@
     if (projects.length) out.push(`<section class="sec details" aria-labelledby="details-t"><p class="eyebrow">${T('en.details')}</p>
       <h2 class="sec-t" id="details-t">${T('page.details')}</h2>${projects.map((p) => detail(p, printUrls)).join('')}</section>`);
 
-    // ④ 기술 스택: 기술마다 근거 문장과 근거 프로젝트(같은 페이지의 상세 패널로)
+    // ④ 기술 역량: 키워드 목록과 중복 없는 근거 프로젝트 링크
     if (skills.length) out.push(`<section id="stack" class="sec"><p class="eyebrow">${T('en.capabilities')}</p><h2 class="sec-t">${T('page.stack')}</h2>
-      <ul class="skills">${skills.map((s) => `<li class="skill"><h3>${esc(s.name)}</h3><ul>${(s.evidence || []).map((e) => `<li><span>${inline(e.text)}</span>${byId[e.project]
-        ? link({ href: `#p-${e.project}`, label: esc(byId[e.project].title), kind: 'anchor', cls: 'chip' }) : ''}</li>`).join('')}</ul></li>`).join('')}</ul></section>`);
+      <ul class="skills">${skills.map((s) => {
+        const related = [...new Set((s.evidence || []).map((e) => e.project))].filter((id) => byId[id]);
+        return `<li class="skill"><h3>${esc(s.name)}</h3><ul class="skill-keywords">${(s.evidence || []).map((e) => `<li><span>${esc(e.text)}</span></li>`).join('')}</ul>
+          <div class="skill-projects"><span>관련 프로젝트</span>${related.map((id) => link({ href: `#p-${id}`, label: esc(byId[id].title), kind: 'anchor' })).join('')}</div></li>`;
+      }).join('')}</ul></section>`);
 
     // ⑤ 연락처
     out.push(`<footer id="contact" class="contact"><b class="ct-name">${esc(nameT)}${prof.nameEn ? ` / <span lang="en">${esc(prof.nameEn)}</span>` : ''}</b>

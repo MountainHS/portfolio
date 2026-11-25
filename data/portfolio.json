@@ -18,92 +18,100 @@
       "name": "Unity",
       "evidence": [
         {
-          "text": "UniTask `PlayerLoopTiming`으로 네트워크 반영·송신 시점을 프레임 안에 고정",
+          "text": "Animator · Override Controller",
+          "project": "5-hive-purge"
+        },
+        {
+          "text": "Animation Layer · Additive",
+          "project": "5-hive-purge"
+        },
+        {
+          "text": "UniTask · PlayerLoop 제어",
           "project": "4-wgo"
-        },
-        {
-          "text": "공용 Base Animator + 몬스터별 Override Controller로 클립만 교체",
-          "project": "5-hive-purge"
-        },
-        {
-          "text": "맞은 쪽 피격 모션을 Animator `Hit` 레이어(Additive)에 겹쳐 이동·공격을 끊지 않음",
-          "project": "5-hive-purge"
         }
       ]
     },
     {
-      "name": "C#",
+      "name": "C# / .NET",
       "evidence": [
         {
-          "text": "소비 계획(`TryCreateConsumePlan`)이 서야만 재료를 빼는 다리 건설 흐름",
+          "text": "인터페이스 · 추상 클래스 · 다형성",
+          "project": "5-hive-purge"
+        },
+        {
+          "text": "비동기 프로그래밍",
           "project": "4-wgo"
         },
         {
-          "text": "추상 클래스 `MonsterAttack`으로 Windup → Active → Recover 공격 사이클 고정",
-          "project": "5-hive-purge"
-        },
-        {
-          "text": "상태 머신을 순수 C# 객체로 두고 시각을 인자로 받아 `new`로 단독 테스트",
-          "project": "5-hive-purge"
+          "text": "스레드 동기화 · Channel",
+          "project": "4-wgo"
         }
       ]
     },
     {
-      "name": "디자인 패턴",
+      "name": "게임 시스템 설계",
       "evidence": [
         {
-          "text": "상속 하나에 얽힌 책임을 `WorldItemRegistry`·`FishObjectPool` 등 네 클래스로 분리",
-          "project": "4-wgo"
-        },
-        {
-          "text": "템플릿 메서드로 공격 6종의 순서를 고정하고 팩토리로 역할별 공격 생성",
+          "text": "상태 머신 (FSM)",
           "project": "5-hive-purge"
         },
         {
-          "text": "싱글톤·`DontDestroyOnLoad` 초기화 순서 문제를 겪고, 씬을 넘어 유지할 데이터와 씬 종속 객체를 나누는 기준을 세움",
+          "text": "Template Method · Factory",
+          "project": "5-hive-purge"
+        },
+        {
+          "text": "Object Pooling",
+          "project": "4-wgo"
+        },
+        {
+          "text": "싱글톤 · 씬 생명주기",
           "project": "3-mini-ftl"
         }
       ]
     },
     {
-      "name": "네트워크 동기화",
+      "name": "네트워크",
       "evidence": [
         {
-          "text": "권한 모델 세 가지를 비교해 호스트 권한형 입력 중계 구조를 고름",
+          "text": "WebSocket 중계 서버",
           "project": "4-wgo"
         },
         {
-          "text": "`Interlocked`·`SemaphoreSlim`·`Channel`로 .NET WebSocket 중계 서버 구현",
+          "text": "Host-Authoritative 모델",
           "project": "4-wgo"
         },
         {
-          "text": "접속자마다 최신 스냅샷 `Channel`을 두어 서버 송신을 분리",
+          "text": "Input · Snapshot 동기화",
           "project": "4-wgo"
         }
       ]
     },
     {
-      "name": "테스트 자동화",
+      "name": "테스트 및 검증",
       "evidence": [
         {
-          "text": "몬스터 상태 머신 전이를 테스트 29개로 확인",
+          "text": "EditMode · PlayMode Test",
           "project": "5-hive-purge"
         },
         {
-          "text": "구조 정리 전후 EditMode·PlayMode 테스트 48개 통과로 회귀 확인",
+          "text": "단위 테스트 · 회귀 테스트",
           "project": "5-hive-purge"
         }
       ]
     },
     {
-      "name": "AI 협업",
+      "name": "개발 워크플로",
       "evidence": [
         {
-          "text": "Claude Code 설계안 중 Composite는 쓰는 이유를 되묻고 빼는 등 채택을 직접 판단",
+          "text": "Claude Code",
           "project": "5-hive-purge"
         },
         {
-          "text": "AI에 맡기는 범위를 직접 확인할 수 있는 백로그 단위로 줄이는 기준을 세움",
+          "text": "명세 기반 개발",
+          "project": "5-hive-purge"
+        },
+        {
+          "text": "작업 단위 분할 · 검증",
           "project": "5-hive-purge"
         }
       ]

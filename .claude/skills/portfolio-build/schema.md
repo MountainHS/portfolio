@@ -25,7 +25,7 @@
     {
       "name": "Unity",
       "evidence": [
-        { "text": "Animator 기반 FSM으로 보스 패턴 5종 설계", "project": "1-action-platformer" }
+        { "text": "Animator · 상태 머신", "project": "1-action-platformer" }
       ]
     }
   ],
@@ -38,10 +38,10 @@
 | `profile.*` | **`profile.md`에서만.** 자기소개(`intro`)는 고쳐 쓰지 않고 그대로 |
 | `settings.layout` | `"project"` 또는 `"stack"` (profile.md `구성 방식`, 없으면 `"project"`) |
 | `settings.accent` | `#RRGGBB` 형식. 형식이 틀리면 `"#2F6FEB"` + 리포트에 알림 |
-| `skills[]` | 3~8개. 기술마다 `evidence`(근거)가 **1개 이상**. 근거 없는 기술은 넣지 않음 |
-| `skills[].name` | 원문에 나온 기술명, 또는 원문의 **구체 항목을 묶는 상위 범주** (싱글톤·Strategy → "디자인 패턴", `csharp` 코드 → "C#") |
-| `skills[].evidence[].text` | "무엇을 만들었는지" 한 줄(40자 내외). 프로젝트 문서에 있는 사실만. 상위 범주로 묶었다면 **원문의 구체 용어**를 문장에 넣음 |
-| `skills[].evidence[].project` | 근거 프로젝트의 **폴더 이름** |
+| `skills[]` | 기술 역량 카드 3~8개. 카드마다 `evidence`(키워드와 근거 프로젝트)가 **1개 이상**. 근거 없는 기술은 넣지 않음 |
+| `skills[].name` | 기술을 묶는 분류 이름. 기존 카드 분류가 있으면 유지하되, 중복되는 분류는 정리 |
+| `skills[].evidence[].text` | 명사형 기술 키워드. 카드당 2~4개 권장. 클래스·메서드 이름, 구현 과정, 설계 이유, 테스트 개수는 싣지 않음. 프로젝트 문서에 있는 사실만 |
+| `skills[].evidence[].project` | 키워드의 근거 프로젝트 **폴더 이름**. 화면에서는 같은 프로젝트를 카드 하단에 한 번만 연결 |
 | `projects` | 표시 순서대로 폴더 이름 배열. profile.md `프로젝트 순서`가 있으면 그 순서 |
 
 ## `data/projects/<폴더 이름>.json`

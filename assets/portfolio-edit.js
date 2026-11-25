@@ -76,12 +76,12 @@
     });
     add(document.querySelector('#cover .about'), '자기소개', { field: 'profile.intro' }, profile.intro, 'lines');
 
-    // ② 기술 스택: 기술 이름(profile.md 메모) · 근거 문장
+    // ② 기술 역량: 분류 이름 · 기술 키워드
     document.querySelectorAll('#stack .skill').forEach((skillElement, skillIndex) => {
       const skill = portfolio.skills[skillIndex];
       add(skillElement.querySelector('h3'), '기술 이름', { field: 'skill.name', skill: skillIndex }, skill.name);
       skillElement.querySelectorAll(':scope > ul > li').forEach((item, evidenceIndex) => {
-        add(item.querySelector('span'), `${skill.name} 근거`, { field: 'skill.evidence', skill: skillIndex, evidence: evidenceIndex }, skill.evidence[evidenceIndex].text);
+        add(item.querySelector('span'), `${skill.name} 기술 키워드`, { field: 'skill.evidence', skill: skillIndex, evidence: evidenceIndex }, skill.evidence[evidenceIndex].text);
       });
     });
 

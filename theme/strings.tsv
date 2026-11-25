@@ -14,7 +14,7 @@ name.solo	공통 · 개인 프로젝트 표시 · 8자	개인 프로젝트
 name.toc	슬라이드 목차 장면 · 상세 문서 목차 · 4자	목차	
 page.updated	포트폴리오 페이지 · 맨 위 오른쪽 날짜 · 16자	업데이트 {date}	
 page.intro	포트폴리오 페이지 · 절 제목 · 12자	자기소개	
-page.stack	포트폴리오 페이지 · 절 제목 · 12자	기술 스택	
+page.stack	포트폴리오 페이지 · 절 제목 · 12자	기술 역량	
 page.stack-note	포트폴리오 페이지 · 기술 스택 절 오른쪽 · 16자	근거 프로젝트와 함께	
 page.project-no	포트폴리오 페이지 · 프로젝트 절 위 작은 글 · 20자	{en.project} {no} / {total}	
 page.features	포트폴리오 페이지 · 기능 절 위 작은 글(프로젝트 번호 뒤) · 8자	기능 소개	
