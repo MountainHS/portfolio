@@ -1000,7 +1000,7 @@
         "keywords": ["세 경우", "호스트 안의 게스트", "IsHost"],
         "sectionPath": ["4. 고민과 선택", "4.3 호스트/게스트 코드를 어떻게 나눌 것인가 (협업 이슈)"],
         "points": [],
-        "visuals": [{"kind": "mermaid", "n": 1, "fp": "flowchart LR"}]
+        "visuals": [{"kind": "mermaid", "n": 1, "fp": "sequenceDiagram"}]
       },
       {
         "key": "host-guest-roles",
@@ -2288,7 +2288,7 @@
         "keywords": ["세 경우", "호스트 안의 게스트", "IsHost"],
         "sectionPath": ["4. 고민과 선택", "4.3 호스트/게스트 코드를 어떻게 나눌 것인가 (협업 이슈)"],
         "points": [],
-        "visuals": [{"kind": "mermaid", "n": 1, "fp": "flowchart LR"}]
+        "visuals": [{"kind": "mermaid", "n": 1, "fp": "sequenceDiagram"}]
       },
       {
         "key": "host-guest-roles",
@@ -2726,6 +2726,6 @@
         "visuals": []
       }
     ],
-    "applied": "811567374dab8721"
+    "applied": "498b48f6184da348"
   }
 }

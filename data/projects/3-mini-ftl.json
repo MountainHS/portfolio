@@ -65,7 +65,12 @@
       "how": "`SceneBinder`가 새 전투 씬의 함선을 찾아 `CombatSystem`에 다시 연결하고, 싱글톤 초기화는 실행 순서 지정으로 앞당겼습니다.",
       "why": "빠르게 문제를 해결하려고 실행 순서 지정과 초기화 시점 변경을 택했지만, 의존 관계가 실행 순서 설정에 숨는 한계가 남았습니다.",
       "section": "3.2 씬 전환과 초기화 — 객체가 존재하는 것과 준비된 것은 다르다",
-      "image": null
+      "image": {
+        "src": "images/battle-loop.png",
+        "w": 1105,
+        "h": 1501,
+        "caption": "전투·상점·다음 전투로 이어지는 진행 흐름"
+      }
     },
     {
       "title": "승무원과 방",
@@ -73,7 +78,12 @@
       "how": "승무원은 `CurrentRoom`을, 방은 `Crews` 목록을 보관해 서로 참조하고, 이동과 사망은 각각 다른 경로에서 방 목록을 갱신합니다.",
       "why": "서로 참조하면 별도 객체를 거치지 않아 구현이 직관적이었지만, 이동·사망 경로의 후처리가 달라 방이 빈 뒤의 정리가 빠질 수 있었습니다.",
       "section": "3.3 승무원과 방 — 상태를 변경하는 책임이 여러 곳에 흩어진 문제",
-      "image": null
+      "image": {
+        "src": "images/main-function-2.png",
+        "w": 342,
+        "h": 116,
+        "caption": "방에 배치된 승무원"
+      }
     },
     {
       "title": "투사체 피해 판정 시점",
@@ -81,7 +91,12 @@
       "how": "`ProjectileController`가 실드에 부딪히거나 목표 방에 닿을 때 `CombatSystem`에 현재 상태 판정을 요청합니다.",
       "why": "발사 시점에 확정하면 날아가는 동안 바뀐 실드 상태를 반영하지 못합니다.",
       "section": "투사체 피해 판정 시점 — 통합 테스트가 필요한 이유",
-      "image": null
+      "image": {
+        "src": "images/main-function-3.png",
+        "w": 156,
+        "h": 220,
+        "caption": "적 함선 방 조준"
+      }
     }
   ],
   "troubleshooting": [
@@ -971,7 +986,7 @@
       {
         "key": "init-design",
         "chapter": "cases",
-        "layout": "overview",
+        "layout": "visual",
         "tab": "구조",
         "title": {
           "text": "문제와 초기 설계",
@@ -1008,7 +1023,7 @@
             "verbatim": true
           }
         ],
-        "visuals": []
+        "visuals": [{"kind": "image", "src": "images/battle-loop.png", "w": 1105, "h": 1501, "caption": {"text": "전투·상점·다음 전투로 이어지는 진행 흐름", "verbatim": true}}]
       },
       {
         "key": "init-order",
@@ -1259,7 +1274,7 @@
       {
         "key": "crew-room",
         "chapter": "cases",
-        "layout": "overview",
+        "layout": "visual",
         "tab": "구조",
         "title": {
           "text": "초기 설계 — 승무원과 방이 서로를 참조",
@@ -1296,7 +1311,7 @@
             "verbatim": true
           }
         ],
-        "visuals": []
+        "visuals": [{"kind": "image", "src": "images/main-function-2.png", "w": 342, "h": 116, "caption": {"text": "방에 배치된 승무원", "verbatim": true}}]
       },
       {
         "key": "crew-paths",
@@ -1706,7 +1721,7 @@
       {
         "key": "damage-timing",
         "chapter": "results",
-        "layout": "overview",
+        "layout": "visual",
         "tab": "선택",
         "title": {
           "text": "투사체 피해 판정 시점 — 통합 테스트가 필요한 이유",
@@ -1742,7 +1757,7 @@
             "verbatim": true
           }
         ],
-        "visuals": []
+        "visuals": [{"kind": "image", "src": "images/main-function-3.png", "w": 156, "h": 220, "caption": {"text": "적 함선 방 조준", "verbatim": true}}]
       },
       {
         "key": "ts-dead-coroutine",
