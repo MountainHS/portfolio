@@ -63,9 +63,9 @@ const PFStr = (() => {
     ['en.meta-platform', 'PLATFORM', "슬라이드 표지 · 메타 '플랫폼' 앞", 12, 'en'],
     // ── [포크] 포트폴리오 페이지 B안 카드형 배치(2026-11-25) ──
     ['page.brand', '{name} / PORTFOLIO SHOWCASE', '포트폴리오 페이지 · 맨 위 왼쪽(영문 이름)', 30],
-    ['en.hero', 'Unity Game Programmer', '포트폴리오 페이지 · 이름 위 작은 글', 24, 'en'],
-    ['page.hello', '안녕하세요,', '포트폴리오 페이지 · 큰 인사 첫 줄', 10],
-    ['page.hello-name', '{name}입니다.', '포트폴리오 페이지 · 큰 인사 둘째 줄', 10],
+    ['en.hero', 'UNITY GAME DEVELOPER', '포트폴리오 페이지 · 이름 위 작은 글', 24, 'en'],
+    ['page.hello', '보이지 않는 곳에서', '포트폴리오 페이지 · 큰 인사 첫 줄', 10],
+    ['page.hello-name', '게임을 완성합니다.', '포트폴리오 페이지 · 큰 인사 둘째 줄', 10],
     ['page.contact-cta', '연락하기', '포트폴리오 페이지 · 머리 연락 링크', 6],
     ['en.focus', 'Development focus', '포트폴리오 페이지 · 머리 오른쪽 상자 위', 20, 'en'],
     ['page.focus-count', '팀 프로젝트 {team}개 · 개인 프로젝트 {solo}개', '포트폴리오 페이지 · 머리 오른쪽 상자 아래', 24],

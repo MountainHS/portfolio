@@ -129,3 +129,6 @@ ui.ov-hint	슬라이드 · 개요 창 안내 · 30자	화살표로 고르고 Ent
 ui.rotate	슬라이드 · 휴대폰 세로 화면 안내 · 24자	가로로 돌리면 더 크게 보입니다.	
 ui.close	상세 문서 · 목차 창 버튼 · 4자	닫기	
 ui.close-esc	상세 문서 · 크게 보기 창 버튼 · 8자	닫기 (Esc)	
+en.hero	포트폴리오 페이지 · 머리 작은 글	UNITY GAME DEVELOPER
+page.hello	포트폴리오 페이지 · 큰 제목 첫 줄	보이지 않는 곳에서
+page.hello-name	포트폴리오 페이지 · 큰 제목 둘째 줄	게임을 완성합니다.
