@@ -43,8 +43,8 @@ KEY_RE = re.compile(r'^[a-z][a-z0-9-]{1,31}$')
 LAYOUTS = ('overview', 'visual', 'code', 'full', 'screens', 'problem')
 TABS = ('개요', '구조', '흐름', '구현', '선택', '문제 해결', '결과', '')
 KINDS = ('mermaid', 'code', 'table', 'image')
-SLIDE_FIELDS = ('key', 'chapter', 'layout', 'presentation', 'tab', 'title', 'lead', 'keywords', 'sectionPath', 'points', 'visuals')
-PRESENTATIONS = ('steps', 'stack', 'comparison', 'columns', 'pair', 'cycle', 'side-notes', 'stage-table')
+SLIDE_FIELDS = ('key', 'chapter', 'layout', 'presentation', 'panels', 'tab', 'title', 'lead', 'keywords', 'sectionPath', 'points', 'visuals')
+PRESENTATIONS = ('steps', 'stack', 'comparison', 'columns', 'pair', 'cycle', 'side-notes', 'stage-table', 'paired', 'visual-notes')
 KIND_KO = {'mermaid': '다이어그램', 'code': '코드', 'table': '표', 'image': '그림'}
 
 for _s in (sys.stdout, sys.stderr):                                # Claude가 읽는 파이프는 UTF-8로(한글 깨짐 방지)
@@ -418,6 +418,14 @@ def is_path(x):
     return isinstance(x, list) and x and all(isinstance(t, str) and t.strip() for t in x)
 
 
+def is_point(x):
+    return (isinstance(x, dict) and isinstance(x.get('label', ''), str) and
+            is_piece(x, allow_empty=bool(x.get('label', '').strip())) and
+            ('lines' not in x or (isinstance(x['lines'], list) and len(x['lines']) == 2 and
+             all(isinstance(line, str) and line.strip() for line in x['lines']) and
+             ' '.join(x['lines']) == x['text'])))
+
+
 def validate(p, chapters, doc):
     """고정 장면 하나 검사 → (문제 목록, 미리 알릴 것[권장], 글 조각 [(이름, 글)], 다른 절 참조 [글])"""
     errs, warns, pieces, cross = [], [], [], []
@@ -448,15 +456,28 @@ def validate(p, chapters, doc):
         errs.append('sectionPath는 제목 글자 배열이어야 함')
         sp = []
     pts = p.get('points') if p.get('points') is not None else []
-    if not isinstance(pts, list) or len(pts) > 4 or not all(isinstance(x, dict) and isinstance(x.get('label', ''), str)
-                                                             and is_piece(x, allow_empty=bool(str(x.get('label', '')).strip())) for x in pts):
+    if not isinstance(pts, list) or len(pts) > 4 or not all(is_point(x) for x in pts):
         errs.append('points는 글 조각(label·text·verbatim) 0~4개여야 함(text가 비면 label 필요)')
         pts = []
+    panels = p.get('panels', [])
+    if presentation == 'paired':
+        if not (isinstance(panels, list) and len(panels) == 2 and all(
+                isinstance(panel, dict) and is_piece(panel.get('title')) and
+                (panel.get('lead') is None or is_piece(panel['lead'])) and
+                ('sectionPath' not in panel or is_path(panel['sectionPath'])) and
+                isinstance(panel.get('points'), list) and len(panel['points']) <= 5 and
+                all(is_point(x) for x in panel['points']) for panel in panels)):
+            errs.append('paired panels는 제목·선택 도입/절 경로·요점 0~5개를 가진 패널 2개 필요')
+        if pts:
+            errs.append('paired 상위 points는 비워야 함')
+    elif 'panels' in p:
+        errs.append('panels는 presentation paired에만 사용')
     vis = p.get('visuals') if p.get('visuals') is not None else []
     max_visuals = 4 if presentation == 'comparison' else 3
     if not isinstance(vis, list) or len(vis) > max_visuals:
         errs.append('visuals는 0~%d개여야 함' % max_visuals)
         vis = []
+    highlighted_points = set()
     for i, v in enumerate(vis):
         if not isinstance(v, dict) or v.get('kind') not in KINDS:
             errs.append('visuals[%d]의 kind는 %s 중 하나' % (i, ' · '.join(KINDS)))
@@ -511,8 +532,24 @@ def validate(p, chapters, doc):
                                     isinstance(c.get('text'), str) and c['text'].strip() and
                                     ('verbatim' not in c or isinstance(c['verbatim'], bool)) for c in cells)):
                         errs.append('visuals[%d]의 표 %s는 [{row, column, text}](본문 행·열 1부터)' % (i, operation))
+            elif v['kind'] == 'code':
+                highlights = view.get('highlights')
+                if (set(view) != {'highlights'} or not isinstance(highlights, list) or not highlights or
+                        not all(isinstance(x, dict) and set(x) == {'start', 'end', 'point'} and
+                                all(isinstance(x.get(f), int) and not isinstance(x[f], bool) for f in ('start', 'end', 'point')) and
+                                1 <= x['start'] <= x['end'] and 1 <= x['point'] <= len(pts) for x in highlights)):
+                    errs.append('visuals[%d]의 코드 highlights는 [{start, end, point}](원문 코드 줄·요점 1부터)' % i)
+                else:
+                    for highlight in highlights:
+                        point = highlight['point']
+                        if point in highlighted_points:
+                            errs.append('코드 강조 point %d는 장면에서 한 구간만 지정' % point)
+                        highlighted_points.add(point)
+                        if 'lines' in v and isinstance(v['lines'], list) and len(v['lines']) == 2 and all(isinstance(n, int) for n in v['lines']):
+                            if not v['lines'][0] <= highlight['start'] <= highlight['end'] <= v['lines'][1]:
+                                errs.append('visuals[%d]의 강조 구간이 발췌 lines 밖에 있음' % i)
             else:
-                errs.append('visuals[%d]의 view는 Mermaid·표에만 사용' % i)
+                errs.append('visuals[%d]의 view는 Mermaid·표·코드에만 사용' % i)
     kinds = [v.get('kind') for v in vis if isinstance(v, dict)]
     if presentation == 'steps' and (kinds != ['mermaid'] or len(pts) != 4):
         errs.append('presentation steps는 Mermaid 1개와 요점 4개 필요')
@@ -528,7 +565,11 @@ def validate(p, chapters, doc):
         errs.append('presentation side-notes는 요점 3개와 Mermaid 0~1개 필요')
     if presentation == 'stage-table' and (len(pts) != 3 or kinds != ['mermaid'] * 3):
         errs.append('presentation stage-table은 Mermaid 3개와 단계 요점 3개 필요')
-    if lay in ('visual', 'code', 'full') and not vis and presentation != 'side-notes':
+    if presentation == 'paired' and kinds not in ([], ['table', 'table']):
+        errs.append('presentation paired는 표 2개 또는 시각 자료 없음 필요')
+    if presentation == 'visual-notes' and (kinds != ['mermaid'] or not 1 <= len(pts) <= 4):
+        errs.append('presentation visual-notes는 Mermaid 1개와 요점 1~4개 필요')
+    if lay in ('visual', 'code', 'full') and not vis and presentation not in ('side-notes', 'paired'):
         errs.append('layout "%s"에는 시각 자료가 1개 이상 있어야 함' % lay)
     if lay == 'screens' and not (2 <= len(vis) <= 3 and all(isinstance(v, dict) and v.get('kind') == 'image' for v in vis)):
         errs.append('layout "screens"에는 그림이 2~3개 있어야 함')
@@ -563,6 +604,16 @@ def validate(p, chapters, doc):
         pieces.append(('키워드', ' · '.join(keywords)))
     for x in pts:
         piece(x, '요점(%s)' % x['label'] if x.get('label') else '요점', body)
+    if presentation == 'paired':
+        for i, panel in enumerate(panels):
+            ph = section(panel['sectionPath'], 'panels[%d]' % i) if panel.get('sectionPath') else h
+            panel_scope = scope(ph)
+            piece(panel['title'], '패널 %d 제목' % (i + 1), panel_scope)
+            piece(panel.get('lead'), '패널 %d 도입' % (i + 1), panel_scope)
+            for point in panel['points']:
+                piece(point, '패널 %d 요점' % (i + 1), panel_scope)
+            if ph and ph is not h:
+                cross.append('다른 절의 패널: §%s' % panel['sectionPath'][-1])
     for i, v in enumerate(vis):
         own = v.get('sectionPath')
         vh = section(own, 'visuals[%d]' % i) if own else h
@@ -589,6 +640,11 @@ def validate(p, chapters, doc):
         if (got != want) if kind == 'table' else (got[:60] != want[:60]):
             warns.append('visuals[%d]: §%s의 %s %d번째 지문이 다릅니다 — 원문 "%s"(미리보기에 빨간 띠)' % (i, vh['text'], KIND_KO[kind], nth, got))
         view = v.get('view') or {}
+        if kind == 'code' and view.get('highlights'):
+            start = bl[nth - 1]['line'] + 1
+            end = next((j for j in range(start, len(doc.lines)) if FENCE_OPEN.match(doc.lines[j])), len(doc.lines))
+            if any(highlight['end'] > end - start for highlight in view['highlights']):
+                errs.append('visuals[%d]의 강조 구간이 원문 코드 블록 밖에 있음' % i)
         if kind == 'table' and view.get('omitFromCells'):
             rows = []
             for line in doc.lines[bl[nth - 1]['line'] + 2:]:
@@ -611,7 +667,8 @@ def validate(p, chapters, doc):
 def scene_count(chapters, slides, data):
     used = {s.get('chapter') for s in slides}
     retro = data.get('retro') or {}
-    has_retro = any(retro.get(x) for x in ('achieved', 'regrets', 'plans'))
+    retro_fields = ('regrets', 'plans') if ((data.get('deck') or {}).get('retro') or {}).get('hideAchieved') else ('achieved', 'regrets', 'plans')
+    has_retro = any(retro.get(x) for x in retro_fields)
     return len(slides) + len([c for c in chapters if c in used]) + 3 + (1 if has_retro else 0)
 
 
@@ -782,9 +839,6 @@ def apply_edits(data, edits, doc, rep):
             rep.add('권장', '포트폴리오 페이지 기능 "%s"의 [슬라이드 열기]가 연결된 장면이 빠졌습니다 → %s 이어집니다' % (hl.get('title', sec), where))
     if applied or removed:
         rep.add('참고', '고친 장면 %d개 · 숨긴 장면 %d개를 반영했습니다' % (len(applied), len(removed)))
-    n0, n1 = scene_count(chapters, base, data), scene_count(chapters, S, data)
-    if n1 > 40 and n1 > n0:
-        rep.add('참고', '장면이 약 %d장이 됩니다(권장 30~40장, 고치기 전 약 %d장). 코드가 길면 더 늘 수 있습니다' % (n1, n0))
     return S, base
 
 
@@ -865,19 +919,19 @@ def _run_apply(pid, write, rep):
     slides, base = apply_edits(data, edits, doc, rep)
     new_deck = dict(deck)
     chapter_options = (edits or {}).get('chapterOptions', {})
-    if not (isinstance(chapter_options, dict) and set(chapter_options) <= {'overview'} and
+    if not (isinstance(chapter_options, dict) and
             all(isinstance(option, dict) and set(option) <= {'hideSceneTabs'} and
                 all(isinstance(value, bool) for value in option.values()) for option in chapter_options.values())):
-        rep.add('필수', 'chapterOptions는 {"overview": {"hideSceneTabs": true/false}}만 지원합니다 → 반영하지 않았습니다')
+        rep.add('필수', 'chapterOptions는 {"장 key": {"hideSceneTabs": true/false}}여야 합니다 → 반영하지 않았습니다')
         return
     new_deck['chapters'] = copy.deepcopy(deck.get('chapters') or [])
-    overview = next((chapter for chapter in new_deck['chapters'] if chapter.get('key') == 'overview'), None)
-    if chapter_options and overview is None:
-        rep.add('필수', 'chapterOptions의 overview 장이 없습니다 → 반영하지 않았습니다')
+    unknown_chapters = set(chapter_options) - {chapter.get('key') for chapter in new_deck['chapters']}
+    if unknown_chapters:
+        rep.add('필수', 'chapterOptions의 장이 없습니다: %s → 반영하지 않았습니다' % ', '.join(sorted(unknown_chapters)))
         return
-    if overview is not None:
-        overview.pop('hideSceneTabs', None)
-        overview.update(chapter_options.get('overview', {}))
+    for chapter in new_deck['chapters']:
+        chapter.pop('hideSceneTabs', None)
+        chapter.update(chapter_options.get(chapter.get('key'), {}))
     retro = copy.deepcopy(deck.get('retro') or {})
     retro.pop('hideAchieved', None)
     if edits and 'retro' in edits:
@@ -915,6 +969,11 @@ def _run_apply(pid, write, rep):
         new_deck['slides'] = slides
         new_deck['base'] = base
         new_deck['applied'] = digest(slides)
+    chapters = [chapter.get('key') for chapter in new_deck['chapters']]
+    n0 = scene_count(chapters, base, data)
+    n1 = scene_count(chapters, slides, dict(data, deck=new_deck))
+    if n1 > 40 and n1 > n0:
+        rep.add('참고', '장면이 약 %d장이 됩니다(권장 30~40장, 고치기 전 약 %d장). 코드가 길면 더 늘 수 있습니다' % (n1, n0))
     if new_deck == deck:
         if edits is not None:
             rep.add('참고', '바뀐 것 없음')

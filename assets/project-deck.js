@@ -176,7 +176,7 @@
         // 표 안 그림: 불러오기 전 높이로 재면 나중에 표가 커져 조용히 잘림 → 크기를 먼저 받아 두고 복제본에 width·height를 적음(vboxHtml)
         if (ref.kind === 'table' && r.el) return { ref, ...r, imgDims: await Promise.all([...r.el.querySelectorAll('img')].map((i) => PF.imageSize(i.getAttribute('src')))) };
         return { ref, ...r };
-      }))).map((v) => (sl.edited ? { ...v, edited: true } : v));             // 장면 고치기로 고친 장면: 원문 문제 띠 문구가 다름
+      }))).map((v, index) => ({ ...v, index, edited: sl.edited }));          // 원문 참조 순서를 렌더링된 조각에서도 유지
     }
     await renderMermaid(mm);
   }
@@ -185,7 +185,21 @@
   const LANG = { csharp: 'C#', cs: 'C#', js: 'JavaScript', javascript: 'JavaScript', ts: 'TypeScript', json: 'JSON', yaml: 'YAML', yml: 'YAML', xml: 'XML', html: 'HTML', css: 'CSS', python: 'Python', py: 'Python', bash: 'Shell', sh: 'Shell', powershell: 'PowerShell', hlsl: 'HLSL', shader: 'Shader', cpp: 'C++', c: 'C', lua: 'Lua' };
   const codeLines = (el) => { const t = (el.querySelector('code')?.textContent || '').replace(/\n$/, ''); return t.split('\n'); };
   const langOf = (el) => /language-([\w+#-]+)/.exec(el.querySelector('code')?.className || '')?.[1]?.toLowerCase() || '';
-  function codeHtml(el, a, b) {
+  function codeHtml(el, a, b, highlights = []) {
+    if (highlights.length) {
+      const gutter = [], rendered = [], marked = new Set();
+      for (let n = a; n <= b; n++) {
+        const active = highlights.filter((h) => n >= h.start && n <= h.end);
+        const marks = active.filter((h) => {
+          if (n !== Math.max(a, h.start) || marked.has(h.point)) return false;
+          marked.add(h.point); return true;
+        });
+        gutter.push(`<span class="code-gutter-line" data-source-line="${n}">${marks.map((h) => `<span class="code-marker" data-point="${h.point}">${h.point}</span>`).join('')}</span>`);
+        const one = document.createElement('div'); one.innerHTML = codeHtml(el, n, n);
+        rendered.push(`<span class="code-line${active.length ? ' highlighted' : ''}" data-source-line="${n}"${active.length ? ` data-highlight-points="${[...new Set(active.map((h) => h.point))].join(' ')}"` : ''}>${one.querySelector('code').innerHTML}</span>`);
+      }
+      return `<span class="code-gutter" aria-hidden="true">${gutter.join('')}</span><code class="code-with-highlights" data-source-start="${a}" data-source-end="${b}">${rendered.join('\n')}</code>`;
+    }
     const lang = langOf(el), text = codeLines(el).slice(a - 1, b).join('\n');
     const code = document.createElement('code');
     code.textContent = text;
@@ -204,13 +218,14 @@
     if (k === 'mermaid') {
       const r = svgCache.get(v.mermaidEl || v.el) || {};
       if (!r.svg) return `<figure class="vbox err">${PF.vband('visual-missing', `다이어그램을 그리지 못했습니다: ${r.error || ''}`)}</figure>`;
-      return `<figure class="vbox" data-kind="mermaid"><div class="vmedia">${r.svg}</div>${cap(v.ref.caption?.text ? inline(v.ref.caption.text) : '')}${warn}</figure>`;
+      return `<figure class="vbox" data-kind="mermaid" data-visual-index="${v.index}"><div class="vmedia">${r.svg}</div>${cap(v.ref.caption?.text ? inline(v.ref.caption.text) : '')}${warn}</figure>`;
     }
     if (k === 'code') {
       const all = codeLines(v.el).length, [a, b] = chunk;
       const lang = LANG[langOf(v.el)] || '';
       const part = a > 1 || b < all ? PF.t('deck.code-lines', { a, b, all }) : '';
-      return `<figure class="vbox" data-kind="code"><div class="vmedia"><div class="fit-in"><pre>${codeHtml(v.el, a, b)}</pre></div></div>${cap([lang, part].filter(Boolean).map(esc).join(' · '))}${warn}</figure>`;
+      const highlights = v.ref.view?.highlights || [];
+      return `<figure class="vbox" data-kind="code" data-visual-index="${v.index}" data-source-start="${a}" data-source-end="${b}"><div class="vmedia"><div class="fit-in"><pre${highlights.length ? ' class="code-annotated"' : ''}>${codeHtml(v.el, a, b, highlights)}</pre></div></div>${cap([lang, part].filter(Boolean).map(esc).join(' · '))}${warn}</figure>`;
     }
     if (k === 'table') {
       const t = v.el.cloneNode(true);
@@ -236,20 +251,25 @@
       const rows = [...t.querySelectorAll('tbody tr')];
       t.dataset.sourceRows = rows.length;
       rows.forEach((r, i) => { r.dataset.sourceRow = i; if (chunk && (i < chunk[0] || i >= chunk[1])) r.remove(); });
-      return `<figure class="vbox" data-kind="table"><div class="vmedia"><div class="fit-in">${dropRefs(t.outerHTML)}</div></div>${cap(v.ref.caption?.text ? inline(v.ref.caption.text) : '')}${warn}</figure>`;
+      return `<figure class="vbox" data-kind="table" data-visual-index="${v.index}"><div class="vmedia"><div class="fit-in">${dropRefs(t.outerHTML)}</div></div>${cap(v.ref.caption?.text ? inline(v.ref.caption.text) : '')}${warn}</figure>`;
     }
     return '';
   }
 
   // ── 장면 틀(deck.slides[].layout) ──
   const txt = (t) => dropRefs((t && typeof t === 'object' ? t.text : t) || '');
+  const pointHtml = (pt) => {
+    if (!pt.lines) return inline(txt(pt));
+    if (pt.lines.length !== 2 || pt.lines.join(' ') !== txt(pt)) throw new Error('요점 lines는 원문 text와 같은 내용의 두 줄이어야 합니다');
+    return pt.lines.map((line) => `<span class="point-line">${inline(line)}</span>`).join('');
+  };
   const ncards = (points, { row = false, num = true, two = false } = {}) => (points.length
     ? `<div class="cards${row ? ' row' : ''}${two ? ' two' : ''}" style="--n:${Math.min(points.length, 4)}">${points.map((pt, i) =>
-      `<div class="ncard${num ? '' : ' nonum'}">${num ? `<span class="num" aria-hidden="true">${i + 1}</span>` : ''}<div>${pt.label ? `<span class="lb">${esc(PF.label(pt.label))}</span>` : ''}<p>${inline(txt(pt))}</p></div></div>`).join('')}</div>` : '');
+      `<div class="ncard${num ? '' : ' nonum'}">${num ? `<span class="num" aria-hidden="true">${i + 1}</span>` : ''}<div>${pt.label ? `<span class="lb">${esc(PF.label(pt.label))}</span>` : ''}<p>${pointHtml(pt)}</p></div></div>`).join('')}</div>` : '');
   const FLOW = { '문제': '', '원인': '', '해결': 'accent', '결과': 'ok', '배운 점': '' };   // data 값 → 칩 색(보이는 글자만 PF.label로 바뀜)
   const flowTone = (label) => /^\d+차\s+해결$/.test(label) ? 'accent' : FLOW[label] || '';
   const flowHtml = (points, dir) => `<div class="flow ${dir}" style="--n:${Math.min(points.length, 4)}">${points.map((pt) =>
-    `<div class="fstep${pt.label === '결과' ? ' res' : ''}">${pt.label ? `<span class="labelchip${flowTone(pt.label) ? ' ' + flowTone(pt.label) : ''}">${esc(PF.label(pt.label))}</span>` : ''}<p>${inline(txt(pt))}</p></div>`).join('')}</div>`;
+    `<div class="fstep${pt.label === '결과' ? ' res' : ''}">${pt.label ? `<span class="labelchip${flowTone(pt.label) ? ' ' + flowTone(pt.label) : ''}">${esc(PF.label(pt.label))}</span>` : ''}<p>${pointHtml(pt)}</p></div>`).join('')}</div>`;
   function cycleHtml(sl) {
     const v = sl._v[0];
     if (v.status !== 'ok' && v.status !== 'changed') return `<div class="dk">${vboxHtml(v)}</div>`;
@@ -268,7 +288,7 @@
   }
   function stageTableHtml(sl, vs) {
     if (vs.length !== 3 || sl.points.length !== 3) throw new Error('stage-table 배치에는 그림과 단계 설명이 각각 3개 필요합니다');
-    return `<div class="dk dk-stage-table"><table class="stage-table"><thead><tr>${sl.points.map((pt) => `<th scope="col">${esc(PF.label(pt.label))}</th>`).join('')}</tr></thead><tbody><tr class="stage-diagrams">${vs.map((v) => `<td><div class="vis">${v}</div></td>`).join('')}</tr><tr class="stage-explanations">${sl.points.map((pt) => `<td><p>${inline(txt(pt))}</p></td>`).join('')}</tr></tbody></table></div>`;
+    return `<div class="dk dk-stage-table"><table class="stage-table"><thead><tr>${sl.points.map((pt) => `<th scope="col">${esc(PF.label(pt.label))}</th>`).join('')}</tr></thead><tbody><tr class="stage-diagrams">${vs.map((v) => `<td><div class="vis">${v}</div></td>`).join('')}</tr><tr class="stage-explanations">${sl.points.map((pt) => `<td><p>${pointHtml(pt)}</p></td>`).join('')}</tr></tbody></table></div>`;
   }
   function stepsHtml(sl) {
     const v = sl._v[0];
@@ -298,6 +318,11 @@
     const points = sl.points || [];
     const vis = (list) => `<div class="vis">${list.join('')}</div>`;
     const tight = variant.tight ? ' tight' : '';
+    if (sl.presentation === 'paired') {
+      if (sl.panels.length !== 2 || (vs.length && vs.length !== 2)) throw new Error('paired 배치에는 패널 2개와 시각자료 0개 또는 2개가 필요합니다');
+      return `<div class="dk dk-paired${tight}">${sl.panels.map((panel, i) => `<section class="paired-panel" data-panel="${i + 1}"><header class="panel-header"><h3>${inline(txt(panel.title))}</h3>${panel.lead ? `<p class="panel-lead">${inline(txt(panel.lead))}</p>` : ''}</header>${vs.length ? `${vis([vs[i]])}${ncards(panel.points || [], { num: false })}` : flowHtml(panel.points || [], 'col')}</section>`).join('')}</div>`;
+    }
+    if (sl.presentation === 'visual-notes') return `<div class="dk dk-visual-notes${tight}">${vis(vs)}${ncards(points)}</div>`;
     if (sl.presentation === 'steps') return stepsHtml(sl);
     if (sl.presentation === 'cycle') return cycleHtml(sl);
     if (sl.presentation === 'stage-table') return stageTableHtml(sl, vs);
@@ -308,7 +333,7 @@
     }
     if (sl.presentation === 'comparison') return comparisonHtml(vs);
     if (sl.presentation === 'pair') return `<div class="dk dk-pair${tight}">${vs.map((v) => vis([v])).join('')}</div>`;
-    if (sl.presentation === 'columns') return `<div class="dk dk-columns${tight}" style="--n:${vs.length}">${vs.map((v, i) => `<section class="dk-column">${points[i]?.label ? `<h3>${esc(PF.label(points[i].label))}</h3>` : ''}${vis([v])}${points[i] ? `<p>${inline(txt(points[i]))}</p>` : ''}</section>`).join('')}</div>`;
+    if (sl.presentation === 'columns') return `<div class="dk dk-columns${tight}" style="--n:${vs.length}">${vs.map((v, i) => `<section class="dk-column">${vis([v])}${points[i]?.label ? `<h3>${esc(PF.label(points[i].label))}</h3>` : ''}${points[i] ? `<p>${inline(txt(points[i]))}</p>` : ''}</section>`).join('')}</div>`;
     if (sl.presentation === 'stack') return `<div class="dk dk-stack${tight}">${vis(vs)}${ncards(points, { row: true, num: false })}</div>`;
     if (!vs.length) {
       if (sl.layout === 'problem') return `<div class="dk dk-text${tight}">${flowHtml(points, variant.stack || variant.tight ? 'row' : 'col')}</div>`;
@@ -369,8 +394,9 @@
   //   codeChunk(v) = 그 코드의 이번 줄 범위 · tsplit = { v, rows: [a, b) } 행을 나누는 표 하나(다른 표는 그대로 둠)
   function fitSlide(sl, vis, sid, part, codeChunk, meta, tsplit = null, depth = 0) {
     const vs = vis.map((v) => vboxHtml(v, v.ref.kind === 'code' ? codeChunk(v) : v.ref.kind === 'table' && tsplit && tsplit.v === v ? tsplit.rows : null));
+    const codeWidths = vis.some((v) => v.ref.kind === 'code' && v.ref.view?.highlights?.length) ? [{ vw: 2.2 }, { vw: 2.4 }, { vw: 2.2, tight: true }, { vw: 2.4, tight: true }] : [];
     const V = sl.presentation || sl.layout === 'full' || sl.layout === 'screens' ? [{}, { tight: true }]
-      : [{ vw: 1.4 }, { vw: 1.7 }, { vw: 1.15 }, { vw: 1.4, tight: true }, { stack: true }, { stack: true, tight: true }];
+      : [{ vw: 1.4 }, { vw: 1.7 }, { vw: 1.15 }, { vw: 1.4, tight: true }, ...codeWidths, { stack: true }, { stack: true, tight: true }];
     const build = (v) => {
       const s = PF.scene({ id: sid, tpl: 'D', eyebrow: meta.chapter, rlabel: meta.rlabel, title: txt(sl.title) || meta.chapter, sub: part, lead: part && part !== `1/${part.split('/')[1]}` ? '' : txt(sl.lead), foot: meta.foot, sec: meta.chapter, group: meta.chapter, stitle: txt(sl.title) });
       s.classList.add(`l-${sl.layout || 'visual'}`);

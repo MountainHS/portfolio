@@ -240,6 +240,13 @@ table.kv td.role { color: var(--accent-ink); font-weight: 800; }
 .fit-in { transform-origin: 0 0; }
 .fit-in pre { margin: 0 !important; padding: 14px 18px !important; background: transparent !important; }
 .fit-in pre code, .fit-in pre code.hljs { display: block; padding: 0; background: transparent; color: #E6E8F5; font-family: var(--mono); font-size: 14px; line-height: 1.5; white-space: pre; tab-size: 4; border-radius: 0; overflow: visible; }
+.fit-in pre.code-annotated { display: flex; gap: 10px; }
+.fit-in pre code.code-with-highlights { white-space: normal; }
+.code-line { display: block; white-space: pre; min-height: 21px; }
+.code-line.highlighted { background: #36586F; box-shadow: inset 3px 0 #70DEEC; }
+.code-gutter { flex: none; display: flex; flex-direction: column; font: 700 14px/21px var(--mono); }
+.code-gutter-line { display: block; height: 21px; min-width: 22px; }
+.code-marker { display: inline-block; width: 20px; height: 20px; text-align: center; color: #092333; background: #70DEEC; border-radius: 4px; }
 .vbox .cap { font-size: 13px; line-height: 1.4; color: var(--muted); text-align: center; }
 .vbox .cap .ix { font-family: var(--mono); font-size: 12px; color: var(--accent-ink); margin-right: 6px; }
 table.md-table { border-collapse: collapse; width: 100%; font-size: 15px; line-height: 1.5; background: var(--paper); table-layout: auto; }
@@ -300,16 +307,35 @@ table.md-table img { max-height: 120px; max-width: 100%; height: auto; }   /* wi
 .stage-diagrams .vis { height: 225px; justify-content: flex-start; }
 .stage-explanations p { font-size: 16px; line-height: 1.55; margin: 0; }
 .dk-columns { grid-template-columns: repeat(var(--n, 3), minmax(0, 1fr)); gap: 24px; align-items: start; }
-.dk-column { display: grid; grid-template-rows: auto auto auto; gap: 16px; min-width: 0; }
+.dk-column { display: grid; grid-template-rows: auto auto 1fr; gap: 16px; min-width: 0; }
 .dk-column h3 { font-size: 18px; color: var(--accent-ink); margin: 0; }
 .dk-column > p { font-size: 16px; line-height: 1.6; margin: 0; }
 .pf-sizing .dk-columns { align-items: stretch; }
-.pf-sizing .dk-column { grid-template-rows: auto minmax(0, 1fr) auto; }
-.dk-columns .vis { height: 245px; align-items: flex-start; justify-content: flex-start; }
+.dk-columns .vis { height: 210px; align-items: center; justify-content: center; }
 .dk-pair { grid-template-columns: minmax(0, 62fr) minmax(0, 38fr); align-items: start; gap: 24px; }
 .pf-sizing .dk-pair { grid-template-rows: minmax(0, 1fr); align-items: stretch; }
 .dk-pair > .vis { align-items: flex-start; justify-content: flex-start; }
 .dk-pair .md-table code { white-space: nowrap; }
+.dk-visual-notes { grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); align-items: start; }
+.pf-sizing .dk-visual-notes { grid-template-rows: minmax(0, 1fr); align-items: stretch; }
+.dk-visual-notes > .vis { justify-content: flex-start; }
+.dk-visual-notes > .cards { grid-template-columns: minmax(0, 1fr); align-content: start; }
+.dk-paired { grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; }
+.paired-panel { min-width: 0; display: grid; gap: 12px; align-content: start; }
+.panel-header { display: grid; gap: 8px; }
+.panel-header > h3 { font-size: 22px; line-height: 1.3; margin: 0; color: var(--accent-ink); }
+.panel-lead { font-size: 15px; line-height: 1.5; margin: 0; color: var(--muted); }
+.paired-panel > .cards { align-content: start; }
+.paired-panel .flow.col .fstep { grid-template-columns: 86px minmax(0, 1fr); padding: 11px 10px; gap: 10px; }
+.paired-panel .fstep p { font-size: 16px; line-height: 1.5; }
+.dk-paired.tight .flow.col .fstep { padding-block: 9px; }
+.dk-paired.tight .fstep p { font-size: 15px; }
+.paired-panel .flow { gap: 8px; }
+.pf-sizing .dk-paired { align-items: stretch; grid-template-rows: minmax(0, 1fr); }
+.pf-sizing .paired-panel:has(> .vis) { grid-template-rows: auto minmax(0, 1fr) auto; }
+.paired-panel > .vis { justify-content: flex-start; }
+.point-line { display: block; }
+.point-line code, .paired-panel code, .dk-visual-notes .ncard code { white-space: nowrap; }
 .comparison-table { table-layout: fixed !important; }
 .comparison-table tr > :nth-child(1) { width: 14%; }
 .comparison-table tr > :nth-child(2) { width: 42%; }
