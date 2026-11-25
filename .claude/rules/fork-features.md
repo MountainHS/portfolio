@@ -115,7 +115,7 @@ paths:
 
 - 2026-11-22 디자인 핸드오프(흰 바탕 Engineering Editorial)를 적용했습니다. 색·모양·영문 글꼴(Sora)은 `theme/theme.css`에만 있어 업데이트·머지와 상관없습니다. 아래 렌더러 수정만 원본이 덮거나 머지 충돌이 날 수 있습니다(줄마다 `[포크]` 주석).
   - **2026-11-25 B안 카드형 배치로 교체**(사용자가 고른 시안 패키지 `B_layout_agent_package.zip`). 아래 예전 [포크] 블록(68:32 Hero·Engineering Editorial·Indexed·타임라인·Hive 3열)은 모두 지웠습니다.
-    - `assets/portfolio.js` `render()`·`card()`·`detail()`·`linkRows()`·`byRecent()`·`cardFacts()`: nav → 머리(인사·자기소개 | 개발 분야 상자) → 카드 3열(`#projects`) → 상세 패널(`#p-<폴더>`, 기능마다 그림·설명·[슬라이드 열기]) → 기술 스택(`#stack`) → 연락처. 프로젝트는 '기간' 시작일 최근 순. 한눈에 보기·자기소개 절 없음(예전 주소 `#intro`·`#glance`·`#p-<폴더>-core`는 `legacyTarget`이 넘김).
+    - `assets/portfolio.js` `render()`·`card()`·`detail()`·`linkRows()`·`cardFacts()`: nav → 머리(인사·자기소개 | 개발 분야 상자) → 카드 3열(`#projects`) → 상세 패널(`#p-<폴더>`, 기능마다 그림·설명·[슬라이드 열기]) → 기술 스택(`#stack`) → 연락처. 프로젝트는 `data/portfolio.json`의 `projects` 순서. 한눈에 보기·자기소개 절 없음(예전 주소 `#intro`·`#glance`·`#p-<폴더>-core`는 `legacyTarget`이 넘김).
     - `assets/portfolio.css`: 파일 전체가 B안 값(`--b-*`: #F8FAFC·#17628B·#D7E2E9, 1150px, 800px 경계). `theme/theme.css` 색은 이 페이지에 안 쓰고 슬라이드·상세 문서에만 들어갑니다.
     - `assets/strings.js`: `page.brand`·`en.hero`·`page.hello`·`page.hello-name`·`en.focus`·`page.focus-count`·`en.projects`·`page.games`·`en.details`·`page.details`·`en.capabilities`·`page.view`·`page.card-*` 키 추가.
     - `assets/portfolio-edit.js`: 글 칸 선택자를 새 DOM(`#cover h1 .nm`·`.card .title/.role/.intent`·`.detail h3/.d-role/.tagline/.meta/.tags`·`.features li h4/.what`)으로.
