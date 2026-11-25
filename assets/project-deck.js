@@ -153,7 +153,7 @@
   async function renderMermaid(els) {
     if (!els.length) return;
     if (!window.mermaid) { els.forEach((el) => svgCache.set(el, { error: 'Mermaid를 불러오지 못했습니다' })); return; }
-    mermaid.initialize({ startOnLoad: false, theme: 'default', securityLevel: 'loose', fontFamily: 'Pretendard, sans-serif', suppressErrorRendering: true });
+    mermaid.initialize({ startOnLoad: false, theme: 'default', look: 'classic', layout: 'dagre', securityLevel: 'loose', fontFamily: 'Pretendard, sans-serif', suppressErrorRendering: true });
     if (!mmdHost) { mmdHost = document.createElement('div'); mmdHost.setAttribute('aria-hidden', 'true'); Object.assign(mmdHost.style, { position: 'absolute', left: '-20000px', top: '0', width: '1280px', visibility: 'hidden' }); document.body.appendChild(mmdHost); }
     let n = 0;
     for (const el of els) {

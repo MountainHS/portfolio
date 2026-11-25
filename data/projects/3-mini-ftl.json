@@ -240,8 +240,8 @@
           {
             "kind": "image",
             "src": "images/main.png",
-            "w": 1900,
-            "h": 1030,
+            "w": 694,
+            "h": 386,
             "caption": {
               "text": "Project main screen",
               "verbatim": true

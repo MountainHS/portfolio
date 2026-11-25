@@ -27,7 +27,7 @@
   };
   window.PFDoc = Object.assign(window.PFDoc || {}, { whenReady: () => whenReady, report });
   // Mermaid가 페이지 load 때 스스로 그리지 않게 맨 먼저 끕니다(아래 await 사이에 load가 오면 기본 설정으로 먼저 그려 버림)
-  if (window.mermaid) mermaid.initialize({ startOnLoad: false, theme: 'default', securityLevel: 'loose', fontFamily: 'Pretendard, sans-serif' });
+  if (window.mermaid) mermaid.initialize({ startOnLoad: false, theme: 'default', look: 'classic', layout: 'dagre', securityLevel: 'loose', fontFamily: 'Pretendard, sans-serif' });
   if (PF.guardFileProtocol(root)) { errors.push('file:// — 로컬 서버로 열어야 합니다'); return done(); }
 
   const { esc, inline, link, markNewTab } = PF;
