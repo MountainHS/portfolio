@@ -272,6 +272,52 @@ table.md-table img { max-height: 120px; max-width: 100%; height: auto; }   /* wi
 .flow.col .fstep .labelchip { justify-content: center; }
 .scr-row { display: grid; grid-template-columns: repeat(var(--n, 3), minmax(0, 1fr)); gap: 22px; }
 .pf-sizing .scr-row { align-items: stretch; }
+/* [포크] 원문 시각 자료와 설명의 공통 행·열. 기존 layout 안의 선택 presentation. */
+.pf-scene:has(.dk-columns, .dk-pair, .comparison-table) .pf-fill { margin-block: 0; }
+.pf-sizing .pf-fill:has(> .dk-steps) { justify-content: center; }
+.pf-sizing .pf-fill > .dk-steps { flex: 0 0 auto; }
+.dk-steps { gap: 14px; align-content: start; }
+.step-diagram svg, .cycle-diagram svg { display: block; width: 100%; height: auto; overflow: visible; }
+.step-diagram rect, .cycle-diagram rect { fill: var(--card); stroke: var(--accent); stroke-width: 1.5; }
+.step-label { height: 100%; display: flex; align-items: center; justify-content: center; text-align: center; font: 700 18px/1.4 var(--sans, sans-serif); color: var(--ink); word-break: keep-all; }
+.step-edges { fill: none; stroke: var(--accent); stroke-width: 2; }
+.step-diagram marker path, .cycle-diagram marker path { fill: var(--accent); }
+.step-explanations { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0; }
+.step-explanations p { margin: 0; padding: 0 12px; font-size: 17px; line-height: 1.65; word-break: keep-all; text-align: center; }
+.dk-cycle { align-content: center; }
+.cycle-edge > path { fill: none; stroke: var(--accent); stroke-width: 2; }
+.cycle-edge-label { height: 100%; display: flex; align-items: center; justify-content: center; text-align: center; font-size: 16px; line-height: 1.45; color: var(--muted); word-break: keep-all; }
+.dk-side-notes { grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); align-items: start; }
+.dk-side-notes > .cards { grid-template-columns: minmax(0, 1fr); align-content: start; }
+.pf-sizing .dk-side-notes { grid-template-rows: minmax(0, 1fr); }
+.dk-side-notes > .vis { align-self: stretch; justify-content: flex-start; }
+.point-label-flow { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; align-items: center; gap: 40px; }
+.point-label-flow li { position: relative; width: 88%; padding: 20px; text-align: center; border: 1px solid var(--accent); border-radius: 6px; background: var(--card); font-size: 18px; font-weight: 700; }
+.point-label-flow li + li::before { content: '↓'; position: absolute; top: -36px; left: 50%; transform: translateX(-50%); color: var(--accent); }
+.stage-table { width: 100%; table-layout: fixed; border-collapse: collapse; }
+.stage-table th, .stage-table td { width: 33.333%; padding: 12px 16px; vertical-align: top; border: 1px solid var(--line); }
+.stage-table th { text-align: center; background: var(--th); color: var(--accent-ink); font-size: 18px; }
+.stage-diagrams .vis { height: 225px; justify-content: flex-start; }
+.stage-explanations p { font-size: 16px; line-height: 1.55; margin: 0; }
+.dk-columns { grid-template-columns: repeat(var(--n, 3), minmax(0, 1fr)); gap: 24px; align-items: start; }
+.dk-column { display: grid; grid-template-rows: auto auto auto; gap: 16px; min-width: 0; }
+.dk-column h3 { font-size: 18px; color: var(--accent-ink); margin: 0; }
+.dk-column > p { font-size: 16px; line-height: 1.6; margin: 0; }
+.pf-sizing .dk-columns { align-items: stretch; }
+.pf-sizing .dk-column { grid-template-rows: auto minmax(0, 1fr) auto; }
+.dk-columns .vis { height: 245px; align-items: flex-start; justify-content: flex-start; }
+.dk-pair { grid-template-columns: minmax(0, 62fr) minmax(0, 38fr); align-items: start; gap: 24px; }
+.pf-sizing .dk-pair { grid-template-rows: minmax(0, 1fr); align-items: stretch; }
+.dk-pair > .vis { align-items: flex-start; justify-content: flex-start; }
+.dk-pair .md-table code { white-space: nowrap; }
+.comparison-table { table-layout: fixed !important; }
+.comparison-table tr > :nth-child(1) { width: 14%; }
+.comparison-table tr > :nth-child(2) { width: 42%; }
+.comparison-table tr > :nth-child(3), .comparison-table tr > :nth-child(4) { width: 22%; }
+.comparison-table td { font-size: 15px; line-height: 1.45; }
+.comparison-flow .vbox { width: 100%; }
+.comparison-flow .vmedia { width: 100%; height: 132px; border: 0; }
+.comparison-flow .cap { display: none; }
 .pf-vband { margin: 0; padding: 12px 14px; border-left: 4px solid #F04438; background: #2A1212; color: #FDA29B; font-size: 13px; line-height: 1.45; border-radius: 8px; min-width: 260px; }
 .pf-vband b { font-weight: 800; }
 .pf-vband span { display: block; margin-top: 3px; font-family: var(--mono); font-size: 12px; overflow-wrap: anywhere; }

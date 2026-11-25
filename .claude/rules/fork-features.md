@@ -80,6 +80,13 @@ paths:
 - `/portfolio-update`는 `tools/`·`.claude/settings.json`을 건드리지 않습니다.
 - 「유지」 단계의 원 레포 받기 버튼은 `/portfolio-update`가 아니라 **git 머지**를 부탁하는 say 버튼입니다(2026-11-18). `/portfolio-update`는 루트 `CLAUDE.md`·`format/`·`portfolio-*` 스킬을 원본으로 덮어 keywords·장면 수 30~40·편집 모드 연결 같은 포크 수정을 지울 수 있어서입니다. 이 포크는 `git fetch upstream` 뒤 `git merge upstream/main`으로 받고, 머지 전에 바뀌는 점과 포크 규칙 충돌을 정리해 확인받습니다.
 
+## WGO 48장 검토안의 배치
+
+- WGO의 페이지 구성과 문구는 `src/4-wgo/deck-edits.json`에 둡니다. 다시 빌드한 뒤 `deck-edits.py apply`가 기존 기본 장면을 바탕으로 고정·숨김, 합친 장면의 옛 주소, 회고 표시를 `data/projects/4-wgo.json`에 반영합니다.
+- 원문 참조와 지문을 먼저 확인하고, `presentation`·`visuals[].view`가 지정된 장면에 표시 변형을 적용합니다. `/portfolio-update`나 원본 머지로 덮일 수 있는 경로는 `assets/project-deck.js`의 배치·Mermaid 변형·회고·옛 주소 이동, `assets/deck-theme.css`의 대응 배치, `.claude/skills/portfolio-build/deck-edits.py`와 `schema.md`의 선택 필드 검증·보존입니다.
+- `chapterOptions.overview.hideSceneTabs`는 WGO 1장 표지의 각 제목 아래 탭 이름만 숨깁니다. 슬라이드 탭과 다른 장 표지의 표시는 별개입니다. p.30은 `omitFromCells`로 지정 칸의 원문구를 화면에서 생략합니다.
+- 배치가 바뀌면 로컬 미리보기 서버에서 `node tools/check-wgo-deck.mjs --url http://127.0.0.1:4600`을 실행합니다. 1장 목차 범위와 링크, p.8의 가운데·4열 대응, p.13의 노드 높이, p.27/31의 좌우 배치, p.30의 정확한 생략, p.38의 공통 표 행, p.46의 차수별 해결 배지를 검사합니다. PDF 48쪽과 목차 이동, p.11의 간트, p.33의 시퀀스와 역할 표, p.37–38의 그림 가독성도 확인합니다.
+
 ## Engineering Editorial 배치 (이 포크 전용)
 
 - 2026-11-22 디자인 핸드오프(흰 바탕 Engineering Editorial)를 적용했습니다. 색·모양·영문 글꼴(Sora)은 `theme/theme.css`에만 있어 업데이트·머지와 상관없습니다. 아래 렌더러 수정만 원본이 덮거나 머지 충돌이 날 수 있습니다(줄마다 `[포크]` 주석).

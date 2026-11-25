@@ -43,7 +43,8 @@ KEY_RE = re.compile(r'^[a-z][a-z0-9-]{1,31}$')
 LAYOUTS = ('overview', 'visual', 'code', 'full', 'screens', 'problem')
 TABS = ('개요', '구조', '흐름', '구현', '선택', '문제 해결', '결과', '')
 KINDS = ('mermaid', 'code', 'table', 'image')
-SLIDE_FIELDS = ('key', 'chapter', 'layout', 'tab', 'title', 'lead', 'keywords', 'sectionPath', 'points', 'visuals')
+SLIDE_FIELDS = ('key', 'chapter', 'layout', 'presentation', 'tab', 'title', 'lead', 'keywords', 'sectionPath', 'points', 'visuals')
+PRESENTATIONS = ('steps', 'stack', 'comparison', 'columns', 'pair', 'cycle', 'side-notes', 'stage-table')
 KIND_KO = {'mermaid': '다이어그램', 'code': '코드', 'table': '표', 'image': '그림'}
 
 for _s in (sys.stdout, sys.stderr):                                # Claude가 읽는 파이프는 UTF-8로(한글 깨짐 방지)
@@ -428,6 +429,9 @@ def validate(p, chapters, doc):
     lay = p.get('layout')
     if lay not in LAYOUTS:
         errs.append('layout "%s"는 %s 중 하나여야 함' % (lay, ' · '.join(LAYOUTS)))
+    presentation = p.get('presentation')
+    if presentation is not None and presentation not in PRESENTATIONS:
+        errs.append('presentation은 %s 중 하나여야 함' % ' · '.join(PRESENTATIONS))
     if p.get('tab', '') not in TABS:
         errs.append('tab "%s"는 %s 중 하나여야 함' % (p.get('tab'), ' · '.join(t or '""' for t in TABS)))
     if not is_piece(p.get('title')):
@@ -449,8 +453,9 @@ def validate(p, chapters, doc):
         errs.append('points는 글 조각(label·text·verbatim) 0~4개여야 함(text가 비면 label 필요)')
         pts = []
     vis = p.get('visuals') if p.get('visuals') is not None else []
-    if not isinstance(vis, list) or len(vis) > 3:
-        errs.append('visuals는 0~3개여야 함')
+    max_visuals = 4 if presentation == 'comparison' else 3
+    if not isinstance(vis, list) or len(vis) > max_visuals:
+        errs.append('visuals는 0~%d개여야 함' % max_visuals)
         vis = []
     for i, v in enumerate(vis):
         if not isinstance(v, dict) or v.get('kind') not in KINDS:
@@ -472,7 +477,58 @@ def validate(p, chapters, doc):
             errs.append('visuals[%d]의 caption은 글 조각' % i)
         if v.get('sectionPath') is not None and not is_path(v['sectionPath']):
             errs.append('visuals[%d]의 sectionPath는 제목 글자 배열' % i)
-    if lay in ('visual', 'code', 'full') and not vis:
+        if 'view' in v:
+            view = v['view']
+            if not isinstance(view, dict) or not view:
+                errs.append('visuals[%d]의 view는 비어 있지 않은 객체' % i)
+            elif v['kind'] == 'mermaid':
+                if 'compactSequence' in view:
+                    if set(view) != {'compactSequence'} or view['compactSequence'] is not True or squash(v.get('fp')) != 'sequenceDiagram':
+                        errs.append('visuals[%d]의 compactSequence는 sequenceDiagram 원문의 단독 true 설정' % i)
+                elif (set(view) - {'subgraph', 'direction', 'appendToNode'} or
+                        ('direction' in view and 'subgraph' not in view) or
+                        ('subgraph' in view and (not isinstance(view['subgraph'], str) or
+                         not re.fullmatch(r'[A-Za-z_][A-Za-z0-9_]*', view['subgraph']))) or
+                        view.get('direction', 'TD') not in ('LR', 'TD')):
+                    errs.append('visuals[%d]의 Mermaid view는 안전한 subgraph 식별자와 direction LR/TD' % i)
+                if 'appendToNode' in view:
+                    node = view['appendToNode']
+                    if not (isinstance(node, dict) and set(node) == {'id', 'text', 'verbatim'} and
+                            isinstance(node.get('id'), str) and re.fullmatch(r'[A-Za-z_][A-Za-z0-9_]*', node['id']) and
+                            is_piece(node)):
+                        errs.append('visuals[%d]의 appendToNode는 {id, text, verbatim} 글 조각(안전한 노드 id)' % i)
+            elif v['kind'] == 'table':
+                if set(view) - {'appendToCells', 'omitFromCells'}:
+                    errs.append('visuals[%d]의 표 view는 appendToCells·omitFromCells만 지원' % i)
+                for operation in ('appendToCells', 'omitFromCells'):
+                    if operation not in view:
+                        continue
+                    cells = view[operation]
+                    allowed = {'row', 'column', 'text', 'verbatim'} if operation == 'appendToCells' else {'row', 'column', 'text'}
+                    if (not isinstance(cells, list) or not cells or
+                            not all(isinstance(c, dict) and {'row', 'column', 'text'} <= set(c) <= allowed and
+                                    all(isinstance(c.get(x), int) and not isinstance(c[x], bool) and c[x] >= 1 for x in ('row', 'column')) and
+                                    isinstance(c.get('text'), str) and c['text'].strip() and
+                                    ('verbatim' not in c or isinstance(c['verbatim'], bool)) for c in cells)):
+                        errs.append('visuals[%d]의 표 %s는 [{row, column, text}](본문 행·열 1부터)' % (i, operation))
+            else:
+                errs.append('visuals[%d]의 view는 Mermaid·표에만 사용' % i)
+    kinds = [v.get('kind') for v in vis if isinstance(v, dict)]
+    if presentation == 'steps' and (kinds != ['mermaid'] or len(pts) != 4):
+        errs.append('presentation steps는 Mermaid 1개와 요점 4개 필요')
+    if presentation == 'columns' and (kinds != ['mermaid'] * 3 or len(pts) != 3):
+        errs.append('presentation columns는 Mermaid 3개와 요점 3개 필요')
+    if presentation == 'comparison' and kinds != ['table', 'mermaid', 'mermaid', 'mermaid']:
+        errs.append('presentation comparison은 표 1개 다음에 Mermaid 3개 순서 필요')
+    if presentation == 'pair' and not (len(kinds) == 2 and kinds[0] in ('mermaid', 'image') and kinds[1] == 'table'):
+        errs.append('presentation pair는 그림(Mermaid·이미지) 1개 다음에 표 1개 순서 필요')
+    if presentation == 'cycle' and kinds != ['mermaid']:
+        errs.append('presentation cycle은 Mermaid 1개 필요')
+    if presentation == 'side-notes' and (len(pts) != 3 or kinds not in ([], ['mermaid'])):
+        errs.append('presentation side-notes는 요점 3개와 Mermaid 0~1개 필요')
+    if presentation == 'stage-table' and (len(pts) != 3 or kinds != ['mermaid'] * 3):
+        errs.append('presentation stage-table은 Mermaid 3개와 단계 요점 3개 필요')
+    if lay in ('visual', 'code', 'full') and not vis and presentation != 'side-notes':
         errs.append('layout "%s"에는 시각 자료가 1개 이상 있어야 함' % lay)
     if lay == 'screens' and not (2 <= len(vis) <= 3 and all(isinstance(v, dict) and v.get('kind') == 'image' for v in vis)):
         errs.append('layout "screens"에는 그림이 2~3개 있어야 함')
@@ -515,6 +571,11 @@ def validate(p, chapters, doc):
         if own and h and vh is not h:
             cross.append('다른 절의 %s: §%s' % (KIND_KO[v['kind']], own[-1]))
         piece(v.get('caption'), '그림 설명', scope(vh))
+        view = v.get('view') or {}
+        if view.get('appendToNode'):
+            piece(view['appendToNode'], '노드 덧붙임', scope(vh))
+        for cell in view.get('appendToCells', []):
+            piece(dict(cell, verbatim=cell.get('verbatim', False)), '표 칸 덧붙임', scope(vh))
         kind, nth = v['kind'], v.get('n') or 1
         if kind == 'image':                                        # 그림은 그 절에 그 경로가 있는지만
             if norm_src(v['src']) not in unquote(doc.range_text(vh)).replace('](./', ']('):
@@ -527,6 +588,23 @@ def validate(p, chapters, doc):
         got, want = bl[nth - 1]['fp'], squash(v['fp'])
         if (got != want) if kind == 'table' else (got[:60] != want[:60]):
             warns.append('visuals[%d]: §%s의 %s %d번째 지문이 다릅니다 — 원문 "%s"(미리보기에 빨간 띠)' % (i, vh['text'], KIND_KO[kind], nth, got))
+        view = v.get('view') or {}
+        if kind == 'table' and view.get('omitFromCells'):
+            rows = []
+            for line in doc.lines[bl[nth - 1]['line'] + 2:]:
+                if not line.strip() or '|' not in line:
+                    break
+                rows.append(table_cells(line))
+            for cell in view['omitFromCells']:
+                row, col = cell['row'] - 1, cell['column'] - 1
+                if row >= len(rows) or col >= len(rows[row]) or cell['text'] not in rows[row][col]:
+                    errs.append('visuals[%d]의 omitFromCells (%d, %d) 글자가 원문 표 칸에 그대로 없음' % (i, row + 1, col + 1))
+        if kind == 'mermaid' and view.get('subgraph'):
+            start = bl[nth - 1]['line'] + 1
+            end = next((j for j in range(start, len(doc.lines)) if FENCE_OPEN.match(doc.lines[j])), len(doc.lines))
+            body = '\n'.join(doc.lines[start:end])
+            if not re.search(r'^\s*subgraph\s+' + re.escape(view['subgraph']) + r'(?=\s|\[|$)', body, re.M):
+                errs.append('visuals[%d]의 subgraph "%s"가 원문 Mermaid에 없음' % (i, view['subgraph']))
     return errs, warns, pieces, cross
 
 
@@ -786,6 +864,49 @@ def _run_apply(pid, write, rep):
         return
     slides, base = apply_edits(data, edits, doc, rep)
     new_deck = dict(deck)
+    chapter_options = (edits or {}).get('chapterOptions', {})
+    if not (isinstance(chapter_options, dict) and set(chapter_options) <= {'overview'} and
+            all(isinstance(option, dict) and set(option) <= {'hideSceneTabs'} and
+                all(isinstance(value, bool) for value in option.values()) for option in chapter_options.values())):
+        rep.add('필수', 'chapterOptions는 {"overview": {"hideSceneTabs": true/false}}만 지원합니다 → 반영하지 않았습니다')
+        return
+    new_deck['chapters'] = copy.deepcopy(deck.get('chapters') or [])
+    overview = next((chapter for chapter in new_deck['chapters'] if chapter.get('key') == 'overview'), None)
+    if chapter_options and overview is None:
+        rep.add('필수', 'chapterOptions의 overview 장이 없습니다 → 반영하지 않았습니다')
+        return
+    if overview is not None:
+        overview.pop('hideSceneTabs', None)
+        overview.update(chapter_options.get('overview', {}))
+    retro = copy.deepcopy(deck.get('retro') or {})
+    retro.pop('hideAchieved', None)
+    if edits and 'retro' in edits:
+        requested = edits['retro']
+        if not (isinstance(requested, dict) and set(requested) <= {'hideAchieved'} and
+                ('hideAchieved' not in requested or isinstance(requested['hideAchieved'], bool))):
+            rep.add('필수', 'retro는 {"hideAchieved": true/false}여야 합니다 → 반영하지 않았습니다')
+            return
+        retro.update(requested)
+    if retro:
+        new_deck['retro'] = retro
+    else:
+        new_deck.pop('retro', None)
+    aliases = {}
+    retained = {s.get('key') for s in slides}
+    original = {s.get('key') for s in base}
+    for h in (edits or {}).get('hide') or []:
+        if not isinstance(h, dict) or 'into' not in h:
+            continue
+        old, target = h.get('key'), h['into']
+        if not key_ok(old) or not key_ok(target) or old == target or target not in retained:
+            rep.add('필수', 'hide "%s"의 into "%s"는 남아 있는 다른 장면 key여야 합니다 → 반영하지 않았습니다' % (old, target))
+            return
+        if old in original and old not in retained:
+            aliases[old] = target
+    if aliases:
+        new_deck['aliases'] = aliases
+    else:
+        new_deck.pop('aliases', None)
     if slides == base:
         new_deck['slides'] = base
         new_deck.pop('base', None)
@@ -997,6 +1118,8 @@ def main():
             h = {'key': key, 'from': anchor_of(b) if b else pin['from']}
             if group:
                 h['group'] = group
+            if a.into:
+                h['into'] = into
             edits['hide'].append(h)
         save_edits(ep, edits)
         print('장면 "%s"를 숨김 목록에 넣었습니다 → apply로 반영' % key)

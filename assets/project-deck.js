@@ -113,6 +113,43 @@
   // ── 원문 블록 → 장면에 넣을 준비(이미지 크기·다이어그램 SVG를 미리 구함) ──
   let mmdHost = null;
   const svgCache = new Map();
+  const mermaidViews = new WeakMap();
+  // 원문 참조·지문은 유지하고, 노드 주석 또는 선택한 subgraph의 발표용 배치를 적용합니다.
+  function mermaidView(el, view) {
+    if (!view?.subgraph && !view?.appendToNode && !view?.compactSequence) return el;
+    let views = mermaidViews.get(el);
+    if (!views) { views = new Map(); mermaidViews.set(el, views); }
+    const key = JSON.stringify(view);
+    if (views.has(key)) return views.get(key);
+    const lines = el.querySelector('code').textContent.split('\n');
+    const clone = el.cloneNode(true);
+    let body = lines.join('\n');
+    if (view.subgraph) {
+      const start = lines.findIndex((line) => line.trim().startsWith(`subgraph ${view.subgraph}[`));
+      if (start < 0) throw new Error(`Mermaid subgraph를 찾지 못했습니다: ${view.subgraph}`);
+      const end = lines.findIndex((line, i) => i > start && line.trim() === 'end');
+      if (end < 0) throw new Error(`Mermaid subgraph가 끝나지 않았습니다: ${view.subgraph}`);
+      body = [`flowchart ${view.direction || 'TD'}`, ...lines.slice(start + 1, end)].join('\n');
+    }
+    if (view.appendToNode) {
+      const { id: node, text } = view.appendToNode;
+      if (!/^[A-Za-z][\w-]*$/.test(node)) throw new Error(`Mermaid 노드 ID가 올바르지 않습니다: ${node}`);
+      const pattern = new RegExp(`\\b${node}\\["([^"\\n]+)"\\]`);
+      if (!pattern.test(body)) throw new Error(`Mermaid 노드를 찾지 못했습니다: ${node}`);
+      body = body.replace(pattern, (_, label) => `${node}["${label}<br/>${esc(text)}"]`);
+    }
+    // 가로 비교 행에서는 긴 간선 라벨도 여러 줄로 읽습니다. 글자는 원문 그대로입니다.
+    const wrapLabel = (label) => label.split(/<br\s*\/?>/).map((line) => {
+      let width = 0;
+      return line.split(' ').map((word) => { const next = width ? width + word.length + 1 : word.length; const prefix = width ? (next > 12 ? '<br/>' : ' ') : ''; width = next > 12 ? word.length : next; return prefix + word; }).join('');
+    }).join('<br/>');
+    const wrapped = view.direction === 'LR' ? body.replace(/"([^"\n]+)"/g, (_, label) => `"${wrapLabel(label)}"`) : body;
+    const config = view.compactSequence ? { sequence: { mirrorActors: false, diagramMarginX: 10, diagramMarginY: 6, actorMargin: 22, width: 130, height: 36, boxMargin: 4, boxTextMargin: 4, noteMargin: 4, messageMargin: 16 } }
+      : view.subgraph ? { flowchart: { nodeSpacing: 18, rankSpacing: 24 } } : null;
+    clone.querySelector('code').textContent = config ? [`%%{init: ${JSON.stringify(config)}}%%`, wrapped].join('\n') : wrapped;
+    views.set(key, clone);
+    return clone;
+  }
   async function renderMermaid(els) {
     if (!els.length) return;
     if (!window.mermaid) { els.forEach((el) => svgCache.set(el, { error: 'Mermaid를 불러오지 못했습니다' })); return; }
@@ -134,7 +171,7 @@
         if (ref.direct) { const d = ref.w && ref.h ? { w: ref.w, h: ref.h } : await PF.imageSize(PF.srcPath(p.id, ref.src)); return { ref, status: 'ok', src: PF.srcPath(p.id, ref.src), d }; }
         const r = ref._el ? { status: 'ok', el: ref._el } : PF.md.pick(P, ref, sl.sectionPath || []);
         if (r.status === 'missing' || r.status === 'ambiguous') { info.unresolved.push(`${sl.key}: ${r.detail}`); return { ref, ...r }; }
-        if (ref.kind === 'mermaid') mm.push(r.el);
+        if (ref.kind === 'mermaid') { const mermaidEl = mermaidView(r.el, ref.view); mm.push(mermaidEl); return { ref, ...r, mermaidEl }; }
         if (ref.kind === 'image') { const src = r.el.getAttribute('src'); const d = ref.w && ref.h ? { w: ref.w, h: ref.h } : await PF.imageSize(src); return { ref, ...r, src, d }; }
         // 표 안 그림: 불러오기 전 높이로 재면 나중에 표가 커져 조용히 잘림 → 크기를 먼저 받아 두고 복제본에 width·height를 적음(vboxHtml)
         if (ref.kind === 'table' && r.el) return { ref, ...r, imgDims: await Promise.all([...r.el.querySelectorAll('img')].map((i) => PF.imageSize(i.getAttribute('src')))) };
@@ -165,7 +202,7 @@
       return `<figure class="vbox" data-kind="image"${v.d ? ` data-w="${v.d.w}" data-h="${v.d.h}"` : ''}><div class="vmedia">${PF.imgTag(v.src, alt, v.d)}</div>${cap(inline(alt))}</figure>`;
     }
     if (k === 'mermaid') {
-      const r = svgCache.get(v.el) || {};
+      const r = svgCache.get(v.mermaidEl || v.el) || {};
       if (!r.svg) return `<figure class="vbox err">${PF.vband('visual-missing', `다이어그램을 그리지 못했습니다: ${r.error || ''}`)}</figure>`;
       return `<figure class="vbox" data-kind="mermaid"><div class="vmedia">${r.svg}</div>${cap(v.ref.caption?.text ? inline(v.ref.caption.text) : '')}${warn}</figure>`;
     }
@@ -178,12 +215,27 @@
     if (k === 'table') {
       const t = v.el.cloneNode(true);
       t.classList.add('md-table');
+      for (const cell of v.ref.view?.omitFromCells || []) {
+        const td = t.querySelectorAll('tbody tr')[cell.row - 1]?.children[cell.column - 1];
+        if (!td) throw new Error(`표 셀을 찾지 못했습니다: ${cell.row}, ${cell.column}`);
+        const walker = document.createTreeWalker(td, NodeFilter.SHOW_TEXT), matches = [];
+        while (walker.nextNode()) if (walker.currentNode.textContent.includes(cell.text)) matches.push(walker.currentNode);
+        if (matches.length !== 1 || matches[0].textContent.split(cell.text).length !== 2) throw new Error(`표 셀에서 생략할 문구가 유일하지 않습니다: ${cell.row}, ${cell.column}, ${cell.text}`);
+        matches[0].textContent = matches[0].textContent.replace(cell.text, '');
+      }
+      for (const cell of v.ref.view?.appendToCells || []) {
+        const td = t.querySelectorAll('tbody tr')[cell.row - 1]?.children[cell.column - 1];
+        if (!td) throw new Error(`표 셀을 찾지 못했습니다: ${cell.row}, ${cell.column}`);
+        td.insertAdjacentHTML('beforeend', `<br>${inline(cell.text)}`);
+      }
       t.querySelectorAll('img').forEach((i, n) => {                       // 행을 나누기 전에(원본과 같은 순서로) 크기를 적음
         const d = v.imgDims?.[n];
         if (d) { const h = Math.min(d.h, 120); i.width = Math.round((h * d.w) / d.h); i.height = h; }   // CSS max-height 120px와 같은 크기
         i.loading = 'lazy'; i.decoding = 'async';
       });
-      if (chunk) { const rows = [...t.querySelectorAll('tbody tr')]; rows.forEach((r, i) => { if (i < chunk[0] || i >= chunk[1]) r.remove(); }); }
+      const rows = [...t.querySelectorAll('tbody tr')];
+      t.dataset.sourceRows = rows.length;
+      rows.forEach((r, i) => { r.dataset.sourceRow = i; if (chunk && (i < chunk[0] || i >= chunk[1])) r.remove(); });
       return `<figure class="vbox" data-kind="table"><div class="vmedia"><div class="fit-in">${dropRefs(t.outerHTML)}</div></div>${cap(v.ref.caption?.text ? inline(v.ref.caption.text) : '')}${warn}</figure>`;
     }
     return '';
@@ -195,12 +247,69 @@
     ? `<div class="cards${row ? ' row' : ''}${two ? ' two' : ''}" style="--n:${Math.min(points.length, 4)}">${points.map((pt, i) =>
       `<div class="ncard${num ? '' : ' nonum'}">${num ? `<span class="num" aria-hidden="true">${i + 1}</span>` : ''}<div>${pt.label ? `<span class="lb">${esc(PF.label(pt.label))}</span>` : ''}<p>${inline(txt(pt))}</p></div></div>`).join('')}</div>` : '');
   const FLOW = { '문제': '', '원인': '', '해결': 'accent', '결과': 'ok', '배운 점': '' };   // data 값 → 칩 색(보이는 글자만 PF.label로 바뀜)
+  const flowTone = (label) => /^\d+차\s+해결$/.test(label) ? 'accent' : FLOW[label] || '';
   const flowHtml = (points, dir) => `<div class="flow ${dir}" style="--n:${Math.min(points.length, 4)}">${points.map((pt) =>
-    `<div class="fstep${pt.label === '결과' ? ' res' : ''}">${pt.label ? `<span class="labelchip${FLOW[pt.label] ? ' ' + FLOW[pt.label] : ''}">${esc(PF.label(pt.label))}</span>` : ''}<p>${inline(txt(pt))}</p></div>`).join('')}</div>`;
+    `<div class="fstep${pt.label === '결과' ? ' res' : ''}">${pt.label ? `<span class="labelchip${flowTone(pt.label) ? ' ' + flowTone(pt.label) : ''}">${esc(PF.label(pt.label))}</span>` : ''}<p>${inline(txt(pt))}</p></div>`).join('')}</div>`;
+  function cycleHtml(sl) {
+    const v = sl._v[0];
+    if (v.status !== 'ok' && v.status !== 'changed') return `<div class="dk">${vboxHtml(v)}</div>`;
+    const source = (v.mermaidEl || v.el).querySelector('code').textContent;
+    const nodes = [...source.matchAll(/\b([A-Za-z][\w]*)\["([^"]+)"\]/g)].map((m) => ({ id: m[1], label: m[2] }));
+    const connections = source.replace(/\b([A-Za-z][\w]*)\["([^"]+)"\]/g, '$1');
+    const edges = [...connections.matchAll(/\b([A-Za-z][\w]*)\s*-->\|"([^"]+)"\|\s*([A-Za-z][\w]*)/g)].map((m) => ({ from: m[1], label: m[2], to: m[3] }));
+    if (nodes.length !== 4 || edges.length !== 4 || edges.some((edge, i) => edge.from !== nodes[i].id || edge.to !== nodes[(i + 1) % 4].id)) throw new Error('cycle 배치에는 원문의 순서대로 연결된 노드 4개와 순환 간선 4개가 필요합니다');
+    const labelHtml = (label) => label.split(/<br\s*\/?>/).map(esc).join('<br/>');
+    const marker = `cycle-arrow-${sl.key}`;
+    const boxes = nodes.map((node, i) => `<g class="cycle-node" data-node="${esc(node.id)}" transform="translate(${i * 270},0)"><rect x="12" y="82" width="216" height="116" rx="6"/><foreignObject x="22" y="90" width="196" height="100"><div xmlns="http://www.w3.org/1999/xhtml" class="step-label">${labelHtml(node.label)}</div></foreignObject></g>`).join('');
+    const forward = edges.slice(0, 3).map((edge, i) => `<g class="cycle-edge"><foreignObject x="${i * 270 + 132}" y="4" width="246" height="70"><div xmlns="http://www.w3.org/1999/xhtml" class="cycle-edge-label">${labelHtml(edge.label)}</div></foreignObject><path d="M${i * 270 + 228},140 H${(i + 1) * 270 + 10}" marker-end="url(#${marker})"/></g>`).join('');
+    const back = `<g class="cycle-edge cycle-return"><path d="M930 198 V245 H120 V200" marker-end="url(#${marker})"/><foreignObject x="190" y="256" width="700" height="54"><div xmlns="http://www.w3.org/1999/xhtml" class="cycle-edge-label">${labelHtml(edges[3].label)}</div></foreignObject></g>`;
+    const accessible = edges.map((edge, i) => `${nodes[i].label}: ${edge.label} → ${nodes[(i + 1) % 4].label}`).join('; ').replace(/<br\s*\/?>/g, ' ');
+    return `<div class="dk dk-cycle"><div class="cycle-diagram"><svg viewBox="0 0 1080 314" role="img" aria-label="${esc(accessible)}"><defs><marker id="${marker}" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0 0 L7 3.5 L0 7 Z"/></marker></defs>${boxes}${forward}${back}</svg></div></div>`;
+  }
+  function stageTableHtml(sl, vs) {
+    if (vs.length !== 3 || sl.points.length !== 3) throw new Error('stage-table 배치에는 그림과 단계 설명이 각각 3개 필요합니다');
+    return `<div class="dk dk-stage-table"><table class="stage-table"><thead><tr>${sl.points.map((pt) => `<th scope="col">${esc(PF.label(pt.label))}</th>`).join('')}</tr></thead><tbody><tr class="stage-diagrams">${vs.map((v) => `<td><div class="vis">${v}</div></td>`).join('')}</tr><tr class="stage-explanations">${sl.points.map((pt) => `<td><p>${inline(txt(pt))}</p></td>`).join('')}</tr></tbody></table></div>`;
+  }
+  function stepsHtml(sl) {
+    const v = sl._v[0];
+    if (v.status !== 'ok' && v.status !== 'changed') return `<div class="dk">${vboxHtml(v)}</div>`;
+    const source = v.el.querySelector('code').textContent;
+    const labels = [...source.matchAll(/\b[A-Za-z][\w]*\["([^"]+)"\]/g)].map((m) => m[1]);
+    if (labels.length !== 4 || sl.points.length !== 4) throw new Error('steps 배치에는 원문 노드와 설명이 각각 4개 필요합니다');
+    const marker = `step-arrow-${sl.key}`;
+    const nodes = labels.map((label, i) => `<g transform="translate(${i * 270},0)"><rect x="12" y="8" width="246" height="70" rx="6"/><foreignObject x="22" y="14" width="226" height="58"><div xmlns="http://www.w3.org/1999/xhtml" class="step-label">${esc(label)}</div></foreignObject></g>`).join('');
+    const arrows = [0, 1, 2].map((i) => `<path d="M${i * 270 + 258},43 H${(i + 1) * 270 + 10}"/>`).join('');
+    const svg = `<svg viewBox="0 0 1080 120" role="img" aria-label="${esc(labels.join(' → '))}"><defs><marker id="${marker}" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0 0 L7 3.5 L0 7 Z"/></marker></defs>${nodes}<g class="step-edges" marker-end="url(#${marker})">${arrows}<path d="M945 78 V108 H135 V80"/></g></svg>`;
+    return `<div class="dk dk-steps"><div class="step-diagram">${svg}</div><div class="step-explanations">${sl.points.map((pt) => `<p>${inline(txt(pt))}</p>`).join('')}</div></div>`;
+  }
+  function comparisonHtml(vs) {
+    const holder = document.createElement('div'); holder.innerHTML = vs[0];
+    const table = holder.querySelector('table');
+    if (!table) return `<div class="dk">${vs[0]}</div>`;
+    const rows = [...table.querySelectorAll('tbody tr')];
+    if (+table.dataset.sourceRows !== vs.length - 1) throw new Error('comparison 배치의 표 행 수와 다이어그램 수가 다릅니다');
+    const head = document.createElement('th'); head.scope = 'col'; head.textContent = '데이터 흐름';
+    table.querySelector('thead tr').children[0].after(head);
+    rows.forEach((row) => { const cell = document.createElement('td'); cell.className = 'comparison-flow'; cell.innerHTML = vs[+row.dataset.sourceRow + 1]; row.children[0].after(cell); });
+    table.classList.add('comparison-table');
+    return `<div class="dk dk-stack"><div class="vis">${holder.innerHTML}</div></div>`;
+  }
   function bodyHtml(sl, vs, variant) {
     const points = sl.points || [];
     const vis = (list) => `<div class="vis">${list.join('')}</div>`;
     const tight = variant.tight ? ' tight' : '';
+    if (sl.presentation === 'steps') return stepsHtml(sl);
+    if (sl.presentation === 'cycle') return cycleHtml(sl);
+    if (sl.presentation === 'stage-table') return stageTableHtml(sl, vs);
+    if (sl.presentation === 'side-notes') {
+      if (points.length !== 3) throw new Error('side-notes 배치에는 요점 3개가 필요합니다');
+      const diagram = vs.length ? vis(vs) : `<ol class="point-label-flow" aria-label="${esc(points.map((pt) => pt.label).join(' → '))}">${points.map((pt) => `<li>${esc(PF.label(pt.label))}</li>`).join('')}</ol>`;
+      return `<div class="dk dk-side-notes${tight}">${ncards(points, { num: false })}${diagram}</div>`;
+    }
+    if (sl.presentation === 'comparison') return comparisonHtml(vs);
+    if (sl.presentation === 'pair') return `<div class="dk dk-pair${tight}">${vs.map((v) => vis([v])).join('')}</div>`;
+    if (sl.presentation === 'columns') return `<div class="dk dk-columns${tight}" style="--n:${vs.length}">${vs.map((v, i) => `<section class="dk-column">${points[i]?.label ? `<h3>${esc(PF.label(points[i].label))}</h3>` : ''}${vis([v])}${points[i] ? `<p>${inline(txt(points[i]))}</p>` : ''}</section>`).join('')}</div>`;
+    if (sl.presentation === 'stack') return `<div class="dk dk-stack${tight}">${vis(vs)}${ncards(points, { row: true, num: false })}</div>`;
     if (!vs.length) {
       if (sl.layout === 'problem') return `<div class="dk dk-text${tight}">${flowHtml(points, variant.stack || variant.tight ? 'row' : 'col')}</div>`;
       return `<div class="dk dk-text${tight}">${ncards(points, { two: points.length >= 3 && !variant.stack, num: sl.layout !== 'overview' })}</div>`;
@@ -260,7 +369,7 @@
   //   codeChunk(v) = 그 코드의 이번 줄 범위 · tsplit = { v, rows: [a, b) } 행을 나누는 표 하나(다른 표는 그대로 둠)
   function fitSlide(sl, vis, sid, part, codeChunk, meta, tsplit = null, depth = 0) {
     const vs = vis.map((v) => vboxHtml(v, v.ref.kind === 'code' ? codeChunk(v) : v.ref.kind === 'table' && tsplit && tsplit.v === v ? tsplit.rows : null));
-    const V = sl.layout === 'full' || sl.layout === 'screens' ? [{}, { tight: true }]
+    const V = sl.presentation || sl.layout === 'full' || sl.layout === 'screens' ? [{}, { tight: true }]
       : [{ vw: 1.4 }, { vw: 1.7 }, { vw: 1.15 }, { vw: 1.4, tight: true }, { stack: true }, { stack: true, tight: true }];
     const build = (v) => {
       const s = PF.scene({ id: sid, tpl: 'D', eyebrow: meta.chapter, rlabel: meta.rlabel, title: txt(sl.title) || meta.chapter, sub: part, lead: part && part !== `1/${part.split('/')[1]}` ? '' : txt(sl.lead), foot: meta.foot, sec: meta.chapter, group: meta.chapter, stitle: txt(sl.title) });
@@ -269,7 +378,15 @@
       if (sl.edited) s.dataset.pfEdited = '1';                       // 장면 고치기로 고친 장면(미리보기 개요에 ✎)
       PF.body(s).innerHTML = `<div class="pf-fill">${bodyHtml(sl, vs, v)}</div>`;
       if (meta.auto) s.querySelector('.pf-foot > span').insertAdjacentHTML('beforeend', '<span class="pf-autoband" data-pf-ui="note">예전 데이터로 자동 구성 — /portfolio-build를 다시 실행하면 슬라이드가 됩니다</span>');
-      return PF.fitVisuals(s);
+      PF.fitVisuals(s);
+      s.querySelectorAll('.comparison-flow .vbox[data-kind="mermaid"]').forEach((box) => {
+        const svg = box.querySelector('svg'), vb = svg.viewBox.baseVal;
+        const fin = box.closest('table').closest('.fit-in');
+        const width = (parseFloat(fin.style.width) * 0.42 - 22) * +fin.dataset.pfFz;
+        box.dataset.eff = (16 * Math.min(width, 132 * vb.width / vb.height) / vb.width).toFixed(1);
+        box.dataset.lim = 'multi'; box.dataset.vb = `${Math.round(vb.width)}×${Math.round(vb.height)}`;
+      });
+      return s;
     };
     // 들어가는 변형 중 시각 자료가 가장 크게 보이는 것(같으면 앞의 것). 가로로 긴 다이어그램은 위아래 배치가, 세로로 긴 것은 옆 배치가 이김
     let best = null;
@@ -284,7 +401,7 @@
       if (rows[1] - rows[0] >= 4) {
         const mid = rows[0] + Math.ceil((rows[1] - rows[0]) / 2);
         const a = fitSlide(sl, vis, sid, part, codeChunk, meta, { v: tbl, rows: [rows[0], mid] }, depth + 1);
-        const b = fitSlide({ ...sl, points: [], lead: null, layout: 'full' }, vis.filter((v) => v === tbl), `${sid}-t${depth + 1}`, part, codeChunk, meta, { v: tbl, rows: [mid, rows[1]] }, depth + 1);
+        const b = fitSlide({ ...sl, points: [], lead: null, layout: 'full' }, vis.filter((v) => v === tbl || (sl.presentation === 'comparison' && v.ref.kind === 'mermaid')), `${sid}-t${depth + 1}`, part, codeChunk, meta, { v: tbl, rows: [mid, rows[1]] }, depth + 1);
         return [...a, ...b];
       }
     }
@@ -370,7 +487,10 @@
     } else if (/^shots/.test(want)) to = scenes.find((s) => s.classList.contains('l-screens'))?.id || '';
     else if (want === 'more') to = 'end';
     else if (/^retro/.test(want)) to = 'retro';
-    else if (/^d-/.test(want)) to = PF.deckSceneNear(p, want, (id) => scenes.some((s) => s.id === id));   // 숨겼거나 다시 빌드로 없어진 장면
+    else if (/^d-/.test(want)) {                                       // 합쳐진 장면은 원래 링크도 합친 곳으로
+      const alias = p.deck?.aliases?.[want.slice(2)] || p.deck?.aliases?.[want.slice(2).replace(/-(?:\d+|t\d+)$/, '')];
+      to = alias ? `d-${alias}` : PF.deckSceneNear(p, want, (id) => scenes.some((s) => s.id === id));
+    }
     if (!to || !scenes.some((s) => s.id === to)) to = /^(hl|ts|shots|more|retro|d-|ch-)/.test(want) ? 'toc' : '';
     if (to) try { history.replaceState(null, '', `${location.pathname}${location.search}#s=${encodeURIComponent(to)}`); } catch { /* */ }
   }
@@ -398,7 +518,7 @@
         <div class="ch-list t-P2${mode === 'normal' ? '' : cols ? ' compact cols' : ' ' + mode}"><ol class="toc-list${roomy ? '' : ' sub'}"${cols ? ` style="grid-template-rows: repeat(${Math.ceil(rows.length / 2)}, auto)"` : ''}>${list}</ol></div></div>`;
       return band(s, auto);
     };
-    const sceneRows = slides.map((x, i) => [String(i + 1), txt(x.sl.title) || c.title, PF.tab(x.sl.tab), x.scenes[0].id, keywordLine(x.sl)]);
+    const sceneRows = slides.map((x, i) => [String(i + 1), txt(x.sl.title) || c.title, c.hideSceneTabs ? '' : PF.tab(x.sl.tab), x.scenes[0].id, keywordLine(x.sl)]);
     const modes = slides.length <= ROOMY_MAX ? ['roomy', 'normal', 'compact'] : ['normal', 'compact', 'cols'];
     let last = null;
     for (const m of modes) { last = make(m, sceneRows); if (PF.fitsM(last)) return last; }
@@ -449,7 +569,7 @@
 
   // 결과와 회고: ✓ 달성 카드 │ 아쉬운 점 → 개선 계획 표. 안 들어가면 두 장으로
   function buildRetro(r, p, foot, auto) {
-    const ach = r.achieved || [], reg = r.regrets || [], plan = r.plans || [];
+    const ach = p.deck?.retro?.hideAchieved ? [] : r.achieved || [], reg = r.regrets || [], plan = r.plans || [];
     if (!ach.length && !reg.length && !plan.length) return [];
     const n = Math.max(reg.length, plan.length);
     const achHtml = ach.length ? `<div class="rt-ach card"><p class="rt-h ok">✓ ${esc(PF.t('deck.achieved'))}</p><ul>${ach.map((x) => `<li>${inline(x)}</li>`).join('')}</ul></div>` : '';

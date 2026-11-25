@@ -180,13 +180,14 @@
 | `key` | 장면 주소(`#s=d-<key>`)가 됩니다. 「key 규칙」 |
 | `chapter` | 속한 장의 `key` |
 | `layout` | 장면 틀. `"overview"` 개요(글 + 메타·그림) · `"visual"` 그림 + 번호 카드 · `"code"` 코드 + 설명 · `"full"` 큰 그림·표 한 장 가득(비교 표·As-Is/To-Be 표도 여기) · `"screens"` 화면 2~3열 · `"problem"` 문제 해결(문제 → 원인 → 해결 → 결과 + 근거 그림 — 원문 사례가 표면 그 표를 `visuals`로 그대로 보이고 `points`는 비움, 글이면 `points`로) 중 하나. 표지·목차·장 표지·회고·맺음 장면은 렌더러가 만듭니다 |
+| `presentation` | 선택 배치 조정. 기존 `layout`을 유지하며 `"steps"`(Mermaid 1개 + 요점 4개), `"stack"`(시각 자료와 요점을 위아래로), `"comparison"`(원문 표 1개 + Mermaid 하위 그래프 3개), `"columns"`(Mermaid 하위 그래프 3개 + 요점 3개), `"pair"`(그림 Mermaid·이미지 1개 다음 표 1개), `"cycle"`(Mermaid 1개), `"side-notes"`(요점 3개 + Mermaid 0~1개), `"stage-table"`(Mermaid 3개 + 단계 요점 3개)을 지정합니다. `side-notes`는 시각 자료 없이도 기존 `visual`·`code`·`full` 틀에 사용할 수 있습니다. 고정 장면을 복사·적용할 때도 유지됩니다 |
 | `tab` | 장면 머리 오른쪽 작은 라벨. `"개요"` `"구조"` `"흐름"` `"구현"` `"선택"` `"문제 해결"` `"결과"` 중 하나, 또는 `""` |
 | `title` | 글 조각. 기본은 `sectionPath` 마지막 제목 그대로(`verbatim: true`). 짧게 줄였으면 `verbatim: false` |
 | `lead` | 글 조각 하나(도입 1~2문장, 80자 안팎) 또는 `null` |
 | `keywords` | 장 표지 목록에 이 장면 아래 한 줄로 보이는 낱말 2~3개(각 10자 안팎, 문자열 배열). 그 절 원문의 핵심 낱말에서 고름. 장면마다 빠짐없이 채움(없으면 `[]` — 장 표지에 설명 줄이 안 나옴). Claude가 고른 것이라 늘 "확인해 주세요" |
 | `sectionPath` | 이 장면이 다루는 원문 절. 「절 경로」 |
 | `points` | 글 조각 0~4개. `label`은 원문의 굵은 머리말·표 머리·`기능`·`구현`·`이유`·`문제`·`원인`·`해결`·`결과`·`배운 점` 같은 짧은 라벨 또는 `""` |
-| `visuals` | 0~3개. 「원문 블록 참조」. `layout`이 `visual`·`code`·`full`이면 1개 이상, `screens`는 이미지 2~3개 |
+| `visuals` | 0~3개(`presentation: "comparison"`은 표 1개 다음 Mermaid 3개 순서로 4개). 「원문 블록 참조」. `layout`이 `visual`·`code`·`full`이면 1개 이상, `screens`는 이미지 2~3개 |
 
 ### 글 조각 `{ "text", "verbatim" }`
 
@@ -212,6 +213,9 @@
 - `fp`(지문, `code`·`mermaid`·`table`에 필수): `code`·`mermaid`는 블록의 첫 번째 비어 있지 않은 줄(앞뒤 공백 제거, 60자까지. `mermaid`는 `%%`로 시작하는 지시 줄을 건너뜀), `table`은 머리 칸 글자를 `|`로 이은 것(굵게·기울임·백틱 기호와 링크 문법을 뗀, 화면에 보이는 글자 — 렌더러가 그려진 표로 비교함). 원문이 바뀌어 지문이 다르면 렌더러가 띠("원문이 바뀌었습니다 → /portfolio-build 다시")를 그립니다.
 - `caption`: 이미지는 원문 alt가 기본(`verbatim: true`). 다른 블록은 없어도 됩니다.
 - 이미지의 `w`·`h`는 파일 머리에서 읽은 값만.
+- `view`(선택)는 원문 참조·`fp`를 바꾸지 않고 표시만 조정합니다. Mermaid는 `{ "subgraph": "V1", "direction": "LR" }`: 원문의 해당 하위 그래프만 보이고 방향을 `LR` 또는 `TD`로 지정합니다(생략 시 `TD`). 식별자는 영문·밑줄로 시작하고 영문·숫자·밑줄만 쓰며 원문에 실제 있어야 합니다. 표는 `{ "appendToCells": [{ "row": 4, "column": 2, "text": "덧붙일 글", "verbatim": false }] }`: 머리를 제외한 본문 행과 열을 각각 1부터 세어 해당 칸 뒤에 글을 덧붙입니다. `appendToCells[].verbatim`은 선택 불리언(예전 설정은 생략 가능, 생략 시 압축 글로 확인 목록에 기록)입니다. Mermaid 노드에는 `{ "appendToNode": { "id": "R2", "text": "프로젝트 종료 후 적용", "verbatim": false } }`로 글을 덧붙일 수 있고, `subgraph`·`direction`과 함께 지정할 수 있습니다. `direction`은 `subgraph`가 있을 때만 지정합니다. 시퀀스 다이어그램만 `{ "compactSequence": true }`를 단독 view로 지정하여 표시를 압축할 수 있습니다(`fp: "sequenceDiagram"`, 다른 view 키와 함께 쓰지 않음). 노드 `id`도 같은 안전 식별자 규칙이며 `text`·불리언 `verbatim`은 필수입니다. 원문에 근거한 사용자 승인 글만 사용하며 덧붙임 글도 글 조각 검사를 거칩니다. 지문은 변형 전 원문 전체 블록으로 검사합니다.
+
+- 표의 `view.omitFromCells`: `[{ "row": 1, "column": 1, "text": " (받은 뼈대 방식)" }]`로 지정한 본문 칸의 글자만 표시에서 뺍니다. 행·열은 1부터이며 `text`는 해당 원문 칸에 정확히 있는 문자열이어야 합니다(공백 포함, 정규식 아님). `appendToCells`와 함께 사용할 수 있습니다. 원문과 지문은 그대로 유지합니다.
 
 ### key 규칙
 
@@ -261,7 +265,9 @@
 | `pin[].after` | 같은 장 안에서 이 장면 바로 뒤에 놓을 장면 key. 없거나 숨긴 장면이면 옮기지 않음(새 장면은 그 장 끝) |
 | `pin[].from`·`hide[].from` | 닻: 원래 빌드 장면의 `key`·`sectionPath`·시각 자료 서명. `deck-edits.py pin`·`hide`가 채우며 **손대지 않습니다**. 다시 빌드로 key가 바뀌어도 같은 절(제목 그대로)·같은 그림의 장면을 찾아 다시 붙이는 데 씀. 절 제목이 바뀌면 다시 붙지 않습니다(고아) |
 | `pin[].group`·`hide[].group` | 묶음: 나누기(`pin --as`)·합치기(`hide --into`)로 함께 생긴 항목. `undo`는 같은 묶음을 함께 지움. 스크립트가 채우며 손대지 않습니다 |
-| `hide[]` | 숨길 장면. `{ "key", "from" }` 또는 key 글자 |
+| `hide[]` | 숨길 장면. `{ "key", "from" }` 또는 key 글자. 합칠 때 선택 `into`는 남길 장면 key이며 `hide --into`가 저장합니다. 적용 후 `deck.aliases`에 옛 key → 남은 key를 저장하여 옛 주소도 합친 장면으로 이어집니다 |
+| `chapterOptions` | 선택 장 표시 설정. `{ "overview": { "hideSceneTabs": true } }`만 지원하며 실제 `overview` 장이 있어야 합니다. `deck.chapters[]`의 해당 장에만 적용하고 다른 속성은 보존합니다. `false`는 표시, 설정을 지우면 원래 표시로 돌아옵니다 |
+| `retro` | 선택 표시 설정 `{ "hideAchieved": true }`. 렌더러 회고 장면에서 성과 열을 숨깁니다. `data.retro`의 원문 내용은 바꾸지 않고 `deck.retro`에 설정만 반영합니다. 설정을 지우면 원래 표시로 돌아옵니다 |
 | `portfolio` | 포트폴리오 페이지 고치기 자리(2차, 지금은 `null`). 식별자는 `highlights[].section` |
 | `editModePortfolio` | 포트폴리오 페이지 **편집 모드**에서 고친 글(이 포크 전용, 없으면 `null` 또는 키 없음). 원본 템플릿이 예약한 `portfolio` 칸과 겹치지 않게 따로 둔 키입니다. 편집 서버(`edit-server.py` → `portfolio-edits.py`)가 쓰고, 빌드 마지막에 `portfolio-edits.py apply --all`이 data에 덮습니다. 줄마다 `{ "field", 자리 이름, "value", "from" }` — `field`: `title`·`tagline`·`team.role`·`intent`·`tags`·`meta`(+`label`)·`highlight.title`/`highlight.what`/`highlight.caption`(+`section` = `highlights[].section`)·`skill.evidence`(+`skill`·`n`). `from` = 처음 고칠 때 빌드 글. 형식과 저장 위치 규칙은 `portfolio-edits.py` 머리말 |
 
@@ -281,6 +287,9 @@
 | `deck.base` | 빌드가 만든 장면 목록(되돌리기용). 고친 것이 없으면 없음 |
 | `deck.applied` | 반영 결과 지문. `slides`가 스크립트 결과인지(그러면 `base`가 원본) 빌드가 새로 쓴 것인지(그러면 그것이 새 원본) 가림 |
 | `deck.slides[].edited` | `true` = 고친 장면(빨간 띠 문구가 "/portfolio-edit로 고치세요", 미리보기 개요에 ✎) |
+| `deck.chapters[].hideSceneTabs` | `chapterOptions.overview.hideSceneTabs`로 생성한 개요 장 표지의 장면 탭 숨김 설정. 다른 장에는 적용하지 않습니다 |
+| `deck.aliases` | `hide[].into`에서 생성한 옛 장면 key → 남아 있는 장면 key 객체. 합치기 설정을 되돌리면 함께 제거됩니다 |
+| `deck.retro.hideAchieved` | 회고 성과 열 숨김 설정. 원문 회고 내용은 최상위 `retro`에 그대로 남습니다 |
 
 `/portfolio-build`는 `base`·`applied`·`edited`를 직접 쓰지 않습니다(스크립트 몫). 스크립트 출력의 `[필수]`·`[권장]`·`[참고]`는 리포트의 같은 등급으로, "확인해 주세요" 줄은 리포트 "확인해 주세요"로 옮깁니다.
 고아(다시 빌드로 원래 장면을 잃은 고친 장면)는 반영하지 않고 **권장**으로 알리며, 깨진 원문 참조는 지금처럼 빨간 띠(`visual-*`)로 보입니다.

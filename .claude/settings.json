@@ -9,11 +9,11 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python .claude/hooks/subtitle-revise-reminder.py"
+            "command": "python \"$CLAUDE_PROJECT_DIR/.claude/hooks/subtitle-revise-reminder.py\""
           },
           {
             "type": "command",
-            "command": "python tools/voice-lint.py --hook"
+            "command": "python \"$CLAUDE_PROJECT_DIR/tools/voice-lint.py\" --hook"
           }
         ]
       }
@@ -23,7 +23,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python .claude/hooks/application-draft-trigger.py"
+            "command": "python \"$CLAUDE_PROJECT_DIR/.claude/hooks/application-draft-trigger.py\""
           }
         ]
       }
