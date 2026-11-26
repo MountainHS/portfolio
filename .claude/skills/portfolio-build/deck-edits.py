@@ -44,7 +44,8 @@ LAYOUTS = ('overview', 'visual', 'code', 'full', 'screens', 'problem')
 TABS = ('개요', '구조', '흐름', '구현', '선택', '문제 해결', '결과', '')
 KINDS = ('mermaid', 'code', 'table', 'image')
 SLIDE_FIELDS = ('key', 'chapter', 'layout', 'presentation', 'panels', 'tab', 'title', 'lead', 'keywords', 'sectionPath', 'points', 'visuals', 'codeEvidence')
-PRESENTATIONS = ('steps', 'stack', 'comparison', 'columns', 'pair', 'cycle', 'side-notes', 'stage-table', 'paired', 'visual-notes', 'feature-rows', 'phase-timeline', 'visual-pair-table', 'result-rows')
+PRESENTATIONS = ('steps', 'stack', 'comparison', 'columns', 'pair', 'cycle', 'side-notes', 'stage-table', 'paired', 'visual-notes', 'feature-rows', 'phase-timeline', 'visual-pair-table', 'result-rows', 'flow-table')
+NO_POINT_PRESENTATIONS = ('pair', 'comparison', 'visual-pair-table')     # [포크] 렌더러(project-deck.js)가 points를 출력하지 않는 배치
 KIND_KO = {'mermaid': '다이어그램', 'code': '코드', 'table': '표', 'image': '그림'}
 
 for _s in (sys.stdout, sys.stderr):                                # Claude가 읽는 파이프는 UTF-8로(한글 깨짐 방지)
@@ -582,6 +583,11 @@ def validate(p, chapters, doc):
         errs.append('presentation stage-table은 Mermaid 3개와 단계 요점 3개 필요')
     if presentation == 'paired' and kinds not in ([], ['table', 'table']):
         errs.append('presentation paired는 표 2개 또는 시각 자료 없음 필요')
+    if presentation == 'flow-table' and (kinds != ['mermaid', 'table'] or not 2 <= len(pts) <= 5):
+        errs.append('presentation flow-table은 Mermaid 1개 다음에 표 1개, 요점 2~5개(노드 수와 같게) 필요')
+    if presentation in NO_POINT_PRESENTATIONS and pts:
+        errs.append('presentation %s는 요점을 화면에 그리지 않음(요점 %d개가 사라짐). 요점이 필요하면 flow-table·visual-notes·stack, 아니면 points를 비우세요'
+                    % (presentation, len(pts)))
     if presentation == 'visual-notes' and (kinds != ['mermaid'] or not 1 <= len(pts) <= 4):
         errs.append('presentation visual-notes는 Mermaid 1개와 요점 1~4개 필요')
     if lay in ('visual', 'code', 'full') and not vis and presentation not in ('side-notes', 'paired'):
@@ -676,6 +682,13 @@ def validate(p, chapters, doc):
             body = '\n'.join(doc.lines[start:end])
             if not re.search(r'^\s*subgraph\s+' + re.escape(view['subgraph']) + r'(?=\s|\[|$)', body, re.M):
                 errs.append('visuals[%d]의 subgraph "%s"가 원문 Mermaid에 없음' % (i, view['subgraph']))
+        if kind == 'mermaid' and presentation == 'flow-table' and i == 0:  # [포크] 카드 이름(노드)과 요점 이름표가 같은 순서인지
+            start = bl[nth - 1]['line'] + 1
+            end = next((j for j in range(start, len(doc.lines)) if FENCE_OPEN.match(doc.lines[j])), len(doc.lines))
+            node_names = [re.split(r'<br\s*/?>', m)[0] for m in re.findall(r'\b[A-Za-z]\w*\["([^"]+)"\]', '\n'.join(doc.lines[start:end]))]
+            point_labels = [x.get('label', '') for x in pts]
+            if node_names != point_labels:
+                errs.append('flow-table 요점 이름표 %s가 원문 노드 이름 %s와 같은 순서로 맞지 않음' % (point_labels, node_names))
     return errs, warns, pieces, cross
 
 

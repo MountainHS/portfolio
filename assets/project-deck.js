@@ -348,6 +348,34 @@
     if (vs.length !== 3 || sl.points.length !== 3) throw new Error('stage-table 배치에는 그림과 단계 설명이 각각 3개 필요합니다');
     return `<div class="dk dk-stage-table"><table class="stage-table"><thead><tr>${sl.points.map((pt) => `<th scope="col">${esc(PF.label(pt.label))}</th>`).join('')}</tr></thead><tbody><tr class="stage-diagrams">${vs.map((v) => `<td><div class="vis">${v}</div></td>`).join('')}</tr><tr class="stage-explanations">${sl.points.map((pt) => `<td><p>${pointHtml(pt)}</p></td>`).join('')}</tr></tbody></table></div>`;
   }
+  // [포크] flow-table: 위쪽 카드 N개(2~5, Mermaid 노드 = 이름·클래스, 요점 = 설명) + 아래쪽 표
+  //   패널 제목은 visuals[i].caption(없으면 머리 줄 생략). 요점이 '본문(보충)' 꼴이면 괄호를 다음 줄로 내림
+  const FT_ICONS = [
+    '<path d="M5 21V4m0 0h11l-2 4 2 4H5"/>',
+    '<path d="m12 3 9 5-9 5-9-5 9-5Z"/><path d="m3 13 9 5 9-5"/>',
+    '<path d="M2 12h4l3-8 5 16 3-8h5"/>',
+    '<path d="m12 2 9 5v10l-9 5-9-5V7l9-5Z"/><path d="M3 7l9 5 9-5M12 12v10"/>',
+    '<circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/>',
+  ];
+  const FT_PANEL_ICONS = ['<path d="m12 3 9 5-9 5-9-5 9-5Z"/><path d="m3 13 9 5 9-5"/>', '<path d="M4 20V13M10 20V8M16 20V4"/>'];
+  const ftSvg = (path) => `<svg class="ft-icon" viewBox="0 0 24 24" aria-hidden="true">${path}</svg>`;
+  const ftNodes = (source) => [...source.matchAll(/\b[A-Za-z][\w]*\["([^"]+)"\]/g)].map((m) => m[1].split(/<br\s*\/?>/));
+  function ftText(t) {
+    const m = /^(.+?)\s*(\([^()]+\))$/.exec(t);
+    return m ? `${inline(m[1])}<span class="ft-note">${inline(m[2])}</span>` : inline(t);
+  }
+  function ftPanel(v, i, body) {
+    const title = v?.ref?.caption?.text;
+    return `<section class="ft-panel">${title ? `<header>${ftSvg(FT_PANEL_ICONS[i])}<h3>${inline(title)}</h3></header>` : ''}${body}</section>`;
+  }
+  function flowTableHtml(sl, vs) {
+    const v = sl._v[0];
+    if (v.status !== 'ok' && v.status !== 'changed') return `<div class="dk">${vboxHtml(v)}</div>`;
+    const nodes = ftNodes((v.mermaidEl || v.el).querySelector('code').textContent);
+    if (nodes.length < 2 || nodes.length > 5 || nodes.length !== sl.points.length) throw new Error('flow-table 배치에는 원문 노드 2~5개와 같은 수의 요점이 필요합니다');
+    const cards = nodes.map(([name, sub], i) => `<div class="ft-card"><div class="ft-head">${ftSvg(FT_ICONS[i])}<div><b>${esc(name)}</b>${sub ? `<span>${esc(sub)}</span>` : ''}</div></div><p>${ftText(txt(sl.points[i]))}</p></div>`).join('<span class="ft-arrow" aria-hidden="true">→</span>');
+    return `<div class="dk dk-flow-table">${ftPanel(v, 0, `<div class="ft-cards">${cards}</div>`)}${ftPanel(sl._v[1], 1, `<div class="vis">${vs[1]}</div>`)}</div>`;
+  }
   function stepsHtml(sl) {
     const v = sl._v[0];
     if (v.status !== 'ok' && v.status !== 'changed') return `<div class="dk">${vboxHtml(v)}</div>`;
@@ -388,6 +416,7 @@
     if (sl.presentation === 'steps') return stepsHtml(sl);
     if (sl.presentation === 'cycle') return cycleHtml(sl);
     if (sl.presentation === 'stage-table') return stageTableHtml(sl, vs);
+    if (sl.presentation === 'flow-table') return flowTableHtml(sl, vs);
     if (sl.presentation === 'side-notes') {
       if (points.length !== 3) throw new Error('side-notes 배치에는 요점 3개가 필요합니다');
       const diagram = vs.length ? vis(vs) : `<ol class="point-label-flow" aria-label="${esc(points.map((pt) => pt.label).join(' → '))}">${points.map((pt) => `<li>${esc(PF.label(pt.label))}</li>`).join('')}</ol>`;

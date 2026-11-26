@@ -214,6 +214,17 @@ export async function checkDeckPage(projectId, probe) {
       add('every code explanation card has a matching execution-line highlight', json(actual) === json(expected),
         expected, { actual, fragments: parts.map((part) => part.id) }, id);
     }
+    // [포크] 데이터의 요점이 화면에 나왔는지(요점을 그리지 않는 배치가 조용히 버리는 것을 잡음, 2026-11-27 Hive wave-structure)
+    const squeeze = (text) => String(text || '').replace(/[\s*`]/g, '');
+    const sceneText = squeeze(parts.map((part) => part.textContent).join(''));
+    const missingPoints = (slide.points || []).map((point) => squeeze(point.text).slice(0, 8)).filter((head) => head && sceneText.includes(head) === false);
+    add('points rendered', missingPoints.length === 0, 'Every slide point text appears in the scene', { missingPoints, presentation: slide.presentation }, id);
+    if (slide.presentation === 'flow-table') {
+      const cards = all(root, '.ft-card p');
+      const bracketed = (slide.points || []).map((point, i) => ({ i, wants: /\S\s*\([^()]+\)$/.test(point.text || '') }));
+      const badBreaks = bracketed.filter(({ i, wants }) => wants && cards[i]?.querySelector('.ft-note')?.textContent.startsWith('(') !== true).map(({ i }) => i + 1);
+      add('flow-table bracket note starts its own line', badBreaks.length === 0, 'Trailing (…) in a card is a separate line', { badBreaks }, id);
+    }
     const body = rect(root.querySelector('.pf-body'));
     const fill = rect(root.querySelector('.pf-fill'));
     if (slide.presentation === 'visual-pair-table') {
@@ -372,11 +383,12 @@ export async function checkDeckPage(projectId, probe) {
       const picked = PF.md.pick(source, ref, slide.sectionPath);
       const figures = parts.flatMap((part) => all(part, `figure[data-kind="${ref.kind}"][data-visual-index="${index}"]`));
       if (ref.kind === 'mermaid') {
-        const diagrams = ['steps', 'cycle'].includes(slide.presentation)
+        const cardFlow = slide.presentation === 'flow-table';   // [포크] 카드로 그린 구조도(SVG 없음): 카드 4개가 보이면 통과
+        const diagrams = cardFlow ? all(root, '.ft-card') : ['steps', 'cycle'].includes(slide.presentation)
           ? all(root, `.${slide.presentation === 'steps' ? 'step' : 'cycle'}-diagram > svg`)
           : figures.map((figure) => figure.querySelector('svg'));
         add('referenced diagram renders', picked.status === 'ok' && diagrams.length > 0 && diagrams.every((svg) =>
-          isVisible(rect(svg)) && isVisible(svg.getBBox())),
+          isVisible(rect(svg)) && (cardFlow || isVisible(svg.getBBox()))),
         'A visible SVG from the configured source reference', { index, sourceStatus: picked.status, diagrams: diagrams.length }, id);
         if (ref.view?.appendToNode) {
           const { id: nodeId, text } = ref.view.appendToNode;

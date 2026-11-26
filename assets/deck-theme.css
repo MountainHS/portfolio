@@ -317,6 +317,21 @@ table.md-table img { max-height: 120px; max-width: 100%; height: auto; }   /* wi
 .stage-table th { text-align: center; background: var(--th); color: var(--accent-ink); font-size: 18px; }
 .stage-diagrams .vis { height: 225px; justify-content: flex-start; }
 .stage-explanations p { font-size: 16px; line-height: 1.55; margin: 0; }
+.dk-flow-table { align-content: center; gap: 22px; }
+.ft-panel { border: 1px solid var(--line); border-radius: 12px; background: var(--card); overflow: hidden; }
+.ft-panel > header { display: flex; align-items: center; gap: 10px; padding: 10px 18px; background: var(--th); }
+.ft-panel > header h3 { margin: 0; font-size: 22px; color: var(--accent-ink); }
+.ft-icon { width: 26px; height: 26px; flex: none; fill: none; stroke: var(--accent); stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+.ft-cards { display: flex; align-items: center; gap: 10px; padding: 18px; }
+.ft-card { flex: 1 1 0; min-width: 0; border: 1px solid var(--line); border-radius: 10px; background: var(--th); padding: 14px 12px; }
+.ft-head { display: flex; align-items: center; gap: 12px; padding-bottom: 10px; border-bottom: 1px solid var(--line); }
+.ft-head .ft-icon { width: 38px; height: 38px; }
+.ft-head b { display: block; font-size: 22px; line-height: 1.2; }
+.ft-head span { display: block; font-size: 15px; color: var(--muted); }
+.ft-card p { margin: 10px 0 0; text-align: center; font-size: 17px; line-height: 1.5; word-break: keep-all; }
+.ft-arrow { flex: none; font-size: 22px; color: var(--accent-ink); }
+.ft-note { display: block; }   /* [포크] '본문(보충)'의 괄호를 다음 줄로 */
+.ft-panel .vis .cap { display: none; }   /* [포크] 표 설명은 패널 머리 줄로 이미 보임 */
 .dk-columns { grid-template-columns: repeat(var(--n, 3), minmax(0, 1fr)); grid-template-rows: 210px auto auto; gap: 0; align-content: center; }
 .dk-column { display: contents; }
 .dk-column > .vis, .dk-column > h3, .dk-column > p { grid-column: var(--column); min-width: 0; border: 1px solid var(--line); }

@@ -889,19 +889,33 @@
         "key": "wave-structure",
         "chapter": "core",
         "layout": "visual",
-        "presentation": "pair",
+        "presentation": "flow-table",
         "tab": "구조",
         "title": {"text": "시간대별 위협을 네 단계로 편성", "verbatim": false},
         "lead": {"text": "시간대마다 몬스터 구성과 밀도를 바꾸려고 라운드·스테이지·웨이브·스포너로 나눴습니다.", "verbatim": false},
         "keywords": ["네 단계", "Tick", "Finished"],
         "sectionPath": ["3. 핵심 기능", "3.2 몬스터 관리", "3.2.1 개요"],
         "points": [
-          {"label": "목적", "text": "시간대마다 몬스터 종류와 밀도를 바꿔 대응을 다시 고르게 했습니다.", "verbatim": false},
-          {"label": "판단", "text": "라운드 → 스테이지 → 웨이브 → 스포너의 네 단계로 나눴습니다.", "verbatim": false}
+          {"label": "라운드", "text": "전투의 큰 단위(전체 목표와 진행 관리)", "verbatim": false},
+          {"label": "스테이지", "text": "한 라운드 내의 구간(시간대별 흐름 구성)", "verbatim": false},
+          {"label": "웨이브", "text": "해당 구간에서 등장할 몬스터 구성과 밀도", "verbatim": false},
+          {"label": "스포너", "text": "몬스터를 실제로 생성(위치·주기·수량 제어)", "verbatim": false}
         ],
         "visuals": [
-          {"kind": "mermaid", "n": 2, "fp": "flowchart TB", "sectionPath": ["3. 핵심 기능", "3.2 몬스터 관리", "3.2.1 개요"]},
-          {"kind": "table", "n": 1, "fp": "구간|위협의 변화|유도한 대응", "sectionPath": ["3. 핵심 기능", "3.2 몬스터 관리", "3.2.1 개요"]}
+          {
+            "kind": "mermaid",
+            "n": 2,
+            "fp": "flowchart TB",
+            "caption": {"text": "구조도", "verbatim": false},
+            "sectionPath": ["3. 핵심 기능", "3.2 몬스터 관리", "3.2.1 개요"]
+          },
+          {
+            "kind": "table",
+            "n": 1,
+            "fp": "구간|위협의 변화|유도한 대응",
+            "caption": {"text": "시간대별 위협 변화", "verbatim": false},
+            "sectionPath": ["3. 핵심 기능", "3.2 몬스터 관리", "3.2.1 개요"]
+          }
         ],
         "edited": true
       },
@@ -2490,7 +2504,7 @@
         "visuals": [{"kind": "table", "n": 1, "fp": "부채|내용"}]
       }
     ],
-    "applied": "395d4c7f48b11a60",
+    "applied": "dc243021ca4cdd30",
     "aliases": {
       "why": "intro",
       "core-exp": "intro",
