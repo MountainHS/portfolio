@@ -14,9 +14,12 @@
   자리 이름(label·section·skill)은 다시 빌드해도 그대로인 값이라 번호가 바뀌어도 같은 칸을 찾습니다.
   value를 빌드 글(from)과 같게 고치면 그 줄은 지워집니다(= 되돌리기).
 
-슬라이드(project.html) 편집 모드의 장면 글(제목·도입·요점·키워드)도 여기서 씁니다(save_deck_text).
-  - 고친 글은 늘 src/<폴더>/deck-edits.json의 "deckText" 목록에 남기고, 프로젝트 문서에 같은 글이 한 번만 있으면 그 줄도 고칩니다.
-  - "deckText" 목록 한 줄 = { "slide": 장면 key, "field": title · lead · point · keywords, "n": 요점 번호(point만, 1부터), "value", "from" }
+슬라이드(project.html) 편집 모드의 장면 글(제목·도입·요점·그림 설명·키워드·짝 패널·회고)도 여기서 씁니다(save_deck_text).
+  - 고친 글은 늘 src/<폴더>/deck-edits.json의 "deckText" 목록에 남기고, 프로젝트 문서에 같은 글이 한 번만 있으면 그 줄도 고칩니다(한 줄 글만).
+  - "deckText" 목록 한 줄 = { "slide": 장면 key(회고는 "retro"), "field", "n"?, "m"?, "value", "from", "sourceDigest"? }
+    field: title · lead · point · point-label · caption · keywords · panel-title · panel-lead · panel-point · achieved · regret · plan
+    n: 요점·그림·패널·회고 줄 번호(1부터), m: 패널 안 요점 번호(panel-point만). 요점(point·panel-point)의 value는 줄바꿈 하나까지 = 화면 두 줄(data lines).
+    sourceDigest: 고칠 때 그 장면 원문 절의 지문. 원문 절이 바뀌면 apply가 예전 고친 글을 덮지 않고 [권장]으로 알립니다.
   - data에는 deck.slides와 deck.base(장면 고치기 전 빌드 장면, 있으면) 둘 다에 씁니다 → deck-edits.py apply가 base에서 장면을 다시 만들어도 남음.
     다만 /portfolio-edit로 고정한(pin) 장면은 고치기 파일의 글로 다시 만들어지므로, deck-edits.py apply 뒤에는 늘 이 스크립트의 apply를 실행합니다.
 
@@ -24,6 +27,7 @@
   python .claude/skills/portfolio-build/portfolio-edits.py apply <폴더>… | --all     고친 글(포트폴리오 페이지·슬라이드)을 data/에 반영
 Python 3.8 이상, 표준 라이브러리만.
 """
+import hashlib
 import importlib.util
 import json
 import re
@@ -503,76 +507,103 @@ def describe_entry(entry):
 
 
 # ════════════════════════════════════════════════════════════════
-# 슬라이드 장면 글: 제목 · 도입 · 요점 · 키워드 → deck-edits.json "deckText" (+ 프로젝트 문서 줄)
+# 슬라이드 장면 글: 제목 · 도입 · 요점 · 키워드 · 짝 패널 · 회고 → deck-edits.json "deckText" (+ 프로젝트 문서 줄)
 # ════════════════════════════════════════════════════════════════
 
 DECK_TEXT_LIST = "deckText"
-DECK_TEXT_FIELDS = ("title", "lead", "point", "caption", "keywords")
+DECK_TEXT_FIELDS = ("title", "lead", "point", "point-label", "caption", "keywords",
+                    "panel-title", "panel-lead", "panel-point", "achieved", "regret", "plan")
+NUMBERED_FIELDS = ("point", "point-label", "caption", "panel-title", "panel-lead", "panel-point", "achieved", "regret", "plan")   # n이 붙는 칸
+TWO_LINE_FIELDS = ("point", "panel-point")                         # 두 줄까지 쓸 수 있는 칸(data 글 조각의 lines = 화면 두 줄, project-deck.js pointHtml)
+RETRO_SLIDE = "retro"                                              # 회고 장면 자리 이름 — 장면이 아니라 data.retro를 고침
+RETRO_LISTS = {"achieved": "achieved", "regret": "regrets", "plan": "plans"}
 DECK_KEYWORDS_MAX = 3                                              # deck-edits.py 검사와 같은 개수 상한
+SOURCE_DIGEST_LENGTH = 12                                          # 원문 절 지문(sha1 앞자리) 길이
 
 
 def save_deck_text(request):
     """슬라이드 편집 모드의 장면 글 한 칸 저장(또는 저장 위치 묻기). edit-server.py의 /__edit/deck이 부릅니다.
 
-    request: { project, slide: 장면 key, field: title | lead | point | caption | keywords,
-               n: 요점 번호(point) 또는 visuals 번호(caption, 그림 설명) — 둘 다 1부터,
-               expected: 화면을 그릴 때의 값, value: 새 값(keywords는 글자 목록), deckOnly?, dryRun? }
+    request: { project, slide: 장면 key(회고는 "retro"), field: DECK_TEXT_FIELDS 중 하나,
+               n: 요점·그림·패널·회고 줄 번호(1부터), m: 패널 안 요점 번호(panel-point만, 1부터),
+               expected: 화면을 그릴 때의 값, value: 새 값(keywords는 글자 목록, 두 줄 칸은 줄바꿈 하나까지), deckOnly?, dryRun? }
       deckOnly = true면 프로젝트 문서에 같은 글이 있어도 deck-edits.json에만 저장, dryRun = true면 저장 위치만 알려 줌
     반환: { ok, where: 저장 위치 설명, canChooseOverride: 프로젝트 문서를 빼고 슬라이드에만 저장할 수 있는지 }
     """
     project_id = request["project"]
     entry_key = deck_text_entry_key(request)
     data_path = project_data_path(project_id)
-    current = deck_text_value(read_json(data_path), entry_key)
+    data = read_json(data_path)
+    current = deck_text_value(data, entry_key)
     if current != request.get("expected"):
         raise EditError(409, "data가 화면을 그린 뒤에 바뀌었습니다. 새로고침한 뒤 다시 고쳐 주세요.")
 
-    doc_line = choose_deck_doc_line(project_id, entry_key["field"], current, request.get("deckOnly") == True)
+    is_dry_run = request.get("dryRun") == True
+    new_value = None if is_dry_run else clean_deck_text_value(entry_key["field"], request.get("value"))
+    doc_line = choose_deck_doc_line(project_id, entry_key["field"], current, new_value, request.get("deckOnly") == True)
     edits_where = f"src/{project_id}/{EDITS_FILE_NAME}"
     if doc_line is None:
         where = f"{edits_where} (슬라이드에만)"
     else:
         where = f"src/{project_id}/{project_doc_path(project_id).name} {doc_line}줄 (프로젝트 문서) + {edits_where}"
     answer = {"ok": True, "where": where, "canChooseOverride": doc_line is not None}
-    if request.get("dryRun") == True:
+    if is_dry_run or new_value == current:
         return answer
 
-    new_value = clean_deck_text_value(entry_key["field"], request.get("value"))
-    if new_value == current:
-        return answer
     if doc_line is not None:
         doc_path = project_doc_path(project_id)
         old_line = read_lines(doc_path)[doc_line - 1]
         replace_lines(doc_path, doc_line, doc_line, [old_line.replace(current, new_value, 1)])
-    write_deck_text_entry(ROOT / "src" / project_id / EDITS_FILE_NAME, entry_key, current, new_value)
+    source_digest = deck_source_digest(project_id, read_json(data_path), entry_key)
+    write_deck_text_entry(ROOT / "src" / project_id / EDITS_FILE_NAME, entry_key, current, new_value, source_digest)
     write_deck_text_to_data(data_path, entry_key, new_value)
     return answer
 
 
 def deck_text_entry_key(request):
-    """요청 → "deckText" 자리 이름 { slide, field, n? }. 장면 key는 다시 빌드해도 대개 그대로라 자리 이름으로 씁니다."""
+    """요청 → "deckText" 자리 이름 { slide, field, n?, m? }. 장면 key는 다시 빌드해도 대개 그대로라 자리 이름으로 씁니다."""
     field = request.get("field")
     if field not in DECK_TEXT_FIELDS:
         raise EditError(400, f"모르는 장면 글 칸입니다: {field}")
     entry_key = {"slide": str(request.get("slide", "")), "field": field}
-    if field in ("point", "caption"):
+    if field in NUMBERED_FIELDS:
         entry_key["n"] = int(request["n"])
+    if field == "panel-point":
+        entry_key["m"] = int(request["m"])
+    is_retro_field = field in RETRO_LISTS
+    is_retro_slide = entry_key["slide"] == RETRO_SLIDE
+    if is_retro_field != is_retro_slide:
+        raise EditError(400, f"회고 칸(achieved·regret·plan)은 slide \"{RETRO_SLIDE}\"에만 있습니다: {entry_key}")
     return entry_key
 
 
 def deck_text_value(data, entry_key):
-    """장면 글의 지금 값(deck.slides 쪽). 장면이나 칸이 없으면 404."""
+    """장면 글의 지금 값(deck.slides 쪽, 회고는 data.retro). 두 줄 칸은 화면 두 줄(lines)을 줄바꿈으로 이은 글. 없으면 404."""
     slides_path, _ = deck_text_json_paths(data, entry_key)
     if slides_path is None:
-        raise EditError(404, f"슬라이드에서 장면 '{entry_key['slide']}'의 {entry_key['field']} 칸을 찾지 못했습니다. 새로고침해 주세요.")
-    return value_at(data, slides_path)
+        raise EditError(404, f"슬라이드에서 '{entry_key['slide']}'의 {entry_key['field']} 칸을 찾지 못했습니다. 새로고침해 주세요.")
+    return shown_text(data, slides_path)
+
+
+def shown_text(data, text_path):
+    """text_path의 글. 그 글이 두 줄(lines)로 보이는 글 조각의 text면 두 줄을 줄바꿈으로 이어 돌려줍니다(편집창에 보이는 모양)."""
+    value = value_at(data, text_path)
+    if text_path[-1] != "text":
+        return value
+    lines = value_at(data, text_path[:-1]).get("lines")
+    if isinstance(lines, list) and lines:
+        return "\n".join(lines)
+    return value
 
 
 def deck_text_json_paths(data, entry_key):
     """장면 글 자리 → (deck.slides 안 JSON 경로, deck.base 안 JSON 경로). 없으면 그 쪽이 None.
 
     base(장면 고치기 전 빌드 장면)에도 쓰는 이유: deck-edits.py apply가 base에서 장면을 다시 만들므로, base에 없으면 /portfolio-edit 뒤 고친 글이 사라짐.
+    회고 칸은 장면이 아니라 data.retro의 목록이라 (["retro", 목록, n-1], None)입니다.
     """
+    if entry_key["slide"] == RETRO_SLIDE:
+        return retro_text_path(data, entry_key), None
     deck = data.get("deck") if isinstance(data.get("deck"), dict) else {}
     found = {"slides": None, "base": None}
     for list_name in found:
@@ -586,61 +617,126 @@ def deck_text_json_paths(data, entry_key):
     return found["slides"], found["base"]
 
 
+def retro_text_path(data, entry_key):
+    """회고 줄(달성·아쉬운 점·개선 계획)의 JSON 경로. 그 줄이 없거나 빈 글이면 None."""
+    list_name = RETRO_LISTS[entry_key["field"]]
+    items = (data.get("retro") or {}).get(list_name) or []
+    number = entry_key["n"]
+    is_known_item = 1 <= number <= len(items) and isinstance(items[number - 1], str) and items[number - 1] != ""
+    return ["retro", list_name, number - 1] if is_known_item else None
+
+
 def slide_text_path(slide, entry_key):
     """장면 하나 안에서 글 칸의 JSON 경로. 글은 { text, verbatim } 글 조각 또는 글자(schema.md 「글 조각」). 빈 칸(화면에 안 나옴)이면 None."""
     field = entry_key["field"]
     if field == "keywords":
         return ["keywords"] if isinstance(slide.get("keywords"), list) else None
-    if field == "point":
+    if field in ("point", "point-label"):
         points = slide.get("points") or []
         number = entry_key["n"]
         is_known_point = 1 <= number <= len(points) and isinstance(points[number - 1], dict)
-        return ["points", number - 1, "text"] if is_known_point else None
+        if is_known_point == False:
+            return None
+        if field == "point":
+            return ["points", number - 1, "text"]
+        label = points[number - 1].get("label")
+        return ["points", number - 1, "label"] if isinstance(label, str) and label != "" else None
     if field == "caption":
         visuals = slide.get("visuals") or []
         number = entry_key["n"]
         is_image = 1 <= number <= len(visuals) and visuals[number - 1].get("kind") == "image"
         if is_image == False:
             return None
-        caption = visuals[number - 1].get("caption")
-        if isinstance(caption, dict) and isinstance(caption.get("text"), str) and caption["text"] != "":
-            return ["visuals", number - 1, "caption", "text"]
-        if isinstance(caption, str) and caption != "":
-            return ["visuals", number - 1, "caption"]
+        return piece_text_path(visuals[number - 1], "caption", ["visuals", number - 1])
+    if field.startswith("panel-"):
+        return panel_text_path(slide, entry_key)
+    return piece_text_path(slide, field, [])
+
+
+def panel_text_path(slide, entry_key):
+    """짝 패널(presentation paired)의 제목·도입·요점 칸 경로. n = 패널 번호, m = 패널 안 요점 번호(둘 다 1부터)."""
+    panels = slide.get("panels") or []
+    number = entry_key["n"]
+    is_known_panel = 1 <= number <= len(panels) and isinstance(panels[number - 1], dict)
+    if is_known_panel == False:
         return None
-    piece = slide.get(field)
+    panel = panels[number - 1]
+    prefix = ["panels", number - 1]
+    if entry_key["field"] != "panel-point":
+        return piece_text_path(panel, entry_key["field"][len("panel-"):], prefix)
+    points = panel.get("points") or []
+    point_number = entry_key["m"]
+    is_known_point = 1 <= point_number <= len(points) and isinstance(points[point_number - 1], dict)
+    return prefix + ["points", point_number - 1, "text"] if is_known_point else None
+
+
+def piece_text_path(owner, name, prefix):
+    """owner[name]이 글 조각이면 prefix + [name, "text"], 글자면 prefix + [name]. 비었으면 None."""
+    piece = owner.get(name)
     if isinstance(piece, dict) and isinstance(piece.get("text"), str) and piece["text"] != "":
-        return [field, "text"]
+        return prefix + [name, "text"]
     if isinstance(piece, str) and piece != "":
-        return [field]
+        return prefix + [name]
     return None
 
 
-def choose_deck_doc_line(project_id, field, current, deck_only):
-    """장면 글을 프로젝트 문서에도 쓸 줄 번호. 키워드·슬라이드에만 저장·문서에 정확히 한 번 없는 글(제목 줄·코드 블록 제외)이면 None."""
+def choose_deck_doc_line(project_id, field, current, new_value, deck_only):
+    """장면 글을 프로젝트 문서에도 쓸 줄 번호.
+
+    키워드·슬라이드에만 저장·두 줄 글(지금 글이나 새 글에 줄바꿈)·문서에 정확히 한 번 없는 글(제목 줄·코드 블록 제외)이면 None.
+    new_value: 저장할 새 글. 저장 위치만 물을 때(dryRun)는 None.
+    """
     is_doc_candidate = field != "keywords" and deck_only == False
-    if is_doc_candidate == False:
+    is_two_lines = "\n" in current or (new_value is not None and "\n" in new_value)
+    if is_doc_candidate == False or is_two_lines:
         return None
     return find_doc_line(project_doc_path(project_id), current)
 
 
 def clean_deck_text_value(field, value):
-    """새 값을 칸 모양에 맞춥니다. 키워드는 빈 칸을 뺀 낱말 0~3개, 나머지는 빈 글이 아닌 한 줄 글자."""
+    """새 값을 칸 모양에 맞춥니다. 키워드는 빈 칸을 뺀 낱말 0~3개, 요점은 빈 줄을 뺀 한두 줄, 나머지는 빈 글이 아닌 한 줄 글자."""
     if field == "keywords":
         keywords = [str(word).strip() for word in value if str(word).strip() != ""]
         if len(keywords) > DECK_KEYWORDS_MAX:
             raise EditError(400, f"키워드는 {DECK_KEYWORDS_MAX}개까지입니다.")
         return keywords
-    text = str(value).replace("\r\n", "\n").strip()
-    if text == "":
+    lines = [line.strip() for line in str(value).replace("\r\n", "\n").split("\n") if line.strip() != ""]
+    if lines == []:
         raise EditError(400, "빈 글은 저장할 수 없습니다. 장면을 숨기려면 /portfolio-edit를 쓰세요.")
-    if "\n" in text:
-        raise EditError(400, "이 칸은 한 줄 글입니다. 줄바꿈을 빼고 다시 저장해 주세요.")
-    return text
+    max_lines = 2 if field in TWO_LINE_FIELDS else 1
+    if len(lines) > max_lines:
+        raise EditError(400, "요점은 두 줄까지 쓸 수 있습니다." if max_lines == 2 else "이 칸은 한 줄 글입니다. 줄바꿈을 빼고 다시 저장해 주세요.")
+    return "\n".join(lines)
 
 
-def write_deck_text_entry(edits_path, entry_key, current, new_value):
-    """deck-edits.json의 "deckText" 목록에 고친 글을 넣습니다. 같은 자리 줄이 있으면 값만 바꾸고, 빌드 글(from)로 되돌렸으면 그 줄을 지웁니다."""
+def deck_source_digest(project_id, data, entry_key):
+    """고친 글이 기대는 원문 절의 지문(공백을 정리한 절 md의 sha1 앞 12자). 절을 한 곳으로 못 찾으면 None.
+
+    장면은 sectionPath 절, 회고는 data.retro.section 절. apply_deck_text가 이 값이 바뀌면(원문 절을 고침) 예전 고친 글을 덮지 않습니다.
+    """
+    if entry_key["slide"] == RETRO_SLIDE:
+        section_path = [(data.get("retro") or {}).get("section") or ""]
+    else:
+        slides = ((data.get("deck") or {}).get("slides") or [])
+        slide = next((candidate for candidate in slides if candidate.get("key") == entry_key["slide"]), {})
+        section_path = slide.get("sectionPath") or []
+    doc_path = project_doc_path(project_id)
+    if section_path == [] or doc_path.is_file() == False:
+        return None
+    deck_edits = deck_edits_module()
+    doc = deck_edits.Doc(doc_path.read_bytes().decode("utf-8-sig", errors="replace"))
+    headings = doc.find(section_path)
+    if len(headings) != 1:
+        return None
+    section_text = deck_edits.squash(doc.range_text(headings[0]))
+    return hashlib.sha1(section_text.encode("utf-8")).hexdigest()[:SOURCE_DIGEST_LENGTH]
+
+
+def write_deck_text_entry(edits_path, entry_key, current, new_value, source_digest):
+    """deck-edits.json의 "deckText" 목록에 고친 글을 넣습니다. 같은 자리 줄이 있으면 값·지문만 바꾸고, 빌드 글(from)로 되돌렸으면 그 줄을 지웁니다.
+
+    source_digest: 고칠 때의 원문 절 지문(deck_source_digest). None이면 지문 칸을 두지 않습니다(= 원문이 바뀌어도 늘 덮음).
+    """
     edits = read_json(edits_path) if edits_path.exists() else {"schemaVersion": 1, "pin": [], "hide": []}
     entries = edits.get(DECK_TEXT_LIST) if isinstance(edits.get(DECK_TEXT_LIST), list) else []
     entry = find_entry(entries, entry_key)
@@ -649,6 +745,9 @@ def write_deck_text_entry(edits_path, entry_key, current, new_value):
         entries.append(entry)
     else:
         entry["value"] = new_value
+    entry.pop("sourceDigest", None)
+    if source_digest is not None:
+        entry["sourceDigest"] = source_digest
     if entry["value"] == entry["from"]:
         entries.remove(entry)
     edits[DECK_TEXT_LIST] = entries if entries != [] else None
@@ -656,19 +755,38 @@ def write_deck_text_entry(edits_path, entry_key, current, new_value):
 
 
 def write_deck_text_to_data(data_path, entry_key, new_value):
-    """data의 deck.slides·deck.base 두 곳에 새 글을 쓰고, 장면 고치기 표시(deck.applied)를 새 장면 목록에 맞춥니다.
+    """data의 deck.slides·deck.base 두 곳(회고는 data.retro 한 곳)에 새 글을 쓰고, 장면 고치기 표시(deck.applied)를 새 장면 목록에 맞춥니다.
 
     글 조각의 verbatim(원문 그대로)은 false로 바꿉니다. 사용자가 고친 글은 원문 그 절에 그대로 있다고 장담할 수 없고,
     true로 남기면 나중에 /portfolio-edit로 그 장면을 고정할 때 deck-edits.py 검사("원문 그 절에 그대로 없음")에 걸립니다.
+    두 줄 칸(요점)은 글 조각째 바꿉니다: text = 두 줄을 한 칸 띄워 이은 글, lines = 두 줄(한 줄이면 lines를 뺌).
     """
     slides_path, base_path = deck_text_json_paths(read_json(data_path), entry_key)
     for json_path in (slides_path, base_path):
         if json_path is None:
             continue
+        if entry_key["field"] in TWO_LINE_FIELDS:
+            write_point_piece(data_path, json_path, new_value)
+            continue
         if value_at(read_json(data_path), json_path) != new_value:
             write_data_value(data_path, json_path, new_value)
         mark_not_verbatim(data_path, json_path)
     refresh_applied_digest(data_path)
+
+
+def write_point_piece(data_path, text_path, new_value):
+    """요점 글 조각(text_path = …, "text")을 새 글로 통째로 바꿉니다. 줄바꿈이 있으면 화면 두 줄(lines)로, 없으면 lines를 뺍니다."""
+    piece_path = text_path[:-1]
+    piece = dict(value_at(read_json(data_path), piece_path))
+    lines = new_value.split("\n")
+    piece["text"] = " ".join(lines)
+    piece.pop("lines", None)
+    if len(lines) == 2:
+        piece["lines"] = lines
+    if piece.get("verbatim") == True:
+        piece["verbatim"] = False
+    if value_at(read_json(data_path), piece_path) != piece:
+        write_data_value(data_path, piece_path, piece)
 
 
 def mark_not_verbatim(data_path, text_path):
@@ -696,8 +814,10 @@ def refresh_applied_digest(data_path):
 
 
 def apply_deck_text(project_id):
-    """한 프로젝트의 "deckText" 목록을 data/projects/<폴더>.json의 슬라이드에 덮습니다(멱등). deck-edits.py apply 뒤에 실행합니다.
+    """한 프로젝트의 "deckText" 목록을 data/projects/<폴더>.json의 슬라이드(회고는 data.retro)에 덮습니다(멱등). deck-edits.py apply 뒤에 실행합니다.
 
+    줄에 원문 절 지문(sourceDigest)이 있고 지금 원문 절의 지문과 다르면 덮지 않고 [권장]으로 알립니다
+    (원문을 크게 고친 뒤 예전에 고친 슬라이드 글이 남지 않게). 지문이 없는 예전 줄은 늘 덮습니다.
     반환: 보고 줄 목록([참고]·[권장]).
     """
     edits_path = ROOT / "src" / project_id / EDITS_FILE_NAME
@@ -707,17 +827,23 @@ def apply_deck_text(project_id):
     data_path = project_data_path(project_id)
     messages = []
     for entry in entries:
-        place = f"장면 {entry.get('slide')} {entry.get('field')}{' ' + str(entry.get('n')) if entry.get('n') else ''}"
+        place = describe_deck_text_entry(entry)
         slides_path, base_path = deck_text_json_paths(read_json(data_path), entry)
         if slides_path is None:
             messages.append(f"[권장] 슬라이드 고친 글({place})의 장면을 찾지 못했습니다(다시 빌드로 장면 key가 바뀌었거나 숨김) → 반영하지 않았습니다. "
                             f"편집 모드에서 다시 고치거나 src/{project_id}/{EDITS_FILE_NAME}의 그 줄을 지우세요")
             continue
         data = read_json(data_path)
-        current = value_at(data, slides_path)
+        current = shown_text(data, slides_path)
         is_slides_done = current == entry["value"]
-        is_base_done = base_path is None or value_at(data, base_path) == entry["value"]
+        is_base_done = base_path is None or shown_text(data, base_path) == entry["value"]
         if is_slides_done and is_base_done:
+            continue
+        has_source_digest = "sourceDigest" in entry
+        is_source_changed = has_source_digest and deck_source_digest(project_id, data, entry) != entry["sourceDigest"]
+        if is_source_changed:
+            messages.append(f"[권장] {place}: 고친 뒤 원문 절이 바뀌어 예전 고친 글({entry['value'].replace(chr(10), ' / ')})을 적용하지 않았습니다. "
+                            f"편집 모드에서 다시 고치거나 src/{project_id}/{EDITS_FILE_NAME}의 그 줄을 지우세요")
             continue
         write_deck_text_to_data(data_path, entry, entry["value"])
         if current != entry.get("from"):
@@ -725,6 +851,12 @@ def apply_deck_text(project_id):
         else:
             messages.append(f"[참고] {place}: 고친 글을 반영했습니다")
     return messages
+
+
+def describe_deck_text_entry(entry):
+    """보고 줄에 쓸 자리 이름(예: `장면 core-loop point 3`, `장면 spec-level panel-point 1-2`)."""
+    numbers = "-".join(str(entry[name]) for name in ("n", "m") if entry.get(name))
+    return f"장면 {entry.get('slide')} {entry.get('field')}{' ' + numbers if numbers else ''}"
 
 
 # ════════════════════════════════════════════════════════════════

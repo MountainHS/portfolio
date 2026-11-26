@@ -11,9 +11,10 @@
 - POST /__edit/save : src/ 아래 프로젝트 문서 md의 줄 범위 하나를 새 글로 바꿔 씁니다.
 - POST /__edit/portfolio : 포트폴리오 페이지(index.html)의 글 한 칸을 소스(profile.md·프로젝트 문서·deck-edits.json)와 data/에 씁니다.
   어디에 쓸지는 .claude/skills/portfolio-build/portfolio-edits.py가 정합니다(assets/portfolio-edit.js가 부름).
-- POST /__edit/deck : 슬라이드(project.html) 장면 글(제목·도입·요점·키워드) 한 칸을 deck-edits.json(+ 프로젝트 문서 줄)과 data/에 씁니다.
+- POST /__edit/deck : 슬라이드(project.html) 장면 글(제목·도입·요점·키워드·짝 패널·회고 등) 한 칸을 deck-edits.json(+ 프로젝트 문서 줄)과 data/에 씁니다.
   규칙은 같은 portfolio-edits.py의 save_deck_text(assets/deck-edit.js가 부름). 덱의 표·그림·코드는 /__edit/save(md 줄)로 고칩니다.
 - GET  /__edit/base?path=src/<폴더>/<문서>.md&base=HEAD : 그 프로젝트 문서의 git 기준판(base 커밋) 글. assets/doc-diff.js가 [± 바뀐 점]에서 지금 글과 비교합니다.
+- GET  /__edit/history?path=src/<폴더>/<문서>.md : 현재 브랜치에서 그 프로젝트 문서를 바꾼 커밋 목록(해시·날짜·제목만, 글은 안 보냄). [± 바뀐 점]의 기준 고르기 목록입니다.
 127.0.0.1에만 열어 같은 PC에서만 저장할 수 있습니다. GitHub Pages에는 이 서버가 없으므로 편집 버튼이 나오지 않습니다.
 """
 import codecs
@@ -95,24 +96,55 @@ def replace_lines(md_path, start_line, end_line, expected_text, new_text):
 BASE_REF_PATTERN = re.compile(r"^[A-Za-z0-9~^._/-]+$")       # git 기준 이름(HEAD·HEAD~1·브랜치·해시)만 받음 — 명령 끼워 넣기 막기
 
 
-def read_base_text(relative_path, base_ref):
-    """프로젝트 문서 md의 base 커밋 판 글을 돌려줍니다. 그 커밋에 파일이 없으면 None(= 새 파일).
+def resolve_git_doc_path(relative_path):
+    """[± 바뀐 점] 요청의 경로를 git이 쓰는 레포 기준 경로('src/<폴더>/<문서>.md', '/' 구분)로 바꿉니다.
 
-    relative_path: 레포 루트 기준 'src/<폴더>/<문서>.md'
-    base_ref: git 기준(예: 'HEAD', 'HEAD~1')
+    src/ 밖이나 .md가 아니면 400. 파일이 지금 없어도 됩니다(지운 문서의 기록도 볼 수 있게).
     """
     md_path = (ROOT / relative_path).resolve()
     is_inside_src = SRC.resolve() in md_path.parents
     is_markdown = md_path.suffix.lower() == ".md"
     if is_inside_src == False or is_markdown == False:
         raise SaveError(400, f"src/ 아래의 .md 파일만 볼 수 있습니다: {relative_path}")
+    return md_path.relative_to(ROOT.resolve()).as_posix()
+
+
+def read_base_text(relative_path, base_ref):
+    """프로젝트 문서 md의 base 커밋 판 글을 돌려줍니다. 그 커밋에 파일이 없으면 None(= 새 파일).
+
+    relative_path: 레포 루트 기준 'src/<폴더>/<문서>.md'
+    base_ref: git 기준(예: 'HEAD', 'HEAD~1', 커밋 해시)
+    """
+    git_path = resolve_git_doc_path(relative_path)
     if BASE_REF_PATTERN.match(base_ref) is None:
         raise SaveError(400, f"기준 이름이 올바르지 않습니다: {base_ref}")
-    git_path = md_path.relative_to(ROOT.resolve()).as_posix()
     result = subprocess.run(["git", "show", f"{base_ref}:{git_path}"], cwd=str(ROOT), capture_output=True)
     if result.returncode != 0:
         return None
     return result.stdout.decode("utf-8-sig")
+
+
+HISTORY_LIMIT = 50                                             # [± 바뀐 점] 기준 목록에 보일 커밋 수
+
+
+def read_doc_history(relative_path):
+    """현재 브랜치에서 프로젝트 문서 md를 바꾼 커밋 목록(새 것부터, 이름이 바뀐 것도 따라감).
+
+    relative_path: 레포 루트 기준 'src/<폴더>/<문서>.md'
+    반환: [{ hash, short, date: 'YYYY-MM-DD', subject }] — 글은 담지 않음(고른 커밋의 글은 /__edit/base로 따로 받음)
+    """
+    git_path = resolve_git_doc_path(relative_path)
+    log_format = "--format=%H%x09%h%x09%ad%x09%s"
+    result = subprocess.run(["git", "log", "--follow", f"-n{HISTORY_LIMIT}", log_format, "--date=short", "--", git_path],
+                            cwd=str(ROOT), capture_output=True)
+    if result.returncode != 0:
+        raise SaveError(500, result.stderr.decode("utf-8", "replace").strip() or "git log 실패")
+    commits = []
+    for line in result.stdout.decode("utf-8", "replace").splitlines():
+        parts = line.split("\t", 3)
+        if len(parts) == 4:
+            commits.append({"hash": parts[0], "short": parts[1], "date": parts[2], "subject": parts[3]})
+    return commits
 
 
 def load_portfolio_edits():
@@ -177,6 +209,9 @@ class EditHandler(SimpleHTTPRequestHandler):
         if self.path.startswith("/__edit/base?"):
             self.send_base_text()
             return
+        if self.path.startswith("/__edit/history?"):
+            self.send_doc_history()
+            return
         relative_path = requested_file(self.path)
         patched = load_edit_mode_patch().patch_file(ROOT, relative_path)   # 요청마다 다시 읽음 → 넣는 줄을 고쳐도 서버를 다시 켜지 않아도 됨
         if patched is None:
@@ -196,6 +231,17 @@ class EditHandler(SimpleHTTPRequestHandler):
             self.send_json(error.status, {"ok": False, "error": str(error)})
             return
         self.send_json(200, {"ok": True, "base": base_ref, "text": text})
+
+    def send_doc_history(self):
+        """[± 바뀐 점] 기준 고르기용: 쿼리의 path 문서를 바꾼 커밋 목록을 보냅니다."""
+        query = urllib.parse.parse_qs(urllib.parse.urlsplit(self.path).query)
+        relative_path = query.get("path", [""])[0]
+        try:
+            commits = read_doc_history(relative_path)
+        except SaveError as error:
+            self.send_json(error.status, {"ok": False, "error": str(error)})
+            return
+        self.send_json(200, {"ok": True, "commits": commits})
 
     def send_patched_file(self, relative_path, data):
         """편집 모드 줄을 넣은 템플릿 파일 하나를 보냅니다(멈춘 묶음이면 원본 그대로의 바이트).

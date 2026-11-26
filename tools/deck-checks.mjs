@@ -126,6 +126,7 @@ export async function checkDeckPage(projectId, probe) {
   const retroIds = report.ids.filter((id) => /^retro(?:-\d+)?$/.test(id));
   const achieved = deck?.retro?.hideAchieved ? [] : project.retro?.achieved || [];
   const regrets = project.retro?.regrets || [], plans = project.retro?.plans || [];
+  const omittedPairs = new Set(deck?.retro?.omitPairs || []);
   const retroReview = {
     section: project.retro?.section || '', sceneIds: retroIds,
     achieved: retroIds.flatMap((id) => all(scene(id), '.rt-ach li').map((item) => normalize(item.textContent))),
@@ -136,7 +137,7 @@ export async function checkDeckPage(projectId, probe) {
   };
   const expectedPairs = Array.from({ length: Math.max(regrets.length, plans.length) }, (_, i) => ({
     regret: inlineText(regrets[i]), plan: inlineText(plans[i])
-  }));
+  })).filter((_, i) => !omittedPairs.has(i + 1));
   add('retrospective follows source order and display settings',
     Boolean(retroIds.length) === Boolean(achieved.length || expectedPairs.length) &&
     json(achieved.map(inlineText)) === json(retroReview.achieved) &&
@@ -178,8 +179,27 @@ export async function checkDeckPage(projectId, probe) {
     const scale = root.getBoundingClientRect().width / 1280;
     const tol = 2 * scale;
     const parts = sceneParts(id).map(scene);
+    if (slide.codeEvidence === 'all-points') {
+      const expected = (slide.points || []).map((_, i) => i + 1);
+      const actual = [...new Set(parts.flatMap((part) => all(part, '.code-marker').map((mark) => +mark.dataset.point)))].sort((a, b) => a - b);
+      add('every code explanation card has a matching execution-line highlight', json(actual) === json(expected),
+        expected, { actual, fragments: parts.map((part) => part.id) }, id);
+    }
     const body = rect(root.querySelector('.pf-body'));
     const fill = rect(root.querySelector('.pf-fill'));
+    if (slide.presentation === 'visual-pair-table') {
+      const row = root.querySelector('.dk-visual-pair-table .visual-pair-row');
+      const visuals = row ? all(row, ':scope > .vis figure') : [];
+      const table = root.querySelector('.dk-visual-pair-table > .vis table');
+      const first = visuals.map(rect), rowBox = rect(row), bottom = rect(table);
+      add('two visuals share a row above centered table', first.length === 2 && first.every(isVisible) &&
+        isVisible(bottom) && isVisible(rowBox) &&
+        Math.abs((first[0].top + first[0].bottom - first[1].top - first[1].bottom) / 2) <= tol &&
+        first.every((visual) => visual.bottom <= bottom.top + tol) &&
+        first[0].right <= first[1].left + tol &&
+        Math.abs((rowBox.left + rowBox.right - bottom.left - bottom.right) / 2) <= tol,
+      'Two nonoverlapping visuals with aligned centers, with the table centered below', { first, rowBox, bottom }, id);
+    }
     if (isVisible(fill) && fill.height <= body.height && !root.querySelector('.dk-columns, .dk-pair, .comparison-table, .pf-zoomwrap')) {
       add('body content is vertically centered', Math.abs(fill.top + fill.height / 2 - body.top - body.height / 2) <= 3 * scale,
         'Centered content when it fits the body', { body, fill }, id);
@@ -210,10 +230,10 @@ export async function checkDeckPage(projectId, probe) {
     }
     if (slide.presentation === 'columns') {
       const columns = all(root, '.dk-column');
-      const actual = columns.map((column) => {
-        const figure = column.querySelector('figure[data-visual-index]');
+      const actual = columns.map((column, columnIndex) => {
+        const figure = column.querySelector('figure');
         const heading = column.querySelector(':scope > h3'), text = column.querySelector(':scope > p');
-        return { index: figure ? Number(figure.dataset.visualIndex) : null,
+        return { index: figure ? (figure.dataset.visualIndex === undefined ? columnIndex : Number(figure.dataset.visualIndex)) : null,
           label: normalize(heading?.textContent || ''), text: normalize(text?.textContent || ''),
           diagram: rect(figure), heading: rect(heading), explanation: rect(text) };
       });
@@ -223,6 +243,32 @@ export async function checkDeckPage(projectId, probe) {
           json({ index, label, text }) === json(expected[i]) && isVisible(diagram) && isVisible(explanation) &&
           diagram.bottom <= (heading?.top ?? explanation.top) + tol &&
           (!heading || heading.bottom <= explanation.top + tol)), expected, actual, id);
+      const rows = columns.map((column) => ['.vis', 'h3', 'p'].map((selector) =>
+        rect(column.querySelector(`:scope > ${selector}`))));
+      add('matched diagram, title and explanation table rows align', rows.length === expected.length &&
+        rows.every((cells) => cells.every(isVisible)) &&
+        rows.every((cells) => cells.every((cell, row) => Math.abs(cell.top - rows[0][row].top) <= tol)),
+      'Corresponding diagrams, titles and explanations occupy aligned rows', rows, id);
+    }
+    if (slide.presentation === 'feature-rows') {
+      const rows = all(root, '.dk-feature-rows > .feature-row');
+      const visuals = rows.map((row) => all(row, '.feature-row-media figure[data-kind="image"]'));
+      const images = visuals.flat().map((figure) => figure.querySelector('img'));
+      const expected = (slide.visuals || []).map((visual) => normalize(visual.caption?.text || ''));
+      const actual = images.map((img) => normalize(img?.getAttribute('alt') || ''));
+      const cells = rows.map((row) => ({ note: rect(row.querySelector('.feature-row-note')),
+        media: rect(row.querySelector('.feature-row-media')) }));
+      const topMedia = visuals[0]?.map((figure) => rect(figure.querySelector('.vmedia'))) || [];
+      add('two feature rows pair descriptions with ordered images', rows.length === 2 &&
+        visuals[0]?.length === 2 && visuals[1]?.length === 1 && json(actual) === json(expected) &&
+        rows.every((row, i) => normalize(row.querySelector('h3')?.textContent || '') === label(slide.points[i].label) &&
+          normalize(row.querySelector('.feature-row-note > p')?.textContent || '') === inlineText(slide.points[i])) &&
+        cells.every(({ note, media }) => isVisible(note) && isVisible(media) && note.right <= media.left + tol) &&
+        topMedia.length === 2 && topMedia.every(isVisible) &&
+        Math.abs(topMedia[0].top - topMedia[1].top) <= tol &&
+        Math.abs(topMedia[0].height - topMedia[1].height) <= tol,
+      'Two aligned feature rows; first has two equally high images, second has one image',
+      { actual, expected, cells, topMedia }, id);
     }
     if (slide.presentation === 'side-notes' || slide.presentation === 'visual-notes') {
       const layout = root.querySelector(`.dk-${slide.presentation}`);
@@ -234,6 +280,12 @@ export async function checkDeckPage(projectId, probe) {
       const side = isVisible(visual) && cards.every((card) => visualFirst ? visual.right <= card.left + tol : card.right <= visual.left + tol);
       add('diagram and stacked cards placement', stacked && side,
         `${visualFirst ? 'Diagram left, cards right' : 'Cards left, diagram right'} with ${slide.points.length} stacked cards and no overlap`, { visual, cards }, id);
+      const diagram = rect(layout?.querySelector(':scope > .vis > figure, :scope > .point-label-flow')) || visual;
+      const cardGroup = rect(layout?.querySelector(':scope > .cards'));
+      const centered = isVisible(diagram) && isVisible(cardGroup) &&
+        Math.abs((diagram.top + diagram.bottom - cardGroup.top - cardGroup.bottom) / 2) <= 12 * scale;
+      add('diagram and explanation group vertical centers align', centered,
+        'Diagram and stacked explanation cards share a vertical midpoint', { diagram, cardGroup }, id);
       if (layout && !slide.visuals?.length) {
         const expected = slide.points.map((point) => normalize(point.label || ''));
         const actual = all(layout, '.point-label-flow li').map((item) => normalize(item.textContent));
@@ -362,7 +414,11 @@ export async function checkDeckPage(projectId, probe) {
         const highlightsMatch = rows.every((row, i) => {
           const n = first + i;
           const active = highlights.filter((item) => n >= item.start && n <= item.end).map((item) => item.point);
-          return +row.dataset.sourceLine === n && (row.dataset.highlightPoints || '') === active.join(' ');
+          const previous = highlights.filter((item) => n - 1 >= item.start && n - 1 <= item.end).map((item) => item.point);
+          const boundary = i > 0 && active.length > 0 && previous.length > 0 && active.join(' ') !== previous.join(' ');
+          return +row.dataset.sourceLine === n && (row.dataset.highlightPoints || '') === active.join(' ') &&
+            row.classList.contains('code-group-start') === boundary &&
+            gutters[i].classList.contains('code-group-start') === boundary;
         });
         marksIntact &&= rows.length === last - first + 1 && aligned && highlightsMatch &&
           wanted.every(({ point }) => cards.includes(point)) && json(sort(markers)) === json(sort(wanted));

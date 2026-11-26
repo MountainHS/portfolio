@@ -38,9 +38,13 @@ paths:
 ## 슬라이드 편집 모드 (이 포크 전용)
 
 - 편집 서버(`edit-server.py`)로 연 슬라이드(`project.html?p=<폴더>`) 오른쪽 아래 [✎ 편집 모드] → 덱 위 글·그림을 누르면 아래에 입력창이 뜨고, 저장하면 새로고침해 같은 장면으로 돌아옵니다. 덱 데이터(`deck`)로 그린 덱에서만 켜지고, 예전 데이터 자동 구성 덱·GitHub Pages·`python -m http.server`에서는 버튼이 없습니다.
-- 누른 것에 따라 저장 길이 둘입니다(`assets/deck-edit.js`가 나눔).
+- 누른 칸 **하나만** 엽니다(2026-11-26 사용자 결정: 장면 글 전체를 한 창에 여는 안은 다른 칸을 실수로 건드릴 수 있어 뺌). 누른 것에 따라 저장 길이 둘입니다(`assets/deck-edit.js`가 나눔).
   1. 표·코드·다이어그램(프로젝트 문서 원문 블록, 그림(image) 자체는 편집에서 뺌 — 그림 설명 글만 아래 2번) → 그 블록의 md 원문 줄 → `POST /__edit/save`(상세 문서 편집과 같은 길, 프로젝트 문서만 고침). 덱이 블록을 찾는 지문(표 머리 칸·그림 경로·코드·다이어그램 첫 줄)을 바꾸면 `/portfolio-build`를 다시 할 때까지 그 장면에 띠가 뜹니다(입력창에 안내). data의 스크린샷 목록에서 온 그림(`ref.direct`)과 원문을 찾지 못한 그림(빨간 띠)은 누를 수 없습니다.
-  2. 장면 제목·도입·요점 카드·그림 설명(캡션)·장 표지 키워드 → `POST /__edit/deck` → `portfolio-edits.py`의 `save_deck_text`. 고친 글은 늘 `src/<폴더>/deck-edits.json`의 `"deckText"` 목록(`{slide, field, n?, value, from}`)에 남고, 프로젝트 문서에 같은 글이 한 번만 그대로 있으면(제목 줄·코드 블록 제외) 그 줄도 고칩니다(입력창의 [슬라이드에만 저장]을 고르면 문서는 그대로). 키워드는 늘 덱에만. 그림 설명은 `{slide, field:"caption", n: visuals 번호(1부터)}`이고 값은 data `visuals[n-1].caption.text`(글자면 `.caption`)이며, 프로젝트 문서에서는 같은 글이 한 번뿐인 그림 줄(alt)을 고칩니다. 같은 장면에 같은 `src` 그림이 둘이거나 `ref.direct`면 누를 수 없고, 코드 캡션(렌더러가 만든 언어·줄 범위 라벨)은 대상이 아닙니다. data는 `deck.slides`와 `deck.base`(있으면) 둘 다 고치고 `deck.applied` 해시를 맞추며, 글 조각의 `verbatim`은 `false`로 바꿉니다. 빌드 글(`from`)과 같게 고치면 그 줄이 지워집니다(되돌리기).
+  2. 장면 제목·도입·요점 카드와 이름표·그림 설명(캡션)·짝 패널 제목/도입/카드·단계 표 머리 칸/설명 칸·단계 설명 줄·회고(아쉬운 점·개선 계획·달성) 줄·장 표지 키워드 → `POST /__edit/deck` → `portfolio-edits.py`의 `save_deck_text`. 고친 글은 늘 `src/<폴더>/deck-edits.json`의 `"deckText"` 목록(`{slide, field, n?, value, from}`)에 남고, 프로젝트 문서에 같은 글이 한 번만 그대로 있으면(제목 줄·코드 블록 제외) 그 줄도 고칩니다(입력창의 [슬라이드에만 저장]을 고르면 문서는 그대로). 키워드는 늘 덱에만. 그림 설명은 `{slide, field:"caption", n: visuals 번호(1부터)}`이고 값은 data `visuals[n-1].caption.text`(글자면 `.caption`)이며, 프로젝트 문서에서는 같은 글이 한 번뿐인 그림 줄(alt)을 고칩니다. 같은 장면에 같은 `src` 그림이 둘이거나 `ref.direct`면 누를 수 없고, 코드 캡션(렌더러가 만든 언어·줄 범위 라벨)은 대상이 아닙니다. data는 `deck.slides`와 `deck.base`(있으면) 둘 다 고치고 `deck.applied` 해시를 맞추며, 글 조각의 `verbatim`은 `false`로 바꿉니다. 빌드 글(`from`)과 같게 고치면 그 줄이 지워집니다(되돌리기).
+- 2번 칸 자리(`deckText` 한 줄): `{slide, field, n?, m?, value, from, sourceDigest?}`. field = `title`·`lead`·`point`·`point-label`·`caption`·`keywords`·`panel-title`·`panel-lead`·`panel-point`(n 패널, m 카드)·`achieved`·`regret`·`plan`(회고는 `slide: "retro"`, data `retro.achieved|regrets|plans[n-1]`).
+  - 화면 위치 → data 번호는 배치마다 다르게 셉니다(`pointPlace`): 단계 표는 열 번호, 단계 설명은 줄 순서, `.fe-card`·`.result-row`·`.feature-row`·`.dk-column`은 칸 순서, 그 밖은 짝 패널 밖 `.ncard`·`.fstep` 순서. 회고 표 행은 `omitPairs`로 숨긴 짝을 건너뛴 원래 번호. 원본 `project-deck.js` 배치 HTML이 바뀌면 이 셈이 **조용히** 어긋날 수 있습니다.
+  - 요점(`point`·`panel-point`)은 Enter로 두 줄까지: data 글 조각의 `lines`(화면 두 줄, `pointHtml`)와 `text`(두 줄을 한 칸 띄워 이음)를 함께 씁니다. 두 줄 글은 프로젝트 문서 줄에 쓰지 않고 슬라이드에만 둡니다. 다른 칸은 한 줄입니다.
+  - `sourceDigest` = 고칠 때 그 장면 `sectionPath` 절(회고는 `retro.section` 절) md의 지문(`deck-edits.py` `Doc.range_text` → 공백 정리 → sha1 앞 12자). apply 때 지금 원문 절의 지문과 다르면 덮지 않고 `[권장]`으로 알립니다. 원문을 크게 고친 뒤 예전 고친 글이 남지 않게 하려는 것입니다(빌드 글과 비교하지 않는 이유: 원문이 같아도 다시 빌드하면 표현이 바뀜). 지문이 없는 예전 줄은 늘 덮습니다.
 - **`/portfolio-build`와 `/portfolio-edit` 뒤에는 반드시** `deck-edits.py apply --all` 다음에 `python .claude/skills/portfolio-build/portfolio-edits.py apply --all`을 실행합니다(`deckText`를 data에 다시 덮음, 멱등). 특히 `/portfolio-edit`로 고정(pin)한 장면은 고치기 파일의 글로 다시 만들어지므로 이 apply가 없으면 덱 편집 모드에서 고친 글이 빠집니다.
 - 장면 배치(틀·나누기·합치기·숨기기·순서)와 그림 파일 바꾸기는 편집 모드에 없습니다. 배치는 `/portfolio-edit`, 새 그림은 `src/<폴더>/images/`에 넣은 뒤 그림 줄의 경로를 고칩니다.
 - 템플릿 파일에 넣는 줄은 디스크에 없습니다. 편집 서버가 보낼 때만 메모리에서 넣으므로(`.claude/skills/edit-mode-install/edit-mode-patch.py`의 `GROUPS`) `/portfolio-update`가 덮어도 다시 넣을 것이 없습니다. 원본이 `</body>` 줄을 바꿔 서버 창에 `[멈춤]`이 뜨면 `GROUPS`의 기준 줄을 고칩니다.
@@ -52,8 +56,14 @@ paths:
 ## 상세 문서 [± 바뀐 점] (이 포크 전용)
 
 - 편집 서버로 연 상세 문서(`doc.html?p=<폴더>`) 오른쪽 아래 [± 바뀐 점] → 프로젝트 문서의 git 기준판(기본 `HEAD` = 커밋 안 한 변경)과 지금 글을 맨 위 블록 단위로 비교해 색칠합니다. 새 블록 초록, 지운 블록은 그 자리에 빨간 배경으로 끼움, 고친 문단·제목·목록은 낱말 단위 `<del>`/`<ins>`. 표·코드·다이어그램은 블록째 지움+추가. 위쪽 띠에 개수와 [다음 변경 ▼].
-- 주소 옵션: `&diff-base=HEAD~1`(기준 바꾸기), `&pf-diff=1`(열자마자 켬). 켜면 편집 모드는 꺼지고, 끄면 새로고침 없이 원래 화면.
-- 파일: `assets/doc-diff.js`·`assets/doc-diff.css`(로더 `edit-loader.js`의 doc 묶음), `edit-server.py`의 `GET /__edit/base?path=&base=`(`git show <base>:<경로>`, base는 영문·숫자·`~^._/-`만).
+- 기준 고르기: 위쪽 띠의 [기준: … 이후 변경 ▾] → `GET /__edit/history?path=`(현재 브랜치에서 그 문서를 바꾼 커밋 50개, 해시·날짜·제목만)의 목록 → 고른 커밋 판만 `/__edit/base`로 받아 다시 칠하고 주소 `diff-base`를 맞춥니다. 비교의 새 쪽은 늘 지금 글(화면 DOM에 칠하는 구조라 과거 판끼리 비교는 하지 않음, 2026-11-26 결정).
+- 주소 옵션: `&diff-base=<커밋|HEAD~1>`(기준), `&pf-diff=1`(열자마자 켬). 켜면 편집 모드는 꺼지고, 끄면 새로고침 없이 원래 화면.
+- 파일: `assets/doc-diff.js`·`assets/doc-diff.css`(로더 `edit-loader.js`의 doc 묶음), `edit-server.py`의 `GET /__edit/base?path=&base=`(`git show <base>:<경로>`, base는 영문·숫자·`~^._/-`만)·`GET /__edit/history?path=`(`git log --follow`).
+
+## 상세 문서 편집 단위 (이 포크 전용)
+
+- 상세 문서 편집 모드에서 누르는 단위는 **글 묶음**입니다(2026-11-26): 같은 제목 아래 이어진 문단·목록·인용(사이 빈 줄·`<!-- 촬영 -->` 주석 줄 포함)을 한 입력창으로 엽니다. 제목·표·코드·다이어그램·그림만 있는 문단·`<details>` 같은 html 블록은 하나씩 따로 열립니다.
+- 코드: `assets/doc-edit.js`의 `groupTextRuns`(attach에서만 씀). `mapBlocksToLines`는 블록마다 `type`을 더 돌려줄 뿐 그대로라 슬라이드 편집·[± 바뀐 점]은 맨 위 블록 단위를 계속 씁니다.
 
 ## 슬라이드 장면 수 (이 포크 전용)
 
@@ -82,12 +92,17 @@ paths:
 
 ## 프로젝트별 슬라이드 설정
 
-- WGO의 페이지 구성과 문구는 `src/4-wgo/deck-edits.json`에 둡니다. 다시 빌드한 뒤 `deck-edits.py apply`가 기존 기본 장면을 바탕으로 고정·숨김, 합친 장면의 옛 주소, 회고 표시를 `data/projects/4-wgo.json`에 반영합니다.
+- 프로젝트마다 페이지 구성과 문구는 `src/<폴더>/deck-edits.json`에 둡니다. 다시 빌드한 뒤 `deck-edits.py apply`가 기존 기본 장면을 바탕으로 고정·숨김, 합친 장면의 옛 주소, 회고 표시를 `data/projects/<폴더>.json`에 반영합니다.
 - 원문 참조와 지문을 먼저 확인하고, `presentation`·`visuals[].view`가 지정된 장면에 표시 변형을 적용합니다. `/portfolio-update`나 원본 머지로 덮일 수 있는 경로는 `assets/project-deck.js`의 배치·Mermaid 변형·회고·옛 주소 이동, `assets/deck-theme.css`의 대응 배치, `.claude/skills/portfolio-build/deck-edits.py`와 `schema.md`의 선택 필드 검증·보존입니다.
 - `chapterOptions.<장 key>.hideSceneTabs`는 지정한 장 표지의 장면 제목 아래 탭 이름만 숨깁니다. 슬라이드 탭과 다른 장 표지의 표시는 별개입니다. `omitFromCells`는 지정 칸의 원문구를 화면에서 생략합니다. `columns` 배치는 모든 프로젝트에서 각 다이어그램을 같은 열의 제목과 설명 위에 놓습니다.
-- 새 프로젝트는 같은 `deck-edits.json` 설정과 원문 참조를 사용합니다. 배치·노출·원문 범위에 대한 기대값은 그 프로젝트의 데이터에서 읽습니다. 기존 `node tools/check-wgo-deck.mjs` 명령도 공통 실행기를 사용합니다.
+- 새 프로젝트는 같은 `deck-edits.json` 설정과 원문 참조를 사용합니다. 배치·노출·원문 범위에 대한 기대값은 그 프로젝트의 데이터에서 읽습니다. 검사 도구는 모든 프로젝트에 공통으로 쓰는 것만 둡니다(프로젝트 전용 실행기를 만들지 않음).
 
 ## 슬라이드 회귀 검사 (이 포크 전용)
+
+다이어그램과 설명 카드를 좌우로 놓는 `visual-notes`·`side-notes` 배치는 카드 묶음의 세로 중앙을 다이어그램 중앙에 맞춥니다. 장면의 카드 내용이 달라져도 이 정렬을 유지하고, 공통 검사에서 실제 렌더링 위치를 확인합니다.
+다이어그램·화면 여러 개가 각각 다른 제목·설명에 대응하는 `columns` 배치는 표처럼 동일한 열에 해당 세 항목을 두고, 모든 시각 자료·제목·설명 행의 시작 위치를 맞춥니다. 공통 검사는 원문 순서와 각 행의 렌더링 정렬을 확인합니다.
+한 기능의 전후 이미지 두 장과 다른 기능의 이미지 한 장을 보여 주는 `feature-rows` 배치는 기능 설명을 왼쪽 열, 대응 이미지를 오른쪽 열에 두 행으로 맞춥니다. 위쪽 두 이미지의 표시 높이를 같게 하고, 원문 이미지 순서와 설명 대응을 공통 검사로 확인합니다.
+시각 자료 두 개와 표 하나를 함께 보여 주는 `visual-pair-table` 배치는 시각 자료를 위쪽 좌우에 같은 높이로 놓고 표를 아래쪽 전체 폭의 중앙에 둡니다. 공통 검사는 두 자료의 행 정렬, 겹침, 표의 위치와 중앙 정렬을 확인합니다.
 
 ### 코드와 설명의 대응 검수
 
@@ -95,6 +110,7 @@ paths:
 - 제목·도입·카드가 주장하는 핵심 동작마다 화면에 보이는 실행 줄을 찾습니다. 조건 분기, 호출, 상태 변경, 예외 처리 등 설명의 결론을 뒷받침하는 줄을 확인합니다. 번호가 있으면 같은 번호가 붙은 범위에서 확인합니다. 앞뒤 장면에 나뉜 근거는 장면 번호도 함께 기록합니다.
 - 코드가 없거나 범위가 잘렸거나 설명과 동작이 다르면 **필수 수정**으로 처리합니다. 원문에서 실제 구현을 찾아 발췌 범위를 고치거나 설명을 표시 코드에 맞춰 수정하고 다시 대조합니다. 예를 들어 설명에 “원격 플레이어 입력을 끄고 물리 바디를 Kinematic으로 변경”이라고 쓰면 두 설정을 모두 볼 수 있어야 합니다.
 - 검수한 에이전트는 보고서에 장면 ID·설명 항목·근거 줄(표시 범위 또는 인용)·판정을 남깁니다. 의미 대응 검수가 빠졌거나 근거가 확인되지 않은 장면이 있으면 완료로 보고하지 않습니다. 공통 검사기는 화면의 설명·발췌·강조를 수집하고 코드 누락과 강조 구조를 검사합니다. 의미 대응 판정은 검수자가 내립니다.
+- 여러 카드로 실행 코드를 설명하는 장면에는 `codeEvidence: "all-points"`를 지정하고 각 카드 번호를 실제 실행 줄의 `view.highlights` 번호와 연결합니다. 분할 코드 장면은 이어지는 장면까지 합쳐 모든 번호를 확인합니다. 공통 검사는 번호 누락·잘못된 범위·화면 표시를 실패로 처리하며, 설명의 뜻과 실행 동작은 사람이 별도 검수합니다. 코드 밖 그림만이 근거인 카드는 같은 번호의 코드 설명으로 바꾸거나 코드와 그림 설명을 별도 장면으로 나눕니다.
 
 ### 공통 실행과 배치 검사
 
@@ -103,6 +119,8 @@ paths:
 - 내용이 적은 장면은 미리보기의 `low-fill`을 보고 원문에서 보강할 설명·도표·사례를 찾습니다. 보강 근거가 없으면 메시지가 이어지는 장면을 묶을 수 있는지 확인합니다. 묶을 때 문제 단위와 설명 순서, 기존 링크 목적지를 보존합니다. `tiny-diagram`·`long-code`도 가독성이나 설명 근거 누락이 있는지 판단해 기록합니다.
 - 다이어그램과 설명은 각 그림의 대상·단계·데이터가 대응 카드와 같은지 원문과 비교합니다. 비교표·성과의 수치, 단위, 비교 조건, 측정 한계와 적용 여부도 확인합니다. 사용자 피드백에는 장면 ID, 재현 조건, 기대 동작, 판정 근거를 남깁니다. 페이지 번호는 최종 보고서에서 확인합니다.
 - 실패 재현은 프로젝트마다 실제 존재하는 요소에 적용합니다. `--probe swapped-layout`은 그림·카드 순서를 바꾸고, `missing-highlight`는 코드 번호를 지우며, `missing-code`와 `wrong-code-text`는 발췌를 제거하거나 변조합니다. `wrong-retro-pair`는 회고의 개선 계획 셀을 변경합니다. 변경은 브라우저에서만 일어나고 `--output <경로>.json`에 실패 근거를 기록합니다.
+- 검사기(`tools/check-*`·`tools/deck-checks.mjs`·`deck-edits.py`의 검증)를 고친 뒤에는 `python tools/verify-checks.py`로 검사기 자체를 확인합니다. 정상 덱 통과와 일부러 망친 입력의 실패를 케이스당 한 줄로 보여 줍니다(B·C·D는 미리보기 서버 필요).
+- 검사 결과 파일(`--output`의 json·`--pdf`의 PDF·화면 캡처)은 `output/check/`에 씁니다. `report/`에 두지 않습니다. `report/`에는 사람이 읽는 md만 둡니다(2026-11-26, 검사 결과 70여 개가 `report/`에 쌓여 정리함).
 - PDF 납품 시 `node tools/check-deck.mjs <프로젝트 폴더> --print --output <경로>.json`으로 인쇄 배치와 링크의 기대 페이지를 기록합니다. 같은 미리보기에서 PDF를 새로 저장할 때는 `--pdf <새 파일>.pdf`를 사용할 수 있습니다. PDF 파일을 정한 뒤 `python tools/check-deck-pdf.py <PDF 파일> <검사 보고서>.json <프로젝트 폴더>`로 실제 페이지 크기·수와 내부 링크 목적지를 검증하고 수정한 페이지를 화면으로 봅니다. PDF 검사에는 `pypdf`가 필요합니다. 인쇄 측정의 1px 이하 경계 초과는 보고서에 남겨 실제 PDF에서 확인합니다.
 
 ### 회고의 근거와 대응 검수

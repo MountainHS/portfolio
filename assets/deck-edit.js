@@ -3,7 +3,8 @@
 //   덱을 슬라이드 데이터(deck)로 그렸을 때만(예전 데이터 자동 구성 덱은 아님). GitHub Pages나 python -m http.server에서는 아무것도 하지 않습니다.
 //   흐름: 덱이 다 그려지길 기다림 → data·프로젝트 문서 md를 다시 읽음 → [편집 모드] 버튼 → 덱 위 글·그림 누르기 → 아래 입력창
 //         ├ 표·코드·다이어그램 → 그 원문 md 줄 → /__edit/save (상세 문서 편집과 같은 길, 프로젝트 문서만 고침)
-//         └ 장면 제목·도입·요점·장 표지 키워드 → 글 한 칸 → /__edit/deck (deck-edits.json "deckText" + 같은 글이 있으면 프로젝트 문서 줄, data도)
+//         └ 장면 제목·도입·요점(이름표 포함)·그림 설명·짝 패널 글·회고 줄·장 표지 키워드 → 누른 글 한 칸 → /__edit/deck
+//           (deck-edits.json "deckText" + 같은 글이 있으면 프로젝트 문서 줄, data도). 요점은 두 줄까지(Enter로 줄바꿈 = 화면 두 줄)
 //         → 저장하면 새로고침(주소 #s=<장면>이 그대로라 같은 장면으로 돌아옴)
 //   화면의 글·그림이 어느 장면인지는 원본 project-deck.js가 이미 다는 것으로 압니다: 장면 요소 id(d-<key>, slideForSceneId) · figure.vbox의 data-kind와 내용(visualRefForFigure).
 //   표·코드·다이어그램만 고칠 수 있고 그림(image)은 뺐습니다.
@@ -13,7 +14,11 @@
   const MD_SAVE_URL = '/__edit/save';
   const TEXT_SAVE_URL = '/__edit/deck';
   const RESTORE_KEY = 'pf-deck-edit-restore';         // 저장 뒤 새로고침에서 편집 모드를 다시 켜는 sessionStorage 키
-  const POINT_SELECTOR = '.ncard, .fstep, .fe-card';  // 요점 카드·흐름 칸(문제 해결)·화면 카드 — 장면 안 순서 = data points 순서
+  const POINT_SELECTOR = '.ncard, .fstep';             // 요점 카드·흐름 칸(문제 해결) — 짝 패널 밖에서 장면 안 순서 = data points 순서
+  // 요점 하나를 한 칸에 그리는 배치(project-deck.js bodyHtml) — 장면 안 순서 = data points 순서. 안의 h3 = 이름표, 나머지 글 = 요점 글
+  const POINT_ROW_SELECTOR = '.fe-card, .result-row, .feature-row, .dk-column';
+  const TWO_LINE_FIELDS = ['point', 'panel-point'];   // 줄바꿈 하나까지 되는 칸(portfolio-edits.py TWO_LINE_FIELDS와 같음)
+  const RETRO_SCENE_ID = /^retro(-\d+)?$/;           // 회고 장면 id(project-deck.js buildRetro: retro, retro-2)
   const EDITABLE_FIGURE_SELECTOR = 'figure.vbox:is([data-kind="table"], [data-kind="code"], [data-kind="mermaid"])';   // 그림(image)은 편집에서 뺌
   const IMAGE_CAPTION_SELECTOR = 'figure.vbox[data-kind="image"] > figcaption.cap';   // 그림 아래 설명 글(코드 캡션은 렌더러가 만든 라벨이라 제외)
   const VISUAL_NAMES = { table: '표', image: '그림', code: '코드', mermaid: '다이어그램' };
@@ -93,6 +98,7 @@
     if (keywordLine !== null) return keywordSpot(session, keywordLine);
     const scene = target.closest('.pf-scene[id]');
     if (scene === null) return null;
+    if (RETRO_SCENE_ID.test(scene.id)) return retroSpot(session, target);
     const slide = slideForSceneId(session, scene.id);
     if (slide === undefined) return null;
 
@@ -100,16 +106,103 @@
     const imageCaption = target.closest(IMAGE_CAPTION_SELECTOR);
     const title = target.closest('.pf-title');
     const lead = target.closest('.pf-lead');
-    const point = target.closest(POINT_SELECTOR);
+    const panel = target.closest('.paired-panel[data-panel]');
     if (figure !== null) return visualSpot(session, slide, figure);
     if (imageCaption !== null) return captionSpot(session, slide, imageCaption);
     if (title !== null) return textSpot(session, slide, title, '장면 제목', { field: 'title' });
     if (lead !== null) return textSpot(session, slide, lead, '도입 글', { field: 'lead' });
-    if (point !== null) {
-      const number = [...scene.querySelectorAll(POINT_SELECTOR)].indexOf(point) + 1;
-      return textSpot(session, slide, point, `요점 ${number}`, { field: 'point', n: number });
+    if (panel !== null) return panelSpot(session, slide, panel, target);
+    return pointSpot(session, slide, scene, target);
+  }
+
+  /**
+   * 요점 글·이름표 한 칸. 배치마다 그리는 모양이 달라(project-deck.js bodyHtml) 화면 위치를 data points 번호로 바꿉니다.
+   *   단계 표(stage-table): 머리 칸 = 이름표, 아래 설명 칸 = 요점 글(열 번호 = 요점 번호)
+   *   단계 설명(steps): 설명 줄 순서 · 화면 카드·결과 줄·기능 줄·열(POINT_ROW_SELECTOR): 칸 순서 · 그 밖: 요점 카드·흐름 칸 순서
+   * 반환: 고칠 칸 | null(요점이 아닌 곳)
+   */
+  function pointSpot(session, slide, scene, target) {
+    const place = pointPlace(scene, target);
+    if (place === null) return null;
+    if (place.isLabel) return textSpot(session, slide, place.element, `요점 ${place.number} 이름표`, { field: 'point-label', n: place.number });
+    return textSpot(session, slide, place.element, `요점 ${place.number}`, { field: 'point', n: place.number });
+  }
+
+  /** 누른 곳 → { number: 요점 번호(1부터), isLabel, element } | null. 짝 패널 안은 panelSpot이 맡습니다. */
+  function pointPlace(scene, target) {
+    const stageCell = target.closest('.stage-table thead th, .stage-table .stage-explanations td');
+    if (stageCell !== null) {
+      return { number: stageCell.cellIndex + 1, isLabel: stageCell.tagName === 'TH', element: stageCell };
     }
-    return null;
+    const stepLine = target.closest('.step-explanations > p');
+    if (stepLine !== null) {
+      return { number: [...stepLine.parentElement.children].indexOf(stepLine) + 1, isLabel: false, element: stepLine };
+    }
+    const row = target.closest(POINT_ROW_SELECTOR);
+    if (row !== null) return pointRowPlace(scene, row, target);
+    const card = target.closest(POINT_SELECTOR);
+    if (card === null) return null;
+    const cards = [...scene.querySelectorAll(POINT_SELECTOR)].filter((element) => element.closest('.paired-panel') === null);
+    const label = target.closest('.lb, .labelchip');
+    return { number: cards.indexOf(card) + 1, isLabel: label !== null, element: label || card };
+  }
+
+  /** 요점 하나를 한 칸에 그리는 배치의 칸(화면 카드·결과 줄·기능 줄·열). 그림·"FEATURE 01" 라벨을 누르면 null. */
+  function pointRowPlace(scene, row, target) {
+    const isOnVisual = target.closest('.vis, .feature-row-media, figure') !== null;
+    const isFeatureTag = target.closest('.fe-k') !== null;
+    if (isOnVisual || isFeatureTag) return null;
+    const number = [...scene.querySelectorAll(POINT_ROW_SELECTOR)].indexOf(row) + 1;
+    const heading = target.closest('h3');
+    return { number, isLabel: heading !== null, element: heading || row };
+  }
+
+  /** 짝 패널(presentation paired)의 제목·도입·카드 한 칸 → panel-title / panel-lead / panel-point (n = 패널 번호, m = 패널 안 카드 번호) */
+  function panelSpot(session, slide, panel, target) {
+    const number = Number(panel.dataset.panel);
+    const heading = target.closest('.panel-header h3');
+    const lead = target.closest('.panel-lead');
+    const card = target.closest(POINT_SELECTOR);
+    if (heading !== null) return textSpot(session, slide, heading, `패널 ${number} 제목`, { field: 'panel-title', n: number });
+    if (lead !== null) return textSpot(session, slide, lead, `패널 ${number} 도입`, { field: 'panel-lead', n: number });
+    if (card === null) return null;
+    const cardNumber = [...panel.querySelectorAll(POINT_SELECTOR)].indexOf(card) + 1;
+    return textSpot(session, slide, card, `패널 ${number} 요점 ${cardNumber}`, { field: 'panel-point', n: number, m: cardNumber });
+  }
+
+  /**
+   * 회고 장면의 한 줄 → data.retro의 achieved / regrets / plans 번호(slide "retro").
+   * 아쉬운 점·개선 계획 표는 omitPairs(숨긴 짝)를 뺀 줄만 그리므로(project-deck.js buildRetro) 숨긴 번호를 건너뛰어 원래 번호를 셉니다.
+   */
+  function retroSpot(session, target) {
+    const retro = session.source.project.retro || {};
+    const achievement = target.closest('.rt-ach li');
+    if (achievement !== null) {
+      const number = [...achievement.parentElement.children].indexOf(achievement) + 1;
+      return retroTextSpot(session, achievement, `달성 ${number}`, 'achieved', number, retro.achieved);
+    }
+    const cell = target.closest('.rt table.mini tbody td');
+    if (cell === null) return null;
+    const shownRow = [...cell.parentElement.parentElement.children].indexOf(cell.parentElement);
+    const number = retroPairNumbers(session.source.project)[shownRow];
+    const isPlan = cell.cellIndex === 1;
+    if (isPlan) return retroTextSpot(session, cell, `개선 계획 ${number}`, 'plan', number, retro.plans);
+    return retroTextSpot(session, cell, `아쉬운 점 ${number}`, 'regret', number, retro.regrets);
+  }
+
+  /** 회고 표에 그려지는 짝의 원래 번호(1부터) 목록. 화면 행 순서 = 이 목록 순서. */
+  function retroPairNumbers(project) {
+    const retro = project.retro || {};
+    const pairCount = Math.max((retro.regrets || []).length, (retro.plans || []).length);
+    const omitted = new Set(project.deck?.retro?.omitPairs || []);
+    return Array.from({ length: pairCount }, (_, index) => index + 1).filter((number) => omitted.has(number) === false);
+  }
+
+  /** 회고 줄 하나. 값은 data.retro의 글자(빈 줄이면 null — 짝 한쪽만 있는 칸). */
+  function retroTextSpot(session, element, label, field, number, items) {
+    const value = (items || [])[number - 1] || '';
+    if (value === '') return null;
+    return { kind: 'text', element, label, request: { project: session.source.id, slide: 'retro', field, n: number }, value };
   }
 
   /**
@@ -167,15 +260,26 @@
     return { kind: 'text', element: figcaption, label: '그림 설명', request: { project: session.source.id, slide: slide.key, field: 'caption', n: number }, value };
   }
 
-  /** data 장면의 글 칸 값. 글은 { text, verbatim } 글 조각 또는 글자(schema.md 「글 조각」), 키워드는 글자 목록. 없으면 ''. */
+  /**
+   * data 장면의 글 칸 값. 글은 { text, verbatim, lines? } 글 조각 또는 글자(schema.md 「글 조각」), 키워드는 글자 목록. 없으면 ''.
+   * 화면 두 줄(lines)로 그리는 요점은 두 줄을 줄바꿈으로 이은 글(portfolio-edits.py shown_text와 같음).
+   */
   function slideTextValue(slide, place) {
     if (place.field === 'keywords') return Array.isArray(slide.keywords) ? slide.keywords : '';
-    if (place.field === 'caption') {
-      const caption = slide.visuals?.[place.n - 1]?.caption;
-      return typeof caption === 'string' ? caption : caption?.text || '';
-    }
-    const piece = place.field === 'point' ? slide.points?.[place.n - 1] : slide[place.field];
+    if (place.field === 'caption') return pieceText(slide.visuals?.[place.n - 1]?.caption);
+    if (place.field === 'point-label') return slide.points?.[place.n - 1]?.label || '';
+    if (place.field === 'point') return pieceText(slide.points?.[place.n - 1]);
+    const panel = slide.panels?.[place.n - 1];
+    if (place.field === 'panel-title') return pieceText(panel?.title);
+    if (place.field === 'panel-lead') return pieceText(panel?.lead);
+    if (place.field === 'panel-point') return pieceText(panel?.points?.[place.m - 1]);
+    return pieceText(slide[place.field]);
+  }
+
+  /** 글 조각 또는 글자의 글. lines(화면 두 줄)가 있으면 줄바꿈으로 이음. 없으면 ''. */
+  function pieceText(piece) {
     if (typeof piece === 'string') return piece;
+    if (Array.isArray(piece?.lines) && piece.lines.length > 0) return piece.lines.join('\n');
     return piece?.text || '';
   }
 
@@ -301,9 +405,11 @@
     });
     form.querySelector('.pf-edit-cancel').addEventListener('click', close);
     deckOnly.addEventListener('change', () => showDestination(spot, deckOnly.checked, form));
+    const allowsLineBreak = spot.kind === 'md' || TWO_LINE_FIELDS.includes(spot.request?.field);
     textarea.addEventListener('keydown', (event) => {
       if (event.key === 'Escape') close();
-      if (event.key === 'Enter' && event.ctrlKey) form.requestSubmit();
+      if (event.key === 'Enter' && event.ctrlKey) { form.requestSubmit(); return; }
+      if (event.key === 'Enter' && allowsLineBreak === false) event.preventDefault();   // 한 줄 칸: 줄바꿈을 넣지 않음(긴 글은 입력창 안에서 접혀 보임)
     });
 
     document.body.appendChild(form);
@@ -325,10 +431,19 @@
       textarea.wrap = 'off';                           // 표·코드 줄이 접히지 않게(md 한 줄 = 입력창 한 줄)
       return;
     }
-    head.textContent = spot.kind === 'keywords' ? `${spot.label} 고치기 · 쉼표(,)로 나눕니다 (3개까지)` : `${spot.label} 고치기`;
+    const isTwoLine = TWO_LINE_FIELDS.includes(spot.request.field);
+    const hint = spot.kind === 'keywords' ? ' · 쉼표(,)로 나눕니다 (3개까지)' : isTwoLine ? ' · Enter로 두 줄까지' : '';
+    head.textContent = `${spot.label} 고치기${hint}`;
     where.textContent = '저장 위치를 묻는 중…';
     textarea.value = spot.kind === 'keywords' ? spot.value.join(', ') : spot.value;
-    textarea.rows = 3;
+    textarea.rows = rowsFor(textarea.value);
+    textarea.addEventListener('input', () => { textarea.rows = rowsFor(textarea.value); });
+  }
+
+  /** 입력창 줄 수: 글이 다 보이게(한 줄 약 40자로 어림, 2~10줄). */
+  function rowsFor(text) {
+    const wrappedLines = text.split('\n').reduce((sum, line) => sum + Math.max(1, Math.ceil(line.length / 40)), 0);
+    return Math.min(10, Math.max(2, wrappedLines));
   }
 
   /** 서버에 장면 글의 저장 위치만 물어(dryRun) 보여 줍니다. 프로젝트 문서에도 저장될 때만 [슬라이드에만 저장] 선택이 보입니다. */

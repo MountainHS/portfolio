@@ -43,8 +43,8 @@ KEY_RE = re.compile(r'^[a-z][a-z0-9-]{1,31}$')
 LAYOUTS = ('overview', 'visual', 'code', 'full', 'screens', 'problem')
 TABS = ('개요', '구조', '흐름', '구현', '선택', '문제 해결', '결과', '')
 KINDS = ('mermaid', 'code', 'table', 'image')
-SLIDE_FIELDS = ('key', 'chapter', 'layout', 'presentation', 'panels', 'tab', 'title', 'lead', 'keywords', 'sectionPath', 'points', 'visuals')
-PRESENTATIONS = ('steps', 'stack', 'comparison', 'columns', 'pair', 'cycle', 'side-notes', 'stage-table', 'paired', 'visual-notes')
+SLIDE_FIELDS = ('key', 'chapter', 'layout', 'presentation', 'panels', 'tab', 'title', 'lead', 'keywords', 'sectionPath', 'points', 'visuals', 'codeEvidence')
+PRESENTATIONS = ('steps', 'stack', 'comparison', 'columns', 'pair', 'cycle', 'side-notes', 'stage-table', 'paired', 'visual-notes', 'feature-rows', 'phase-timeline', 'visual-pair-table', 'result-rows')
 KIND_KO = {'mermaid': '다이어그램', 'code': '코드', 'table': '표', 'image': '그림'}
 
 for _s in (sys.stdout, sys.stderr):                                # Claude가 읽는 파이프는 UTF-8로(한글 깨짐 방지)
@@ -440,6 +440,8 @@ def validate(p, chapters, doc):
     presentation = p.get('presentation')
     if presentation is not None and presentation not in PRESENTATIONS:
         errs.append('presentation은 %s 중 하나여야 함' % ' · '.join(PRESENTATIONS))
+    if p.get('codeEvidence') not in (None, 'all-points'):
+        errs.append('codeEvidence는 all-points만 지원')
     if p.get('tab', '') not in TABS:
         errs.append('tab "%s"는 %s 중 하나여야 함' % (p.get('tab'), ' · '.join(t or '""' for t in TABS)))
     if not is_piece(p.get('title')):
@@ -551,14 +553,27 @@ def validate(p, chapters, doc):
             else:
                 errs.append('visuals[%d]의 view는 Mermaid·표·코드에만 사용' % i)
     kinds = [v.get('kind') for v in vis if isinstance(v, dict)]
+    if p.get('codeEvidence') == 'all-points':
+        marked = {h.get('point') for v in vis if isinstance(v, dict) and v.get('kind') == 'code'
+                  for h in v.get('view', {}).get('highlights', []) if isinstance(h, dict)}
+        if 'code' not in kinds or marked != set(range(1, len(pts) + 1)):
+            errs.append('codeEvidence all-points는 모든 요점 번호에 대응하는 코드 강조가 필요')
     if presentation == 'steps' and (kinds != ['mermaid'] or len(pts) != 4):
         errs.append('presentation steps는 Mermaid 1개와 요점 4개 필요')
-    if presentation == 'columns' and (kinds != ['mermaid'] * 3 or len(pts) != 3):
-        errs.append('presentation columns는 Mermaid 3개와 요점 3개 필요')
+    if presentation == 'columns' and (len(kinds) != 3 or any(kind not in ('mermaid', 'image') for kind in kinds) or len(pts) != 3):
+        errs.append('presentation columns는 Mermaid·이미지 3개와 요점 3개 필요')
+    if presentation == 'feature-rows' and (kinds != ['image'] * 3 or len(pts) != 2):
+        errs.append('presentation feature-rows는 이미지 3개와 요점 2개 필요')
+    if presentation == 'phase-timeline' and (kinds or len(pts) != 3):
+        errs.append('presentation phase-timeline은 시각 자료 없이 요점 3개 필요')
+    if presentation == 'result-rows' and (kinds or len(pts) != 2):
+        errs.append('presentation result-rows는 시각 자료 없이 요점 2개 필요')
     if presentation == 'comparison' and kinds != ['table', 'mermaid', 'mermaid', 'mermaid']:
         errs.append('presentation comparison은 표 1개 다음에 Mermaid 3개 순서 필요')
     if presentation == 'pair' and not (len(kinds) == 2 and kinds[0] in ('mermaid', 'image') and kinds[1] == 'table'):
         errs.append('presentation pair는 그림(Mermaid·이미지) 1개 다음에 표 1개 순서 필요')
+    if presentation == 'visual-pair-table' and (len(kinds) != 3 or any(kind not in ('mermaid', 'image') for kind in kinds[:2]) or kinds[2] != 'table'):
+        errs.append('presentation visual-pair-table은 그림 2개 다음에 표 1개 필요')
     if presentation == 'cycle' and kinds != ['mermaid']:
         errs.append('presentation cycle은 Mermaid 1개 필요')
     if presentation == 'side-notes' and (len(pts) != 3 or kinds not in ([], ['mermaid'])):
@@ -667,8 +682,10 @@ def validate(p, chapters, doc):
 def scene_count(chapters, slides, data):
     used = {s.get('chapter') for s in slides}
     retro = data.get('retro') or {}
-    retro_fields = ('regrets', 'plans') if ((data.get('deck') or {}).get('retro') or {}).get('hideAchieved') else ('achieved', 'regrets', 'plans')
-    has_retro = any(retro.get(x) for x in retro_fields)
+    settings = ((data.get('deck') or {}).get('retro') or {})
+    pairs = max(len(retro.get('regrets') or []), len(retro.get('plans') or []))
+    remaining = any(i not in settings.get('omitPairs', []) for i in range(1, pairs + 1))
+    has_retro = remaining or (not settings.get('hideAchieved') and bool(retro.get('achieved')))
     return len(slides) + len([c for c in chapters if c in used]) + 3 + (1 if has_retro else 0)
 
 
@@ -934,11 +951,16 @@ def _run_apply(pid, write, rep):
         chapter.update(chapter_options.get(chapter.get('key'), {}))
     retro = copy.deepcopy(deck.get('retro') or {})
     retro.pop('hideAchieved', None)
+    retro.pop('omitPairs', None)
     if edits and 'retro' in edits:
         requested = edits['retro']
-        if not (isinstance(requested, dict) and set(requested) <= {'hideAchieved'} and
-                ('hideAchieved' not in requested or isinstance(requested['hideAchieved'], bool))):
-            rep.add('필수', 'retro는 {"hideAchieved": true/false}여야 합니다 → 반영하지 않았습니다')
+        omitted = requested.get('omitPairs', []) if isinstance(requested, dict) else None
+        if not (isinstance(requested, dict) and set(requested) <= {'hideAchieved', 'omitPairs'} and
+                ('hideAchieved' not in requested or isinstance(requested['hideAchieved'], bool)) and
+                isinstance(omitted, list) and
+                all(isinstance(n, int) and not isinstance(n, bool) and n >= 1 for n in omitted) and
+                len(omitted) == len(set(omitted))):
+            rep.add('필수', 'retro는 hideAchieved(bool)와 omitPairs(중복 없는 1부터의 행 번호 배열)여야 합니다 → 반영하지 않았습니다')
             return
         retro.update(requested)
     if retro:

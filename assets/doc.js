@@ -168,6 +168,8 @@
     let n = 0;
     const figs = [];
     doc.querySelectorAll('code.language-mermaid').forEach((code) => {
+      // [포크] `%% deck-only` 줄이 있는 다이어그램은 슬라이드에서만 씀 — 상세 문서에서는 뺌
+      if (/^\s*%%\s*deck-only\s*$/m.test(code.textContent)) { (code.closest('pre') || code).remove(); return; }
       const fig = document.createElement('figure');
       fig.className = 'mmd';
       const div = document.createElement('div');

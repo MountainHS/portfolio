@@ -1,4 +1,31 @@
 {
+  "claudeMdExcludes": [
+    "**/RawBlog/portfolio-test/CLAUDE.md"
+  ],
+  "skillOverrides": {
+    "refactor-case": "name-only",
+    "user-led-design": "name-only",
+    "초안": "name-only",
+    "karpathy-guidelines": "name-only",
+    "code-structure-analysis": "name-only",
+    "report": "name-only",
+    "caveman": "name-only",
+    "code-review": "name-only",
+    "security-review": "name-only",
+    "simplify": "name-only",
+    "loop": "name-only",
+    "schedule": "name-only",
+    "keybindings-help": "name-only",
+    "run": "name-only",
+    "init": "name-only",
+    "claude-api": "name-only",
+    "dataviz": "name-only",
+    "update-config": "name-only",
+    "fewer-permission-prompts": "name-only",
+    "ship-local": "name-only",
+    "steward": "name-only",
+    "plugin-authoring": "name-only"
+  },
   "enabledPlugins": {
     "portfolio-panel@portfolio-tools": true
   },

@@ -21,6 +21,9 @@ tech-doc-source-old/
 # 프로젝트별 report (로컬 전용 — 루트 report.md는 요약판)
 report/
 
+# 슬라이드 검사 결과 (tools/check-deck.mjs의 --output json·--pdf, 로컬 전용)
+output/
+
 # 원본 녹화 영상 (용량 큼)
 src/*/raw-video/
 
