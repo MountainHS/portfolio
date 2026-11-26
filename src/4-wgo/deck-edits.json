@@ -392,8 +392,8 @@
       "keywords": ["9초 제한", "송신 실패"],
       "sectionPath": ["4. 핵심 기능 구현", "4.4 방 수명과 연결 예외 처리"],
       "points": [
-        {"text": "9초 제한 토큰을 만들고 시간 초과나 `WebSocketException`이 발생하면 송신 실패로 처리합니다.", "verbatim": false, "label": "9초 제한"},
-        {"text": "소켓별 `SemaphoreSlim`을 얻은 뒤 송신하고 `finally`에서 해제합니다.", "verbatim": false, "label": "동시 송신 방지"},
+        {"text": "9초 제한 토큰을 만들어 송신 대기와 송신에 함께 넘깁니다.", "verbatim": false, "label": "9초 제한"},
+        {"text": "소켓별 `SemaphoreSlim`을 얻은 뒤 송신합니다. 시간 초과나 `WebSocketException`은 송신 실패로 처리하고 `finally`에서 해제합니다.", "verbatim": false, "label": "동시 송신 방지"},
         {"text": "`Interlocked.Exchange`로 첫 실패만 기록하고 소켓을 종료합니다.", "verbatim": false, "label": "중복 실패 방지"}
       ],
       "visuals": [
@@ -402,7 +402,7 @@
           "n": 2,
           "fp": "private async Task SendRawAsync(Member member, string json)",
           "lines": [7, 22],
-          "view": {"highlights": [{"start": 7, "end": 8, "point": 1}, {"start": 13, "end": 18, "point": 2}]}
+          "view": {"highlights": [{"start": 7, "end": 8, "point": 1}, {"start": 13, "end": 22, "point": 2}]}
         },
         {
           "kind": "code",
