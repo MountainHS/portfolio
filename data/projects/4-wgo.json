@@ -265,6 +265,18 @@
         "edited": true
       },
       {
+        "key": "win-lose",
+        "chapter": "overview",
+        "layout": "full",
+        "tab": "결과",
+        "title": {"text": "승리·패배 화면", "verbatim": false},
+        "lead": null,
+        "keywords": ["승리 화면", "패배 화면"],
+        "sectionPath": ["1. 개요", "1.4 핵심 게임 루프", "1.4.2 전체 게임 루프 — 자원 수집과 다리 확장"],
+        "points": [],
+        "visuals": [{"kind": "table", "n": 2, "fp": "승리 화면|패배 화면"}]
+      },
+      {
         "key": "team",
         "chapter": "collaboration",
         "layout": "full",
@@ -306,27 +318,6 @@
           {"text": "튜토리얼과 게임 흐름을 완성하고 UI·피드백과 네트워크 지연을 다듬었습니다.", "verbatim": false, "label": "4차 스프린트"}
         ],
         "visuals": [{"kind": "mermaid", "n": 1, "fp": "---"}],
-        "edited": true
-      },
-      {
-        "key": "flow",
-        "chapter": "structure",
-        "layout": "visual",
-        "presentation": "cycle",
-        "tab": "흐름",
-        "title": {"text": "전체 네트워크 흐름", "verbatim": false},
-        "lead": {"text": "호스트가 물리와 규칙을 계산하고 게스트는 결과를 받습니다. 초당 송신·중계 횟수는 저장소 설정값입니다.", "verbatim": false},
-        "keywords": ["입력만", "스냅샷", "초당 20회"],
-        "sectionPath": ["3. 담당 역할 및 시스템 구조", "3.3 전체 네트워크 흐름"],
-        "points": [],
-        "visuals": [
-          {
-            "kind": "mermaid",
-            "n": 1,
-            "fp": "flowchart LR",
-            "view": {"appendToNode": {"id": "R2", "text": "프로젝트 종료 후 적용", "verbatim": false}}
-          }
-        ],
         "edited": true
       },
       {
@@ -662,6 +653,26 @@
         "edited": true
       },
       {
+        "key": "bridge-play",
+        "chapter": "features",
+        "layout": "visual",
+        "tab": "결과",
+        "title": {"text": "다리 건설 화면", "verbatim": false},
+        "lead": {"text": "플레이어가 필요한 물고기를 직접 찾아 낚시하는 경험과 새로운 물고기를 찾기 위해 수중 공간을 탐험하는 경험을 강화하려는 개편입니다.", "verbatim": true},
+        "keywords": ["물고기 재료", "다리 15칸"],
+        "sectionPath": ["4. 핵심 기능 구현", "4.7 다리 건설 조건 개편과 비용 계산"],
+        "points": [],
+        "visuals": [
+          {
+            "kind": "image",
+            "src": "images/bridge-material-0123.gif",
+            "w": 850,
+            "h": 130,
+            "caption": {"text": "재료를 들고 다리에 올라 다리를 짓는 과정", "verbatim": true}
+          }
+        ]
+      },
+      {
         "key": "sync-model",
         "chapter": "structure",
         "layout": "full",
@@ -715,11 +726,14 @@
         "layout": "full",
         "tab": "선택",
         "title": {"text": "코드 리뷰와 협업 방식 개선", "verbatim": false},
-        "lead": {"text": "첫 스프린트가 끝난 뒤 검토 단위와 작업 기록 방법을 바꿨습니다.", "verbatim": false},
-        "keywords": ["PR 리뷰", "PM"],
+        "lead": {"text": "1차 회고에서 모든 변경을 PR로 리뷰하던 규칙을 없애고, 도구도 함께 정리했습니다.", "verbatim": false},
+        "keywords": ["PR 리뷰", "스프린트 단위 리뷰"],
         "sectionPath": ["2. 프로젝트 진행 및 협업", "2.3 협업 방식의 변화"],
-        "points": [{"text": "3~4일 단위로 구조를 검토하고 main 푸시 제한을 유지했습니다. 개별 변경에 대한 검토는 줄었습니다.", "verbatim": false, "label": "판단"}],
-        "visuals": [{"kind": "table", "n": 1, "fp": "대안|장점|단점"}, {"kind": "table", "n": 2, "fp": "|1차 스프린트|1차 회고 뒤"}],
+        "points": [
+          {"text": "1차 스프린트를 진행해 보니 개발 속도가 크게 느려졌습니다.", "verbatim": true, "label": "문제"},
+          {"text": "코드 변경에 대한 검토를 줄여 작업 진행 속도를 향상시키고 기능 단위의 유의미한 리뷰를 진행할 수 있었습니다.", "verbatim": true, "label": "결과"}
+        ],
+        "visuals": [{"kind": "table", "n": 1, "fp": "항목|1차 스프린트|1차 회고 뒤"}],
         "edited": true
       },
       {
@@ -738,6 +752,18 @@
           {"kind": "table", "n": 1, "fp": "경우|조종 입력|물리 계산 여부|스냅샷"}
         ],
         "edited": true
+      },
+      {
+        "key": "relay-sequence",
+        "chapter": "structure",
+        "layout": "full",
+        "tab": "흐름",
+        "title": {"text": "게스트 입력이 돌아오는 순서", "verbatim": false},
+        "lead": {"text": "다음 흐름은 게스트 입력 한 번이 서버와 호스트를 거쳐 게스트 화면에 돌아오는 순서입니다.", "verbatim": true},
+        "keywords": ["입력 왕복", "inputGroup", "snapshot"],
+        "sectionPath": ["3. 담당 역할 및 시스템 구조", "3.5 호스트·게스트의 역할 및 입력·상태 전달 흐름"],
+        "points": [],
+        "visuals": [{"kind": "mermaid", "n": 2, "fp": "sequenceDiagram"}]
       },
       {
         "key": "host-guest",
@@ -804,6 +830,52 @@
           }
         ],
         "edited": true
+      },
+      {
+        "key": "scope-gap",
+        "chapter": "collaboration",
+        "layout": "visual",
+        "tab": "문제 해결",
+        "presentation": "pair",
+        "title": {"text": "작업 범위와 일정 산정 부족", "verbatim": true},
+        "lead": {"text": "처음 하나로 계획했던 서버 관련 작업은 개발 과정에서 17개로 늘어났습니다.", "verbatim": true},
+        "keywords": ["선후관계", "서버 작업 17개"],
+        "sectionPath": ["2. 프로젝트 진행 및 협업", "2.4 기능별 독립 개발과 시스템 통합", "작업 범위와 일정 산정 부족"],
+        "points": [
+          {
+            "label": "문제",
+            "text": "서버 중계가 먼저 마련되어야 개별 게임 기능을 연동하고 검증할 수 있었지만, 이러한 선후관계를 충분히 고려하지 않고 두 작업에 동일한 마감을 설정했습니다.",
+            "verbatim": true
+          }
+        ],
+        "visuals": [
+          {
+            "kind": "image",
+            "src": "images/asana-plan-vs-actual.png",
+            "w": 1290,
+            "h": 679,
+            "caption": {"text": "Asana 분석 리포트의 기능 영역별 작업 수: E11. 서버는 처음 계획 1개, 나중에 추가 16개, 합계 17개", "verbatim": true}
+          },
+          {"kind": "table", "n": 1, "fp": "시점|서버 관련 작업"}
+        ]
+      },
+      {
+        "key": "role-spec",
+        "chapter": "collaboration",
+        "layout": "full",
+        "tab": "문제 해결",
+        "title": {"text": "호스트·게스트별 연동 명세 부족", "verbatim": true},
+        "lead": {"text": "호스트 권한형에서는 호스트가 게임 상태를 계산하고, 게스트는 계산된 결과를 받아 화면에 반영합니다.", "verbatim": true},
+        "keywords": ["세 가지 경우", "연동 가이드"],
+        "sectionPath": ["2. 프로젝트 진행 및 협업", "2.4 기능별 독립 개발과 시스템 통합", "호스트·게스트별 연동 명세 부족"],
+        "points": [
+          {
+            "label": "문제",
+            "text": "연동 가이드를 작성했지만, 팀원들이 자신의 기능을 동기화하려면 네트워크 구조와 역할별 동작을 추가로 파악해야 했습니다.",
+            "verbatim": true
+          }
+        ],
+        "visuals": [{"kind": "table", "n": 1, "fp": "구분|역할"}]
       },
       {
         "key": "snapshot-compare",
@@ -1062,6 +1134,38 @@
         "edited": true
       }
     ],
+    "retro": {"hideAchieved": true},
+    "aliases": {
+      "theme": "motive",
+      "experience": "experience-map",
+      "bond": "discord",
+      "greed": "experience-map",
+      "loop-link": "game-loop",
+      "loop-fields": "snapshot-role",
+      "structure-why": "components",
+      "feature-map": "snapshot-role",
+      "input-idle": "input-relay",
+      "snapshot-traits": "snapshot-role",
+      "snapshot-send-loop": "snapshot-channel",
+      "atomic-guard": "room-lifecycle",
+      "world-item-why": "world-item-roles",
+      "bridge-why": "bridge-classes",
+      "bridge-alt": "bridge-classes",
+      "sync-choice": "sync-model",
+      "sync-again": "host-guest",
+      "review-tools": "review",
+      "host-guest-roles": "host-guest-cases",
+      "host-guest-code": "host-guest-cases",
+      "snapshot-stages": "snapshot-stage2",
+      "event-deferred": "state-event",
+      "snapshot-delegate": "snapshot-apply",
+      "lifecycle": "ts-bridge-count",
+      "ts-rejoin": "room-lifecycle",
+      "ts-host-leave": "room-lifecycle",
+      "direction": "spec-level",
+      "ts-hello": "ts-input",
+      "ts-socket-leave": "ts-bridge-count"
+    },
     "base": [
       {
         "key": "intro",
@@ -1130,16 +1234,16 @@
         "layout": "overview",
         "tab": "개요",
         "title": {"text": "1.3 핵심 플레이 경험", "verbatim": true},
-        "lead": {"text": "프로젝트에서 제공하려는 핵심 경험은 유대감과 불협화음입니다.", "verbatim": true},
+        "lead": {"text": "프로젝트에서 제공하려는 핵심 경험은 유대감과 불협화음입니다.", "verbatim": false},
         "keywords": ["유대감", "불협화음", "탐욕과 도전"],
         "sectionPath": ["1. 개요", "1.3 핵심 플레이 경험"],
         "points": [
           {
             "label": "",
             "text": "두 경험은 플레이어들이 서로의 움직임을 방해하는 혼란스러운 상황에서 점차 호흡을 맞춰 목표를 달성하는 하나의 과정으로 이어집니다.",
-            "verbatim": true
+            "verbatim": false
           },
-          {"label": "", "text": "여기에 스태미나와 자원 확보의 위험을 통해 탐욕과 도전의 경험을 보조적으로 제공하고자 했습니다.", "verbatim": true}
+          {"label": "", "text": "여기에 스태미나와 자원 확보의 위험을 통해 탐욕과 도전의 경험을 보조적으로 제공하고자 했습니다.", "verbatim": false}
         ],
         "visuals": []
       },
@@ -1220,7 +1324,7 @@
         "layout": "visual",
         "tab": "흐름",
         "title": {"text": "1.4.1 핵심 플레이 루프 — 협력하여 물고기 포획 및 운반", "verbatim": true},
-        "lead": {"text": "이러한 과정에서 발생하는 혼란, 역할 분담, 협력이 게임의 핵심 플레이 경험입니다.", "verbatim": true},
+        "lead": {"text": "이러한 과정에서 발생하는 혼란, 역할 분담, 협력이 게임의 핵심 플레이 경험입니다.", "verbatim": false},
         "keywords": ["탐색", "포획·제압", "운반"],
         "sectionPath": ["1. 개요", "1.4 핵심 게임 루프", "1.4.1 핵심 플레이 루프 — 협력하여 물고기 포획 및 운반"],
         "points": [
@@ -1251,6 +1355,18 @@
         "visuals": [{"kind": "mermaid", "n": 1, "fp": "flowchart LR"}, {"kind": "table", "n": 1, "fp": "종료 조건|언제"}]
       },
       {
+        "key": "win-lose",
+        "chapter": "overview",
+        "layout": "full",
+        "tab": "결과",
+        "title": {"text": "승리·패배 화면", "verbatim": false},
+        "lead": null,
+        "keywords": ["승리 화면", "패배 화면"],
+        "sectionPath": ["1. 개요", "1.4 핵심 게임 루프", "1.4.2 전체 게임 루프 — 자원 수집과 다리 확장"],
+        "points": [],
+        "visuals": [{"kind": "table", "n": 2, "fp": "승리 화면|패배 화면"}]
+      },
+      {
         "key": "loop-link",
         "chapter": "overview",
         "layout": "overview",
@@ -1263,7 +1379,7 @@
           {"label": "자원 수집", "text": "서로 의지하고 방해하는 물리적 상호작용이 발생하는 구간", "verbatim": true},
           {"label": "포획 및 운반", "text": "혼란 속에서 협력하고 공동의 성취를 얻는 구간", "verbatim": true},
           {"label": "다리 건설", "text": "협력의 결과가 공동의 목표 달성으로 이어지는 구간", "verbatim": true},
-          {"label": "", "text": "모든 화면에서 같은 물리 상호작용이 보여야 이 루프가 성립하므로, 네트워크 동기화가 이 루프를 받칩니다.", "verbatim": true}
+          {"label": "", "text": "모든 화면에서 같은 물리 상호작용이 보여야 이 루프가 성립하므로, 네트워크 동기화가 이 루프를 받칩니다.", "verbatim": false}
         ],
         "visuals": []
       },
@@ -1273,12 +1389,12 @@
         "layout": "visual",
         "tab": "개요",
         "title": {"text": "2.1 팀 구성 및 역할 분담", "verbatim": true},
-        "lead": {"text": "내 담당은 이 루프의 두 곳입니다.", "verbatim": true},
+        "lead": {"text": "내 담당은 이 루프의 두 곳입니다.", "verbatim": false},
         "keywords": ["팀원", "팀장·PM", "내 담당 두 곳"],
         "sectionPath": ["2. 프로젝트 진행 및 협업", "2.1 팀 구성 및 역할 분담"],
         "points": [
-          {"label": "루프 전체", "text": "네 명의 화면에 같은 물리 결과가 보이게 하는 동기화 뼈대.", "verbatim": true},
-          {"label": "루프의 다리 건설 구간", "text": "다리 건설 조건을 개편하는 작업에 참여했습니다. 3.7에서 다룹니다.", "verbatim": true}
+          {"label": "루프 전체", "text": "네 명의 화면에 같은 물리 결과가 보이게 하는 동기화 뼈대.", "verbatim": false},
+          {"label": "루프의 다리 건설 구간", "text": "다리 건설 조건을 개편하는 작업에 참여했습니다. 3.7에서 다룹니다.", "verbatim": false}
         ],
         "visuals": [{"kind": "table", "n": 1, "fp": "팀원|맡은 일|네트워크 동기화에서 맡은 기능"}]
       },
@@ -1288,21 +1404,21 @@
         "layout": "visual",
         "tab": "흐름",
         "title": {"text": "2.2 프로젝트 일정 및 개발 단계", "verbatim": true},
-        "lead": {"text": "한 달 동안 기획 뒤 네 번의 스프린트로 진행했습니다.", "verbatim": true},
+        "lead": {"text": "한 달 동안 기획 뒤 네 번의 스프린트로 진행했습니다.", "verbatim": false},
         "keywords": ["네 번의 스프린트", "빌드 테스트", "생존→탐험"],
         "sectionPath": ["2. 프로젝트 진행 및 협업", "2.2 프로젝트 일정 및 개발 단계"],
         "points": [
-          {"label": "1차 스프린트", "text": "팀원마다 기능을 나눠 만들었습니다.", "verbatim": true},
+          {"label": "1차 스프린트", "text": "팀원마다 기능을 나눠 만들었습니다.", "verbatim": false},
           {
             "label": "2차 스프린트",
             "text": "서버 중계와 그 위의 동기화 작업을 같은 마감으로 잡았습니다. 플레이어·물고기·자원 시스템은 예정대로 완성했지만, 이 기능들을 서버에 붙이는 통합이 사흘 늦게 끝났습니다.",
-            "verbatim": true
+            "verbatim": false
           },
-          {"label": "3차 스프린트", "text": "첫 빌드 테스트에서 조작에 적응하다 죽는 일이 많아, 게임 방향을 생존에서 탐험으로 바꿨습니다.", "verbatim": true},
+          {"label": "3차 스프린트", "text": "첫 빌드 테스트에서 조작에 적응하다 죽는 일이 많아, 게임 방향을 생존에서 탐험으로 바꿨습니다.", "verbatim": false},
           {
             "label": "4차 스프린트",
             "text": "튜토리얼과 게임 흐름(메인 메뉴 → 인게임 → 결과)을 완성했습니다. UI·피드백 효과를 다듬고, 물고기 버그와 네트워크 지연을 고쳤습니다.",
-            "verbatim": true
+            "verbatim": false
           }
         ],
         "visuals": [{"kind": "mermaid", "n": 1, "fp": "---"}]
@@ -1397,7 +1513,7 @@
         "layout": "visual",
         "tab": "구조",
         "title": {"text": "3.6 다른 게임 시스템과 네트워크의 연동 규약", "verbatim": true},
-        "lead": {"text": "새 기능을 동기화하는 순서는 세 단계입니다.", "verbatim": true},
+        "lead": {"text": "새 기능을 동기화하는 순서는 세 단계입니다.", "verbatim": false},
         "keywords": ["RoomClient API", "연동 가이드", "세 단계"],
         "sectionPath": ["3. 담당 역할 및 시스템 구조", "3.6 다른 게임 시스템과 네트워크의 연동 규약"],
         "points": [
@@ -1414,11 +1530,11 @@
         "layout": "full",
         "tab": "구조",
         "title": {"text": "4. 핵심 기능 구현", "verbatim": true},
-        "lead": {"text": "2.3 시퀀스의 구간 순서대로 봅니다.", "verbatim": true},
+        "lead": {"text": "2.3 시퀀스의 구간 순서대로 봅니다.", "verbatim": false},
         "keywords": ["2.3 흐름", "절 지도"],
         "sectionPath": ["4. 핵심 기능 구현"],
         "points": [],
-        "visuals": [{"kind": "table", "n": 1, "fp": "절|2.3 흐름에서 맡는 구간|중심 코드"}]
+        "visuals": [{"kind": "table", "n": 1, "fp": "절|3.5 흐름에서 맡는 구간|중심 코드"}]
       },
       {
         "key": "input-relay",
@@ -1483,19 +1599,14 @@
         "keywords": ["최신 1개", "중간 입장", "한 번 일어나는 일"],
         "sectionPath": ["4. 핵심 기능 구현", "4.2 호스트 스냅샷: 게임의 현재 상태 한 장"],
         "points": [
+          {"label": "", "text": "최신 1개면 충분합니다: 밀린 과거 스냅샷은 보낼 의미가 없습니다. 서버는 멤버마다 가장 최신 것만 남깁니다(4.3).", "verbatim": true},
           {
             "label": "",
-            "text": {"text": "최신 1개면 충분합니다: 밀린 과거 스냅샷은 보낼 의미가 없습니다. 서버는 멤버마다 가장 최신 것만 남깁니다(4.3).", "verbatim": true}
+            "text": "중간 입장도 같은 길로 따라잡습니다: 늦게 들어온 게스트는 별도 초기 메시지 없이 다음 스냅샷 하나로 현재 상태를 모두 받습니다.",
+            "verbatim": true
           },
-          {
-            "label": "",
-            "text": {"text": "중간 입장도 같은 길로 따라잡습니다: 늦게 들어온 게스트는 별도 초기 메시지 없이 다음 스냅샷 하나로 현재 상태를 모두 받습니다.", "verbatim": true}
-          },
-          {"label": "", "text": {"text": "사라짐을 따로 알리지 않습니다: 이번 스냅샷에 없는 물고기는 호스트에서 사라진 것으로 봅니다(4.6).", "verbatim": true}},
-          {
-            "label": "",
-            "text": {"text": "한 번 일어나는 일은 담기 어렵습니다: 다리 건설·승패처럼 한 번 일어나는 일도 스냅샷 값으로 보냈습니다.", "verbatim": true}
-          }
+          {"label": "", "text": "사라짐을 따로 알리지 않습니다: 이번 스냅샷에 없는 물고기는 호스트에서 사라진 것으로 봅니다(4.6).", "verbatim": true},
+          {"label": "", "text": "한 번 일어나는 일은 담기 어렵습니다: 다리 건설·승패처럼 한 번 일어나는 일도 스냅샷 값으로 보냈습니다.", "verbatim": true}
         ],
         "visuals": []
       },
@@ -1617,7 +1728,7 @@
           {
             "label": "",
             "text": "게스트 쪽 물리 끄기: 게스트 화면의 모든 플레이어 Rigidbody2D를 Kinematic으로 바꾸고, 내 것이 아닌 플레이어의 입력 컴포넌트를 끕니다.",
-            "verbatim": true
+            "verbatim": false
           }
         ],
         "visuals": [{"kind": "code", "n": 1, "fp": "// 수신 루프"}]
@@ -1752,6 +1863,26 @@
         "visuals": [{"kind": "code", "n": 1, "fp": "public void BridgeBuild() // 호스트에서만 불림 (Bridge.OnCollisionSt"}]
       },
       {
+        "key": "bridge-play",
+        "chapter": "features",
+        "layout": "visual",
+        "tab": "결과",
+        "title": {"text": "다리 건설 화면", "verbatim": false},
+        "lead": {"text": "플레이어가 필요한 물고기를 직접 찾아 낚시하는 경험과 새로운 물고기를 찾기 위해 수중 공간을 탐험하는 경험을 강화하려는 개편입니다.", "verbatim": true},
+        "keywords": ["물고기 재료", "다리 15칸"],
+        "sectionPath": ["4. 핵심 기능 구현", "4.7 다리 건설 조건 개편과 비용 계산"],
+        "points": [],
+        "visuals": [
+          {
+            "kind": "image",
+            "src": "images/bridge-material-0123.gif",
+            "w": 850,
+            "h": 130,
+            "caption": {"text": "재료를 들고 다리에 올라 다리를 짓는 과정", "verbatim": true}
+          }
+        ]
+      },
+      {
         "key": "bridge-why",
         "chapter": "decisions",
         "layout": "overview",
@@ -1775,7 +1906,7 @@
           {
             "label": "AI 활용",
             "text": "AI 도구는 내가 정한 명세대로 BridgeManager에서 쓸 가치 연산 모듈(BridgeBuildCostCalculator)을 만들고, TSV → DTO → Ref 데이터 파이프라인을 구축하는 데 썼습니다.",
-            "verbatim": true
+            "verbatim": false
           }
         ],
         "visuals": []
@@ -1815,7 +1946,7 @@
         "layout": "overview",
         "tab": "선택",
         "title": {"text": "3.2 대안마다 내린 판단", "verbatim": false},
-        "lead": {"text": "서버 파트를 맡은 내가 최종으로 정했습니다.", "verbatim": true},
+        "lead": {"text": "서버 파트를 맡은 내가 최종으로 정했습니다.", "verbatim": false},
         "keywords": ["결정자", "세 모델 판단"],
         "sectionPath": ["3. 담당 역할 및 시스템 구조", "3.2 네트워크 동기화 모델 선정"],
         "points": [
@@ -1883,23 +2014,26 @@
         "layout": "full",
         "tab": "선택",
         "title": {"text": "2.3 협업 방식의 변화", "verbatim": true},
-        "lead": {"text": "최종 결정: B로 바꿨습니다. 1차 스프린트를 시작할 때 내가 세운 PR 규칙을, 1차가 끝나고 피드백할 때 완전히 없앴습니다.", "verbatim": true},
-        "keywords": ["PR 리뷰", "PM"],
+        "lead": {"text": "1차 회고에서 모든 변경을 PR로 리뷰하던 규칙을 없애고, 도구도 함께 정리했습니다.", "verbatim": false},
+        "keywords": ["PR 리뷰", "스프린트 단위 리뷰"],
         "sectionPath": ["2. 프로젝트 진행 및 협업", "2.3 협업 방식의 변화"],
-        "points": [],
-        "visuals": [{"kind": "table", "n": 1, "fp": "대안|장점|단점"}]
+        "points": [
+          {"label": "문제", "text": "1차 스프린트를 진행해 보니 개발 속도가 크게 느려졌습니다.", "verbatim": true},
+          {"label": "결과", "text": "코드 변경에 대한 검토를 줄여 작업 진행 속도를 향상시키고 기능 단위의 유의미한 리뷰를 진행할 수 있었습니다.", "verbatim": true}
+        ],
+        "visuals": [{"kind": "table", "n": 1, "fp": "항목|1차 스프린트|1차 회고 뒤"}]
       },
       {
         "key": "review-tools",
         "chapter": "collaboration",
-        "layout": "full",
+        "layout": "overview",
         "tab": "선택",
         "title": {"text": "2.3 협업 방식의 변화", "verbatim": true},
-        "lead": {"text": "함께 도구도 정리했습니다.", "verbatim": true},
+        "lead": {"text": "작업·회의 기록도 여러 도구에 흩어져 있어, 진행 상황과 산출물을 보려면 여러 곳을 찾아야 했습니다.", "verbatim": true},
         "keywords": ["Asana 한 곳", "도구 정리"],
         "sectionPath": ["2. 프로젝트 진행 및 협업", "2.3 협업 방식의 변화"],
         "points": [],
-        "visuals": [{"kind": "table", "n": 2, "fp": "|1차 스프린트|1차 회고 뒤"}]
+        "visuals": []
       },
       {
         "key": "host-guest-cases",
@@ -1907,11 +2041,23 @@
         "layout": "visual",
         "tab": "구조",
         "title": {"text": "3.5 호스트·게스트의 역할 및 입력·상태 전달 흐름", "verbatim": true},
-        "lead": {"text": "플레이어 객체가 맡는 경우는 셋입니다.", "verbatim": true},
+        "lead": {"text": "플레이어 객체가 맡는 경우는 셋입니다.", "verbatim": false},
         "keywords": ["세 경우", "호스트 안의 게스트", "IsHost"],
         "sectionPath": ["3. 담당 역할 및 시스템 구조", "3.5 호스트·게스트의 역할 및 입력·상태 전달 흐름"],
         "points": [],
         "visuals": [{"kind": "mermaid", "n": 1, "fp": "sequenceDiagram"}]
+      },
+      {
+        "key": "relay-sequence",
+        "chapter": "structure",
+        "layout": "full",
+        "tab": "흐름",
+        "title": {"text": "게스트 입력이 돌아오는 순서", "verbatim": false},
+        "lead": {"text": "다음 흐름은 게스트 입력 한 번이 서버와 호스트를 거쳐 게스트 화면에 돌아오는 순서입니다.", "verbatim": true},
+        "keywords": ["입력 왕복", "inputGroup", "snapshot"],
+        "sectionPath": ["3. 담당 역할 및 시스템 구조", "3.5 호스트·게스트의 역할 및 입력·상태 전달 흐름"],
+        "points": [],
+        "visuals": [{"kind": "mermaid", "n": 2, "fp": "sequenceDiagram"}]
       },
       {
         "key": "host-guest-roles",
@@ -1955,13 +2101,10 @@
         "layout": "visual",
         "tab": "선택",
         "title": {"text": "2.4 미리 정해 둘 명세 수준", "verbatim": false},
-        "lead": {"text": "명세가 없어서 놓친 것도 있었습니다.", "verbatim": true},
+        "lead": {"text": "기능마다 따로 동작하는 것만으로는 의도한 협동이 나오지 않았습니다.", "verbatim": true},
         "keywords": ["명세 수준", "데이터 계약", "CurrentState"],
         "sectionPath": ["2. 프로젝트 진행 및 협업", "2.4 기능별 독립 개발과 시스템 통합"],
-        "points": [
-          {"label": "놓친 것", "text": "물고기 상태(CurrentState)는 스냅샷에 들어 있지만 게스트 물고기는 위치·각도·좌우 반전만 반영했습니다.", "verbatim": true},
-          {"label": "", "text": "이 문제는 폴리싱 단계에서 VFX·SFX를 넣을 때 크게 드러났습니다.", "verbatim": true}
-        ],
+        "points": [{"label": "", "text": "그러나 네트워크 통합 과정에서 두 가지 문제가 발생했습니다.", "verbatim": true}],
         "visuals": [
           {
             "kind": "table",
@@ -1972,22 +2115,71 @@
         ]
       },
       {
+        "key": "scope-gap",
+        "chapter": "collaboration",
+        "layout": "visual",
+        "tab": "문제 해결",
+        "presentation": "pair",
+        "title": {"text": "작업 범위와 일정 산정 부족", "verbatim": true},
+        "lead": {"text": "처음 하나로 계획했던 서버 관련 작업은 개발 과정에서 17개로 늘어났습니다.", "verbatim": true},
+        "keywords": ["선후관계", "서버 작업 17개"],
+        "sectionPath": ["2. 프로젝트 진행 및 협업", "2.4 기능별 독립 개발과 시스템 통합", "작업 범위와 일정 산정 부족"],
+        "points": [
+          {
+            "label": "문제",
+            "text": "서버 중계가 먼저 마련되어야 개별 게임 기능을 연동하고 검증할 수 있었지만, 이러한 선후관계를 충분히 고려하지 않고 두 작업에 동일한 마감을 설정했습니다.",
+            "verbatim": true
+          }
+        ],
+        "visuals": [
+          {
+            "kind": "image",
+            "src": "images/asana-plan-vs-actual.png",
+            "w": 1290,
+            "h": 679,
+            "caption": {"text": "Asana 분석 리포트의 기능 영역별 작업 수: E11. 서버는 처음 계획 1개, 나중에 추가 16개, 합계 17개", "verbatim": true}
+          },
+          {"kind": "table", "n": 1, "fp": "시점|서버 관련 작업"}
+        ]
+      },
+      {
+        "key": "role-spec",
+        "chapter": "collaboration",
+        "layout": "full",
+        "tab": "문제 해결",
+        "title": {"text": "호스트·게스트별 연동 명세 부족", "verbatim": true},
+        "lead": {"text": "호스트 권한형에서는 호스트가 게임 상태를 계산하고, 게스트는 계산된 결과를 받아 화면에 반영합니다.", "verbatim": true},
+        "keywords": ["세 가지 경우", "연동 가이드"],
+        "sectionPath": ["2. 프로젝트 진행 및 협업", "2.4 기능별 독립 개발과 시스템 통합", "호스트·게스트별 연동 명세 부족"],
+        "points": [
+          {
+            "label": "문제",
+            "text": "연동 가이드를 작성했지만, 팀원들이 자신의 기능을 동기화하려면 네트워크 구조와 역할별 동작을 추가로 파악해야 했습니다.",
+            "verbatim": true
+          }
+        ],
+        "visuals": [{"kind": "table", "n": 1, "fp": "구분|역할"}]
+      },
+      {
         "key": "direction",
         "chapter": "collaboration",
         "layout": "visual",
         "tab": "선택",
         "title": {"text": "2.5 빌드 테스트에 따른 기획 방향 조정", "verbatim": true},
-        "lead": {"text": "1차 빌드를 팀원들과 해 보니 조작이 생각보다 어려웠습니다. 처음 하는 사람은 조작에 적응하다가, 낚시로 허기를 채우기 전에 죽는 일이 많았습니다.", "verbatim": true},
+        "lead": {
+          "text": "1차 빌드를 팀원들과 해 보니 조작이 생각보다 어려웠습니다. 처음 하는 사람은 조작에 적응하다가, 낚시로 허기를 채우기 전에 죽는 일이 많았습니다.",
+          "verbatim": false
+        },
         "keywords": ["허기→스태미나", "뗏목→다리", "탐험"],
         "sectionPath": ["2. 프로젝트 진행 및 협업", "2.5 빌드 테스트에 따른 기획 방향 조정"],
         "points": [
-          {"label": "결정", "text": "생존 요소를 없애고 탐험 쪽으로 바꿨습니다.", "verbatim": true},
+          {"label": "결정", "text": "생존 요소를 없애고 탐험 쪽으로 바꿨습니다.", "verbatim": false},
           {
             "label": "이유",
             "text": "1차 빌드에서 느낀 핵심 재미는 캐릭터들이 물고기를 잡으며 좌충우돌하는 상황이었습니다. 생존 압박보다 다리를 넓히려는 탐사를 앞에 두었습니다.",
-            "verbatim": true
+            "verbatim": false
           },
-          {"label": "", "text": "탐험할 이유를 늘리려고 다리 건설 조건도 이때 함께 넓혔습니다(4.7).", "verbatim": true}
+          {"label": "", "text": "탐험할 이유를 늘리려고 다리 건설 조건도 이때 함께 넓혔습니다(4.7).", "verbatim": false}
         ],
         "visuals": [{"kind": "table", "n": 1, "fp": "항목|처음 기획|바꾼 기획"}]
       },
@@ -2116,7 +2308,7 @@
           {
             "label": "대신",
             "text": "\"반영은 OnSnapshot에서만, 다른 곳은 읽기만\" 규칙을 정하고, 객체마다 스냅샷에 넣을 상태와 이벤트를 명세해야 했습니다(5.1).",
-            "verbatim": true
+            "verbatim": false
           }
         ],
         "visuals": []
@@ -2300,7 +2492,7 @@
           {
             "label": "해결",
             "text": "2차, 송신 제한: 서버 송신을 방 단위 큐로 모으고, 송신마다 9000ms 제한을 두어 넘으면 그 소켓을 끊습니다(4.5의 2단계, 3.4).",
-            "verbatim": true
+            "verbatim": false
           }
         ],
         "visuals": []
@@ -2355,38 +2547,6 @@
         "visuals": []
       }
     ],
-    "applied": "67160f7644eb9a5b",
-    "retro": {"hideAchieved": true},
-    "aliases": {
-      "theme": "motive",
-      "experience": "experience-map",
-      "bond": "discord",
-      "greed": "experience-map",
-      "loop-link": "game-loop",
-      "loop-fields": "snapshot-role",
-      "structure-why": "components",
-      "feature-map": "snapshot-role",
-      "input-idle": "input-relay",
-      "snapshot-traits": "snapshot-role",
-      "snapshot-send-loop": "snapshot-channel",
-      "atomic-guard": "room-lifecycle",
-      "world-item-why": "world-item-roles",
-      "bridge-why": "bridge-classes",
-      "bridge-alt": "bridge-classes",
-      "sync-choice": "sync-model",
-      "sync-again": "host-guest",
-      "review-tools": "review",
-      "host-guest-roles": "host-guest-cases",
-      "host-guest-code": "host-guest-cases",
-      "snapshot-stages": "snapshot-stage2",
-      "event-deferred": "state-event",
-      "snapshot-delegate": "snapshot-apply",
-      "lifecycle": "ts-bridge-count",
-      "ts-rejoin": "room-lifecycle",
-      "ts-host-leave": "room-lifecycle",
-      "direction": "spec-level",
-      "ts-hello": "ts-input",
-      "ts-socket-leave": "ts-bridge-count"
-    }
+    "applied": "7e6e2745b05a69a7"
   }
 }

@@ -157,7 +157,11 @@
           }
         }
       ],
-      "from": {"key": "team", "sectionPath": ["2. 프로젝트 진행 및 협업", "2.1 팀 구성 및 역할 분담"], "sig": ["1.5 팀과 내 역할|table|1|팀원|맡은 일|네트워크 동기화에서 맡은 기능"]}
+      "from": {
+        "key": "team",
+        "sectionPath": ["2. 프로젝트 진행 및 협업", "2.1 팀 구성 및 역할 분담"],
+        "sig": ["1.5 팀과 내 역할|table|1|팀원|맡은 일|네트워크 동기화에서 맡은 기능"]
+      }
     },
     {
       "key": "schedule",
@@ -176,28 +180,11 @@
       ],
       "visuals": [{"kind": "mermaid", "n": 1, "fp": "---"}],
       "presentation": "visual-notes",
-      "from": {"key": "schedule", "sectionPath": ["2. 프로젝트 진행 및 협업", "2.2 프로젝트 일정 및 개발 단계"], "sig": ["1.6 프로젝트 일정|mermaid|1|---"]}
-    },
-    {
-      "key": "flow",
-      "chapter": "structure",
-      "layout": "visual",
-      "tab": "흐름",
-      "title": {"text": "전체 네트워크 흐름", "verbatim": false},
-      "lead": {"text": "호스트가 물리와 규칙을 계산하고 게스트는 결과를 받습니다. 초당 송신·중계 횟수는 저장소 설정값입니다.", "verbatim": false},
-      "keywords": ["입력만", "스냅샷", "초당 20회"],
-      "sectionPath": ["3. 담당 역할 및 시스템 구조", "3.3 전체 네트워크 흐름"],
-      "points": [],
-      "visuals": [
-        {
-          "kind": "mermaid",
-          "n": 1,
-          "fp": "flowchart LR",
-          "view": {"appendToNode": {"id": "R2", "text": "프로젝트 종료 후 적용", "verbatim": false}}
-        }
-      ],
-      "presentation": "cycle",
-      "from": {"key": "flow", "sectionPath": ["3. 담당 역할 및 시스템 구조", "3.3 전체 네트워크 흐름"], "sig": ["2.1 전체 네트워크 흐름|mermaid|1|flowchart LR"]}
+      "from": {
+        "key": "schedule",
+        "sectionPath": ["2. 프로젝트 진행 및 협업", "2.2 프로젝트 일정 및 개발 단계"],
+        "sig": ["1.6 프로젝트 일정|mermaid|1|---"]
+      }
     },
     {
       "key": "components",
@@ -393,7 +380,11 @@
       "sectionPath": ["4. 핵심 기능 구현", "4.4 방 수명과 연결 예외 처리"],
       "points": [
         {"text": "9초 제한 토큰을 만들어 송신 대기와 송신에 함께 넘깁니다.", "verbatim": false, "label": "9초 제한"},
-        {"text": "소켓별 `SemaphoreSlim`을 얻은 뒤 송신합니다. 시간 초과나 `WebSocketException`은 송신 실패로 처리하고 `finally`에서 해제합니다.", "verbatim": false, "label": "동시 송신 방지"},
+        {
+          "text": "소켓별 `SemaphoreSlim`을 얻은 뒤 송신합니다. 시간 초과나 `WebSocketException`은 송신 실패로 처리하고 `finally`에서 해제합니다.",
+          "verbatim": false,
+          "label": "동시 송신 방지"
+        },
         {"text": "`Interlocked.Exchange`로 첫 실패만 기록하고 소켓을 종료합니다.", "verbatim": false, "label": "중복 실패 방지"}
       ],
       "visuals": [
@@ -632,11 +623,14 @@
       "layout": "full",
       "tab": "선택",
       "title": {"text": "코드 리뷰와 협업 방식 개선", "verbatim": false},
-      "lead": {"text": "첫 스프린트가 끝난 뒤 검토 단위와 작업 기록 방법을 바꿨습니다.", "verbatim": false},
-      "keywords": ["PR 리뷰", "PM"],
+      "lead": {"text": "1차 회고에서 모든 변경을 PR로 리뷰하던 규칙을 없애고, 도구도 함께 정리했습니다.", "verbatim": false},
+      "keywords": ["PR 리뷰", "스프린트 단위 리뷰"],
       "sectionPath": ["2. 프로젝트 진행 및 협업", "2.3 협업 방식의 변화"],
-      "points": [{"text": "3~4일 단위로 구조를 검토하고 main 푸시 제한을 유지했습니다. 개별 변경에 대한 검토는 줄었습니다.", "verbatim": false, "label": "판단"}],
-      "visuals": [{"kind": "table", "n": 1, "fp": "대안|장점|단점"}, {"kind": "table", "n": 2, "fp": "|1차 스프린트|1차 회고 뒤"}],
+      "points": [
+        {"text": "1차 스프린트를 진행해 보니 개발 속도가 크게 느려졌습니다.", "verbatim": true, "label": "문제"},
+        {"text": "코드 변경에 대한 검토를 줄여 작업 진행 속도를 향상시키고 기능 단위의 유의미한 리뷰를 진행할 수 있었습니다.", "verbatim": true, "label": "결과"}
+      ],
+      "visuals": [{"kind": "table", "n": 1, "fp": "항목|1차 스프린트|1차 회고 뒤"}],
       "from": {
         "key": "review",
         "sectionPath": ["2. 프로젝트 진행 및 협업", "2.3 협업 방식의 변화"],
@@ -1050,7 +1044,11 @@
     },
     {
       "key": "structure-why",
-      "from": {"key": "structure-why", "sectionPath": ["3. 담당 역할 및 시스템 구조", "3.4 네트워크 주요 클래스와 책임", "네트워크 클래스 분할 이유 세부 설명"], "sig": []},
+      "from": {
+        "key": "structure-why",
+        "sectionPath": ["3. 담당 역할 및 시스템 구조", "3.4 네트워크 주요 클래스와 책임", "네트워크 클래스 분할 이유 세부 설명"],
+        "sig": []
+      },
       "into": "components"
     },
     {
@@ -1222,9 +1220,22 @@
       },
       "group": "merge-ts-bridge-count",
       "into": "ts-bridge-count"
+    },
+    {
+      "key": "flow",
+      "from": {
+        "key": "flow",
+        "sectionPath": ["3. 담당 역할 및 시스템 구조", "3.3 전체 네트워크 흐름"],
+        "sig": ["2.1 전체 네트워크 흐름|mermaid|1|flowchart LR"]
+      }
     }
   ],
-  "retro": {"hideAchieved": true}
-,
-  "editModePortfolio": [{"field": "intent", "value": "서로의 몸을 붙잡고 바닷속 자원을 모아 다리를 건설합니다. 물리적 조작에서 발생하는 불협화음을 극복하며 협동의 재미를 느끼도록 설계했습니다.", "from": "주제 선정 당시 팀원 모두 협동 게임을 선호했습니다. 그래서 기획 초기에는 협동 게임에서 제공하는 플레이어 간 상호작용, 경험에 집중했습니다."}]
+  "retro": {"hideAchieved": true},
+  "editModePortfolio": [
+    {
+      "field": "intent",
+      "value": "서로의 몸을 붙잡고 바닷속 자원을 모아 다리를 건설합니다. 물리적 조작에서 발생하는 불협화음을 극복하며 협동의 재미를 느끼도록 설계했습니다.",
+      "from": "주제 선정 당시 팀원 모두 협동 게임을 선호했습니다. 그래서 기획 초기에는 협동 게임에서 제공하는 플레이어 간 상호작용, 경험에 집중했습니다."
+    }
+  ]
 }
