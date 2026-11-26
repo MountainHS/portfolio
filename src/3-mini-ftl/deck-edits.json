@@ -38,12 +38,14 @@
     {
      "kind": "mermaid",
      "n": 1,
-     "fp": "flowchart LR"
+     "fp": "flowchart LR",
+     "caption": {"text": "핵심 루프", "verbatim": false}
     },
     {
      "kind": "table",
      "n": 1,
-     "fp": "게임 승패|언제"
+     "fp": "게임 승패|언제",
+     "caption": {"text": "게임 승패", "verbatim": false}
     }
    ],
    "from": {
@@ -57,7 +59,7 @@
     ]
    },
    "group": "merge-loop",
-   "presentation": "pair"
+   "presentation": "flow-table"
   },
   {
    "key": "power-cost",

@@ -294,7 +294,7 @@
         "key": "loop",
         "chapter": "overview",
         "layout": "visual",
-        "presentation": "pair",
+        "presentation": "flow-table",
         "tab": "흐름",
         "title": {"text": "1.4 핵심 루프", "verbatim": true},
         "lead": {"text": "플레이어는 적 함선과 전투하고, 이기면 상점에서 함선을 정비한 뒤 다음 전투로 나아갑니다.", "verbatim": true},
@@ -308,7 +308,10 @@
           },
           {"label": "상점에서 정비", "text": "반응로를 강화하고, 함선을 수리하고, 승무원을 치료해 다음 전투에 대비합니다.", "verbatim": true}
         ],
-        "visuals": [{"kind": "mermaid", "n": 1, "fp": "flowchart LR"}, {"kind": "table", "n": 1, "fp": "게임 승패|언제"}],
+        "visuals": [
+          {"kind": "mermaid", "n": 1, "fp": "flowchart LR", "caption": {"text": "핵심 루프", "verbatim": false}},
+          {"kind": "table", "n": 1, "fp": "게임 승패|언제", "caption": {"text": "게임 승패", "verbatim": false}}
+        ],
         "edited": true
       },
       {
@@ -2023,6 +2026,6 @@
         "visuals": [{"kind": "table", "n": 1, "fp": "초기 가정|실제로 확인한 점|이후 적용할 기준"}]
       }
     ],
-    "applied": "aa6f03d7c77e3c25"
+    "applied": "771d0e7b03a60fbc"
   }
 }

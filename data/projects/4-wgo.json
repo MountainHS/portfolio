@@ -815,8 +815,8 @@
         "key": "scope-gap",
         "chapter": "collaboration",
         "layout": "visual",
+        "presentation": "stack",
         "tab": "문제 해결",
-        "presentation": "pair",
         "title": {"text": "작업 범위와 일정 산정 부족", "verbatim": true},
         "lead": {"text": "처음 하나로 계획했던 서버 관련 작업은 개발 과정에서 17개로 늘어났습니다.", "verbatim": true},
         "keywords": ["선후관계", "서버 작업 17개"],
@@ -837,7 +837,8 @@
             "caption": {"text": "Asana 분석 리포트의 기능 영역별 작업 수: E11. 서버는 처음 계획 1개, 나중에 추가 16개, 합계 17개", "verbatim": true}
           },
           {"kind": "table", "n": 1, "fp": "시점|서버 관련 작업"}
-        ]
+        ],
+        "edited": true
       },
       {
         "key": "role-spec",
@@ -2527,6 +2528,6 @@
         "visuals": []
       }
     ],
-    "applied": "16a8991af5cc9896"
+    "applied": "5cb6bd555ec2a760"
   }
 }
