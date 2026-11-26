@@ -653,26 +653,6 @@
         "edited": true
       },
       {
-        "key": "bridge-play",
-        "chapter": "features",
-        "layout": "visual",
-        "tab": "결과",
-        "title": {"text": "다리 건설 화면", "verbatim": false},
-        "lead": {"text": "플레이어가 필요한 물고기를 직접 찾아 낚시하는 경험과 새로운 물고기를 찾기 위해 수중 공간을 탐험하는 경험을 강화하려는 개편입니다.", "verbatim": true},
-        "keywords": ["물고기 재료", "다리 15칸"],
-        "sectionPath": ["4. 핵심 기능 구현", "4.7 다리 건설 조건 개편과 비용 계산"],
-        "points": [],
-        "visuals": [
-          {
-            "kind": "image",
-            "src": "images/bridge-material-0123.gif",
-            "w": 850,
-            "h": 130,
-            "caption": {"text": "재료를 들고 다리에 올라 다리를 짓는 과정", "verbatim": true}
-          }
-        ]
-      },
-      {
         "key": "sync-model",
         "chapter": "structure",
         "layout": "full",
@@ -2547,6 +2527,6 @@
         "visuals": []
       }
     ],
-    "applied": "7e6e2745b05a69a7"
+    "applied": "16a8991af5cc9896"
   }
 }

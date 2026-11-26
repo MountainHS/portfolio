@@ -1228,6 +1228,14 @@
         "sectionPath": ["3. 담당 역할 및 시스템 구조", "3.3 전체 네트워크 흐름"],
         "sig": ["2.1 전체 네트워크 흐름|mermaid|1|flowchart LR"]
       }
+    },
+    {
+      "key": "bridge-play",
+      "from": {
+        "key": "bridge-play",
+        "sectionPath": ["4. 핵심 기능 구현", "4.7 다리 건설 조건 개편과 비용 계산"],
+        "sig": ["4.7 다리 건설 조건 개편과 비용 계산|image|images/bridge-material-0123.gif|1"]
+      }
     }
   ],
   "retro": {"hideAchieved": true},
