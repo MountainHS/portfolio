@@ -25,8 +25,19 @@ PATTERNS = [
     (r"이 순서대로 읽|괄호 안 번호", "목차 안내 — 지움"),
     (r"브랜치", "작업 이력 — '최종 빌드' 등 독자 말로"),
     (r"이번에는", "작업 회차 — '이 프로젝트에서는'으로"),
+    # 2026-11-26 메모리 tech-doc-narrator-voice에서 옮김(2026-11-19 mini ftl 검수에서 실제로 나온 말)
+    (r"제작자의 회고|보조 사례", "제3자·정리자 시점 — 사용자 1인칭으로"),
+    # 2026-11-26 메모리 tech-doc-no-commit-hashes에서 옮김: 커밋 해시는 report에만
+    (r"(?<![0-9A-Za-z#])(?=[0-9a-f]*[0-9])(?=[0-9a-f]*[a-f])[0-9a-f]{7,40}(?![0-9A-Za-z])",
+     "커밋 해시 — 본문에서 빼고 report에 모음"),
 ]
 COMPILED = [(re.compile(pattern), reason) for pattern, reason in PATTERNS]
+
+# 합니다체 검사(2026-11-20 사용자 결정): 문장이 "~다."로 끝나는데 "~니다."가 아님.
+# 제목(#)·표(|)·인용(>, 요청 원문을 그대로 옮기는 자리)·HTML 주석 줄은 건너뜀.
+PLAIN_ENDING = re.compile(r"(?<!니)다\.(?=\s|$|\*|\))")
+PLAIN_ENDING_REASON = "한다체 — 합니다체로(인용 원문이면 둠)"
+SKIP_PLAIN_ENDING = re.compile(r"^\s*(#|\||>|<!--)")
 CODE_FENCE = re.compile(r"^\s*(```|~~~)")
 
 
@@ -50,6 +61,11 @@ def find_hits(lines, first_line_number=1):
             match = pattern.search(line)
             if match:
                 hits.append((first_line_number + offset, match.group(0), reason, line.strip()))
+        if SKIP_PLAIN_ENDING.match(line):
+            continue
+        match = PLAIN_ENDING.search(line)
+        if match:
+            hits.append((first_line_number + offset, match.group(0), PLAIN_ENDING_REASON, line.strip()))
     return hits
 
 

@@ -25,7 +25,7 @@ paths:
 | [references/to-tech-doc.md](references/to-tech-doc.md) | 7단계 프로젝트 문서 반영 |
 | [scripts/check_quotes.py](scripts/check_quotes.py) | 대응표를 쓰거나 고친 뒤 발췌 검사 |
 
-함께 지키는 규칙: `.claude/rules/portfolio-writing.md`(규칙 6 AI 6단계 등), `.claude/CLAUDE.md` 「글쓰기 기본 지침」·「report 구조」. 프로젝트 문서 본문에는 정확한 일자·커밋 해시·`(§4.4)`나 `파일:줄` 같은 출처 표시를 쓰지 않습니다(근거는 분류 파일과 report에만).
+함께 지키는 규칙: `.claude/rules/portfolio-writing.md`(규칙 6 AI 6단계 등), `.claude/CLAUDE.md` 「글쓰기 기본 지침」·「report 구조」. 프로젝트 문서 본문에는 정확한 일자·커밋 해시·원천 자료를 가리키는 `(§4.4)`·`회고.md:12` 같은 출처 표시를 쓰지 않습니다(근거는 분류 파일과 report에만). 문서 안 절 번호·`code/` 파일:줄 참조는 써도 됩니다.
 
 ## 0단계 — 가드와 모드 판정
 

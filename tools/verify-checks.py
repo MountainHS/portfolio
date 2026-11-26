@@ -4,7 +4,7 @@
 검사기(tools/check-*.py·mjs, deck-edits.py)를 고친 뒤 실행합니다.
 
 사용:
-    python tools/verify-checks.py [--only A,B,C,D,E,F,G,H]
+    python tools/verify-checks.py [--only A,B,C,D,E,F,G,H,I]
     B·C·D는 로컬 미리보기 서버가 켜져 있어야 합니다(.\\preview.ps1 server, 127.0.0.1:4600).
 결과:
     화면에는 케이스마다 한 줄, 끝에 PASS n / FAIL m.
@@ -13,6 +13,7 @@
 케이스:
     A 정적 문법   B 슬라이드 기준선   C 슬라이드 변이(--probe)   D PDF
     E 기술 카드   F 장면 분류기       G 카드 높이 CSS           H deck-edits.py 멱등·오류 검사
+    I 문체 검사(voice-lint.py: 한다체·커밋 해시·제3자 시점)
 """
 
 import argparse
@@ -295,10 +296,36 @@ def check_deck_edits():
     record(code == 1 and "필수" in stdout, "H deck-edits 변이 범위 밖 강조", f"{target} exit={code} {stdout.strip().splitlines()[-1] if stdout.strip() else '-'}")
 
 
+# ── I. 문체 검사(voice-lint.py): 잡을 줄은 잡고, 둘 줄은 두는지 ──
+
+VOICE_SAMPLE = """# 제목은 한다체여도 둔다.
+구조를 바꿨다.
+구조를 바꿨습니다.
+커밋 7572c57에서 고쳤습니다.
+색 #17628B, 버전 17.3.0, 기간 2026.06.16.
+제작자의 회고에서는 좋았습니다.
+> 인용한 요청 원문은 둔다.
+| 표 칸은 둔다. |
+```
+int count = 0; // 코드 주석은 둔다.
+```
+"""
+VOICE_EXPECTED_LINES = [2, 4, 6]  # 한다체 · 커밋 해시 · 제3자 시점
+
+
+def check_voice_lint():
+    sample = OUT / "I-voice-sample.md"
+    sample.write_text(VOICE_SAMPLE, encoding="utf-8")
+    _, stdout, _ = run([sys.executable, "tools/voice-lint.py", str(sample)], "I-voice-lint")
+    found = sorted({int(number) for number in re.findall(r"I-voice-sample\.md:(\d+):", stdout)})
+    record(found == VOICE_EXPECTED_LINES, "I 문체 검사 잡을 줄만 잡음", f"기대 {VOICE_EXPECTED_LINES} / 실제 {found}")
+
+
 # ── 실행 ──
 
 CASES = {"A": check_static, "B": check_deck_baseline, "C": check_deck_probes, "D": check_pdf,
-         "E": check_capabilities, "F": check_classifier, "G": check_card_height_css, "H": check_deck_edits}
+         "E": check_capabilities, "F": check_classifier, "G": check_card_height_css, "H": check_deck_edits,
+         "I": check_voice_lint}
 NEEDS_PREVIEW = {"B", "C", "D"}
 
 
