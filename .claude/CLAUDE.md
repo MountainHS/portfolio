@@ -65,6 +65,7 @@
 
 - 자세한 규칙은 `.claude/rules/fork-features.md`에 있습니다. `assets/`·`*.html`·`data/`·`edit-server.py`·`tools/`·포트폴리오·편집 모드 스킬을 다룰 때 자동으로 실리고, 그 전에 이 기능을 고쳐야 하면 직접 Read합니다.
 - **`/portfolio-build`와 `/portfolio-edit` 뒤에는 반드시** `python .claude/skills/portfolio-build/deck-edits.py apply --all` 다음에 `python .claude/skills/portfolio-build/portfolio-edits.py apply --all`을 실행합니다(편집 모드에서 고친 글을 data에 다시 덮음, 멱등).
+  - 이어서 `python tools/code-locations.py --all`로 슬라이드 코드 캡션의 실제 위치(`클래스.메서드() · 파일:줄`)를 다시 찾습니다(프로젝트 문서 코드 블록이나 `src/<폴더>/code/`를 고쳤을 때 필요, 멱등). 자세한 규칙은 `.claude/rules/fork-features.md` 「슬라이드 코드 캡션 위치」.
   - 실행 전에 `git status`를 봅니다. 이번 작업 밖 프로젝트의 프로젝트 문서가 `M`이면 `--all` 대신 대상 폴더만 적용하거나 사용자에게 먼저 묻습니다(그 미커밋 수정이 data에 섞임, 2026-11-22). 커밋할 때도 세션 전부터 `M`인 파일은 `git diff`로 내 변경만인지 확인합니다.
 - 슬라이드는 30~40장 권장이고, `/portfolio-build`는 장면 수를 맞추려고 장면을 빼지 않습니다. 40장을 넘을 때만 리포트에 [참고]로 알립니다.
 

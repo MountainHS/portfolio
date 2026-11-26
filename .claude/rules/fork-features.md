@@ -40,7 +40,7 @@ paths:
 - 편집 서버(`edit-server.py`)로 연 슬라이드(`project.html?p=<폴더>`) 오른쪽 아래 [✎ 편집 모드] → 덱 위 글·그림을 누르면 아래에 입력창이 뜨고, 저장하면 새로고침해 같은 장면으로 돌아옵니다. 덱 데이터(`deck`)로 그린 덱에서만 켜지고, 예전 데이터 자동 구성 덱·GitHub Pages·`python -m http.server`에서는 버튼이 없습니다.
 - 누른 칸 **하나만** 엽니다(2026-11-26 사용자 결정: 장면 글 전체를 한 창에 여는 안은 다른 칸을 실수로 건드릴 수 있어 뺌). 누른 것에 따라 저장 길이 둘입니다(`assets/deck-edit.js`가 나눔).
   1. 표·코드·다이어그램(프로젝트 문서 원문 블록, 그림(image) 자체는 편집에서 뺌 — 그림 설명 글만 아래 2번) → 그 블록의 md 원문 줄 → `POST /__edit/save`(상세 문서 편집과 같은 길, 프로젝트 문서만 고침). 덱이 블록을 찾는 지문(표 머리 칸·그림 경로·코드·다이어그램 첫 줄)을 바꾸면 `/portfolio-build`를 다시 할 때까지 그 장면에 띠가 뜹니다(입력창에 안내). data의 스크린샷 목록에서 온 그림(`ref.direct`)과 원문을 찾지 못한 그림(빨간 띠)은 누를 수 없습니다.
-  2. 장면 제목·도입·요점 카드와 이름표·그림 설명(캡션)·짝 패널 제목/도입/카드·단계 표 머리 칸/설명 칸·단계 설명 줄·회고(아쉬운 점·개선 계획·달성) 줄·장 표지 키워드 → `POST /__edit/deck` → `portfolio-edits.py`의 `save_deck_text`. 고친 글은 늘 `src/<폴더>/deck-edits.json`의 `"deckText"` 목록(`{slide, field, n?, value, from}`)에 남고, 프로젝트 문서에 같은 글이 한 번만 그대로 있으면(제목 줄·코드 블록 제외) 그 줄도 고칩니다(입력창의 [슬라이드에만 저장]을 고르면 문서는 그대로). 키워드는 늘 덱에만. 그림 설명은 `{slide, field:"caption", n: visuals 번호(1부터)}`이고 값은 data `visuals[n-1].caption.text`(글자면 `.caption`)이며, 프로젝트 문서에서는 같은 글이 한 번뿐인 그림 줄(alt)을 고칩니다. 같은 장면에 같은 `src` 그림이 둘이거나 `ref.direct`면 누를 수 없고, 코드 캡션(렌더러가 만든 언어·줄 범위 라벨)은 대상이 아닙니다. data는 `deck.slides`와 `deck.base`(있으면) 둘 다 고치고 `deck.applied` 해시를 맞추며, 글 조각의 `verbatim`은 `false`로 바꿉니다. 빌드 글(`from`)과 같게 고치면 그 줄이 지워집니다(되돌리기).
+  2. 장면 제목·도입·요점 카드와 이름표·그림 설명(캡션)·짝 패널 제목/도입/카드·단계 표 머리 칸/설명 칸·단계 설명 줄·회고(아쉬운 점·개선 계획·달성) 줄·장 표지 키워드 → `POST /__edit/deck` → `portfolio-edits.py`의 `save_deck_text`. 고친 글은 늘 `src/<폴더>/deck-edits.json`의 `"deckText"` 목록(`{slide, field, n?, value, from}`)에 남고, 프로젝트 문서에 같은 글이 한 번만 그대로 있으면(제목 줄·코드 블록 제외) 그 줄도 고칩니다(입력창의 [슬라이드에만 저장]을 고르면 문서는 그대로). 키워드는 늘 덱에만. 그림 설명은 `{slide, field:"caption", n: visuals 번호(1부터)}`이고 값은 data `visuals[n-1].caption.text`(글자면 `.caption`)이며, 프로젝트 문서에서는 같은 글이 한 번뿐인 그림 줄(alt)을 고칩니다. 같은 장면에 같은 `src` 그림이 둘이거나 `ref.direct`면 누를 수 없고, 코드 캡션(렌더러가 만든 코드 위치 라벨)은 대상이 아닙니다. data는 `deck.slides`와 `deck.base`(있으면) 둘 다 고치고 `deck.applied` 해시를 맞추며, 글 조각의 `verbatim`은 `false`로 바꿉니다. 빌드 글(`from`)과 같게 고치면 그 줄이 지워집니다(되돌리기).
 - 2번 칸 자리(`deckText` 한 줄): `{slide, field, n?, m?, value, from, sourceDigest?}`. field = `title`·`lead`·`point`·`point-label`·`caption`·`keywords`·`panel-title`·`panel-lead`·`panel-point`(n 패널, m 카드)·`achieved`·`regret`·`plan`(회고는 `slide: "retro"`, data `retro.achieved|regrets|plans[n-1]`).
   - 화면 위치 → data 번호는 배치마다 다르게 셉니다(`pointPlace`): 단계 표는 열 번호, 단계 설명은 줄 순서, `.fe-card`·`.result-row`·`.feature-row`·`.dk-column`은 칸 순서, 그 밖은 짝 패널 밖 `.ncard`·`.fstep` 순서. 회고 표 행은 `omitPairs`로 숨긴 짝을 건너뛴 원래 번호. 원본 `project-deck.js` 배치 HTML이 바뀌면 이 셈이 **조용히** 어긋날 수 있습니다.
   - 요점(`point`·`panel-point`)은 Enter로 두 줄까지: data 글 조각의 `lines`(화면 두 줄, `pointHtml`)와 `text`(두 줄을 한 칸 띄워 이음)를 함께 씁니다. 두 줄 글은 프로젝트 문서 줄에 쓰지 않고 슬라이드에만 둡니다. 다른 칸은 한 줄입니다.
@@ -89,6 +89,14 @@ paths:
 - 확인: `claude plugin validate tools/portfolio-panel` · `claude plugin test tools/portfolio-panel`(버튼 run·fill·say가 각각 `command.run`·`prompt.fill`·`prompt.submit`으로 넘어가는지).
 - `/portfolio-update`는 `tools/`·`.claude/settings.json`을 건드리지 않습니다.
 - 「유지」 단계의 원 레포 받기 버튼은 `/portfolio-update`가 아니라 **git 머지**를 부탁하는 say 버튼입니다(2026-11-18). `/portfolio-update`는 루트 `CLAUDE.md`·`format/`·`portfolio-*` 스킬을 원본으로 덮어 keywords·장면 수 30~40·편집 모드 연결 같은 포크 수정을 지울 수 있어서입니다. 이 포크는 `git fetch upstream` 뒤 `git merge upstream/main`으로 받고, 머지 전에 바뀌는 점과 포크 규칙 충돌을 정리해 확인받습니다.
+
+## 슬라이드 코드 캡션 위치 (이 포크 전용)
+
+- 슬라이드 코드 칸 아래 캡션은 언어 이름(`C#`)이 아니라 실제 코드 위치입니다(2026-11-27 사용자 요청): `클래스.메서드() · 파일:줄`(예: `RoomClient.SendSnapshotOrInputMessage() · RoomClient.cs:641-646`). 모든 프로젝트에 같습니다.
+- 위치는 `python tools/code-locations.py <폴더>|--all`이 찾아 `data/code-locations/<폴더>.json`에 씁니다. 프로젝트 문서 코드 블록을 `// 클래스.메서드()` 꼴 주석 줄마다 구간으로 나누고, 구간 줄을 `src/<폴더>/code/`의 `.cs`와 대조합니다(주석이 파일 이름을 가리키면 그 파일만, 비교 줄의 절반 이상 일치·동점 없음). 클래스·메서드는 원본에서 그 줄을 감싸는 선언입니다. 빌드가 덮지 않는 별도 파일이며, 빌드 뒤 apply 두 개 다음에 다시 실행합니다.
+- 대체 순서: 원본에서 못 찾으면 블록 첫 줄 주석의 이름(`// EnemyController.Start()`) → 블록 안 `class` 선언 이름 → 빈 캡션. 블록을 고쳐 열쇠(줄마다 trim해 이은 글)가 안 맞으면 렌더러가 첫 줄 주석 이름을 씁니다.
+- 렌더러(`assets/project-deck.js` `loadCodeLocations`·`codeLocationLabel`·`lineRanges`, `vboxHtml` 코드 분기): 나뉜 장면은 그 조각에 보이는 줄의 메서드·원본 줄만 쓰고, 위치가 있으면 `a~b줄 / 전체 n줄` 라벨을 빼며, 90자(`CODE_CAPTION_MAX`)를 넘으면 `파일:줄`만 씁니다(캡션이 두 줄로 넘어가 장면이 넘치지 않게, Mini FTL `d-damage-timing`). `/portfolio-update`나 원본 머지가 덮으면 이 부분과 `:60` 근처 `loadCodeLocations` 호출을 다시 넣습니다.
+- 검사: `tools/deck-checks.mjs`의 `code caption shows source location`(필수) — 코드 캡션이 비었거나 언어 이름이면 실패합니다.
 
 ## 프로젝트별 슬라이드 설정
 

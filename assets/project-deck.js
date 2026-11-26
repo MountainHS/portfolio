@@ -67,6 +67,7 @@
         html: `<p>데이터에 적힌 프로젝트 문서(<code>src/${esc(p.id)}/${esc(p.doc || '')}</code>)를 열 수 없습니다. <code>src/</code> 폴더를 확인한 뒤 <code>/portfolio-build</code>를 다시 실행해 주세요.</p><p class="pf-note-err">${esc(e.message)}</p>${back}` }));
       return;
     }
+    await loadCodeLocations(p.id);                                     // [포크] 코드 캡션 위치(tools/code-locations.py)
     const P = PF.md.parse(md, p.id);
     info.headings = P.headings.length;
     refNumbers = PF.md.sectionNumbers(P);
@@ -182,8 +183,62 @@
   }
 
   // ── 시각 자료 HTML(.vbox). 코드는 줄 범위를 잘라 조각마다 강조 ──
-  const LANG = { csharp: 'C#', cs: 'C#', js: 'JavaScript', javascript: 'JavaScript', ts: 'TypeScript', json: 'JSON', yaml: 'YAML', yml: 'YAML', xml: 'XML', html: 'HTML', css: 'CSS', python: 'Python', py: 'Python', bash: 'Shell', sh: 'Shell', powershell: 'PowerShell', hlsl: 'HLSL', shader: 'Shader', cpp: 'C++', c: 'C', lua: 'Lua' };
   const codeLines = (el) => { const t = (el.querySelector('code')?.textContent || '').replace(/\n$/, ''); return t.split('\n'); };
+  // [포크] 코드 캡션 = 실제 코드 위치. tools/code-locations.py가 만든 data/code-locations/<폴더>.json을 읽고,
+  // 없거나 블록이 바뀌어 못 찾으면 블록 첫 줄 주석의 이름(예: // EnemyController.Start())을 쓴다. 언어 이름은 쓰지 않는다.
+  let codeLocations = new Map();
+  const CODE_CAPTION_MAX = 90;                                         // 글자. 넘으면 메서드 이름을 빼고 '파일:줄'만(두 줄로 넘어가 장면이 넘치지 않게)
+  async function loadCodeLocations(id) {
+    const entries = await PF.loadJSON(`data/code-locations/${encodeURIComponent(id)}.json`).catch(() => []);
+    codeLocations = new Map(entries.map((entry) => [entry.key, entry.parts]));
+  }
+  const codeKey = (lines) => lines.map((line) => line.trim()).join('\n').replace(/^\n+|\n+$/g, '');
+  function commentName(line) {
+    const text = (line || '').trim();
+    if (!text.startsWith('//')) return '';
+    const name = text.slice(2).trim().split(/\s+[—–-]\s+|\s+\(/)[0].trim();
+    if (!/^(?:code\/)?[A-Za-z_][\w.]*(?:\(\))?(?:\.cs)?(?::[\d\-, ]+)?$/.test(name)) return '';
+    return name.replace(/^code\//, '');
+  }
+  /** md 줄마다의 원본 줄 번호(lineMap 조각, 못 맞춘 줄 null) → '641-646, 700-712'. 빈 줄·중괄호처럼 대조에서 뺀 줄이 만든
+   *  작은 틈(md에서 건너뛴 줄 수 + 3줄 이하)은 한 구간으로 잇고, 발췌로 크게 건너뛴 곳·순서가 거꾸로인 곳에서만 나눈다. */
+  function lineRanges(lineMap) {
+    const ranges = [];
+    let lastIndex = -1;
+    lineMap.forEach((source, index) => {
+      if (!source) return;
+      const last = ranges[ranges.length - 1];
+      const continues = last && source > last[1] && source - last[1] <= index - lastIndex + 3;
+      if (continues) last[1] = source; else ranges.push([source, source]);
+      lastIndex = index;
+    });
+    return ranges.map(([from, to]) => (from === to ? `${from}` : `${from}-${to}`)).join(', ');
+  }
+  /** 코드 장면 조각 [a, b](md 블록 안 줄 번호, 1부터)의 위치 라벨. 구간마다 '클래스.메서드() · 파일:줄'을 ' / '로 잇는다. 못 찾으면 ''. */
+  function codeLocationLabel(el, a, b) {
+    const lines = codeLines(el);
+    const parts = codeLocations.get(codeKey(lines));
+    if (!parts) return commentName(lines.find((line) => line.trim()) || '');
+    const byFile = new Map();                                          // 같은 파일 구간은 한 묶음으로: 'Class.A() / B() · File.cs:1-5, 9-12'
+    const labels = [];
+    for (const part of parts.filter((item) => item.start <= b && item.end >= a)) {
+      const from = Math.max(a, part.start) - part.start, to = Math.min(b, part.end) - part.start + 1;
+      const shown = part.lineMap.slice(from, to);
+      if (!part.file || !shown.some(Boolean)) { labels.push({ text: part.label }); continue; }
+      let group = byFile.get(part.file);
+      if (!group) { group = { file: part.file, className: part.className, methods: [], ranges: [] }; byFile.set(part.file, group); labels.push(group); }
+      for (const method of part.methodMap.slice(from, to)) if (method && !group.methods.includes(method)) group.methods.push(method);
+      group.ranges.push(lineRanges(shown));
+    }
+    const full = labels.map((item) => {
+      if (!item.file) return item.text;
+      const methods = item.methods.map((method) => `${method}()`).join(' / ');
+      const member = [item.className, methods].filter(Boolean).join('.');
+      return `${member} · ${item.file}:${item.ranges.join(', ')}`;
+    }).filter(Boolean).join(' / ');
+    if (full.length <= CODE_CAPTION_MAX) return full;
+    return labels.map((item) => (item.file ? `${item.file}:${item.ranges.join(', ')}` : item.text)).filter(Boolean).join(' / ');
+  }
   const langOf = (el) => /language-([\w+#-]+)/.exec(el.querySelector('code')?.className || '')?.[1]?.toLowerCase() || '';
   function codeHtml(el, a, b, highlights = []) {
     if (highlights.length) {
@@ -225,10 +280,10 @@
     }
     if (k === 'code') {
       const all = codeLines(v.el).length, [a, b] = chunk;
-      const lang = LANG[langOf(v.el)] || '';
-      const part = a > 1 || b < all ? PF.t('deck.code-lines', { a, b, all }) : '';
+      const where = codeLocationLabel(v.el, a, b);                     // [포크] 언어 이름 대신 실제 코드 위치
+      const part = !where && (a > 1 || b < all) ? PF.t('deck.code-lines', { a, b, all }) : '';   // [포크] 위치가 있으면 원본 줄 번호가 대신함
       const highlights = v.ref.view?.highlights || [];
-      return `<figure class="vbox" data-kind="code" data-visual-index="${v.index}" data-source-start="${a}" data-source-end="${b}"><div class="vmedia"><div class="fit-in"><pre${highlights.length ? ' class="code-annotated"' : ''}>${codeHtml(v.el, a, b, highlights)}</pre></div></div>${cap([lang, part].filter(Boolean).map(esc).join(' · '))}${warn}</figure>`;
+      return `<figure class="vbox" data-kind="code" data-visual-index="${v.index}" data-source-start="${a}" data-source-end="${b}"><div class="vmedia"><div class="fit-in"><pre${highlights.length ? ' class="code-annotated"' : ''}>${codeHtml(v.el, a, b, highlights)}</pre></div></div>${cap([where, part].filter(Boolean).map(esc).join(' · '))}${warn}</figure>`;
     }
     if (k === 'table') {
       const t = v.el.cloneNode(true);

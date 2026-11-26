@@ -1,0 +1,594 @@
+[
+ {
+  "key": "// GameManager.OnSceneLoaded() — 전투 씬 1\ngameContext.SetEnemyType(enemyType);\nsceneBinder.BindSceneObjects(gameContext);\n\n// SceneBinder.BindSceneObjectsWithEnvironment()\nplayer.Hp = gameContext.ShipHp;\nplayer.SetReactorPower(gameContext.ShipPower);\nplayer.SetFacilitySystems(gameContext.FacilityStates);\nplayer.SetCrewsState(gameContext.CrewStates);\nplayer.SetWeaponTypes(gameContext.WeaponTypes);\nBindCombatSystem(player, enemy);",
+  "parts": [
+   {
+    "label": "GameManager.OnSceneLoaded()",
+    "file": "GameManager.cs",
+    "start": 1,
+    "end": 4,
+    "lineMap": [
+     null,
+     422,
+     423,
+     null
+    ],
+    "className": "GameManager",
+    "methodMap": [
+     "",
+     "OnSceneLoaded",
+     "OnSceneLoaded",
+     ""
+    ]
+   },
+   {
+    "label": "SceneBinder.BindSceneObjectsWithEnvironment()",
+    "file": "SceneBinder.cs",
+    "start": 5,
+    "end": 11,
+    "lineMap": [
+     null,
+     46,
+     49,
+     50,
+     51,
+     52,
+     53
+    ],
+    "className": "SceneBinder",
+    "methodMap": [
+     "",
+     "BindSceneObjectsWithEnvironment",
+     "BindSceneObjectsWithEnvironment",
+     "BindSceneObjectsWithEnvironment",
+     "BindSceneObjectsWithEnvironment",
+     "BindSceneObjectsWithEnvironment",
+     "BindSceneObjectsWithEnvironment"
+    ]
+   }
+  ]
+ },
+ {
+  "key": "// ShipPowerController.AllocatePower — 핵심 부분\nint currentPower = GetAssignedPower(facilityType);\nint nextPower = currentPower + amount;\nif (CanSpendReactorPower(amount) == false ||\nfacility.CanAddPower(amount) == false ||\nCanSetFacilityPower(facility, nextPower) == false)\n{\nreturn;\n}\n\nSetAssignedPower(facilityType, nextPower);\nfacility.AddPower(amount);\nreactorController.ReducePower(amount);",
+  "parts": [
+   {
+    "label": "ShipPowerController.AllocatePower()",
+    "file": "ShipPowerController.cs",
+    "start": 1,
+    "end": 13,
+    "lineMap": [
+     null,
+     41,
+     42,
+     null,
+     null,
+     44,
+     null,
+     46,
+     null,
+     null,
+     49,
+     50,
+     51
+    ],
+    "className": "ShipPowerController",
+    "methodMap": [
+     "",
+     "AllocatePower",
+     "AllocatePower",
+     "",
+     "",
+     "AllocatePower",
+     "",
+     "AllocatePower",
+     "",
+     "",
+     "AllocatePower",
+     "AllocatePower",
+     "AllocatePower"
+    ]
+   }
+  ]
+ },
+ {
+  "key": "// FacilityController.UpdateFacilityStatus — 최종 코드\nif (TotalDamage == MaxPowerLimit)\nfacilityStatus = FacilityStatus.Broked;\nelse if (TotalDamage > 0 && TotalDamage < MaxPowerLimit)\nfacilityStatus = FacilityStatus.Damaged;\nelse if (Power == 0)\nfacilityStatus = FacilityStatus.Disabled;\nelse if (TotalDamage == 0)\nfacilityStatus = FacilityStatus.Normal;",
+  "parts": [
+   {
+    "label": "FacilityController.UpdateFacilityStatus()",
+    "file": "FacilityController.cs",
+    "start": 1,
+    "end": 9,
+    "lineMap": [
+     null,
+     117,
+     119,
+     121,
+     123,
+     125,
+     127,
+     129,
+     131
+    ],
+    "className": "FacilityController",
+    "methodMap": [
+     "",
+     "UpdateFacilityStatus",
+     "UpdateFacilityStatus",
+     "UpdateFacilityStatus",
+     "UpdateFacilityStatus",
+     "UpdateFacilityStatus",
+     "UpdateFacilityStatus",
+     "UpdateFacilityStatus",
+     "UpdateFacilityStatus"
+    ]
+   }
+  ]
+ },
+ {
+  "key": "// EnemyController.Start()\ntargetingSystem = new RandomTargeter(\nCombatSystem.Instance.GetPlayerRooms()\n);\n\n// CombatSystem.GetPlayerRooms()\npublic List<Room> GetPlayerRooms()\n{\nreturn ships[0].Rooms;\n}",
+  "parts": [
+   {
+    "label": "EnemyController.Start()",
+    "file": "",
+    "start": 1,
+    "end": 5,
+    "lineMap": []
+   },
+   {
+    "label": "CombatSystem.GetPlayerRooms()",
+    "file": "CombatSystem.cs",
+    "start": 6,
+    "end": 10,
+    "lineMap": [
+     null,
+     181,
+     null,
+     184,
+     null
+    ],
+    "className": "CombatSystem",
+    "methodMap": [
+     "",
+     "GetPlayerRooms",
+     "",
+     "GetPlayerRooms",
+     ""
+    ]
+   }
+  ]
+ },
+ {
+  "key": "[DefaultExecutionOrder(-1000)]\npublic abstract class SingletonBase<T> : MonoBehaviour\nwhere T : MonoBehaviour",
+  "parts": [
+   {
+    "label": "SingletonBase",
+    "file": "",
+    "start": 1,
+    "end": 3,
+    "lineMap": []
+   }
+  ]
+ },
+ {
+  "key": "// ShipController\nprotected virtual void Start()\n{\ncrewSystem.Rooms = Rooms;\n}",
+  "parts": [
+   {
+    "label": "ShipController.Start()",
+    "file": "ShipController.cs",
+    "start": 1,
+    "end": 5,
+    "lineMap": [
+     null,
+     64,
+     null,
+     66,
+     null
+    ],
+    "className": "ShipController",
+    "methodMap": [
+     "",
+     "Start",
+     "",
+     "Start",
+     ""
+    ]
+   }
+  ]
+ },
+ {
+  "key": "// SceneBinder.BindSceneObjectsWithEnvironment()\nPlayerController player = FindFirstObjectByType<PlayerController>();\nEnemyController enemy = SpawnEnemyOrFindSceneEnemy(gameContext.EnemyType);\nBindCombatSystem(player, enemy);   // → CombatSystem.Instance.InitCombatSystem(player, enemy)\n\n// CombatSystem.InitCombatSystem()\nCollider2D playerCollider = playerOwnership.GetComponent<Collider2D>();\nCollider2D enemyCollider = enemyOwnership.GetComponent<Collider2D>();\nships = new ShipController[] { player, enemy };\nshipAreas = new[] { playerCollider, enemyCollider };",
+  "parts": [
+   {
+    "label": "SceneBinder.BindSceneObjectsWithEnvironment()",
+    "file": "SceneBinder.cs",
+    "start": 1,
+    "end": 5,
+    "lineMap": [
+     null,
+     26,
+     27,
+     53,
+     null
+    ],
+    "className": "SceneBinder",
+    "methodMap": [
+     "",
+     "BindSceneObjectsWithEnvironment",
+     "BindSceneObjectsWithEnvironment",
+     "BindSceneObjectsWithEnvironment",
+     ""
+    ]
+   },
+   {
+    "label": "CombatSystem.InitCombatSystem()",
+    "file": "CombatSystem.cs",
+    "start": 6,
+    "end": 10,
+    "lineMap": [
+     null,
+     58,
+     59,
+     63,
+     64
+    ],
+    "className": "CombatSystem",
+    "methodMap": [
+     "",
+     "InitCombatSystem",
+     "InitCombatSystem",
+     "InitCombatSystem",
+     "InitCombatSystem"
+    ]
+   }
+  ]
+ },
+ {
+  "key": "TargetRoom = room;\nCurrentRoom.ReduceCrew(this);\n\nif (CurrentRoom.IsEmptyCrew())\n{\nAssistFacility(false);\nResetRepairProgressOnEmptyRoom(CurrentRoom);\n}\n\nTargetRoom.AddCrew(this);\nCurrentRoom = TargetRoom;\ncrewStatus = CrewStatus.Moving;",
+  "parts": [
+   {
+    "label": "CrewController.SetTargetRoom()",
+    "file": "CrewController.cs",
+    "start": 1,
+    "end": 12,
+    "lineMap": [
+     47,
+     48,
+     null,
+     50,
+     null,
+     52,
+     53,
+     null,
+     null,
+     56,
+     57,
+     58
+    ],
+    "className": "CrewController",
+    "methodMap": [
+     "SetTargetRoom",
+     "SetTargetRoom",
+     "",
+     "SetTargetRoom",
+     "",
+     "SetTargetRoom",
+     "SetTargetRoom",
+     "",
+     "",
+     "SetTargetRoom",
+     "SetTargetRoom",
+     "SetTargetRoom"
+    ]
+   }
+  ]
+ },
+ {
+  "key": "// CrewSystem.HandleCrewDeath — 핵심 부분\nship.Crews.Remove(crew);\ncrews.Remove(crew);\n\n// 승무원이 속한 Room을 검색\nroom.ReduceCrew(crew);",
+  "parts": [
+   {
+    "label": "CrewSystem.HandleCrewDeath()",
+    "file": "CrewSystem.cs",
+    "start": 1,
+    "end": 6,
+    "lineMap": [
+     null,
+     121,
+     122,
+     null,
+     null,
+     132
+    ],
+    "className": "CrewSystem",
+    "methodMap": [
+     "",
+     "HandleCrewDeath",
+     "HandleCrewDeath",
+     "",
+     "",
+     "HandleCrewDeath"
+    ]
+   }
+  ]
+ },
+ {
+  "key": "// EnemyController.Start()\ntargetingSystem = new RandomTargeter(CombatSystem.Instance.GetPlayerRooms());\nWeaponController.SetWeaponsTargetingSystem(targetingSystem);\n\n// WeaponSystem.SetWeaponsTargetingSystem()\nTargetingSystem = targetingSystem;\nfor (int i = 0; i < weapons.Count; i++)\n{\nweapons[i].SetTargetingSystem(TargetingSystem);\n}",
+  "parts": [
+   {
+    "label": "EnemyController.Start()",
+    "file": "EnemyController.cs",
+    "start": 1,
+    "end": 4,
+    "lineMap": [
+     null,
+     12,
+     13,
+     null
+    ],
+    "className": "EnemyController",
+    "methodMap": [
+     "",
+     "Start",
+     "Start",
+     ""
+    ]
+   },
+   {
+    "label": "WeaponSystem.SetWeaponsTargetingSystem()",
+    "file": "WeaponSystem.cs",
+    "start": 5,
+    "end": 10,
+    "lineMap": [
+     null,
+     43,
+     44,
+     null,
+     46,
+     null
+    ],
+    "className": "WeaponSystem",
+    "methodMap": [
+     "",
+     "SetWeaponsTargetingSystem",
+     "SetWeaponsTargetingSystem",
+     "",
+     "SetWeaponsTargetingSystem",
+     ""
+    ]
+   }
+  ]
+ },
+ {
+  "key": "// ProjectileController.OnTriggerEnter2D() — 실드에 부딪힐 때\nif (canHitShield)\n{\nbool isShielded = CombatSystem.Instance.HandleShieldCollision(this);\nif (isShielded)\n{\nDestroy(gameObject);\n}\n}\n\n// ProjectileController.Update() — 목표 방에 닿을 때\nif (IsArrived)\n{\nCombatSystem.Instance.HandleRoomCollision(this);\n// … 폭발 효과 위치 지정\nDestroy(gameObject);\n}\n\n// CombatSystem.HandleShieldCollision() — 도착 순간의 실드 수로 판정\nif (oppenentShieldController.ShieldCount > 0)\n{\noppenentShieldController.TakeDamageToShield(projectile.ShieldDamage);\nreturn true;\n}",
+  "parts": [
+   {
+    "label": "ProjectileController.OnTriggerEnter2D()",
+    "file": "ProjectileController.cs",
+    "start": 1,
+    "end": 10,
+    "lineMap": [
+     null,
+     124,
+     null,
+     127,
+     128,
+     null,
+     130,
+     null,
+     null,
+     null
+    ],
+    "className": "ProjectileController",
+    "methodMap": [
+     "",
+     "OnTriggerEnter2D",
+     "",
+     "OnTriggerEnter2D",
+     "OnTriggerEnter2D",
+     "",
+     "OnTriggerEnter2D",
+     "",
+     "",
+     ""
+    ]
+   },
+   {
+    "label": "ProjectileController.Update()",
+    "file": "ProjectileController.cs",
+    "start": 11,
+    "end": 18,
+    "lineMap": [
+     null,
+     77,
+     null,
+     82,
+     null,
+     85,
+     null,
+     null
+    ],
+    "className": "ProjectileController",
+    "methodMap": [
+     "",
+     "Update",
+     "",
+     "Update",
+     "",
+     "Update",
+     "",
+     ""
+    ]
+   },
+   {
+    "label": "CombatSystem.HandleShieldCollision()",
+    "file": "CombatSystem.cs",
+    "start": 19,
+    "end": 24,
+    "lineMap": [
+     null,
+     149,
+     null,
+     151,
+     153,
+     null
+    ],
+    "className": "CombatSystem",
+    "methodMap": [
+     "",
+     "HandleShieldCollision",
+     "",
+     "HandleShieldCollision",
+     "HandleShieldCollision",
+     ""
+    ]
+   }
+  ]
+ },
+ {
+  "key": "// ShipController.CheckGameOver()\nbool isGameOver = IsDead || crewSystem.IsAllCrewDead;\nif (!isGameOver || isDeadCoroutineActivated)\n{\nreturn;\n}\n// … 결과 판정\nStartCoroutine(DeadCoroutine(deadAnimationTime, battleResult));\n\n// ShipController.DeadCoroutine()\nisDeadCoroutineActivated = true;\nyield return new WaitForSeconds(seconds);\nGameManager.Instance.HandleBattleResult(result);",
+  "parts": [
+   {
+    "label": "ShipController.CheckGameOver()",
+    "file": "ShipController.cs",
+    "start": 1,
+    "end": 9,
+    "lineMap": [
+     null,
+     437,
+     438,
+     null,
+     440,
+     null,
+     null,
+     461,
+     null
+    ],
+    "className": "ShipController",
+    "methodMap": [
+     "",
+     "CheckGameOver",
+     "CheckGameOver",
+     "",
+     "CheckGameOver",
+     "",
+     "",
+     "CheckGameOver",
+     ""
+    ]
+   },
+   {
+    "label": "ShipController.DeadCoroutine()",
+    "file": "ShipController.cs",
+    "start": 10,
+    "end": 13,
+    "lineMap": [
+     null,
+     390,
+     391,
+     392
+    ],
+    "className": "ShipController",
+    "methodMap": [
+     "",
+     "DeadCoroutine",
+     "DeadCoroutine",
+     "DeadCoroutine"
+    ]
+   }
+  ]
+ },
+ {
+  "key": "// CombatSystem.MoveToEnemyArea()\nVector3 spawnPos = GetRandomPositionOnColliderEdge(nextShipCol, projectile.transform.position.z, seed);\nVector3 targetPos = projectile.TargetPos;\n\nprojectile.transform.position = spawnPos;\nVector3 direction = targetPos - spawnPos;\ndirection.z = projectile.transform.position.z;\nprojectile.transform.right = direction;",
+  "parts": [
+   {
+    "label": "CombatSystem.MoveToEnemyArea()",
+    "file": "CombatSystem.cs",
+    "start": 1,
+    "end": 8,
+    "lineMap": [
+     null,
+     126,
+     127,
+     null,
+     131,
+     132,
+     133,
+     134
+    ],
+    "className": "CombatSystem",
+    "methodMap": [
+     "",
+     "MoveToEnemyArea",
+     "MoveToEnemyArea",
+     "",
+     "MoveToEnemyArea",
+     "MoveToEnemyArea",
+     "MoveToEnemyArea",
+     "MoveToEnemyArea"
+    ]
+   }
+  ]
+ },
+ {
+  "key": "// WeaponSystem.ResetSelectedWeapon()\nResetWeaponTargetSprite(selectedWeapon);\nCursorController.Instance.ResetMouseSprite();\n// … selectedWeapon이 없으면 종료\nselectedWeapon.SetRoomTarget(emptyData);\nselectedWeapon = null;\n\n// PlayerController.Update()\nif (SimpleInput.GetKeyDown(Key.Escape))\n{\nWeaponController.ResetSelectedWeapon();\ncrewSystem.ResetSelectedCrews();\n}\n\nif (!CanControlShip())\n{\nreturn;\n}",
+  "parts": [
+   {
+    "label": "WeaponSystem.ResetSelectedWeapon()",
+    "file": "WeaponSystem.cs",
+    "start": 1,
+    "end": 7,
+    "lineMap": [
+     null,
+     84,
+     85,
+     null,
+     92,
+     93,
+     null
+    ],
+    "className": "WeaponSystem",
+    "methodMap": [
+     "",
+     "ResetSelectedWeapon",
+     "ResetSelectedWeapon",
+     "",
+     "ResetSelectedWeapon",
+     "ResetSelectedWeapon",
+     ""
+    ]
+   },
+   {
+    "label": "PlayerController.Update()",
+    "file": "PlayerController.cs",
+    "start": 8,
+    "end": 18,
+    "lineMap": [
+     null,
+     43,
+     null,
+     45,
+     46,
+     null,
+     null,
+     49,
+     null,
+     51,
+     null
+    ],
+    "className": "PlayerController",
+    "methodMap": [
+     "",
+     "Update",
+     "",
+     "Update",
+     "Update",
+     "",
+     "",
+     "Update",
+     "",
+     "Update",
+     ""
+    ]
+   }
+  ]
+ }
+]

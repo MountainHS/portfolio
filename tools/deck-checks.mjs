@@ -190,6 +190,14 @@ export async function checkDeckPage(projectId, probe) {
       code
     }];
   });
+  // [포크] 코드 캡션은 언어 이름이 아니라 실제 코드 위치(tools/code-locations.py → data/code-locations/)
+  const bareLanguages = new Set(['C#', 'JavaScript', 'TypeScript', 'JSON', 'YAML', 'XML', 'HTML', 'CSS', 'Python', 'Shell', 'PowerShell', 'HLSL', 'Shader', 'C++', 'C', 'Lua']);
+  for (const review of codeReview) {
+    const unlocated = review.code.filter((code) => !code.caption || bareLanguages.has(code.caption.split(' · ')[0]));
+    if (unlocated.length) add('code caption shows source location', false,
+      'Class.Method() · File:lines (run python tools/code-locations.py <folder>, or add a // Class.Method() first-line comment)',
+      unlocated.map(({ caption, range }) => ({ caption, range })), review.sceneId);
+  }
   for (const slide of deck?.slides || []) {
     const id = `d-${slide.key}`;
     const root = scene(id);
