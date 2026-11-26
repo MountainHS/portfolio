@@ -196,6 +196,10 @@ table.kv td.role { color: var(--accent-ink); font-weight: 800; }
 .intent .it { margin-top: 4px !important; font-size: 15px; line-height: 1.62; color: var(--ink); }
 .pi-links { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
 .pi-links.row { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+/* [포크] 링크 카드 크기 통일: 행 높이를 모두 같게(1fr), 테두리 상자(a)가 칸을 꽉 채움. 검사: tools/deck-checks.mjs 'link cards same size' */
+.pi-links, .en-links { grid-auto-rows: 1fr; }
+.lcard { display: flex; min-width: 0; }
+.lcard a { flex: 1 1 auto; min-width: 0; }
 .lcard a { position: relative; display: block; border: 1px solid var(--line); border-radius: calc(var(--radius) * .6); padding: 8px 30px 9px 14px; color: var(--ink); text-decoration: none; background: var(--paper); }
 .lcard a .pf-newtab-icon { position: absolute; right: 12px; top: 11px; margin: 0; }
 .lcard a:hover { border-color: var(--accent); }

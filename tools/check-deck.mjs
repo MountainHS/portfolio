@@ -10,7 +10,7 @@ import { checkDeckPage, readPrintDeck } from './deck-checks.mjs';
 
 const usage = 'node tools/check-deck.mjs <project-id> | --all [--url <local preview>] [--browser <path>] [--output <json>] [--print] [--pdf <path>]';
 const pause = (ms) => new Promise((done) => setTimeout(done, ms));
-const probes = ['swapped-layout', 'missing-highlight', 'missing-code', 'wrong-code-text', 'wrong-retro-pair'];
+const probes = ['swapped-layout', 'missing-highlight', 'missing-code', 'wrong-code-text', 'wrong-retro-pair', 'uneven-link-card'];
 
 export async function run(args, { flatReport = false } = {}) {
   const { positionals, values } = parseArgs({ args, allowPositionals: true, options: {

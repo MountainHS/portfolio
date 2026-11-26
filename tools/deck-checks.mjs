@@ -33,6 +33,13 @@ export async function checkDeckPage(projectId, probe) {
   if (probe === 'missing-code') first('figure[data-kind="code"]').remove();
   if (probe === 'wrong-code-text') first('figure[data-kind="code"] pre > code').append('changed excerpt');
   if (probe === 'wrong-retro-pair') first('.rt td.p').append('changed plan');
+  if (probe === 'uneven-link-card') {
+    const card = first('.lcard a');
+    card.style.flex = 'none';
+    card.style.height = 'auto';
+    card.style.alignSelf = 'flex-start';
+    card.querySelector('.url')?.append(' changed-long-address-'.repeat(4));
+  }
 
   add('screen deck is ready', report.ready === 'yes' && report.scenes > 0 && report.scenes === pages.size &&
     report.info.id === projectId && ['cover', 'toc', 'end'].every((id) => pages.has(id)),
@@ -68,6 +75,20 @@ export async function checkDeckPage(projectId, probe) {
   add('screen internal links', links.length > 0 && !broken.length, 'Internal links and old-address destinations resolve to mounted scenes',
     { checked: links.length, broken: broken.length });
   for (const link of broken) add('broken internal link', false, 'Existing target with correct page number', link, link.sceneId);
+
+  // 표지·맺음 링크 카드: 한 묶음 안의 카드는 폭·높이가 같아야 함(주소 줄바꿈 수와 상관없이)
+  const linkGroups = all(document, '#deck .pi-links, #deck .en-links').map((group) => {
+    const cards = all(group, ':scope > .lcard > a').map((card) => {
+      const box = card.getBoundingClientRect();
+      return { label: card.querySelector('.lc-t')?.textContent || '', width: Math.round(box.width * 10) / 10, height: Math.round(box.height * 10) / 10 };
+    });
+    const spread = (key) => (cards.length ? Math.max(...cards.map((c) => c[key])) - Math.min(...cards.map((c) => c[key])) : 0);
+    return { sceneId: group.closest('.pf-scene')?.id || null, cards, widthSpread: spread('width'), heightSpread: spread('height') };
+  });
+  const unevenGroups = linkGroups.filter((group) => group.widthSpread > 1 || group.heightSpread > 1);
+  add('link cards same size', !unevenGroups.length, 'Every link card in a cover or closing group has the same width and height (within 1px)',
+    { groups: linkGroups.length, uneven: unevenGroups.length });
+  for (const group of unevenGroups) add('uneven link cards', false, 'Same width and height within the group', group, group.sceneId);
 
   const rect = (node) => node?.getBoundingClientRect().toJSON();
   const isVisible = (box) => box?.width > 0 && box?.height > 0;
