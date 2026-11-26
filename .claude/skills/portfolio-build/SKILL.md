@@ -295,7 +295,7 @@ argument-hint: "[프로젝트 폴더 이름 (생략하면 전체)]"
    이미 떠 있으면 재사용. 브라우저 도구가 있으면 세 페이지를 열어 콘솔 오류·깨진 이미지가 없는지 확인합니다.
    브라우저 도구가 없으면 `CLAUDE.md` 「미리보기」의 headless Chrome 방법(`?pf-audit=1`)으로 같은 `report()` JSON을 읽고 `ready`가 `yes`인지 확인합니다.
    상세 문서도 같습니다(`doc.html?p=<id>&pf-audit=1` — 그림까지 받은 뒤 씀. 상세 문서의 `ready`는 `true`).
-   포트폴리오 기술 역량 영역은 폭 1200px(3열), 760px(2열), 375px(1열)에서 확인합니다. 앞의 두 폭에서 `.skill`의 `getBoundingClientRect().height`가 모두 1px 이내로 같고, 어느 폭에서도 가로 스크롤이나 카드 안 텍스트 잘림이 없어야 합니다. 1열에서는 짧은 카드가 긴 카드 높이에 맞춰 늘어나지 않아야 합니다. 카드의 관련 프로젝트 링크가 `#p-<id>`로 실제 상세 절에 연결되는지도 확인합니다. 이번 세션의 4개 키워드 카드와 2개 키워드 카드가 같은 높이인지가 대표 회귀 사례입니다.
+   포트폴리오 기술 역량 카드 높이는 브라우저로 재지 않고 `python tools/verify-checks.py --only G`(CSS 검사: `.skills`의 `grid-auto-rows: 1fr`, `.skill`에 고정 `height` 없음)로 확인합니다. 이 CSS가 유지되면 3열·2열에서 카드 높이가 같고 1열은 내용 높이입니다(2026-11-26 1200·760px 측정으로 확인). 카드의 관련 프로젝트 링크가 `#p-<id>`로 실제 상세 절에 연결되는지와 `PFPage.report().overflowX`가 0인지는 위 report로 봅니다.
 
    **7-1. 프로젝트마다 슬라이드(`project.html?p=<id>`)**
    — `await PFScene.whenReady()` 뒤 `PFScene.report()`를 읽습니다.

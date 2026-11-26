@@ -7,7 +7,7 @@
 사용:
     python tools/deck-classify.py <입력> [<출력 폴더>]
     <입력>  src/4-wgo 처럼 프로젝트 폴더 하나, 또는 src 폴더(그 아래 프로젝트 전부)
-    <출력>  생략하면 report/deck-classify
+    <출력>  생략하면 output/check/deck-classify
 결과:
     <출력>/<폴더>-분류.md   사람이 보는 표
     <출력>/<폴더>-분류.csv  엑셀 정렬용 (UTF-8 BOM)
@@ -381,7 +381,7 @@ def main(argv):
         print(f"[오류] 프로젝트 문서 md가 있는 폴더를 찾지 못했습니다: {target}")
         return 1
     repo = folders[0].parent.parent  # src/<폴더> 기준 레포 루트
-    out_dir = out_dir or repo / "report" / "deck-classify"
+    out_dir = out_dir or repo / "output" / "check" / "deck-classify"
     out_dir.mkdir(parents=True, exist_ok=True)
     for folder in folders:
         result, err = analyze(folder, repo)

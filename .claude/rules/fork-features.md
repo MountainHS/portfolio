@@ -82,10 +82,10 @@ paths:
 
 ## 프로젝트별 슬라이드 설정
 
-- WGO의 페이지 구성과 문구는 `src/4-wgo/deck-edits.json`에 둡니다. 다시 빌드한 뒤 `deck-edits.py apply`가 기존 기본 장면을 바탕으로 고정·숨김, 합친 장면의 옛 주소, 회고 표시를 `data/projects/4-wgo.json`에 반영합니다.
+- 프로젝트마다 페이지 구성과 문구는 `src/<폴더>/deck-edits.json`에 둡니다. 다시 빌드한 뒤 `deck-edits.py apply`가 기존 기본 장면을 바탕으로 고정·숨김, 합친 장면의 옛 주소, 회고 표시를 `data/projects/<폴더>.json`에 반영합니다.
 - 원문 참조와 지문을 먼저 확인하고, `presentation`·`visuals[].view`가 지정된 장면에 표시 변형을 적용합니다. `/portfolio-update`나 원본 머지로 덮일 수 있는 경로는 `assets/project-deck.js`의 배치·Mermaid 변형·회고·옛 주소 이동, `assets/deck-theme.css`의 대응 배치, `.claude/skills/portfolio-build/deck-edits.py`와 `schema.md`의 선택 필드 검증·보존입니다.
 - `chapterOptions.<장 key>.hideSceneTabs`는 지정한 장 표지의 장면 제목 아래 탭 이름만 숨깁니다. 슬라이드 탭과 다른 장 표지의 표시는 별개입니다. `omitFromCells`는 지정 칸의 원문구를 화면에서 생략합니다. `columns` 배치는 모든 프로젝트에서 각 다이어그램을 같은 열의 제목과 설명 위에 놓습니다.
-- 새 프로젝트는 같은 `deck-edits.json` 설정과 원문 참조를 사용합니다. 배치·노출·원문 범위에 대한 기대값은 그 프로젝트의 데이터에서 읽습니다. 기존 `node tools/check-wgo-deck.mjs` 명령도 공통 실행기를 사용합니다.
+- 새 프로젝트는 같은 `deck-edits.json` 설정과 원문 참조를 사용합니다. 배치·노출·원문 범위에 대한 기대값은 그 프로젝트의 데이터에서 읽습니다. 검사 도구는 모든 프로젝트에 공통으로 쓰는 것만 둡니다(프로젝트 전용 실행기를 만들지 않음).
 
 ## 슬라이드 회귀 검사 (이 포크 전용)
 
@@ -109,6 +109,7 @@ paths:
 - 내용이 적은 장면은 미리보기의 `low-fill`을 보고 원문에서 보강할 설명·도표·사례를 찾습니다. 보강 근거가 없으면 메시지가 이어지는 장면을 묶을 수 있는지 확인합니다. 묶을 때 문제 단위와 설명 순서, 기존 링크 목적지를 보존합니다. `tiny-diagram`·`long-code`도 가독성이나 설명 근거 누락이 있는지 판단해 기록합니다.
 - 다이어그램과 설명은 각 그림의 대상·단계·데이터가 대응 카드와 같은지 원문과 비교합니다. 비교표·성과의 수치, 단위, 비교 조건, 측정 한계와 적용 여부도 확인합니다. 사용자 피드백에는 장면 ID, 재현 조건, 기대 동작, 판정 근거를 남깁니다. 페이지 번호는 최종 보고서에서 확인합니다.
 - 실패 재현은 프로젝트마다 실제 존재하는 요소에 적용합니다. `--probe swapped-layout`은 그림·카드 순서를 바꾸고, `missing-highlight`는 코드 번호를 지우며, `missing-code`와 `wrong-code-text`는 발췌를 제거하거나 변조합니다. `wrong-retro-pair`는 회고의 개선 계획 셀을 변경합니다. 변경은 브라우저에서만 일어나고 `--output <경로>.json`에 실패 근거를 기록합니다.
+- 검사기(`tools/check-*`·`tools/deck-checks.mjs`·`deck-edits.py`의 검증)를 고친 뒤에는 `python tools/verify-checks.py`로 검사기 자체를 확인합니다. 정상 덱 통과와 일부러 망친 입력의 실패를 케이스당 한 줄로 보여 줍니다(B·C·D는 미리보기 서버 필요).
 - 검사 결과 파일(`--output`의 json·`--pdf`의 PDF·화면 캡처)은 `output/check/`에 씁니다. `report/`에 두지 않습니다. `report/`에는 사람이 읽는 md만 둡니다(2026-11-26, 검사 결과 70여 개가 `report/`에 쌓여 정리함).
 - PDF 납품 시 `node tools/check-deck.mjs <프로젝트 폴더> --print --output <경로>.json`으로 인쇄 배치와 링크의 기대 페이지를 기록합니다. 같은 미리보기에서 PDF를 새로 저장할 때는 `--pdf <새 파일>.pdf`를 사용할 수 있습니다. PDF 파일을 정한 뒤 `python tools/check-deck-pdf.py <PDF 파일> <검사 보고서>.json <프로젝트 폴더>`로 실제 페이지 크기·수와 내부 링크 목적지를 검증하고 수정한 페이지를 화면으로 봅니다. PDF 검사에는 `pypdf`가 필요합니다. 인쇄 측정의 1px 이하 경계 초과는 보고서에 남겨 실제 PDF에서 확인합니다.
 
