@@ -2,10 +2,13 @@
 //   하는 일: 프로젝트 문서의 git 기준판(기본 HEAD = 커밋 안 한 변경)과 지금 글을 맨 위 블록(문단·제목·목록·표·코드) 단위로 비교해 화면에 색칠합니다.
 //     새 블록 = 초록 배경 · 지운 블록 = 그 자리에 빨간 배경으로 끼워 넣음 · 고친 문단·제목·목록 = 블록 안 낱말 단위로 <del> 빨강 / <ins> 초록.
 //     표·코드·다이어그램·인용은 낱말 비교를 하지 않고 블록째 지움 + 추가로 보입니다(구조가 깨지지 않게).
-//   기준 바꾸기: 주소에 &diff-base=HEAD~1 (커밋한 뒤에도 직전 변경 보기). &pf-diff=1이면 열자마자 켭니다.
+//   기준 바꾸기: 위쪽 띠의 [기준: …]을 누르면 이 문서를 바꾼 커밋 목록(/__edit/history)이 뜨고, 고른 커밋 판과 지금 글을 다시 비교합니다.
+//     비교의 새 쪽은 늘 지금 글(커밋 안 한 변경 포함)입니다. 고른 기준은 주소 &diff-base=<커밋>에 남아 새로고침해도 유지됩니다.
+//     주소에 직접 &diff-base=HEAD~1처럼 써도 됩니다. &pf-diff=1이면 열자마자 켭니다.
 //   끄면 새로고침 없이 원래 화면으로 되돌립니다. 켜는 동안 편집 모드는 끕니다(색칠한 글을 원문으로 착각하지 않게).
 (() => {
   const BASE_URL = '/__edit/base';
+  const HISTORY_URL = '/__edit/history';
   const PAIR_SIMILARITY = 0.5;                                     // 지움·추가 블록을 "고침"으로 짝지을 최소 글자 유사도(0~1)
   const WORD_DIFF_TYPES = ['paragraph', 'heading', 'list'];        // 낱말 비교를 하는 블록 종류(marked 토큰 type)
 
@@ -24,13 +27,19 @@
     const mdPath = `src/${id}/${project.doc}`;
     const currentText = await PF.loadText(PF.srcPath(id, project.doc));
     const baseRef = params.get('diff-base') || 'HEAD';
-    const response = await fetch(`${BASE_URL}?path=${encodeURIComponent(mdPath)}&base=${encodeURIComponent(baseRef)}`, { cache: 'no-store' });
-    const answer = await response.json();
+    const answer = await fetchBase(mdPath, baseRef);
     if (answer.ok === false) { console.warn('[doc-diff]', answer.error); return; }
 
-    const session = { docElement, baseRef, currentText, baseText: answer.text ?? '', isNewFile: answer.text === null, undo: [], marks: [], cursor: -1, bar: null, button: null };
+    const baseLabel = /^[0-9a-f]{40}$/.test(baseRef) ? baseRef.slice(0, 7) : baseRef;   // 주소의 전체 해시는 짧게 보임
+    const session = { docElement, mdPath, baseRef, baseLabel, currentText, baseText: answer.text ?? '', isNewFile: answer.text === null, undo: [], marks: [], cursor: -1, bar: null, button: null, picker: null };
     addToggleButton(session);
     if (params.get('pf-diff') === '1') setDiffing(session, true);
+  }
+
+  /** 기준판 글을 받습니다. 반환: { ok, text: 글 | null(그 커밋에 파일 없음), error? } */
+  async function fetchBase(mdPath, baseRef) {
+    const response = await fetch(`${BASE_URL}?path=${encodeURIComponent(mdPath)}&base=${encodeURIComponent(baseRef)}`, { cache: 'no-store' });
+    return response.json();
   }
 
   // ── 켜고 끄기 ──
@@ -56,6 +65,7 @@
       session.marks = [];
       session.bar?.remove();
       session.bar = null;
+      closeBasePicker(session);
     }
     document.body.classList.toggle('pf-diffing', isOn);
     session.button.setAttribute('aria-pressed', String(isOn));
@@ -71,13 +81,14 @@
   function showBar(session, counts) {
     const bar = document.createElement('div');
     bar.className = 'pf-diff-bar';
-    const baseLabel = session.isNewFile ? `${session.baseRef}에 없던 새 파일` : `기준: ${session.baseRef}`;
-    bar.innerHTML = `<span>${PF.esc(baseLabel)}</span>
+    const baseLabel = session.isNewFile ? `${session.baseLabel}에 없던 새 파일` : `기준: ${session.baseLabel} 이후 변경`;
+    bar.innerHTML = `<button type="button" class="pf-diff-base" title="기준 커밋 고르기">${PF.esc(baseLabel)} ▾</button>
       <span class="pf-diff-count add">추가 ${counts.added}</span>
       <span class="pf-diff-count del">삭제 ${counts.deleted}</span>
       <span class="pf-diff-count mod">고침 ${counts.modified}</span>
       <button type="button" class="pf-diff-next">다음 변경 ▼</button>`;
     bar.querySelector('.pf-diff-next').addEventListener('click', () => scrollToNext(session));
+    bar.querySelector('.pf-diff-base').addEventListener('click', () => toggleBasePicker(session));
     document.body.appendChild(bar);
     session.bar = bar;
   }
@@ -86,6 +97,65 @@
     if (session.marks.length === 0) return;
     session.cursor = (session.cursor + 1) % session.marks.length;
     session.marks[session.cursor].scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+
+  // ── 기준 커밋 고르기 ──
+
+  function toggleBasePicker(session) {
+    if (session.picker !== null) { closeBasePicker(session); return; }
+    openBasePicker(session);
+  }
+
+  function closeBasePicker(session) {
+    session.picker?.remove();
+    session.picker = null;
+  }
+
+  /**
+   * 띠 아래에 기준 목록을 엽니다: 맨 위 HEAD(마지막 커밋), 그 아래 이 문서를 바꾼 커밋들(/__edit/history).
+   * 하나를 고르면 changeBase로 다시 비교합니다. 목록은 커밋 정보만 받고, 고른 판의 글만 따로 받습니다.
+   */
+  async function openBasePicker(session) {
+    const picker = document.createElement('div');
+    picker.className = 'pf-diff-picker';
+    picker.textContent = '커밋 목록을 읽는 중…';
+    document.body.appendChild(picker);
+    session.picker = picker;
+
+    const response = await fetch(`${HISTORY_URL}?path=${encodeURIComponent(session.mdPath)}`, { cache: 'no-store' });
+    const answer = await response.json();
+    if (session.picker !== picker) return;                       // 읽는 동안 닫힘
+    if (answer.ok === false) { picker.textContent = `목록을 읽지 못했습니다: ${answer.error}`; return; }
+
+    const choices = [{ ref: 'HEAD', label: 'HEAD', detail: '마지막 커밋 (커밋 안 한 변경만 보기)' },
+      ...answer.commits.map((commit) => ({ ref: commit.hash, label: `${commit.short} (${commit.date.slice(5)})`, detail: commit.subject }))];
+    picker.innerHTML = '<p class="pf-diff-picker-head">이 커밋 판과 지금 글을 비교합니다</p>';
+    for (const choice of choices) {
+      const item = document.createElement('button');
+      item.type = 'button';
+      item.className = 'pf-diff-choice';
+      item.setAttribute('aria-current', String(choice.label === session.baseLabel || choice.ref === session.baseRef));
+      item.innerHTML = `<b>${PF.esc(choice.label)}</b> <span>${PF.esc(choice.detail)}</span>`;
+      item.addEventListener('click', () => changeBase(session, choice));
+      picker.appendChild(item);
+    }
+  }
+
+  /** 기준을 바꿔 다시 칠합니다. 주소의 diff-base도 맞춰 새로고침해도 같은 기준이 됩니다. */
+  async function changeBase(session, choice) {
+    const answer = await fetchBase(session.mdPath, choice.ref);
+    if (answer.ok === false) { session.picker.textContent = `기준판을 읽지 못했습니다: ${answer.error}`; return; }
+    setDiffing(session, false);
+    session.baseRef = choice.ref;
+    session.baseLabel = choice.label;
+    session.baseText = answer.text ?? '';
+    session.isNewFile = answer.text === null;
+    setDiffing(session, true);
+
+    const url = new URL(location.href);
+    if (choice.ref === 'HEAD') url.searchParams.delete('diff-base');
+    else url.searchParams.set('diff-base', choice.ref);
+    history.replaceState(history.state, '', url);
   }
 
   // ── 비교해서 색칠 ──

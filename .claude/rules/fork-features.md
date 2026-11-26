@@ -38,9 +38,13 @@ paths:
 ## 슬라이드 편집 모드 (이 포크 전용)
 
 - 편집 서버(`edit-server.py`)로 연 슬라이드(`project.html?p=<폴더>`) 오른쪽 아래 [✎ 편집 모드] → 덱 위 글·그림을 누르면 아래에 입력창이 뜨고, 저장하면 새로고침해 같은 장면으로 돌아옵니다. 덱 데이터(`deck`)로 그린 덱에서만 켜지고, 예전 데이터 자동 구성 덱·GitHub Pages·`python -m http.server`에서는 버튼이 없습니다.
-- 누른 것에 따라 저장 길이 둘입니다(`assets/deck-edit.js`가 나눔).
+- 누른 칸 **하나만** 엽니다(2026-11-26 사용자 결정: 장면 글 전체를 한 창에 여는 안은 다른 칸을 실수로 건드릴 수 있어 뺌). 누른 것에 따라 저장 길이 둘입니다(`assets/deck-edit.js`가 나눔).
   1. 표·코드·다이어그램(프로젝트 문서 원문 블록, 그림(image) 자체는 편집에서 뺌 — 그림 설명 글만 아래 2번) → 그 블록의 md 원문 줄 → `POST /__edit/save`(상세 문서 편집과 같은 길, 프로젝트 문서만 고침). 덱이 블록을 찾는 지문(표 머리 칸·그림 경로·코드·다이어그램 첫 줄)을 바꾸면 `/portfolio-build`를 다시 할 때까지 그 장면에 띠가 뜹니다(입력창에 안내). data의 스크린샷 목록에서 온 그림(`ref.direct`)과 원문을 찾지 못한 그림(빨간 띠)은 누를 수 없습니다.
-  2. 장면 제목·도입·요점 카드·그림 설명(캡션)·장 표지 키워드 → `POST /__edit/deck` → `portfolio-edits.py`의 `save_deck_text`. 고친 글은 늘 `src/<폴더>/deck-edits.json`의 `"deckText"` 목록(`{slide, field, n?, value, from}`)에 남고, 프로젝트 문서에 같은 글이 한 번만 그대로 있으면(제목 줄·코드 블록 제외) 그 줄도 고칩니다(입력창의 [슬라이드에만 저장]을 고르면 문서는 그대로). 키워드는 늘 덱에만. 그림 설명은 `{slide, field:"caption", n: visuals 번호(1부터)}`이고 값은 data `visuals[n-1].caption.text`(글자면 `.caption`)이며, 프로젝트 문서에서는 같은 글이 한 번뿐인 그림 줄(alt)을 고칩니다. 같은 장면에 같은 `src` 그림이 둘이거나 `ref.direct`면 누를 수 없고, 코드 캡션(렌더러가 만든 언어·줄 범위 라벨)은 대상이 아닙니다. data는 `deck.slides`와 `deck.base`(있으면) 둘 다 고치고 `deck.applied` 해시를 맞추며, 글 조각의 `verbatim`은 `false`로 바꿉니다. 빌드 글(`from`)과 같게 고치면 그 줄이 지워집니다(되돌리기).
+  2. 장면 제목·도입·요점 카드와 이름표·그림 설명(캡션)·짝 패널 제목/도입/카드·단계 표 머리 칸/설명 칸·단계 설명 줄·회고(아쉬운 점·개선 계획·달성) 줄·장 표지 키워드 → `POST /__edit/deck` → `portfolio-edits.py`의 `save_deck_text`. 고친 글은 늘 `src/<폴더>/deck-edits.json`의 `"deckText"` 목록(`{slide, field, n?, value, from}`)에 남고, 프로젝트 문서에 같은 글이 한 번만 그대로 있으면(제목 줄·코드 블록 제외) 그 줄도 고칩니다(입력창의 [슬라이드에만 저장]을 고르면 문서는 그대로). 키워드는 늘 덱에만. 그림 설명은 `{slide, field:"caption", n: visuals 번호(1부터)}`이고 값은 data `visuals[n-1].caption.text`(글자면 `.caption`)이며, 프로젝트 문서에서는 같은 글이 한 번뿐인 그림 줄(alt)을 고칩니다. 같은 장면에 같은 `src` 그림이 둘이거나 `ref.direct`면 누를 수 없고, 코드 캡션(렌더러가 만든 언어·줄 범위 라벨)은 대상이 아닙니다. data는 `deck.slides`와 `deck.base`(있으면) 둘 다 고치고 `deck.applied` 해시를 맞추며, 글 조각의 `verbatim`은 `false`로 바꿉니다. 빌드 글(`from`)과 같게 고치면 그 줄이 지워집니다(되돌리기).
+- 2번 칸 자리(`deckText` 한 줄): `{slide, field, n?, m?, value, from, sourceDigest?}`. field = `title`·`lead`·`point`·`point-label`·`caption`·`keywords`·`panel-title`·`panel-lead`·`panel-point`(n 패널, m 카드)·`achieved`·`regret`·`plan`(회고는 `slide: "retro"`, data `retro.achieved|regrets|plans[n-1]`).
+  - 화면 위치 → data 번호는 배치마다 다르게 셉니다(`pointPlace`): 단계 표는 열 번호, 단계 설명은 줄 순서, `.fe-card`·`.result-row`·`.feature-row`·`.dk-column`은 칸 순서, 그 밖은 짝 패널 밖 `.ncard`·`.fstep` 순서. 회고 표 행은 `omitPairs`로 숨긴 짝을 건너뛴 원래 번호. 원본 `project-deck.js` 배치 HTML이 바뀌면 이 셈이 **조용히** 어긋날 수 있습니다.
+  - 요점(`point`·`panel-point`)은 Enter로 두 줄까지: data 글 조각의 `lines`(화면 두 줄, `pointHtml`)와 `text`(두 줄을 한 칸 띄워 이음)를 함께 씁니다. 두 줄 글은 프로젝트 문서 줄에 쓰지 않고 슬라이드에만 둡니다. 다른 칸은 한 줄입니다.
+  - `sourceDigest` = 고칠 때 그 장면 `sectionPath` 절(회고는 `retro.section` 절) md의 지문(`deck-edits.py` `Doc.range_text` → 공백 정리 → sha1 앞 12자). apply 때 지금 원문 절의 지문과 다르면 덮지 않고 `[권장]`으로 알립니다. 원문을 크게 고친 뒤 예전 고친 글이 남지 않게 하려는 것입니다(빌드 글과 비교하지 않는 이유: 원문이 같아도 다시 빌드하면 표현이 바뀜). 지문이 없는 예전 줄은 늘 덮습니다.
 - **`/portfolio-build`와 `/portfolio-edit` 뒤에는 반드시** `deck-edits.py apply --all` 다음에 `python .claude/skills/portfolio-build/portfolio-edits.py apply --all`을 실행합니다(`deckText`를 data에 다시 덮음, 멱등). 특히 `/portfolio-edit`로 고정(pin)한 장면은 고치기 파일의 글로 다시 만들어지므로 이 apply가 없으면 덱 편집 모드에서 고친 글이 빠집니다.
 - 장면 배치(틀·나누기·합치기·숨기기·순서)와 그림 파일 바꾸기는 편집 모드에 없습니다. 배치는 `/portfolio-edit`, 새 그림은 `src/<폴더>/images/`에 넣은 뒤 그림 줄의 경로를 고칩니다.
 - 템플릿 파일에 넣는 줄은 디스크에 없습니다. 편집 서버가 보낼 때만 메모리에서 넣으므로(`.claude/skills/edit-mode-install/edit-mode-patch.py`의 `GROUPS`) `/portfolio-update`가 덮어도 다시 넣을 것이 없습니다. 원본이 `</body>` 줄을 바꿔 서버 창에 `[멈춤]`이 뜨면 `GROUPS`의 기준 줄을 고칩니다.
@@ -52,8 +56,14 @@ paths:
 ## 상세 문서 [± 바뀐 점] (이 포크 전용)
 
 - 편집 서버로 연 상세 문서(`doc.html?p=<폴더>`) 오른쪽 아래 [± 바뀐 점] → 프로젝트 문서의 git 기준판(기본 `HEAD` = 커밋 안 한 변경)과 지금 글을 맨 위 블록 단위로 비교해 색칠합니다. 새 블록 초록, 지운 블록은 그 자리에 빨간 배경으로 끼움, 고친 문단·제목·목록은 낱말 단위 `<del>`/`<ins>`. 표·코드·다이어그램은 블록째 지움+추가. 위쪽 띠에 개수와 [다음 변경 ▼].
-- 주소 옵션: `&diff-base=HEAD~1`(기준 바꾸기), `&pf-diff=1`(열자마자 켬). 켜면 편집 모드는 꺼지고, 끄면 새로고침 없이 원래 화면.
-- 파일: `assets/doc-diff.js`·`assets/doc-diff.css`(로더 `edit-loader.js`의 doc 묶음), `edit-server.py`의 `GET /__edit/base?path=&base=`(`git show <base>:<경로>`, base는 영문·숫자·`~^._/-`만).
+- 기준 고르기: 위쪽 띠의 [기준: … 이후 변경 ▾] → `GET /__edit/history?path=`(현재 브랜치에서 그 문서를 바꾼 커밋 50개, 해시·날짜·제목만)의 목록 → 고른 커밋 판만 `/__edit/base`로 받아 다시 칠하고 주소 `diff-base`를 맞춥니다. 비교의 새 쪽은 늘 지금 글(화면 DOM에 칠하는 구조라 과거 판끼리 비교는 하지 않음, 2026-11-26 결정).
+- 주소 옵션: `&diff-base=<커밋|HEAD~1>`(기준), `&pf-diff=1`(열자마자 켬). 켜면 편집 모드는 꺼지고, 끄면 새로고침 없이 원래 화면.
+- 파일: `assets/doc-diff.js`·`assets/doc-diff.css`(로더 `edit-loader.js`의 doc 묶음), `edit-server.py`의 `GET /__edit/base?path=&base=`(`git show <base>:<경로>`, base는 영문·숫자·`~^._/-`만)·`GET /__edit/history?path=`(`git log --follow`).
+
+## 상세 문서 편집 단위 (이 포크 전용)
+
+- 상세 문서 편집 모드에서 누르는 단위는 **글 묶음**입니다(2026-11-26): 같은 제목 아래 이어진 문단·목록·인용(사이 빈 줄·`<!-- 촬영 -->` 주석 줄 포함)을 한 입력창으로 엽니다. 제목·표·코드·다이어그램·그림만 있는 문단·`<details>` 같은 html 블록은 하나씩 따로 열립니다.
+- 코드: `assets/doc-edit.js`의 `groupTextRuns`(attach에서만 씀). `mapBlocksToLines`는 블록마다 `type`을 더 돌려줄 뿐 그대로라 슬라이드 편집·[± 바뀐 점]은 맨 위 블록 단위를 계속 씁니다.
 
 ## 슬라이드 장면 수 (이 포크 전용)
 

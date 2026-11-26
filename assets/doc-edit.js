@@ -4,6 +4,8 @@
 //   GitHub Pages나 python -m http.server에서는 아무것도 하지 않습니다(편집 버튼 없음).
 //   흐름: md 블록마다 원문 줄 범위 찾기 → [편집 모드] 버튼 → 블록 누르기 → 그 줄들의 md 원문 입력창 → [저장] → 서버가 그 줄만 바꿔 씀 → 새로고침
 //   블록 = 맨 위 수준의 md 덩어리(문단·제목·목록·표·코드·인용). 목록 안 한 줄만 고치는 단위는 없습니다(목록 전체가 한 블록).
+//   상세 문서에서 누르는 단위 = 글 묶음: 같은 제목 아래 이어진 문단·목록·인용을 한 입력창으로 엽니다(groupTextRuns).
+//     제목·표·코드·다이어그램·그림만 있는 문단·html 덩어리는 지금처럼 하나씩 따로 엽니다.
 (() => {
   const PING_URL = '/__edit/ping';
   const SAVE_URL = '/__edit/save';
@@ -20,7 +22,7 @@
     const hasEditServer = await pingEditServer();
     if (hasEditServer === false) return;
 
-    const blocks = mapBlocksToLines(md, docElement);
+    const blocks = groupTextRuns(mapBlocksToLines(md, docElement));
     const originalLines = md.replace(/\r\n?/g, '\n').split('\n');
     const session = { mdPath: `src/${id}/${docFile}`, originalLines, blocks, docElement, toggleButton: null, openEditor: null };
     markEditableBlocks(session);
@@ -44,7 +46,7 @@
    * 화면의 블록 요소마다 md 원문 줄 범위를 찾습니다.
    * 방법: md의 맨 위 수준 토큰(marked.lexer)마다 줄 범위를 재고, 그 토큰 앞에 <!--pf-md:시작-끝--> 주석 줄을 끼운 md를 한 번 더 그립니다.
    *   주석은 요소가 아니므로 그 그림의 요소 배치는 화면과 같습니다. 그래서 주석 바로 뒤 요소의 위치(자식 순서 경로)로 화면 요소를 찾습니다.
-   * 반환: [{ start, end, elements }] (줄은 1부터, 끝 포함). 화면과 배치가 어긋난 블록은 넣지 않고 콘솔에 남깁니다.
+   * 반환: [{ start, end, type, elements }] (줄은 1부터, 끝 포함. type은 topLevelTokenRanges와 같음). 화면과 배치가 어긋난 블록은 넣지 않고 콘솔에 남깁니다.
    */
   function mapBlocksToLines(md, docElement) {
     const text = md.replace(/\r\n?/g, '\n');
@@ -52,6 +54,7 @@
     const template = document.createElement('template');
     template.innerHTML = renderMarkdown(insertLineMarkers(text, ranges));
 
+    const typeByStart = new Map(ranges.map((range) => [range.start, range.type]));
     const blocks = [];
     for (const marker of markerComments(template.content)) {
       const [start, end] = marker.data.slice(MARKER_PREFIX.length).split('-').map(Number);
@@ -59,7 +62,7 @@
         .filter((element) => containsMarker(element) === false)        // <details> 같은 HTML 덩어리 안에 다른 블록이 들어 있으면 그 겉은 고치지 않음
         .map((element) => findSameElement(element, template.content, docElement));
       const isMatched = elements.length > 0 && elements.every(Boolean);
-      if (isMatched) blocks.push({ start, end, elements });
+      if (isMatched) blocks.push({ start, end, type: typeByStart.get(start), elements });
       else if (elements.length > 0) console.warn(`[doc-edit] ${start}~${end}줄 블록을 화면에서 찾지 못해 편집에서 뺍니다.`);
     }
     return blocks;
@@ -80,7 +83,8 @@
   /**
    * md의 맨 위 수준 토큰(빈 줄 제외)마다 줄 범위를 잽니다.
    * marked가 줄 앞 탭을 공백으로 바꾸므로 같은 규칙으로 바꾼 글에서 토큰 원문(raw)의 위치를 찾습니다(줄 수는 그대로).
-   * 반환: [{ start, end }] (1부터, 끝 포함)
+   * 반환: [{ start, end, type }] (1부터, 끝 포함). type은 marked 토큰 종류(paragraph·list·blockquote·heading·table·code·html…),
+   *   단 그림만 있는 문단은 'image'(글 묶음에서 그림을 따로 두려고)
    */
   function topLevelTokenRanges(text) {
     const expanded = text.replace(/^( *)(\t+)/gm, (_, leading, tabs) => leading + '    '.repeat(tabs.length));
@@ -92,10 +96,43 @@
       if (at < 0) { console.warn('[doc-edit] 토큰 위치를 찾지 못해 편집을 끕니다:', token); return []; }
       const start = countNewlines(expanded.slice(0, at)) + 1;
       const end = start + countNewlines(token.raw.replace(/\n+$/, ''));
-      ranges.push({ start, end });
+      ranges.push({ start, end, type: isImageOnlyParagraph(token) ? 'image' : token.type });
       cursor = at + token.raw.length;
     }
     return ranges;
+  }
+
+  /** 그림(![](…))만 있고 다른 글이 없는 문단인지. 그림 사이 공백·줄바꿈은 글로 치지 않습니다. */
+  function isImageOnlyParagraph(token) {
+    if (token.type !== 'paragraph') return false;
+    const children = token.tokens || [];
+    const hasImage = children.some((child) => child.type === 'image');
+    const hasOtherText = children.some((child) => child.type !== 'image' && /\S/.test(child.raw));
+    return hasImage && hasOtherText === false;
+  }
+
+  const TEXT_BLOCK_TYPES = ['paragraph', 'list', 'blockquote'];   // 글 묶음으로 이어 붙이는 블록 종류
+
+  /**
+   * 이웃한 글 블록(문단·목록·인용)을 한 묶음으로 합칩니다. 상세 문서에서 누르는 단위입니다.
+   * 제목·표·코드·다이어그램·그림 문단·html 블록은 하나씩 그대로 두고, 그 자리에서 글 묶음이 끊깁니다.
+   * 묶음의 줄 범위는 첫 블록 시작 ~ 마지막 블록 끝이라 사이의 빈 줄·주석 줄(<!-- 촬영 -->)도 함께 고칩니다.
+   * blocks: mapBlocksToLines 결과(문서 순서). 반환: [{ start, end, type, elements }] — 묶음의 type은 'text'
+   */
+  function groupTextRuns(blocks) {
+    const groups = [];
+    for (const block of blocks) {
+      const previous = groups[groups.length - 1];
+      const isTextBlock = TEXT_BLOCK_TYPES.includes(block.type);
+      const canJoinPrevious = previous !== undefined && previous.type === 'text' && isTextBlock;
+      if (canJoinPrevious) {
+        previous.end = block.end;
+        previous.elements.push(...block.elements);
+        continue;
+      }
+      groups.push({ start: block.start, end: block.end, type: isTextBlock ? 'text' : block.type, elements: [...block.elements] });
+    }
+    return groups;
   }
 
   /** 각 범위의 시작 줄 앞에 <!--pf-md:시작-끝--> 줄을 끼운 md를 돌려줍니다(HTML 주석 줄은 문단을 끊고, 그 자체는 요소를 만들지 않음). */
@@ -272,7 +309,7 @@
   }
 
   // mapBlocksToLines는 슬라이드 편집 모드(assets/deck-edit.js)도 씀: 덱의 표·그림·코드가 md 몇 줄인지 같은 방법으로 잼
-  window.PFDocEdit = { attach, mapBlocksToLines };
+  window.PFDocEdit = { attach, mapBlocksToLines, groupTextRuns };
 
   /**
    * 상세 문서(doc.html)에서만 스스로 켭니다(window.PFDoc가 있을 때. 슬라이드에는 없어 건너뜀).
