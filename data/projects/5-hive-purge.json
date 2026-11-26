@@ -431,7 +431,7 @@
         "title": {"text": "AttackState가 공격 실행과 재진입을 결정", "verbatim": false},
         "lead": {"text": "상태 머신과 공격이 만나는 곳은 AttackState 하나입니다.", "verbatim": true},
         "keywords": ["AttackState", "FinishAttackCycle", "WallHit"],
-        "sectionPath": ["3. 핵심 기능", "3.1 몬스터 구조", "3.1.3 상태 머신 (Plain Old C# Object)", "Stunned·Dead"],
+        "sectionPath": ["3. 핵심 기능", "3.1 몬스터 구조", "3.1.3 상태 머신 (Plain Old C# Object)", "공격이 끝난 뒤 행선지"],
         "points": [
           {"label": "진행 중", "text": "공격 중에는 공격의 Tick을 부르고 종료된 프레임에 FinishAttackCycle을 부릅니다.", "verbatim": false},
           {"label": "재진입", "text": "대상이 없으면 Idle, 유지 사거리 밖이거나 공격할 수 없으면 Chase로 갑니다.", "verbatim": false},
@@ -443,12 +443,12 @@
             "n": 1,
             "fp": "// code/AttackState.cs:23-43, 51-77",
             "lines": [2, 21],
-            "sectionPath": ["3. 핵심 기능", "3.1 몬스터 구조", "3.1.3 상태 머신 (Plain Old C# Object)", "Stunned·Dead"],
+            "sectionPath": ["3. 핵심 기능", "3.1 몬스터 구조", "3.1.3 상태 머신 (Plain Old C# Object)", "공격이 끝난 뒤 행선지"],
             "view": {
               "highlights": [
                 {"start": 5, "end": 10, "point": 1},
-                {"start": 13, "end": 16, "point": 2},
-                {"start": 19, "end": 21, "point": 3}
+                {"start": 12, "end": 15, "point": 2},
+                {"start": 18, "end": 20, "point": 3}
               ]
             }
           }
@@ -464,19 +464,30 @@
         "title": {"text": "공격 종료 결과에 따라 다음 상태를 고르기", "verbatim": false},
         "lead": {"text": "AttackState가 공격의 결과와 After 값을 읽어 다음 행동을 정합니다.", "verbatim": false},
         "keywords": ["WallHit", "After", "상태 전이"],
-        "sectionPath": ["3. 핵심 기능", "3.1 몬스터 구조", "3.1.3 상태 머신 (Plain Old C# Object)", "Stunned·Dead"],
+        "sectionPath": ["3. 핵심 기능", "3.1 몬스터 구조", "3.1.3 상태 머신 (Plain Old C# Object)", "공격이 끝난 뒤 행선지"],
         "points": [
           {"label": "벽 충돌", "text": "WallHit이면 Stun을 호출합니다.", "verbatim": false},
-          {"label": "공격 뒤 행동", "text": "Completed일 때 After 값에 따라 사망·대기·재배치를 선택합니다.", "verbatim": false}
+          {"label": "공격 뒤 행동", "text": "Completed일 때 After 값에 따라 사망·대기·재배치를 선택합니다.", "verbatim": false},
+          {
+            "label": "추적",
+            "text": "기본값 ChaseUntilReady면 쿨다운 동안 Chase로 따라가고, 쿨다운이 끝나면 다시 Attack으로 갑니다.",
+            "verbatim": false
+          }
         ],
         "visuals": [
           {
             "kind": "code",
             "n": 1,
             "fp": "// code/AttackState.cs:23-43, 51-77",
-            "lines": [24, 43],
-            "sectionPath": ["3. 핵심 기능", "3.1 몬스터 구조", "3.1.3 상태 머신 (Plain Old C# Object)", "Stunned·Dead"],
-            "view": {"highlights": [{"start": 26, "end": 29, "point": 1}, {"start": 33, "end": 42, "point": 2}]}
+            "lines": [24, 46],
+            "sectionPath": ["3. 핵심 기능", "3.1 몬스터 구조", "3.1.3 상태 머신 (Plain Old C# Object)", "공격이 끝난 뒤 행선지"],
+            "view": {
+              "highlights": [
+                {"start": 26, "end": 29, "point": 1},
+                {"start": 33, "end": 43, "point": 2},
+                {"start": 44, "end": 46, "point": 3}
+              ]
+            }
           }
         ],
         "codeEvidence": "all-points",
@@ -487,18 +498,18 @@
         "chapter": "core",
         "layout": "code",
         "tab": "구현",
-        "title": {"text": "Stunned·Dead — ChangeState", "verbatim": false},
+        "title": {"text": "모든 상태 전이는 ChangeState 한 곳을 거침", "verbatim": false},
         "lead": {"text": "상태를 바꿀 때는 모두 ChangeState 하나를 거칩니다.", "verbatim": true},
         "keywords": ["ChangeState", "Exit → Enter", "StateChanged"],
-        "sectionPath": ["3. 핵심 기능", "3.1 몬스터 구조", "3.1.3 상태 머신 (Plain Old C# Object)", "Stunned·Dead"],
+        "sectionPath": ["3. 핵심 기능", "3.1 몬스터 구조", "3.1.3 상태 머신 (Plain Old C# Object)", "상태 전이: ChangeState"],
         "points": [
-          {"label": "", "text": "순서는 이전 상태 Exit → 새 상태 Enter → StateChanged 알림입니다.", "verbatim": true},
-          {"label": "", "text": "Dead가 된 뒤의 변경은 무시합니다.", "verbatim": true}
+          {"label": "순서", "text": "순서는 이전 상태 Exit → 새 상태 Enter → StateChanged 알림입니다.", "verbatim": true},
+          {"label": "Dead 이후", "text": "Dead가 된 뒤의 변경은 무시합니다.", "verbatim": true}
         ],
         "visuals": [
           {
             "kind": "code",
-            "n": 2,
+            "n": 1,
             "fp": "// code/MonsterStateMachine.cs:174-184",
             "view": {"highlights": [{"start": 7, "end": 11, "point": 1}, {"start": 5, "end": 5, "point": 2}]}
           }
@@ -690,16 +701,16 @@
         "sectionPath": ["3. 핵심 기능", "3.1 몬스터 구조", "3.1.6 피드백", "피격 ~ 시체: 상시 체력바 없이 상태를 읽게 하기"],
         "points": [
           {"label": "방향", "text": "피격 방향에 맞는 모션을 선택합니다.", "verbatim": false},
-          {"label": "저체력", "text": "다음 피격 모션 허용 시각 전에는 재생을 건너뜁니다.", "verbatim": false},
+          {"label": "재생 간격", "text": "다음 피격 모션 허용 시각 전에는 재생을 건너뜁니다.", "verbatim": false},
           {"label": "재생", "text": "Hit 레이어에 방향별 클립을 겹쳐 재생합니다.", "verbatim": false}
         ],
         "visuals": [
           {
             "kind": "image",
-            "src": "images/hit-feedback-low-hp-and-blood.png",
-            "w": 540,
-            "h": 369,
-            "caption": {"text": "저체력 — 붉은 기와 피", "verbatim": true},
+            "src": "images/hit-feedback-flash-0502.gif",
+            "w": 960,
+            "h": 540,
+            "caption": {"text": "피격 — 명중 섬광과 붉은 피격 표시", "verbatim": true},
             "sectionPath": ["3. 핵심 기능", "3.1 몬스터 구조", "3.1.6 피드백", "피격 ~ 시체: 상시 체력바 없이 상태를 읽게 하기"]
           },
           {
@@ -729,8 +740,8 @@
         "keywords": ["Lying", "Sinking", "Gone"],
         "sectionPath": ["3. 핵심 기능", "3.1 몬스터 구조", "3.1.6 피드백", "피격 ~ 시체: 상시 체력바 없이 상태를 읽게 하기"],
         "points": [
-          {"label": "문제", "text": "Lying 동안 회전을 줄이고 시간이 지나면 Sinking을 시작합니다.", "verbatim": false},
-          {"label": "수정", "text": "Sinking 동안 내려가고 시간이 지나면 Gone으로 넘어갑니다.", "verbatim": false}
+          {"label": "Lying", "text": "Lying 동안 회전을 줄이고 시간이 지나면 Sinking을 시작합니다.", "verbatim": false},
+          {"label": "Sinking", "text": "Sinking 동안 내려가고 시간이 지나면 Gone으로 넘어갑니다.", "verbatim": false}
         ],
         "visuals": [
           {
@@ -2479,7 +2490,7 @@
         "visuals": [{"kind": "table", "n": 1, "fp": "부채|내용"}]
       }
     ],
-    "applied": "f76bf44c03ad696a",
+    "applied": "395d4c7f48b11a60",
     "aliases": {
       "why": "intro",
       "core-exp": "intro",
