@@ -177,34 +177,10 @@
   },
   "deck": {
     "chapters": [
-      {
-        "key": "overview",
-        "title": "개요",
-        "sectionPath": [
-          "1. 개요"
-        ]
-      },
-      {
-        "key": "structure",
-        "title": "시스템 구조",
-        "sectionPath": [
-          "2. 시스템 구조"
-        ]
-      },
-      {
-        "key": "cases",
-        "title": "개발 과정의 주요 사례",
-        "sectionPath": [
-          "3. 개발 과정의 주요 사례"
-        ]
-      },
-      {
-        "key": "results",
-        "title": "결과와 회고",
-        "sectionPath": [
-          "4. 결과와 회고"
-        ]
-      }
+      {"key": "overview", "title": "개요", "sectionPath": ["1. 개요"]},
+      {"key": "structure", "title": "시스템 구조", "sectionPath": ["2. 시스템 구조"]},
+      {"key": "cases", "title": "개발 과정의 주요 사례", "sectionPath": ["3. 개발 과정의 주요 사례"]},
+      {"key": "results", "title": "결과와 회고", "sectionPath": ["4. 결과와 회고"]}
     ],
     "slides": [
       {
@@ -212,23 +188,10 @@
         "chapter": "overview",
         "layout": "overview",
         "tab": "개요",
-        "title": {
-          "text": "1.1 프로젝트 소개",
-          "verbatim": true
-        },
-        "lead": {
-          "text": "플레이어가 함선과 승무원을 직접 조작해 상대 우주선과 전투하는 1인 제작 PC 게임",
-          "verbatim": true
-        },
-        "keywords": [
-          "우주 전략",
-          "함선 전투",
-          "1인 제작"
-        ],
-        "sectionPath": [
-          "1. 개요",
-          "1.1 프로젝트 소개"
-        ],
+        "title": {"text": "1.1 프로젝트 소개", "verbatim": true},
+        "lead": {"text": "플레이어가 함선과 승무원을 직접 조작해 상대 우주선과 전투하는 1인 제작 PC 게임", "verbatim": true},
+        "keywords": ["우주 전략", "함선 전투", "1인 제작"],
+        "sectionPath": ["1. 개요", "1.1 프로젝트 소개"],
         "points": [
           {
             "label": "",
@@ -242,13 +205,8 @@
             "src": "images/main.png",
             "w": 694,
             "h": 386,
-            "caption": {
-              "text": "Project main screen",
-              "verbatim": true
-            },
-            "sectionPath": [
-              "Mini FTL — 첫 Unity 프로젝트에서 배운 설계와 검증의 기준"
-            ]
+            "caption": {"text": "Project main screen", "verbatim": true},
+            "sectionPath": ["Mini FTL — 첫 Unity 프로젝트에서 배운 설계와 검증의 기준"]
           }
         ]
       },
@@ -257,39 +215,17 @@
         "chapter": "overview",
         "layout": "visual",
         "tab": "개요",
-        "title": {
-          "text": "《FTL: Faster Than Light》 소개",
-          "verbatim": true
-        },
+        "title": {"text": "《FTL: Faster Than Light》 소개", "verbatim": true},
         "lead": {
           "text": "《FTL: Faster Than Light》는 플레이어가 우주선의 함장이 되어 은하계를 탐험하며 생존을 목표로 하는 2D 전략 로그라이크 게임입니다.",
           "verbatim": true
         },
-        "keywords": [
-          "원작 FTL",
-          "함선 전투 화면"
-        ],
-        "sectionPath": [
-          "1. 개요",
-          "1.1 프로젝트 소개",
-          "《FTL: Faster Than Light》 소개"
-        ],
+        "keywords": ["원작 FTL", "함선 전투 화면"],
+        "sectionPath": ["1. 개요", "1.1 프로젝트 소개", "《FTL: Faster Than Light》 소개"],
         "points": [
-          {
-            "label": "",
-            "text": "왼쪽 내 함선: 방마다 시설과 승무원이 있습니다.",
-            "verbatim": true
-          },
-          {
-            "label": "",
-            "text": "오른쪽 적 함선(TARGET): 무기로 노릴 방을 고릅니다.",
-            "verbatim": true
-          },
-          {
-            "label": "",
-            "text": "왼쪽 아래 전력 바: 반응로 전력을 시설마다 나눠 줍니다.",
-            "verbatim": true
-          },
+          {"label": "", "text": "왼쪽 내 함선: 방마다 시설과 승무원이 있습니다.", "verbatim": true},
+          {"label": "", "text": "오른쪽 적 함선(TARGET): 무기로 노릴 방을 고릅니다.", "verbatim": true},
+          {"label": "", "text": "왼쪽 아래 전력 바: 반응로 전력을 시설마다 나눠 줍니다.", "verbatim": true},
           {
             "label": "",
             "text": "원작은 은하 탐험·무작위 이벤트·자원 수집까지 담고 있습니다. Mini FTL은 그중 이 화면의 함선 전투만 추려 만들었습니다.",
@@ -302,10 +238,7 @@
             "src": "images/reference-image.png",
             "w": 1823,
             "h": 1014,
-            "caption": {
-              "text": "《FTL》 전투 화면 — 왼쪽 내 함선, 오른쪽 적 함선(TARGET), 왼쪽 아래 시설별 전력 바, 가운데 아래 무기 칸",
-              "verbatim": true
-            }
+            "caption": {"text": "《FTL》 전투 화면 — 왼쪽 내 함선, 오른쪽 적 함선(TARGET), 왼쪽 아래 시설별 전력 바, 가운데 아래 무기 칸", "verbatim": true}
           }
         ]
       },
@@ -314,19 +247,10 @@
         "chapter": "overview",
         "layout": "overview",
         "tab": "개요",
-        "title": {
-          "text": "1.2 왜 만들었나",
-          "verbatim": true
-        },
+        "title": {"text": "1.2 왜 만들었나", "verbatim": true},
         "lead": null,
-        "keywords": [
-          "재현 가능성 검증",
-          "객체지향 설계"
-        ],
-        "sectionPath": [
-          "1. 개요",
-          "1.2 왜 만들었나"
-        ],
+        "keywords": ["재현 가능성 검증", "객체지향 설계"],
+        "sectionPath": ["1. 개요", "1.2 왜 만들었나"],
         "points": [
           {
             "label": "핵심 플레이 경험의 재현 가능성 검증",
@@ -351,34 +275,13 @@
         "chapter": "overview",
         "layout": "overview",
         "tab": "개요",
-        "title": {
-          "text": "1.3 핵심 경험 — 함장으로서 내리는 전략적 판단",
-          "verbatim": true
-        },
-        "lead": {
-          "text": "플레이어가 함장이 되어 함선을 지휘하고, 피해를 최소화하면서 적의 약점을 공략하는 전략적 판단을 핵심 경험으로 삼았습니다.",
-          "verbatim": true
-        },
-        "keywords": [
-          "함장의 판단",
-          "피해 최소화",
-          "약점 공략"
-        ],
-        "sectionPath": [
-          "1. 개요",
-          "1.3 핵심 경험 — 함장으로서 내리는 전략적 판단"
-        ],
+        "title": {"text": "1.3 핵심 경험 — 함장으로서 내리는 전략적 판단", "verbatim": true},
+        "lead": {"text": "플레이어가 함장이 되어 함선을 지휘하고, 피해를 최소화하면서 적의 약점을 공략하는 전략적 판단을 핵심 경험으로 삼았습니다.", "verbatim": true},
+        "keywords": ["함장의 판단", "피해 최소화", "약점 공략"],
+        "sectionPath": ["1. 개요", "1.3 핵심 경험 — 함장으로서 내리는 전략적 판단"],
         "points": [
-          {
-            "label": "피해 최소화",
-            "text": "적의 공격을 실드로 막고, 피해 입은 시설은 승무원을 보내 수리합니다.",
-            "verbatim": true
-          },
-          {
-            "label": "약점 공략",
-            "text": "적 함선의 어느 방을 먼저 무너뜨릴지 골라 무기로 노립니다.",
-            "verbatim": true
-          },
+          {"label": "피해 최소화", "text": "적의 공격을 실드로 막고, 피해 입은 시설은 승무원을 보내 수리합니다.", "verbatim": true},
+          {"label": "약점 공략", "text": "적 함선의 어느 방을 먼저 무너뜨릴지 골라 무기로 노립니다.", "verbatim": true},
           {
             "label": "한정된 자원의 배분",
             "text": "반응로 전력은 모든 시설을 동시에 최대로 가동할 만큼 넉넉하지 않습니다. 공격과 방어 중 어디에 힘을 실을지 계속 고릅니다.",
@@ -391,96 +294,32 @@
         "key": "loop",
         "chapter": "overview",
         "layout": "visual",
+        "presentation": "pair",
         "tab": "흐름",
-        "title": {
-          "text": "1.4 핵심 루프",
-          "verbatim": true
-        },
-        "lead": {
-          "text": "플레이어는 적 함선과 전투하고, 이기면 상점에서 함선을 정비한 뒤 다음 전투로 나아갑니다.",
-          "verbatim": true
-        },
-        "keywords": [
-          "전투",
-          "상점 정비"
-        ],
-        "sectionPath": [
-          "1. 개요",
-          "1.4 핵심 루프"
-        ],
+        "title": {"text": "1.4 핵심 루프", "verbatim": true},
+        "lead": {"text": "플레이어는 적 함선과 전투하고, 이기면 상점에서 함선을 정비한 뒤 다음 전투로 나아갑니다.", "verbatim": true},
+        "keywords": ["전투", "상점 정비"],
+        "sectionPath": ["1. 개요", "1.4 핵심 루프"],
         "points": [
           {
             "label": "적 함선과 전투",
             "text": "플레이어 함선과 적 함선이 실시간으로 서로의 방을 공격합니다. 적은 자동으로 조준해 공격하고, 플레이어는 전력·무기·승무원을 직접 관리합니다.",
             "verbatim": true
           },
-          {
-            "label": "상점에서 정비",
-            "text": "반응로를 강화하고, 함선을 수리하고, 승무원을 치료해 다음 전투에 대비합니다.",
-            "verbatim": true
-          }
+          {"label": "상점에서 정비", "text": "반응로를 강화하고, 함선을 수리하고, 승무원을 치료해 다음 전투에 대비합니다.", "verbatim": true}
         ],
-        "visuals": [
-          {
-            "kind": "mermaid",
-            "n": 1,
-            "fp": "flowchart LR"
-          }
-        ]
-      },
-      {
-        "key": "win-lose",
-        "chapter": "overview",
-        "layout": "full",
-        "tab": "흐름",
-        "title": {
-          "text": "게임 승패",
-          "verbatim": true
-        },
-        "lead": {
-          "text": "전투를 거칠수록 더 강한 적 함선과 소행성·태양 플레어 같은 환경 위험이 더해집니다.",
-          "verbatim": true
-        },
-        "keywords": [
-          "승리·패배",
-          "환경 위험",
-          "고철 보상"
-        ],
-        "sectionPath": [
-          "1. 개요",
-          "1.4 핵심 루프"
-        ],
-        "points": [],
-        "visuals": [
-          {
-            "kind": "table",
-            "n": 1,
-            "fp": "게임 승패|언제"
-          }
-        ]
+        "visuals": [{"kind": "mermaid", "n": 1, "fp": "flowchart LR"}, {"kind": "table", "n": 1, "fp": "게임 승패|언제"}],
+        "edited": true
       },
       {
         "key": "three-decisions",
         "chapter": "overview",
         "layout": "screens",
         "tab": "개요",
-        "title": {
-          "text": "1.5 전투에서 플레이어가 하는 세 가지 판단",
-          "verbatim": true
-        },
-        "lead": {
-          "text": "한정된 전력을 어디에 쓸지, 적 함선의 어느 방을 노릴지, 승무원을 어디로 보낼지입니다.",
-          "verbatim": true
-        },
-        "keywords": [
-          "전력 관리",
-          "무기 조준",
-          "승무원 관리"
-        ],
-        "sectionPath": [
-          "1. 개요",
-          "1.5 전투에서 플레이어가 하는 세 가지 판단"
-        ],
+        "title": {"text": "1.5 전투에서 플레이어가 하는 세 가지 판단", "verbatim": true},
+        "lead": {"text": "한정된 전력을 어디에 쓸지, 적 함선의 어느 방을 노릴지, 승무원을 어디로 보낼지입니다.", "verbatim": true},
+        "keywords": ["전력 관리", "무기 조준", "승무원 관리"],
+        "sectionPath": ["1. 개요", "1.5 전투에서 플레이어가 하는 세 가지 판단"],
         "points": [],
         "visuals": [
           {
@@ -488,30 +327,21 @@
             "src": "images/main-function-1.png",
             "w": 412,
             "h": 352,
-            "caption": {
-              "text": "전력 관리",
-              "verbatim": true
-            }
+            "caption": {"text": "전력 관리", "verbatim": true}
           },
           {
             "kind": "image",
             "src": "images/main-function-3.png",
             "w": 156,
             "h": 220,
-            "caption": {
-              "text": "무기 조준",
-              "verbatim": true
-            }
+            "caption": {"text": "무기 조준", "verbatim": true}
           },
           {
             "kind": "image",
             "src": "images/main-function-2.png",
             "w": 342,
             "h": 116,
-            "caption": {
-              "text": "승무원 관리",
-              "verbatim": true
-            }
+            "caption": {"text": "승무원 관리", "verbatim": true}
           }
         ]
       },
@@ -520,21 +350,10 @@
         "chapter": "structure",
         "layout": "visual",
         "tab": "구조",
-        "title": {
-          "text": "2. 시스템 구조",
-          "verbatim": true
-        },
-        "lead": {
-          "text": "이 조작은 모두 함선(ShipController)을 거쳐 각 시스템에 전달됩니다.",
-          "verbatim": true
-        },
-        "keywords": [
-          "ShipController",
-          "시스템 나누기"
-        ],
-        "sectionPath": [
-          "2. 시스템 구조"
-        ],
+        "title": {"text": "2. 시스템 구조", "verbatim": true},
+        "lead": {"text": "이 조작은 모두 함선(ShipController)을 거쳐 각 시스템에 전달됩니다.", "verbatim": true},
+        "keywords": ["ShipController", "시스템 나누기"],
+        "sectionPath": ["2. 시스템 구조"],
         "points": [
           {
             "label": "",
@@ -547,41 +366,19 @@
             "verbatim": true
           }
         ],
-        "visuals": [
-          {
-            "kind": "mermaid",
-            "n": 1,
-            "fp": "flowchart LR"
-          }
-        ]
+        "visuals": [{"kind": "mermaid", "n": 1, "fp": "flowchart LR"}]
       },
       {
         "key": "game-flow",
         "chapter": "structure",
         "layout": "visual",
         "tab": "구조",
-        "title": {
-          "text": "2.1 게임 진행",
-          "verbatim": true
-        },
-        "lead": {
-          "text": "`GameManager`는 씬이 바뀌어도 남아 전투 결과를 받고 다음 씬을 고릅니다.",
-          "verbatim": true
-        },
-        "keywords": [
-          "GameContext",
-          "SceneBinder"
-        ],
-        "sectionPath": [
-          "2. 시스템 구조",
-          "2.1 게임 진행"
-        ],
+        "title": {"text": "2.1 게임 진행", "verbatim": true},
+        "lead": {"text": "`GameManager`는 씬이 바뀌어도 남아 전투 결과를 받고 다음 씬을 고릅니다.", "verbatim": true},
+        "keywords": ["GameContext", "SceneBinder"],
+        "sectionPath": ["2. 시스템 구조", "2.1 게임 진행"],
         "points": [
-          {
-            "label": "",
-            "text": "함선 체력·전력·시설·승무원·무기 상태는 `GameContext`에 담아 전투 씬과 상점 씬 사이로 넘깁니다.",
-            "verbatim": true
-          },
+          {"label": "", "text": "함선 체력·전력·시설·승무원·무기 상태는 `GameContext`에 담아 전투 씬과 상점 씬 사이로 넘깁니다.", "verbatim": true},
           {
             "label": "",
             "text": "새 전투 씬이 열리면 `SceneBinder`가 이 상태를 플레이어 함선에 되돌리고, 적 함선과 `CombatSystem`을 준비합니다.",
@@ -589,339 +386,200 @@
           }
         ],
         "visuals": [
+          {"kind": "mermaid", "n": 1, "fp": "classDiagram"},
           {
-            "kind": "mermaid",
+            "kind": "code",
             "n": 1,
-            "fp": "classDiagram"
+            "fp": "// GameManager.OnSceneLoaded() — 전투 씬 1",
+            "view": {"highlights": [{"start": 2, "end": 3, "point": 1}, {"start": 6, "end": 11, "point": 2}]}
           }
-        ]
+        ],
+        "codeEvidence": "all-points",
+        "edited": true
       },
       {
         "key": "ship",
         "chapter": "structure",
         "layout": "visual",
         "tab": "구조",
-        "title": {
-          "text": "2.2 함선",
-          "verbatim": true
-        },
-        "lead": {
-          "text": "`ShipController`는 한 함선의 방·체력·시설·승무원·무기를 한곳에 모은 기준점입니다.",
-          "verbatim": true
-        },
-        "keywords": [
-          "ShipController",
-          "상속"
-        ],
-        "sectionPath": [
-          "2. 시스템 구조",
-          "2.2 함선"
-        ],
+        "title": {"text": "2.2 함선", "verbatim": true},
+        "lead": {"text": "`ShipController`는 한 함선의 방·체력·시설·승무원·무기를 한곳에 모은 기준점입니다.", "verbatim": true},
+        "keywords": ["ShipController", "상속"],
+        "sectionPath": ["2. 시스템 구조", "2.2 함선"],
         "points": [
           {
             "label": "",
             "text": "플레이어 함선(`PlayerController`)과 적 함선(`EnemyController`)이 같은 부모를 물려받아 방 피해와 사망 처리를 함께 사용합니다.",
             "verbatim": true
           },
-          {
-            "label": "",
-            "text": "플레이어 함선은 상점에서 바뀐 상태를 받아들이고, 적 함선은 `RandomTargeter`로 노릴 방을 고릅니다.",
-            "verbatim": true
-          }
+          {"label": "", "text": "플레이어 함선은 상점에서 바뀐 상태를 받아들이고, 적 함선은 `RandomTargeter`로 노릴 방을 고릅니다.", "verbatim": true}
         ],
-        "visuals": [
-          {
-            "kind": "mermaid",
-            "n": 1,
-            "fp": "classDiagram"
-          }
-        ]
+        "visuals": [{"kind": "mermaid", "n": 1, "fp": "classDiagram"}]
       },
       {
         "key": "crew-system",
         "chapter": "structure",
         "layout": "visual",
         "tab": "구조",
-        "title": {
-          "text": "2.3 승무원",
-          "verbatim": true
-        },
-        "lead": {
-          "text": "`CrewSystem`은 선택한 승무원 목록을 들고 이동 명령을 각 승무원에게 나눠 줍니다.",
-          "verbatim": true
-        },
-        "keywords": [
-          "CrewSystem",
-          "Room"
-        ],
-        "sectionPath": [
-          "2. 시스템 구조",
-          "2.3 승무원"
-        ],
+        "title": {"text": "2.3 승무원", "verbatim": true},
+        "lead": {"text": "`CrewSystem`은 선택한 승무원 목록을 들고 이동 명령을 각 승무원에게 나눠 줍니다.", "verbatim": true},
+        "keywords": ["CrewSystem", "Room"],
+        "sectionPath": ["2. 시스템 구조", "2.3 승무원"],
         "points": [
           {
             "label": "",
             "text": "`CrewController`는 승무원 한 명의 체력과 지금 있는 방(`CurrentRoom`)을 갖고, 도착한 방의 시설 상태에 맞춰 수리하거나 보조합니다.",
             "verbatim": true
           },
-          {
-            "label": "",
-            "text": "`Room`은 그 방에 있는 승무원 목록과 시설을 함께 갖고 있어, 수리와 방 피해가 이곳을 거칩니다.",
-            "verbatim": true
-          }
+          {"label": "", "text": "`Room`은 그 방에 있는 승무원 목록과 시설을 함께 갖고 있어, 수리와 방 피해가 이곳을 거칩니다.", "verbatim": true}
         ],
-        "visuals": [
-          {
-            "kind": "mermaid",
-            "n": 1,
-            "fp": "classDiagram"
-          }
-        ]
+        "visuals": [{"kind": "mermaid", "n": 1, "fp": "classDiagram"}]
       },
       {
         "key": "power-system",
         "chapter": "structure",
         "layout": "visual",
         "tab": "구조",
-        "title": {
-          "text": "2.4 전력 조절",
-          "verbatim": true
-        },
-        "lead": {
-          "text": "반응로의 남은 전력과 시설마다 받은 전력을 다른 클래스가 갖습니다.",
-          "verbatim": true
-        },
-        "keywords": [
-          "ShipPowerController",
-          "배분·회수"
-        ],
-        "sectionPath": [
-          "2. 시스템 구조",
-          "2.4 전력 조절"
-        ],
+        "title": {"text": "2.4 전력 조절", "verbatim": true},
+        "lead": {"text": "반응로의 남은 전력과 시설마다 받은 전력을 다른 클래스가 갖습니다.", "verbatim": true},
+        "keywords": ["ShipPowerController", "배분·회수"],
+        "sectionPath": ["2. 시스템 구조", "2.4 전력 조절"],
         "points": [
           {
             "label": "",
             "text": "`ReactorController`는 쓸 수 있는 전력을, `FacilityController`는 시설의 전력·최대 전력·피해를 맡습니다.",
             "verbatim": true
           },
-          {
-            "label": "",
-            "text": "두 값을 함께 바꾸는 배분·회수 요청은 `ShipPowerController`가 처리합니다.",
-            "verbatim": true
-          }
+          {"label": "", "text": "두 값을 함께 바꾸는 배분·회수 요청은 `ShipPowerController`가 처리합니다.", "verbatim": true}
         ],
-        "visuals": [
-          {
-            "kind": "mermaid",
-            "n": 1,
-            "fp": "classDiagram"
-          }
-        ]
+        "visuals": [{"kind": "mermaid", "n": 1, "fp": "classDiagram"}]
       },
       {
         "key": "combat-system",
         "chapter": "structure",
         "layout": "visual",
         "tab": "구조",
-        "title": {
-          "text": "2.5 무기·전투",
-          "verbatim": true
-        },
+        "title": {"text": "2.5 무기·전투", "verbatim": true},
         "lead": {
           "text": "무기실 시설인 `WeaponSystem`이 무기(`WeaponController`)들을 들고, 충전이 끝난 무기가 투사체(`ProjectileController`)를 쏩니다.",
           "verbatim": true
         },
-        "keywords": [
-          "WeaponSystem",
-          "CombatSystem"
-        ],
-        "sectionPath": [
-          "2. 시스템 구조",
-          "2.5 무기·전투"
-        ],
+        "keywords": ["WeaponSystem", "CombatSystem"],
+        "sectionPath": ["2. 시스템 구조", "2.5 무기·전투"],
         "points": [
           {
             "label": "",
             "text": "투사체가 실드에 닿거나 목표 방에 도착하면 `CombatSystem`이 두 함선 중 맞은 쪽을 찾아 실드 피해나 방 피해를 넘깁니다.",
             "verbatim": true
           },
-          {
-            "label": "",
-            "text": "이 구조에서 개발하며 가장 크게 부딪힌 곳은 전력 조절, 전투 씬을 다시 조립하는 게임 진행, 승무원이었습니다.",
-            "verbatim": true
-          }
+          {"label": "", "text": "이 구조에서 개발하며 가장 크게 부딪힌 곳은 전력 조절, 전투 씬을 다시 조립하는 게임 진행, 승무원이었습니다.", "verbatim": true}
         ],
-        "visuals": [
-          {
-            "kind": "mermaid",
-            "n": 1,
-            "fp": "flowchart LR"
-          }
-        ]
+        "visuals": [{"kind": "mermaid", "n": 1, "fp": "flowchart LR"}]
       },
       {
         "key": "power-choice",
         "chapter": "cases",
         "layout": "full",
         "tab": "선택",
-        "title": {
-          "text": "문제와 첫 설계",
-          "verbatim": true
-        },
-        "lead": {
-          "text": "프로젝트에서 실제로 구현할 범위보다 미래에 추가할 수 있는 규칙을 더 크게 고려해, 처음부터 역할을 분리하는 방식을 선택했습니다.",
-          "verbatim": true
-        },
-        "keywords": [
-          "전력 관리자",
-          "책임 분리",
-          "미래 규칙"
-        ],
-        "sectionPath": [
-          "3. 개발 과정의 주요 사례",
-          "3.1 전력 관리 — 책임을 나누면 구현도 쉬워질 것이라는 판단",
-          "문제와 첫 설계"
-        ],
+        "title": {"text": "문제와 첫 설계", "verbatim": true},
+        "lead": {"text": "프로젝트에서 실제로 구현할 범위보다 미래에 추가할 수 있는 규칙을 더 크게 고려해, 처음부터 역할을 분리하는 방식을 선택했습니다.", "verbatim": true},
+        "keywords": ["전력 관리자", "책임 분리", "미래 규칙"],
+        "sectionPath": ["3. 개발 과정의 주요 사례", "3.1 전력 관리 — 책임을 나누면 구현도 쉬워질 것이라는 판단", "문제와 첫 설계"],
         "points": [],
-        "visuals": [
-          {
-            "kind": "table",
-            "n": 1,
-            "fp": "대안|생각했던 장점|예상한 부담"
-          }
-        ]
+        "visuals": [{"kind": "table", "n": 1, "fp": "대안|생각했던 장점|예상한 부담"}]
       },
       {
         "key": "power-code",
         "chapter": "cases",
         "layout": "code",
         "tab": "구현",
-        "title": {
-          "text": "실제 구현 — 상태는 각자, 전력 이동은 중간 관리자가 처리",
-          "verbatim": true
-        },
-        "lead": {
-          "text": "클래스의 역할을 구분하는 것과, 하나의 동작을 이해하기 쉽게 만드는 것은 같은 문제가 아니었습니다.",
-          "verbatim": true
-        },
-        "keywords": [
-          "AllocatePower",
-          "세 객체의 역할"
-        ],
-        "sectionPath": [
-          "3. 개발 과정의 주요 사례",
-          "3.1 전력 관리 — 책임을 나누면 구현도 쉬워질 것이라는 판단",
-          "실제 구현 — 상태는 각자, 전력 이동은 중간 관리자가 처리"
-        ],
+        "title": {"text": "실제 구현 — 상태는 각자, 전력 이동은 중간 관리자가 처리", "verbatim": true},
+        "lead": {"text": "클래스의 역할을 구분하는 것과, 하나의 동작을 이해하기 쉽게 만드는 것은 같은 문제가 아니었습니다.", "verbatim": true},
+        "keywords": ["AllocatePower", "세 객체의 역할"],
+        "sectionPath": ["3. 개발 과정의 주요 사례", "3.1 전력 관리 — 책임을 나누면 구현도 쉬워질 것이라는 판단", "실제 구현 — 상태는 각자, 전력 이동은 중간 관리자가 처리"],
         "points": [
-          {
-            "label": "",
-            "text": "`ReactorController`: 반응로의 최대 전력과 가용 전력 관리",
-            "verbatim": true
-          },
-          {
-            "label": "",
-            "text": "`FacilityController`: 시설별 할당 전력, 피해량, 사용 가능한 최대 전력 및 상태 관리",
-            "verbatim": true
-          },
-          {
-            "label": "",
-            "text": "`ShipPowerController`: 전력 할당·회수 가능 여부를 검사하고, 두 객체의 값을 변경",
-            "verbatim": true
-          }
+          {"label": "", "text": "`ReactorController`: 반응로의 최대 전력과 가용 전력 관리", "verbatim": true},
+          {"label": "", "text": "`FacilityController`: 시설별 할당 전력, 피해량, 사용 가능한 최대 전력 및 상태 관리", "verbatim": true},
+          {"label": "", "text": "`ShipPowerController`: 전력 할당·회수 가능 여부를 검사하고, 두 객체의 값을 변경", "verbatim": true}
         ],
         "visuals": [
           {
             "kind": "code",
             "n": 1,
-            "fp": "// ShipPowerController.AllocatePower — 핵심 부분"
+            "fp": "// ShipPowerController.AllocatePower — 핵심 부분",
+            "view": {
+              "highlights": [
+                {"start": 13, "end": 13, "point": 1},
+                {"start": 12, "end": 12, "point": 2},
+                {"start": 4, "end": 9, "point": 3}
+              ]
+            }
           }
-        ]
+        ],
+        "codeEvidence": "all-points",
+        "edited": true
       },
       {
         "key": "power-cost",
         "chapter": "cases",
-        "layout": "problem",
-        "tab": "문제 해결",
-        "title": {
-          "text": "실제 겪은 문제 — 설계의 복잡성이 테스트 비용으로 돌아옴",
-          "verbatim": true
-        },
-        "lead": null,
-        "keywords": [
-          "테스트 비용",
-          "중복 감소 버그"
-        ],
-        "sectionPath": [
-          "3. 개발 과정의 주요 사례",
-          "3.1 전력 관리 — 책임을 나누면 구현도 쉬워질 것이라는 판단",
-          "실제 겪은 문제 — 설계의 복잡성이 테스트 비용으로 돌아옴"
-        ],
-        "points": [
+        "layout": "overview",
+        "presentation": "paired",
+        "panels": [
           {
-            "label": "문제",
-            "text": "전력 기능을 테스트하려면 Unity에서 반응로와 무기·실드·엔진 등 관련 컴포넌트를 준비하고 참조를 연결해야 했습니다.",
-            "verbatim": true
+            "title": {"text": "실제 겪은 문제", "verbatim": false},
+            "lead": null,
+            "points": [
+              {
+                "label": "문제",
+                "text": "전력 기능을 테스트하려면 Unity에서 반응로와 무기·실드·엔진 등 관련 컴포넌트를 준비하고 참조를 연결해야 했습니다.",
+                "verbatim": true
+              },
+              {
+                "label": "원인",
+                "text": "시설 피해 처리 과정에서 `FacilityController.TakeDamage()`가 초과 전력을 직접 줄인 뒤 `ShipPowerController.DeallocatePower()`를 호출해, 시설 전력이 중복 감소했습니다.",
+                "verbatim": false
+              },
+              {
+                "label": "해결",
+                "text": "중복된 `ReducePower()` 호출을 제거하고, `DeallocatePower()`가 전력 회수를 한 번만 처리하도록 수정했습니다.",
+                "verbatim": true
+              }
+            ],
+            "sectionPath": ["3. 개발 과정의 주요 사례", "3.1 전력 관리 — 책임을 나누면 구현도 쉬워질 것이라는 판단", "실제 겪은 문제 — 설계의 복잡성이 테스트 비용으로 돌아옴"]
           },
           {
-            "label": "원인",
-            "text": "시설 피해 처리 과정에서 `FacilityController.TakeDamage()`가 초과 전력을 직접 줄인 뒤 `ShipPowerController.DeallocatePower()`를 호출해, 시설 전력이 중복 감소했습니다.",
-            "verbatim": false
-          },
-          {
-            "label": "해결",
-            "text": "중복된 `ReducePower()` 호출을 제거하고, `DeallocatePower()`가 전력 회수를 한 번만 처리하도록 수정했습니다.",
-            "verbatim": true
-          },
-          {
-            "label": "결과",
-            "text": "개발을 마치고 보니 처음 예상했던 이온 피해 등 추가 규칙은 실제 프로젝트에 들어가지 않았습니다.",
-            "verbatim": true
+            "title": {"text": "결과와 배운 점", "verbatim": true},
+            "lead": {"text": "다시 같은 규모의 프로토타입을 만든다면 우선 한곳에서 전력 이동을 추적하고 테스트할 수 있는 단순한 구조로 시작하겠습니다.", "verbatim": true},
+            "points": [
+              {"label": "배운 점", "text": "책임 분리는 미래에 추가할지 모르는 기능보다 현재 존재하는 규칙과 변경 요구를 기준으로 합니다.", "verbatim": true},
+              {"label": "배운 점", "text": "여러 객체의 상태가 함께 변하는 기능은 개별 값의 유효성뿐 아니라 객체 사이의 일관성까지 검증합니다.", "verbatim": true}
+            ],
+            "sectionPath": ["3. 개발 과정의 주요 사례", "3.1 전력 관리 — 책임을 나누면 구현도 쉬워질 것이라는 판단", "결과와 배운 점"]
           }
         ],
-        "visuals": []
+        "tab": "문제 해결",
+        "title": {"text": "실제 겪은 문제 — 설계의 복잡성이 테스트 비용으로 돌아옴", "verbatim": true},
+        "lead": null,
+        "keywords": ["테스트 비용", "중복 감소 버그"],
+        "sectionPath": ["3. 개발 과정의 주요 사례", "3.1 전력 관리 — 책임을 나누면 구현도 쉬워질 것이라는 판단", "실제 겪은 문제 — 설계의 복잡성이 테스트 비용으로 돌아옴"],
+        "points": [],
+        "visuals": [],
+        "edited": true
       },
       {
         "key": "power-ui",
         "chapter": "cases",
         "layout": "problem",
         "tab": "문제 해결",
-        "title": {
-          "text": "시설 상태 UI — 상태의 의미를 명확히 정하지 않고 UI를 구현",
-          "verbatim": true
-        },
+        "title": {"text": "시설 상태 UI — 상태의 의미를 명확히 정하지 않고 UI를 구현", "verbatim": true},
         "lead": null,
-        "keywords": [
-          "상태 우선순위",
-          "회색 표시 버그"
-        ],
-        "sectionPath": [
-          "3. 개발 과정의 주요 사례",
-          "3.1 전력 관리 — 책임을 나누면 구현도 쉬워질 것이라는 판단",
-          "시설 상태 UI — 상태의 의미를 명확히 정하지 않고 UI를 구현"
-        ],
+        "keywords": ["상태 우선순위", "회색 표시 버그"],
+        "sectionPath": ["3. 개발 과정의 주요 사례", "3.1 전력 관리 — 책임을 나누면 구현도 쉬워질 것이라는 판단", "시설 상태 UI — 상태의 의미를 명확히 정하지 않고 UI를 구현"],
         "points": [
-          {
-            "label": "문제",
-            "text": "완전히 파괴되어 빨간색이어야 할 시설이 회색으로 표시되는 문제를 겪었습니다.",
-            "verbatim": false
-          },
-          {
-            "label": "원인",
-            "text": "원인은 하나의 시설이 동시에 여러 조건을 만족할 수 있다는 사실을 충분히 고려하지 않은 데 있었습니다.",
-            "verbatim": true
-          },
-          {
-            "label": "해결",
-            "text": "조건 판정의 우선순위를 조정해 수정했습니다.",
-            "verbatim": false
-          },
-          {
-            "label": "배운 점",
-            "text": "이 UI 문제는 상태 조건의 중첩과 표시 우선순위를 먼저 정의하지 않은 실수였습니다.",
-            "verbatim": true
-          }
+          {"label": "문제", "text": "완전히 파괴되어 빨간색이어야 할 시설이 회색으로 표시되는 문제를 겪었습니다.", "verbatim": false},
+          {"label": "원인", "text": "원인은 하나의 시설이 동시에 여러 조건을 만족할 수 있다는 사실을 충분히 고려하지 않은 데 있었습니다.", "verbatim": true},
+          {"label": "해결", "text": "조건 판정의 우선순위를 조정해 수정했습니다.", "verbatim": false},
+          {"label": "배운 점", "text": "이 UI 문제는 상태 조건의 중첩과 표시 우선순위를 먼저 정의하지 않은 실수였습니다.", "verbatim": true}
         ],
         "visuals": [
           {
@@ -929,83 +587,20 @@
             "src": "images/power-ui.png",
             "w": 265,
             "h": 229,
-            "caption": {
-              "text": "Power UI",
-              "verbatim": true
-            }
+            "caption": {"text": "Power UI", "verbatim": true}
           },
-          {
-            "kind": "code",
-            "n": 1,
-            "fp": "// FacilityController.UpdateFacilityStatus — 최종 코드"
-          }
+          {"kind": "code", "n": 1, "fp": "// FacilityController.UpdateFacilityStatus — 최종 코드"}
         ]
-      },
-      {
-        "key": "power-lessons",
-        "chapter": "cases",
-        "layout": "overview",
-        "tab": "결과",
-        "title": {
-          "text": "결과와 배운 점",
-          "verbatim": true
-        },
-        "lead": {
-          "text": "다시 같은 규모의 프로토타입을 만든다면 우선 한곳에서 전력 이동을 추적하고 테스트할 수 있는 단순한 구조로 시작하겠습니다.",
-          "verbatim": true
-        },
-        "keywords": [
-          "현재 규칙 기준",
-          "일관성 검증",
-          "상태 정의"
-        ],
-        "sectionPath": [
-          "3. 개발 과정의 주요 사례",
-          "3.1 전력 관리 — 책임을 나누면 구현도 쉬워질 것이라는 판단",
-          "결과와 배운 점"
-        ],
-        "points": [
-          {
-            "label": "배운 점",
-            "text": "책임 분리는 미래에 추가할지 모르는 기능보다 현재 존재하는 규칙과 변경 요구를 기준으로 합니다.",
-            "verbatim": true
-          },
-          {
-            "label": "배운 점",
-            "text": "여러 객체의 상태가 함께 변하는 기능은 개별 값의 유효성뿐 아니라 객체 사이의 일관성까지 검증합니다.",
-            "verbatim": true
-          },
-          {
-            "label": "배운 점",
-            "text": "상태를 화면에 표시하기 전에 상태의 의미와 우선순위를 먼저 정의합니다.",
-            "verbatim": true
-          }
-        ],
-        "visuals": []
       },
       {
         "key": "init-design",
         "chapter": "cases",
         "layout": "visual",
         "tab": "구조",
-        "title": {
-          "text": "문제와 초기 설계",
-          "verbatim": true
-        },
-        "lead": {
-          "text": "이 프로젝트의 전투 루프는 `전투 → 상점 → 다음 전투` 순서로 반복됩니다.",
-          "verbatim": true
-        },
-        "keywords": [
-          "싱글톤",
-          "DontDestroyOnLoad",
-          "상태 유지"
-        ],
-        "sectionPath": [
-          "3. 개발 과정의 주요 사례",
-          "3.2 씬 전환과 초기화 — 객체가 존재하는 것과 준비된 것은 다르다",
-          "문제와 초기 설계"
-        ],
+        "title": {"text": "문제와 초기 설계", "verbatim": true},
+        "lead": {"text": "이 프로젝트의 전투 루프는 `전투 → 상점 → 다음 전투` 순서로 반복됩니다.", "verbatim": true},
+        "keywords": ["싱글톤", "DontDestroyOnLoad", "상태 유지"],
+        "sectionPath": ["3. 개발 과정의 주요 사례", "3.2 씬 전환과 초기화 — 객체가 존재하는 것과 준비된 것은 다르다", "문제와 초기 설계"],
         "points": [
           {
             "label": "",
@@ -1023,68 +618,31 @@
             "verbatim": true
           }
         ],
-        "visuals": [{"kind": "image", "src": "images/battle-loop.png", "w": 1105, "h": 1501, "caption": {"text": "전투·상점·다음 전투로 이어지는 진행 흐름", "verbatim": true}}]
+        "visuals": [
+          {
+            "kind": "image",
+            "src": "images/battle-loop.png",
+            "w": 1105,
+            "h": 1501,
+            "caption": {"text": "전투·상점·다음 전투로 이어지는 진행 흐름", "verbatim": true}
+          }
+        ]
       },
       {
         "key": "init-order",
         "chapter": "cases",
         "layout": "visual",
         "tab": "흐름",
-        "title": {
-          "text": "실제 문제 1 — 초기화 순서에 따라 적 함선 로직이 중단됨",
-          "verbatim": true
-        },
-        "lead": {
-          "text": "새 전투 씬이 열리면 아래 순서로 준비돼야 적 함선이 플레이어 방을 조준할 수 있습니다.",
-          "verbatim": true
-        },
-        "keywords": [
-          "초기화 순서",
-          "InitCombatSystem"
-        ],
-        "sectionPath": [
-          "3. 개발 과정의 주요 사례",
-          "3.2 씬 전환과 초기화 — 객체가 존재하는 것과 준비된 것은 다르다",
-          "실제 문제 1 — 초기화 순서에 따라 적 함선 로직이 중단됨"
-        ],
+        "title": {"text": "실제 문제 1 — 초기화 순서에 따라 적 함선 로직이 중단됨", "verbatim": true},
+        "lead": {"text": "새 전투 씬이 열리면 아래 순서로 준비돼야 적 함선이 플레이어 방을 조준할 수 있습니다.", "verbatim": true},
+        "keywords": ["초기화 순서", "InitCombatSystem"],
+        "sectionPath": ["3. 개발 과정의 주요 사례", "3.2 씬 전환과 초기화 — 객체가 존재하는 것과 준비된 것은 다르다", "실제 문제 1 — 초기화 순서에 따라 적 함선 로직이 중단됨"],
         "points": [
           {
             "label": "문제",
             "text": "`EnemyController.Start`가 `InitCombatSystem`보다 먼저 돌면 `ships`가 비어 있어 조준 초기화가 깨집니다.",
             "verbatim": true
-          }
-        ],
-        "visuals": [
-          {
-            "kind": "mermaid",
-            "n": 1,
-            "fp": "sequenceDiagram"
-          }
-        ]
-      },
-      {
-        "key": "init-code",
-        "chapter": "cases",
-        "layout": "code",
-        "tab": "구현",
-        "title": {
-          "text": "실제 문제 1 — 초기화 순서에 따라 적 함선 로직이 중단됨",
-          "verbatim": true
-        },
-        "lead": {
-          "text": "최종 코드에서도 객체 사이의 초기화 의존 관계를 확인할 수 있습니다.",
-          "verbatim": true
-        },
-        "keywords": [
-          "GetPlayerRooms",
-          "초기화 의존"
-        ],
-        "sectionPath": [
-          "3. 개발 과정의 주요 사례",
-          "3.2 씬 전환과 초기화 — 객체가 존재하는 것과 준비된 것은 다르다",
-          "실제 문제 1 — 초기화 순서에 따라 적 함선 로직이 중단됨"
-        ],
-        "points": [
+          },
           {
             "label": "",
             "text": "`EnemyController`는 적의 자동 조준을 초기화하면서 `CombatSystem`에서 플레이어 방 목록을 가져옵니다.",
@@ -1097,60 +655,981 @@
           }
         ],
         "visuals": [
+          {"kind": "mermaid", "n": 1, "fp": "sequenceDiagram", "view": {"compactSequence": true}},
           {
             "kind": "code",
             "n": 1,
-            "fp": "// EnemyController.Start()"
+            "fp": "// EnemyController.Start()",
+            "view": {"highlights": [{"start": 2, "end": 4, "point": 2}, {"start": 9, "end": 9, "point": 3}]}
           }
-        ]
+        ],
+        "edited": true
       },
       {
         "key": "init-fix",
         "chapter": "cases",
         "layout": "code",
         "tab": "문제 해결",
-        "title": {
-          "text": "당시 해결 — 실행 순서 지정과 초기화 시점 변경",
-          "verbatim": true
-        },
+        "title": {"text": "당시 해결 — 실행 순서 지정과 초기화 시점 변경", "verbatim": true},
         "lead": null,
-        "keywords": [
-          "DefaultExecutionOrder",
-          "Awake → Start"
-        ],
-        "sectionPath": [
-          "3. 개발 과정의 주요 사례",
-          "3.2 씬 전환과 초기화 — 객체가 존재하는 것과 준비된 것은 다르다",
-          "당시 해결 — 실행 순서 지정과 초기화 시점 변경"
-        ],
+        "keywords": ["DefaultExecutionOrder", "Awake → Start"],
+        "sectionPath": ["3. 개발 과정의 주요 사례", "3.2 씬 전환과 초기화 — 객체가 존재하는 것과 준비된 것은 다르다", "당시 해결 — 실행 순서 지정과 초기화 시점 변경"],
         "points": [
-          {
-            "label": "해결",
-            "text": "첫째, 싱글톤의 초기화 순서를 먼저 실행하도록 지정했습니다.",
-            "verbatim": true
-          },
-          {
-            "label": "해결",
-            "text": "둘째, 다른 객체의 초기화 결과에 의존하는 일부 코드를 `Awake`에서 `Start`로 이동했습니다.",
-            "verbatim": true
-          },
-          {
-            "label": "결과",
-            "text": "수정 후에는 전투에서 상점으로 이동하고 다음 전투에 진입하는 루프를 반복하며 문제가 재발하지 않는지 확인했습니다.",
-            "verbatim": true
-          }
+          {"label": "해결", "text": "첫째, 싱글톤의 초기화 순서를 먼저 실행하도록 지정했습니다.", "verbatim": true},
+          {"label": "해결", "text": "둘째, 다른 객체의 초기화 결과에 의존하는 일부 코드를 `Awake`에서 `Start`로 이동했습니다.", "verbatim": true},
+          {"label": "결과", "text": "수정 후에는 전투에서 상점으로 이동하고 다음 전투에 진입하는 루프를 반복하며 문제가 재발하지 않는지 확인했습니다.", "verbatim": true}
         ],
         "visuals": [
           {
             "kind": "code",
             "n": 1,
-            "fp": "[DefaultExecutionOrder(-1000)]"
+            "fp": "[DefaultExecutionOrder(-1000)]",
+            "view": {"highlights": [{"start": 1, "end": 1, "point": 1}]}
           },
           {
             "kind": "code",
             "n": 2,
-            "fp": "// ShipController"
+            "fp": "// ShipController",
+            "view": {"highlights": [{"start": 2, "end": 5, "point": 2}]}
           }
+        ],
+        "edited": true
+      },
+      {
+        "key": "init-limit",
+        "chapter": "cases",
+        "layout": "overview",
+        "presentation": "paired",
+        "panels": [
+          {
+            "title": {"text": "다만 이 해결책에는 한계가 있었습니다.", "verbatim": true},
+            "lead": null,
+            "points": [
+              {
+                "label": "한계",
+                "text": "`DefaultExecutionOrder`는 Unity가 실행 순서를 관리하도록 설정하는 방법이지, 객체가 필요한 데이터를 모두 갖췄는지 보장하는 명시적인 초기화 절차는 아닙니다.",
+                "verbatim": true
+              }
+            ],
+            "sectionPath": ["3. 개발 과정의 주요 사례", "3.2 씬 전환과 초기화 — 객체가 존재하는 것과 준비된 것은 다르다", "당시 해결 — 실행 순서 지정과 초기화 시점 변경"]
+          },
+          {
+            "title": {"text": "결과와 배운 점", "verbatim": true},
+            "lead": null,
+            "points": [
+              {"label": "배운 점", "text": "객체의 생성과 사용 가능한 상태를 구분해야 합니다.", "verbatim": true},
+              {"label": "배운 점", "text": "씬을 넘어 유지할 데이터와 씬에 종속된 객체를 구분해야 합니다.", "verbatim": true},
+              {"label": "배운 점", "text": "실행 순서 설정은 간단한 해결책이지만 의존 관계를 감출 수 있습니다.", "verbatim": true}
+            ],
+            "sectionPath": ["3. 개발 과정의 주요 사례", "3.2 씬 전환과 초기화 — 객체가 존재하는 것과 준비된 것은 다르다", "결과와 배운 점"]
+          }
+        ],
+        "tab": "선택",
+        "title": {"text": "당시 해결의 한계와 배운 점", "verbatim": false},
+        "lead": null,
+        "keywords": ["실행 순서 설정", "숨은 의존"],
+        "sectionPath": ["3. 개발 과정의 주요 사례", "3.2 씬 전환과 초기화 — 객체가 존재하는 것과 준비된 것은 다르다", "당시 해결 — 실행 순서 지정과 초기화 시점 변경"],
+        "points": [],
+        "visuals": [],
+        "edited": true
+      },
+      {
+        "key": "combat-lifetime",
+        "chapter": "cases",
+        "layout": "code",
+        "tab": "문제 해결",
+        "title": {"text": "관련 문제 — 씬을 넘어 유지되는 CombatSystem의 참조", "verbatim": true},
+        "lead": null,
+        "keywords": ["씬 종속 참조", "SceneBinder"],
+        "sectionPath": ["3. 개발 과정의 주요 사례", "3.2 씬 전환과 초기화 — 객체가 존재하는 것과 준비된 것은 다르다", "관련 문제 — 씬을 넘어 유지되는 CombatSystem의 참조"],
+        "points": [
+          {
+            "label": "문제",
+            "text": "`CombatSystem`은 `DontDestroyOnLoad`로 유지되지만 내부의 `ships`, `shipAreas` 등은 전투 씬의 객체를 참조합니다.",
+            "verbatim": true
+          },
+          {
+            "label": "해결",
+            "text": "이를 해결하기 위해 `GameManager`가 씬 로드 완료를 감지하고, `SceneBinder`가 새로 생성된 함선 객체들을 찾아 `CombatSystem.InitCombatSystem()`으로 다시 연결하도록 구현했습니다.",
+            "verbatim": true
+          },
+          {"label": "배운 점", "text": "`CombatSystem`의 주요 참조는 전투 씬의 함선과 콜라이더에 종속되어 있었습니다.", "verbatim": true}
+        ],
+        "visuals": [
+          {
+            "kind": "code",
+            "n": 1,
+            "fp": "// SceneBinder.BindSceneObjectsWithEnvironment()",
+            "view": {"highlights": [{"start": 9, "end": 10, "point": 1}, {"start": 2, "end": 4, "point": 2}]}
+          }
+        ],
+        "edited": true
+      },
+      {
+        "key": "crew-room",
+        "chapter": "cases",
+        "layout": "visual",
+        "tab": "구조",
+        "title": {"text": "초기 설계 — 승무원과 방이 서로를 참조", "verbatim": true},
+        "lead": {"text": "이를 구현하기 위해 승무원은 자신의 `CurrentRoom`을, 방은 소속된 승무원의 `Crews` 목록을 보관하도록 했습니다.", "verbatim": true},
+        "keywords": ["CurrentRoom", "Crews 목록", "서로 참조"],
+        "sectionPath": ["3. 개발 과정의 주요 사례", "3.3 승무원과 방 — 상태를 변경하는 책임이 여러 곳에 흩어진 문제", "초기 설계 — 승무원과 방이 서로를 참조"],
+        "points": [
+          {"label": "", "text": "승무원은 지정된 방으로 이동하고, 그 방에 있는 시설의 상태에 따라 수리하거나 보조하는 기능이 필요했습니다.", "verbatim": true},
+          {"label": "", "text": "이 방식은 구현이 직관적이었습니다.", "verbatim": true},
+          {"label": "", "text": "승무원이 방의 시설에 접근하거나, 방에서 승무원들에게 피해를 전달하기 위해 별도의 객체를 거칠 필요가 없었습니다.", "verbatim": true}
+        ],
+        "visuals": [
+          {
+            "kind": "image",
+            "src": "images/main-function-2.png",
+            "w": 342,
+            "h": 116,
+            "caption": {"text": "방에 배치된 승무원", "verbatim": true}
+          }
+        ]
+      },
+      {
+        "key": "crew-paths",
+        "chapter": "cases",
+        "layout": "code",
+        "tab": "구현",
+        "title": {"text": "실제 구현 — 승무원 이동과 사망의 처리 경로", "verbatim": true},
+        "lead": {"text": "이동과 사망 모두 승무원이 방에서 빠지는 동작이지만, 후처리 방식이 달랐습니다.", "verbatim": true},
+        "keywords": ["이동 경로", "사망 경로", "후처리 차이"],
+        "sectionPath": ["3. 개발 과정의 주요 사례", "3.3 승무원과 방 — 상태를 변경하는 책임이 여러 곳에 흩어진 문제", "실제 구현 — 승무원 이동과 사망의 처리 경로"],
+        "points": [
+          {"label": "", "text": "이동 시: 승무원을 제거하고 방이 비었으면 시설 보조를 해제하고 수리 진행도를 초기화합니다.", "verbatim": true},
+          {"label": "", "text": "사망 시: 승무원을 목록에서 제거하지만 같은 후처리는 호출하지 않습니다.", "verbatim": true}
+        ],
+        "visuals": [
+          {
+            "kind": "code",
+            "n": 1,
+            "fp": "TargetRoom = room;",
+            "view": {"highlights": [{"start": 2, "end": 8, "point": 1}]}
+          },
+          {
+            "kind": "code",
+            "n": 2,
+            "fp": "// CrewSystem.HandleCrewDeath — 핵심 부분",
+            "view": {"highlights": [{"start": 2, "end": 6, "point": 2}]}
+          }
+        ],
+        "codeEvidence": "all-points",
+        "edited": true
+      },
+      {
+        "key": "crew-bugs",
+        "chapter": "cases",
+        "layout": "visual",
+        "tab": "문제 해결",
+        "title": {"text": "개발 후 검토에서 발견한 문제", "verbatim": true},
+        "lead": null,
+        "keywords": ["후처리 누락", "위치 불일치"],
+        "sectionPath": ["3. 개발 과정의 주요 사례", "3.3 승무원과 방 — 상태를 변경하는 책임이 여러 곳에 흩어진 문제", "개발 후 검토에서 발견한 문제"],
+        "points": [
+          {"label": "문제", "text": "첫째, 승무원 사망 시 시설 상태의 후처리가 누락될 수 있습니다.", "verbatim": true},
+          {"label": "문제", "text": "둘째, 승무원의 실제 위치와 소속 방 정보가 일치하지 않을 수 있습니다.", "verbatim": true},
+          {"label": "원인", "text": "문제는 상태를 참조하는 책임과 상태 변경의 일관성을 보장하는 책임을 구분하지 않았다는 점이었습니다.", "verbatim": false}
+        ],
+        "visuals": [
+          {
+            "kind": "mermaid",
+            "n": 1,
+            "fp": "stateDiagram-v2",
+            "sectionPath": ["3. 개발 과정의 주요 사례", "3.3 승무원과 방 — 상태를 변경하는 책임이 여러 곳에 흩어진 문제", "원인 분석 — 데이터의 책임과 상태 변경의 책임을 구별하지 않음"]
+          }
+        ],
+        "edited": true
+      },
+      {
+        "key": "crew-redo",
+        "chapter": "cases",
+        "layout": "overview",
+        "presentation": "paired",
+        "panels": [
+          {
+            "title": {"text": "다시 구현한다면", "verbatim": true},
+            "lead": null,
+            "points": [
+              {"label": "다시 구현", "text": "승무원이 현재 위치한 방에서 나갈때 이루어지는 작업을 `Room`의 단일 메서드로 모을 것입니다.", "verbatim": true},
+              {
+                "label": "다시 구현",
+                "text": "실제 이동 중 어느 방에 속한 것으로 취급할지 게임 규칙을 먼저 정의한 뒤 데이터 갱신 시점을 결정할 것입니다.",
+                "verbatim": true
+              }
+            ],
+            "sectionPath": ["3. 개발 과정의 주요 사례", "3.3 승무원과 방 — 상태를 변경하는 책임이 여러 곳에 흩어진 문제", "다시 구현한다면"]
+          },
+          {
+            "title": {"text": "배운 점", "verbatim": true},
+            "lead": {"text": "이 사례에서 얻은 기준은 객체 사이의 참조 관계뿐 아니라 상태를 변경하는 모든 경로에서 같은 규칙이 적용되는지 확인해야 한다는 것입니다.", "verbatim": true},
+            "points": [
+              {
+                "label": "배운 점",
+                "text": "데이터를 소유한 객체와 상태 변경을 요청하는 객체의 책임을 구분하고, 여러 경로에서 공통으로 수행해야 하는 후처리는 한곳에서 보장해야 합니다.",
+                "verbatim": true
+              }
+            ],
+            "sectionPath": ["3. 개발 과정의 주요 사례", "3.3 승무원과 방 — 상태를 변경하는 책임이 여러 곳에 흩어진 문제", "배운 점"]
+          }
+        ],
+        "tab": "선택",
+        "title": {"text": "다시 구현한다면", "verbatim": true},
+        "lead": null,
+        "keywords": ["Room 단일 메서드", "TargetRoom 의미"],
+        "sectionPath": ["3. 개발 과정의 주요 사례", "3.3 승무원과 방 — 상태를 변경하는 책임이 여러 곳에 흩어진 문제", "다시 구현한다면"],
+        "points": [],
+        "visuals": [],
+        "edited": true
+      },
+      {
+        "key": "loop-goal",
+        "chapter": "cases",
+        "layout": "overview",
+        "presentation": "paired",
+        "panels": [
+          {
+            "title": {"text": "목표", "verbatim": false},
+            "lead": {
+              "text": "《FTL: Faster Than Light》에서 전력 배분, 무기 조준, 승무원 관리라는 세 가지 조작을 추려 최소 전투 루프를 구성했습니다.",
+              "verbatim": true
+            },
+            "points": [],
+            "sectionPath": ["3. 개발 과정의 주요 사례", "3.4 핵심 루프 구현과 플레이 경험 — 기능을 줄이는 것만으로는 핵심 재미를 남길 수 없었다", "목표 — FTL의 핵심 시스템만으로 전투 경험 재현"]
+          },
+          {
+            "title": {"text": "실제 구현 결과", "verbatim": false},
+            "lead": {"text": "기능을 재현한 것과 기능들이 결합해 만드는 플레이 경험을 재현한 것은 다른 목표였습니다.", "verbatim": true},
+            "points": [
+              {"label": "원작", "text": "다양한 무기·시설이 만들어 내는 전투별 선택지", "verbatim": true},
+              {"label": "원작", "text": "화재·산소 고갈·강습 등 예기치 못한 함선 내부 상황", "verbatim": true},
+              {"label": "내 구현", "text": "내 프로젝트에서는 이러한 선택의 폭과 사건의 변화가 제한적이었습니다.", "verbatim": true}
+            ],
+            "sectionPath": [
+              "3. 개발 과정의 주요 사례",
+              "3.4 핵심 루프 구현과 플레이 경험 — 기능을 줄이는 것만으로는 핵심 재미를 남길 수 없었다",
+              "실제 구현 결과 — 루프는 완성했지만 선택의 폭이 좁았다"
+            ]
+          }
+        ],
+        "tab": "개요",
+        "title": {"text": "목표 — FTL의 핵심 시스템만으로 전투 경험 재현", "verbatim": true},
+        "keywords": ["세 가지 조작", "최소 전투 루프"],
+        "sectionPath": ["3. 개발 과정의 주요 사례", "3.4 핵심 루프 구현과 플레이 경험 — 기능을 줄이는 것만으로는 핵심 재미를 남길 수 없었다", "목표 — FTL의 핵심 시스템만으로 전투 경험 재현"],
+        "points": [],
+        "visuals": [],
+        "lead": null,
+        "edited": true
+      },
+      {
+        "key": "scope-misjudge",
+        "chapter": "cases",
+        "layout": "overview",
+        "presentation": "paired",
+        "panels": [
+          {
+            "title": {"text": "또 다른 판단 오류", "verbatim": false},
+            "lead": {"text": "최초 일정은 핵심 기능을 순서대로 구현하는 7단계 계획이었습니다.", "verbatim": true},
+            "points": [
+              {
+                "label": "실제 기간",
+                "text": "하지만 실제 작업은 약 3주가 걸렸고, 전력·시설 단계는 4일, 최종 통합·피드백 단계는 6일이 걸렸습니다.",
+                "verbatim": true
+              },
+              {"label": "원인", "text": "처음 접하는 Unity 에디터 작업과 데이터 연결에 예상보다 많은 시간을 사용했습니다.", "verbatim": true}
+            ],
+            "sectionPath": [
+              "3. 개발 과정의 주요 사례",
+              "3.4 핵심 루프 구현과 플레이 경험 — 기능을 줄이는 것만으로는 핵심 재미를 남길 수 없었다",
+              "또 다른 판단 오류 — 구현해야 할 일의 범위를 코드 중심으로 추정"
+            ]
+          },
+          {
+            "title": {"text": "결과와 다음 프로젝트에서 적용할 기준", "verbatim": true},
+            "lead": {"text": "다음에는 기능 목록을 줄이기 전에 남길 핵심 경험과 그 경험을 만드는 상호작용을 먼저 정의하겠습니다.", "verbatim": true},
+            "points": [
+              {"label": "결과", "text": "프로젝트를 통해 전투·정비 루프의 최소 동작을 구현하는 목표는 달성했습니다.", "verbatim": true},
+              {"label": "결과", "text": "반면 원작과 유사한 전략적 경험을 제공했는지는 검증하지 못했습니다.", "verbatim": true}
+            ],
+            "sectionPath": ["3. 개발 과정의 주요 사례", "3.4 핵심 루프 구현과 플레이 경험 — 기능을 줄이는 것만으로는 핵심 재미를 남길 수 없었다", "결과와 다음 프로젝트에서 적용할 기준"]
+          }
+        ],
+        "tab": "결과",
+        "title": {"text": "또 다른 판단 오류 — 구현해야 할 일의 범위를 코드 중심으로 추정", "verbatim": true},
+        "keywords": ["7단계 계획", "에디터 작업", "약 3주"],
+        "sectionPath": [
+          "3. 개발 과정의 주요 사례",
+          "3.4 핵심 루프 구현과 플레이 경험 — 기능을 줄이는 것만으로는 핵심 재미를 남길 수 없었다",
+          "또 다른 판단 오류 — 구현해야 할 일의 범위를 코드 중심으로 추정"
+        ],
+        "points": [],
+        "visuals": [],
+        "lead": null,
+        "edited": true
+      },
+      {
+        "key": "targeting",
+        "chapter": "results",
+        "layout": "code",
+        "tab": "선택",
+        "title": {"text": "적 조준 규칙 분리 — 기획한 범위보다 큰 설계", "verbatim": true},
+        "lead": {"text": "적 무기가 공격할 플레이어 방을 고르는 규칙을 무기 시스템 밖으로 빼기 위해 `ITargeting` 인터페이스를 두었습니다.", "verbatim": true},
+        "keywords": ["ITargeting", "과한 분리"],
+        "sectionPath": ["4. 결과와 회고", "4.2 무기 쪽에서 겪은 시행착오", "적 조준 규칙 분리 — 기획한 범위보다 큰 설계"],
+        "points": [
+          {"label": "실제로 만든 것", "text": "조준 규칙은 랜덤으로 방 하나를 고르는 `RandomTargeter` 하나였습니다.", "verbatim": true},
+          {
+            "label": "남은 비용",
+            "text": "`EnemyController`가 Targeter를 만들어 `WeaponSystem`에 주입하는 초기화 흐름을 따로 따라가야 했습니다.",
+            "verbatim": true
+          },
+          {"label": "배운 점", "text": "인터페이스는 두 번째 규칙이 실제로 필요해질 때 나눠도 늦지 않습니다.", "verbatim": true}
+        ],
+        "visuals": [
+          {
+            "kind": "code",
+            "n": 1,
+            "fp": "// EnemyController.Start()",
+            "view": {"highlights": [{"start": 2, "end": 2, "point": 1}, {"start": 3, "end": 10, "point": 2}]}
+          }
+        ],
+        "edited": true
+      },
+      {
+        "key": "damage-timing",
+        "chapter": "results",
+        "layout": "code",
+        "tab": "선택",
+        "title": {"text": "투사체 피해 판정 시점 — 통합 테스트가 필요한 이유", "verbatim": true},
+        "lead": {"text": "투사체가 날아가는 동안 실드 상태가 바뀔 수 있어, 발사 시점과 도착 시점 중 언제 피해를 확정할지 정해야 했습니다.", "verbatim": true},
+        "keywords": ["도착 시 판정", "통합 테스트"],
+        "sectionPath": ["4. 결과와 회고", "4.2 무기 쪽에서 겪은 시행착오", "투사체 피해 판정 시점 — 통합 테스트가 필요한 이유"],
+        "points": [
+          {
+            "label": "선택",
+            "text": "`ProjectileController`가 실드에 부딪히거나 목표 방에 닿을 때 `CombatSystem`에 현재 상태 판정을 요청하게 했습니다.",
+            "verbatim": true
+          },
+          {
+            "label": "대가",
+            "text": "호출 흐름이 `WeaponController` → `ProjectileController` → `CombatSystem` → 실드·방으로 길어졌습니다.",
+            "verbatim": true
+          },
+          {"label": "배운 점", "text": "여러 투사체의 도착 순서를 포함한 통합 테스트가 필요합니다.", "verbatim": true}
+        ],
+        "visuals": [
+          {
+            "kind": "code",
+            "n": 1,
+            "fp": "// ProjectileController.OnTriggerEnter2D() — 실드에 부딪힐 때",
+            "view": {"highlights": [{"start": 2, "end": 17, "point": 1}]}
+          }
+        ],
+        "edited": true
+      },
+      {
+        "key": "ts-dead-coroutine",
+        "chapter": "results",
+        "layout": "code",
+        "tab": "문제 해결",
+        "title": {"text": "함선 사망 코루틴 중복 실행", "verbatim": true},
+        "lead": null,
+        "keywords": ["사망 코루틴", "한 번만 실행"],
+        "sectionPath": ["4. 결과와 회고", "4.3 그 밖에 겪은 문제", "함선 사망 코루틴 중복 실행"],
+        "points": [
+          {"label": "문제", "text": "게임오버 뒤 사망 코루틴이 여러 번 실행되어, 씬을 불러올 때 콘솔이 에러 로그로 도배되었습니다.", "verbatim": true},
+          {
+            "label": "원인",
+            "text": "승무원 전멸과 함선 파괴를 각각 검사해 코루틴을 시작했고, 코루틴이 한 번만 실행되도록 보장하는 처리가 빠져 있었습니다.",
+            "verbatim": true
+          },
+          {"label": "해결", "text": "코루틴 실행 상태를 저장하는 멤버를 추가해 한 번만 실행되도록 했습니다.", "verbatim": true},
+          {"label": "결과", "text": "고친 뒤 결과 화면이 한 번만 뜨는 것을 확인했습니다.", "verbatim": true}
+        ],
+        "visuals": [
+          {
+            "kind": "code",
+            "n": 1,
+            "fp": "// ShipController.CheckGameOver()",
+            "view": {"highlights": [{"start": 3, "end": 6, "point": 3}]}
+          }
+        ],
+        "edited": true
+      },
+      {
+        "key": "ts-projectile",
+        "chapter": "results",
+        "layout": "code",
+        "tab": "문제 해결",
+        "title": {"text": "투사체 발사 방향과 회전이 어긋남", "verbatim": true},
+        "lead": null,
+        "keywords": ["targetPos", "회전 방향"],
+        "sectionPath": ["4. 결과와 회고", "4.3 그 밖에 겪은 문제", "투사체 발사 방향과 회전이 어긋남"],
+        "points": [
+          {
+            "label": "문제",
+            "text": "적 함선의 가운데가 아닌 방을 조준하면, 투사체가 목표 방으로 날아가면서도 머리는 함선 가운데를 향해 비스듬히 날아갔습니다.",
+            "verbatim": true
+          },
+          {"label": "원인", "text": "회전 방향을 공격하는 방의 목표 지점(`targetPos`)이 아니라 함선의 중심 지점으로 계산했습니다.", "verbatim": true},
+          {"label": "해결", "text": "투사체가 가진 목표 지점을 바라보도록 회전 방향을 바꿨습니다.", "verbatim": true},
+          {"label": "결과", "text": "고친 뒤 스프라이트가 바라보는 방향이 목표 지점과 일치하는 것을 확인했습니다.", "verbatim": true}
+        ],
+        "visuals": [
+          {
+            "kind": "code",
+            "n": 1,
+            "fp": "// CombatSystem.MoveToEnemyArea()",
+            "view": {"highlights": [{"start": 6, "end": 8, "point": 3}]}
+          }
+        ],
+        "edited": true
+      },
+      {
+        "key": "ts-cursor",
+        "chapter": "results",
+        "layout": "code",
+        "tab": "문제 해결",
+        "title": {"text": "조준 중 일시정지하면 마우스 커서가 사라짐", "verbatim": true},
+        "lead": null,
+        "keywords": ["일시정지", "조준 UI 초기화"],
+        "sectionPath": ["4. 결과와 회고", "4.3 그 밖에 겪은 문제", "조준 중 일시정지하면 마우스 커서가 사라짐"],
+        "points": [
+          {"label": "문제", "text": "조준 중 메뉴를 열어 게임이 멈출 때, 커서 UI와 무기 조준 UI가 초기화되지 않았습니다.", "verbatim": true},
+          {
+            "label": "원인",
+            "text": "선택 해제(`ResetSelectedWeapon`)가 무기 정보만 비우고, 연결된 커서 스프라이트·조준점 스프라이트·무기에 저장된 목표는 되돌리지 않았습니다.",
+            "verbatim": true
+          },
+          {
+            "label": "해결",
+            "text": "선택 해제에서 조준점·커서 스프라이트와 무기의 목표를 함께 되돌리고, Esc 입력 처리를 조작 가능 검사보다 앞으로 옮겼습니다.",
+            "verbatim": true
+          },
+          {"label": "결과", "text": "고친 뒤 조준을 해제하면 커서와 조준 스프라이트 상태가 함께 맞춰지는 것을 확인했습니다.", "verbatim": true}
+        ],
+        "visuals": [
+          {
+            "kind": "code",
+            "n": 1,
+            "fp": "// WeaponSystem.ResetSelectedWeapon()",
+            "view": {"highlights": [{"start": 2, "end": 6, "point": 3}]}
+          }
+        ],
+        "edited": true
+      },
+      {
+        "key": "assumptions",
+        "chapter": "results",
+        "layout": "full",
+        "tab": "결과",
+        "title": {"text": "4.4 처음 가정과 실제, 이후 기준", "verbatim": true},
+        "lead": {"text": "네 사례를 통해 처음 세웠던 네 가지 가정을 수정했습니다.", "verbatim": true},
+        "keywords": ["처음 가정", "확인한 점", "이후 기준"],
+        "sectionPath": ["4. 결과와 회고", "4.4 처음 가정과 실제, 이후 기준"],
+        "points": [],
+        "visuals": [{"kind": "table", "n": 1, "fp": "초기 가정|실제로 확인한 점|이후 적용할 기준"}]
+      }
+    ],
+    "aliases": {
+      "win-lose": "loop",
+      "power-lessons": "power-cost",
+      "init-code": "init-order",
+      "init-lessons": "init-limit",
+      "crew-state": "crew-bugs",
+      "crew-lessons": "crew-redo",
+      "loop-result": "loop-goal",
+      "loop-next": "scope-misjudge"
+    },
+    "base": [
+      {
+        "key": "intro",
+        "chapter": "overview",
+        "layout": "overview",
+        "tab": "개요",
+        "title": {"text": "1.1 프로젝트 소개", "verbatim": true},
+        "lead": {"text": "플레이어가 함선과 승무원을 직접 조작해 상대 우주선과 전투하는 1인 제작 PC 게임", "verbatim": true},
+        "keywords": ["우주 전략", "함선 전투", "1인 제작"],
+        "sectionPath": ["1. 개요", "1.1 프로젝트 소개"],
+        "points": [
+          {
+            "label": "",
+            "text": "《FTL: Faster Than Light》를 참고해, 플레이어가 함선 전력을 배분하고 승무원을 지휘하며 적 함선의 방을 직접 조준해 싸우는 2D 전략 게임을 제작했습니다.",
+            "verbatim": true
+          }
+        ],
+        "visuals": [
+          {
+            "kind": "image",
+            "src": "images/main.png",
+            "w": 694,
+            "h": 386,
+            "caption": {"text": "Project main screen", "verbatim": true},
+            "sectionPath": ["Mini FTL — 첫 Unity 프로젝트에서 배운 설계와 검증의 기준"]
+          }
+        ]
+      },
+      {
+        "key": "ftl-intro",
+        "chapter": "overview",
+        "layout": "visual",
+        "tab": "개요",
+        "title": {"text": "《FTL: Faster Than Light》 소개", "verbatim": true},
+        "lead": {
+          "text": "《FTL: Faster Than Light》는 플레이어가 우주선의 함장이 되어 은하계를 탐험하며 생존을 목표로 하는 2D 전략 로그라이크 게임입니다.",
+          "verbatim": true
+        },
+        "keywords": ["원작 FTL", "함선 전투 화면"],
+        "sectionPath": ["1. 개요", "1.1 프로젝트 소개", "《FTL: Faster Than Light》 소개"],
+        "points": [
+          {"label": "", "text": "왼쪽 내 함선: 방마다 시설과 승무원이 있습니다.", "verbatim": true},
+          {"label": "", "text": "오른쪽 적 함선(TARGET): 무기로 노릴 방을 고릅니다.", "verbatim": true},
+          {"label": "", "text": "왼쪽 아래 전력 바: 반응로 전력을 시설마다 나눠 줍니다.", "verbatim": true},
+          {
+            "label": "",
+            "text": "원작은 은하 탐험·무작위 이벤트·자원 수집까지 담고 있습니다. Mini FTL은 그중 이 화면의 함선 전투만 추려 만들었습니다.",
+            "verbatim": true
+          }
+        ],
+        "visuals": [
+          {
+            "kind": "image",
+            "src": "images/reference-image.png",
+            "w": 1823,
+            "h": 1014,
+            "caption": {"text": "《FTL》 전투 화면 — 왼쪽 내 함선, 오른쪽 적 함선(TARGET), 왼쪽 아래 시설별 전력 바, 가운데 아래 무기 칸", "verbatim": true}
+          }
+        ]
+      },
+      {
+        "key": "why",
+        "chapter": "overview",
+        "layout": "overview",
+        "tab": "개요",
+        "title": {"text": "1.2 왜 만들었나", "verbatim": true},
+        "lead": null,
+        "keywords": ["재현 가능성 검증", "객체지향 설계"],
+        "sectionPath": ["1. 개요", "1.2 왜 만들었나"],
+        "points": [
+          {
+            "label": "핵심 플레이 경험의 재현 가능성 검증",
+            "text": "《FTL》의 핵심 시스템만 추려 최소한의 전투 루프로 구현했을 때도, 원작과 유사한 플레이 경험을 제공할 수 있는지 실험하고자 했습니다.",
+            "verbatim": true
+          },
+          {
+            "label": "직접 부딪히며 객체지향 설계의 필요성 깨닫기",
+            "text": "익숙하지 않았던 객체지향 설계를 실제 게임 개발에 적용하고, 여러 시스템의 역할과 상호작용을 직접 설계하는 경험을 쌓고자 했습니다.",
+            "verbatim": true
+          },
+          {
+            "label": "",
+            "text": "구현하면서 드러난 구조적 문제를 기록하고 \"이래서 이런 디자인 패턴과 객체지향 원칙을 쓰는구나\"를 직접 확인하는 것을 목표로 했습니다.",
+            "verbatim": true
+          }
+        ],
+        "visuals": []
+      },
+      {
+        "key": "experience",
+        "chapter": "overview",
+        "layout": "overview",
+        "tab": "개요",
+        "title": {"text": "1.3 핵심 경험 — 함장으로서 내리는 전략적 판단", "verbatim": true},
+        "lead": {"text": "플레이어가 함장이 되어 함선을 지휘하고, 피해를 최소화하면서 적의 약점을 공략하는 전략적 판단을 핵심 경험으로 삼았습니다.", "verbatim": true},
+        "keywords": ["함장의 판단", "피해 최소화", "약점 공략"],
+        "sectionPath": ["1. 개요", "1.3 핵심 경험 — 함장으로서 내리는 전략적 판단"],
+        "points": [
+          {"label": "피해 최소화", "text": "적의 공격을 실드로 막고, 피해 입은 시설은 승무원을 보내 수리합니다.", "verbatim": true},
+          {"label": "약점 공략", "text": "적 함선의 어느 방을 먼저 무너뜨릴지 골라 무기로 노립니다.", "verbatim": true},
+          {
+            "label": "한정된 자원의 배분",
+            "text": "반응로 전력은 모든 시설을 동시에 최대로 가동할 만큼 넉넉하지 않습니다. 공격과 방어 중 어디에 힘을 실을지 계속 고릅니다.",
+            "verbatim": true
+          }
+        ],
+        "visuals": []
+      },
+      {
+        "key": "loop",
+        "chapter": "overview",
+        "layout": "visual",
+        "tab": "흐름",
+        "title": {"text": "1.4 핵심 루프", "verbatim": true},
+        "lead": {"text": "플레이어는 적 함선과 전투하고, 이기면 상점에서 함선을 정비한 뒤 다음 전투로 나아갑니다.", "verbatim": true},
+        "keywords": ["전투", "상점 정비"],
+        "sectionPath": ["1. 개요", "1.4 핵심 루프"],
+        "points": [
+          {
+            "label": "적 함선과 전투",
+            "text": "플레이어 함선과 적 함선이 실시간으로 서로의 방을 공격합니다. 적은 자동으로 조준해 공격하고, 플레이어는 전력·무기·승무원을 직접 관리합니다.",
+            "verbatim": true
+          },
+          {"label": "상점에서 정비", "text": "반응로를 강화하고, 함선을 수리하고, 승무원을 치료해 다음 전투에 대비합니다.", "verbatim": true}
+        ],
+        "visuals": [{"kind": "mermaid", "n": 1, "fp": "flowchart LR"}]
+      },
+      {
+        "key": "win-lose",
+        "chapter": "overview",
+        "layout": "full",
+        "tab": "흐름",
+        "title": {"text": "게임 승패", "verbatim": true},
+        "lead": {"text": "전투를 거칠수록 더 강한 적 함선과 소행성·태양 플레어 같은 환경 위험이 더해집니다.", "verbatim": true},
+        "keywords": ["승리·패배", "환경 위험", "고철 보상"],
+        "sectionPath": ["1. 개요", "1.4 핵심 루프"],
+        "points": [],
+        "visuals": [{"kind": "table", "n": 1, "fp": "게임 승패|언제"}]
+      },
+      {
+        "key": "three-decisions",
+        "chapter": "overview",
+        "layout": "screens",
+        "tab": "개요",
+        "title": {"text": "1.5 전투에서 플레이어가 하는 세 가지 판단", "verbatim": true},
+        "lead": {"text": "한정된 전력을 어디에 쓸지, 적 함선의 어느 방을 노릴지, 승무원을 어디로 보낼지입니다.", "verbatim": true},
+        "keywords": ["전력 관리", "무기 조준", "승무원 관리"],
+        "sectionPath": ["1. 개요", "1.5 전투에서 플레이어가 하는 세 가지 판단"],
+        "points": [],
+        "visuals": [
+          {
+            "kind": "image",
+            "src": "images/main-function-1.png",
+            "w": 412,
+            "h": 352,
+            "caption": {"text": "전력 관리", "verbatim": true}
+          },
+          {
+            "kind": "image",
+            "src": "images/main-function-3.png",
+            "w": 156,
+            "h": 220,
+            "caption": {"text": "무기 조준", "verbatim": true}
+          },
+          {
+            "kind": "image",
+            "src": "images/main-function-2.png",
+            "w": 342,
+            "h": 116,
+            "caption": {"text": "승무원 관리", "verbatim": true}
+          }
+        ]
+      },
+      {
+        "key": "system-map",
+        "chapter": "structure",
+        "layout": "visual",
+        "tab": "구조",
+        "title": {"text": "2. 시스템 구조", "verbatim": true},
+        "lead": {"text": "이 조작은 모두 함선(ShipController)을 거쳐 각 시스템에 전달됩니다.", "verbatim": true},
+        "keywords": ["ShipController", "시스템 나누기"],
+        "sectionPath": ["2. 시스템 구조"],
+        "points": [
+          {
+            "label": "",
+            "text": "전투에 들어가면 플레이어는 전력을 조절하고(전력 조절), 승무원을 움직이고(승무원), 무기를 상대 함선의 방에 조준해(무기·전투) 전투를 진행합니다.",
+            "verbatim": true
+          },
+          {
+            "label": "",
+            "text": "전투에서 살아남으면 결과가 게임 진행(GameManager)에 보고되고, 상점에서 함선 체력 회복·전력 강화 같은 준비를 한 뒤 다음 전투 씬이 조립됩니다.",
+            "verbatim": true
+          }
+        ],
+        "visuals": [{"kind": "mermaid", "n": 1, "fp": "flowchart LR"}]
+      },
+      {
+        "key": "game-flow",
+        "chapter": "structure",
+        "layout": "visual",
+        "tab": "구조",
+        "title": {"text": "2.1 게임 진행", "verbatim": true},
+        "lead": {"text": "`GameManager`는 씬이 바뀌어도 남아 전투 결과를 받고 다음 씬을 고릅니다.", "verbatim": true},
+        "keywords": ["GameContext", "SceneBinder"],
+        "sectionPath": ["2. 시스템 구조", "2.1 게임 진행"],
+        "points": [
+          {"label": "", "text": "함선 체력·전력·시설·승무원·무기 상태는 `GameContext`에 담아 전투 씬과 상점 씬 사이로 넘깁니다.", "verbatim": true},
+          {
+            "label": "",
+            "text": "새 전투 씬이 열리면 `SceneBinder`가 이 상태를 플레이어 함선에 되돌리고, 적 함선과 `CombatSystem`을 준비합니다.",
+            "verbatim": true
+          }
+        ],
+        "visuals": [{"kind": "mermaid", "n": 1, "fp": "classDiagram"}]
+      },
+      {
+        "key": "ship",
+        "chapter": "structure",
+        "layout": "visual",
+        "tab": "구조",
+        "title": {"text": "2.2 함선", "verbatim": true},
+        "lead": {"text": "`ShipController`는 한 함선의 방·체력·시설·승무원·무기를 한곳에 모은 기준점입니다.", "verbatim": true},
+        "keywords": ["ShipController", "상속"],
+        "sectionPath": ["2. 시스템 구조", "2.2 함선"],
+        "points": [
+          {
+            "label": "",
+            "text": "플레이어 함선(`PlayerController`)과 적 함선(`EnemyController`)이 같은 부모를 물려받아 방 피해와 사망 처리를 함께 사용합니다.",
+            "verbatim": true
+          },
+          {"label": "", "text": "플레이어 함선은 상점에서 바뀐 상태를 받아들이고, 적 함선은 `RandomTargeter`로 노릴 방을 고릅니다.", "verbatim": true}
+        ],
+        "visuals": [{"kind": "mermaid", "n": 1, "fp": "classDiagram"}]
+      },
+      {
+        "key": "crew-system",
+        "chapter": "structure",
+        "layout": "visual",
+        "tab": "구조",
+        "title": {"text": "2.3 승무원", "verbatim": true},
+        "lead": {"text": "`CrewSystem`은 선택한 승무원 목록을 들고 이동 명령을 각 승무원에게 나눠 줍니다.", "verbatim": true},
+        "keywords": ["CrewSystem", "Room"],
+        "sectionPath": ["2. 시스템 구조", "2.3 승무원"],
+        "points": [
+          {
+            "label": "",
+            "text": "`CrewController`는 승무원 한 명의 체력과 지금 있는 방(`CurrentRoom`)을 갖고, 도착한 방의 시설 상태에 맞춰 수리하거나 보조합니다.",
+            "verbatim": true
+          },
+          {"label": "", "text": "`Room`은 그 방에 있는 승무원 목록과 시설을 함께 갖고 있어, 수리와 방 피해가 이곳을 거칩니다.", "verbatim": true}
+        ],
+        "visuals": [{"kind": "mermaid", "n": 1, "fp": "classDiagram"}]
+      },
+      {
+        "key": "power-system",
+        "chapter": "structure",
+        "layout": "visual",
+        "tab": "구조",
+        "title": {"text": "2.4 전력 조절", "verbatim": true},
+        "lead": {"text": "반응로의 남은 전력과 시설마다 받은 전력을 다른 클래스가 갖습니다.", "verbatim": true},
+        "keywords": ["ShipPowerController", "배분·회수"],
+        "sectionPath": ["2. 시스템 구조", "2.4 전력 조절"],
+        "points": [
+          {
+            "label": "",
+            "text": "`ReactorController`는 쓸 수 있는 전력을, `FacilityController`는 시설의 전력·최대 전력·피해를 맡습니다.",
+            "verbatim": true
+          },
+          {"label": "", "text": "두 값을 함께 바꾸는 배분·회수 요청은 `ShipPowerController`가 처리합니다.", "verbatim": true}
+        ],
+        "visuals": [{"kind": "mermaid", "n": 1, "fp": "classDiagram"}]
+      },
+      {
+        "key": "combat-system",
+        "chapter": "structure",
+        "layout": "visual",
+        "tab": "구조",
+        "title": {"text": "2.5 무기·전투", "verbatim": true},
+        "lead": {
+          "text": "무기실 시설인 `WeaponSystem`이 무기(`WeaponController`)들을 들고, 충전이 끝난 무기가 투사체(`ProjectileController`)를 쏩니다.",
+          "verbatim": true
+        },
+        "keywords": ["WeaponSystem", "CombatSystem"],
+        "sectionPath": ["2. 시스템 구조", "2.5 무기·전투"],
+        "points": [
+          {
+            "label": "",
+            "text": "투사체가 실드에 닿거나 목표 방에 도착하면 `CombatSystem`이 두 함선 중 맞은 쪽을 찾아 실드 피해나 방 피해를 넘깁니다.",
+            "verbatim": true
+          },
+          {"label": "", "text": "이 구조에서 개발하며 가장 크게 부딪힌 곳은 전력 조절, 전투 씬을 다시 조립하는 게임 진행, 승무원이었습니다.", "verbatim": true}
+        ],
+        "visuals": [{"kind": "mermaid", "n": 1, "fp": "flowchart LR"}]
+      },
+      {
+        "key": "power-choice",
+        "chapter": "cases",
+        "layout": "full",
+        "tab": "선택",
+        "title": {"text": "문제와 첫 설계", "verbatim": true},
+        "lead": {"text": "프로젝트에서 실제로 구현할 범위보다 미래에 추가할 수 있는 규칙을 더 크게 고려해, 처음부터 역할을 분리하는 방식을 선택했습니다.", "verbatim": true},
+        "keywords": ["전력 관리자", "책임 분리", "미래 규칙"],
+        "sectionPath": ["3. 개발 과정의 주요 사례", "3.1 전력 관리 — 책임을 나누면 구현도 쉬워질 것이라는 판단", "문제와 첫 설계"],
+        "points": [],
+        "visuals": [{"kind": "table", "n": 1, "fp": "대안|생각했던 장점|예상한 부담"}]
+      },
+      {
+        "key": "power-code",
+        "chapter": "cases",
+        "layout": "code",
+        "tab": "구현",
+        "title": {"text": "실제 구현 — 상태는 각자, 전력 이동은 중간 관리자가 처리", "verbatim": true},
+        "lead": {"text": "클래스의 역할을 구분하는 것과, 하나의 동작을 이해하기 쉽게 만드는 것은 같은 문제가 아니었습니다.", "verbatim": true},
+        "keywords": ["AllocatePower", "세 객체의 역할"],
+        "sectionPath": ["3. 개발 과정의 주요 사례", "3.1 전력 관리 — 책임을 나누면 구현도 쉬워질 것이라는 판단", "실제 구현 — 상태는 각자, 전력 이동은 중간 관리자가 처리"],
+        "points": [
+          {"label": "", "text": "`ReactorController`: 반응로의 최대 전력과 가용 전력 관리", "verbatim": true},
+          {"label": "", "text": "`FacilityController`: 시설별 할당 전력, 피해량, 사용 가능한 최대 전력 및 상태 관리", "verbatim": true},
+          {"label": "", "text": "`ShipPowerController`: 전력 할당·회수 가능 여부를 검사하고, 두 객체의 값을 변경", "verbatim": true}
+        ],
+        "visuals": [{"kind": "code", "n": 1, "fp": "// ShipPowerController.AllocatePower — 핵심 부분"}]
+      },
+      {
+        "key": "power-cost",
+        "chapter": "cases",
+        "layout": "problem",
+        "tab": "문제 해결",
+        "title": {"text": "실제 겪은 문제 — 설계의 복잡성이 테스트 비용으로 돌아옴", "verbatim": true},
+        "lead": null,
+        "keywords": ["테스트 비용", "중복 감소 버그"],
+        "sectionPath": ["3. 개발 과정의 주요 사례", "3.1 전력 관리 — 책임을 나누면 구현도 쉬워질 것이라는 판단", "실제 겪은 문제 — 설계의 복잡성이 테스트 비용으로 돌아옴"],
+        "points": [
+          {
+            "label": "문제",
+            "text": "전력 기능을 테스트하려면 Unity에서 반응로와 무기·실드·엔진 등 관련 컴포넌트를 준비하고 참조를 연결해야 했습니다.",
+            "verbatim": true
+          },
+          {
+            "label": "원인",
+            "text": "시설 피해 처리 과정에서 `FacilityController.TakeDamage()`가 초과 전력을 직접 줄인 뒤 `ShipPowerController.DeallocatePower()`를 호출해, 시설 전력이 중복 감소했습니다.",
+            "verbatim": false
+          },
+          {
+            "label": "해결",
+            "text": "중복된 `ReducePower()` 호출을 제거하고, `DeallocatePower()`가 전력 회수를 한 번만 처리하도록 수정했습니다.",
+            "verbatim": true
+          },
+          {"label": "결과", "text": "개발을 마치고 보니 처음 예상했던 이온 피해 등 추가 규칙은 실제 프로젝트에 들어가지 않았습니다.", "verbatim": true}
+        ],
+        "visuals": []
+      },
+      {
+        "key": "power-ui",
+        "chapter": "cases",
+        "layout": "problem",
+        "tab": "문제 해결",
+        "title": {"text": "시설 상태 UI — 상태의 의미를 명확히 정하지 않고 UI를 구현", "verbatim": true},
+        "lead": null,
+        "keywords": ["상태 우선순위", "회색 표시 버그"],
+        "sectionPath": ["3. 개발 과정의 주요 사례", "3.1 전력 관리 — 책임을 나누면 구현도 쉬워질 것이라는 판단", "시설 상태 UI — 상태의 의미를 명확히 정하지 않고 UI를 구현"],
+        "points": [
+          {"label": "문제", "text": "완전히 파괴되어 빨간색이어야 할 시설이 회색으로 표시되는 문제를 겪었습니다.", "verbatim": false},
+          {"label": "원인", "text": "원인은 하나의 시설이 동시에 여러 조건을 만족할 수 있다는 사실을 충분히 고려하지 않은 데 있었습니다.", "verbatim": true},
+          {"label": "해결", "text": "조건 판정의 우선순위를 조정해 수정했습니다.", "verbatim": false},
+          {"label": "배운 점", "text": "이 UI 문제는 상태 조건의 중첩과 표시 우선순위를 먼저 정의하지 않은 실수였습니다.", "verbatim": true}
+        ],
+        "visuals": [
+          {
+            "kind": "image",
+            "src": "images/power-ui.png",
+            "w": 265,
+            "h": 229,
+            "caption": {"text": "Power UI", "verbatim": true}
+          },
+          {"kind": "code", "n": 1, "fp": "// FacilityController.UpdateFacilityStatus — 최종 코드"}
+        ]
+      },
+      {
+        "key": "power-lessons",
+        "chapter": "cases",
+        "layout": "overview",
+        "tab": "결과",
+        "title": {"text": "결과와 배운 점", "verbatim": true},
+        "lead": {"text": "다시 같은 규모의 프로토타입을 만든다면 우선 한곳에서 전력 이동을 추적하고 테스트할 수 있는 단순한 구조로 시작하겠습니다.", "verbatim": true},
+        "keywords": ["현재 규칙 기준", "일관성 검증", "상태 정의"],
+        "sectionPath": ["3. 개발 과정의 주요 사례", "3.1 전력 관리 — 책임을 나누면 구현도 쉬워질 것이라는 판단", "결과와 배운 점"],
+        "points": [
+          {"label": "배운 점", "text": "책임 분리는 미래에 추가할지 모르는 기능보다 현재 존재하는 규칙과 변경 요구를 기준으로 합니다.", "verbatim": true},
+          {"label": "배운 점", "text": "여러 객체의 상태가 함께 변하는 기능은 개별 값의 유효성뿐 아니라 객체 사이의 일관성까지 검증합니다.", "verbatim": true},
+          {"label": "배운 점", "text": "상태를 화면에 표시하기 전에 상태의 의미와 우선순위를 먼저 정의합니다.", "verbatim": true}
+        ],
+        "visuals": []
+      },
+      {
+        "key": "init-design",
+        "chapter": "cases",
+        "layout": "visual",
+        "tab": "구조",
+        "title": {"text": "문제와 초기 설계", "verbatim": true},
+        "lead": {"text": "이 프로젝트의 전투 루프는 `전투 → 상점 → 다음 전투` 순서로 반복됩니다.", "verbatim": true},
+        "keywords": ["싱글톤", "DontDestroyOnLoad", "상태 유지"],
+        "sectionPath": ["3. 개발 과정의 주요 사례", "3.2 씬 전환과 초기화 — 객체가 존재하는 것과 준비된 것은 다르다", "문제와 초기 설계"],
+        "points": [
+          {
+            "label": "",
+            "text": "처음에는 `GameManager`, `CombatSystem`처럼 여러 시스템에서 사용하는 객체를 싱글톤으로 관리하고, `DontDestroyOnLoad`를 이용해 씬 전환 후에도 유지하는 방식을 사용했습니다.",
+            "verbatim": true
+          },
+          {
+            "label": "문제",
+            "text": "씬을 구성하는 객체들이 서로의 초기화 결과에 의존했지만, 어떤 객체가 먼저 준비되어야 하는지 명확하게 보장하지 않았습니다.",
+            "verbatim": true
+          },
+          {
+            "label": "문제",
+            "text": "`CombatSystem`은 씬을 넘어 유지되지만, 내부에서 참조하는 플레이어·적 함선은 씬이 바뀔 때 파괴되고 다시 생성됩니다.",
+            "verbatim": true
+          }
+        ],
+        "visuals": [
+          {
+            "kind": "image",
+            "src": "images/battle-loop.png",
+            "w": 1105,
+            "h": 1501,
+            "caption": {"text": "전투·상점·다음 전투로 이어지는 진행 흐름", "verbatim": true}
+          }
+        ]
+      },
+      {
+        "key": "init-order",
+        "chapter": "cases",
+        "layout": "visual",
+        "tab": "흐름",
+        "title": {"text": "실제 문제 1 — 초기화 순서에 따라 적 함선 로직이 중단됨", "verbatim": true},
+        "lead": {"text": "새 전투 씬이 열리면 아래 순서로 준비돼야 적 함선이 플레이어 방을 조준할 수 있습니다.", "verbatim": true},
+        "keywords": ["초기화 순서", "InitCombatSystem"],
+        "sectionPath": ["3. 개발 과정의 주요 사례", "3.2 씬 전환과 초기화 — 객체가 존재하는 것과 준비된 것은 다르다", "실제 문제 1 — 초기화 순서에 따라 적 함선 로직이 중단됨"],
+        "points": [
+          {
+            "label": "문제",
+            "text": "`EnemyController.Start`가 `InitCombatSystem`보다 먼저 돌면 `ships`가 비어 있어 조준 초기화가 깨집니다.",
+            "verbatim": true
+          }
+        ],
+        "visuals": [{"kind": "mermaid", "n": 1, "fp": "sequenceDiagram"}]
+      },
+      {
+        "key": "init-code",
+        "chapter": "cases",
+        "layout": "code",
+        "tab": "구현",
+        "title": {"text": "실제 문제 1 — 초기화 순서에 따라 적 함선 로직이 중단됨", "verbatim": true},
+        "lead": {"text": "최종 코드에서도 객체 사이의 초기화 의존 관계를 확인할 수 있습니다.", "verbatim": true},
+        "keywords": ["GetPlayerRooms", "초기화 의존"],
+        "sectionPath": ["3. 개발 과정의 주요 사례", "3.2 씬 전환과 초기화 — 객체가 존재하는 것과 준비된 것은 다르다", "실제 문제 1 — 초기화 순서에 따라 적 함선 로직이 중단됨"],
+        "points": [
+          {
+            "label": "",
+            "text": "`EnemyController`는 적의 자동 조준을 초기화하면서 `CombatSystem`에서 플레이어 방 목록을 가져옵니다.",
+            "verbatim": true
+          },
+          {
+            "label": "원인",
+            "text": "`ships`는 `CombatSystem.InitCombatSystem()`에서 설정되므로, 해당 초기화가 끝나기 전에 접근하면 정상적으로 동작할 수 없습니다.",
+            "verbatim": false
+          }
+        ],
+        "visuals": [{"kind": "code", "n": 1, "fp": "// EnemyController.Start()"}]
+      },
+      {
+        "key": "init-fix",
+        "chapter": "cases",
+        "layout": "code",
+        "tab": "문제 해결",
+        "title": {"text": "당시 해결 — 실행 순서 지정과 초기화 시점 변경", "verbatim": true},
+        "lead": null,
+        "keywords": ["DefaultExecutionOrder", "Awake → Start"],
+        "sectionPath": ["3. 개발 과정의 주요 사례", "3.2 씬 전환과 초기화 — 객체가 존재하는 것과 준비된 것은 다르다", "당시 해결 — 실행 순서 지정과 초기화 시점 변경"],
+        "points": [
+          {"label": "해결", "text": "첫째, 싱글톤의 초기화 순서를 먼저 실행하도록 지정했습니다.", "verbatim": true},
+          {"label": "해결", "text": "둘째, 다른 객체의 초기화 결과에 의존하는 일부 코드를 `Awake`에서 `Start`로 이동했습니다.", "verbatim": true},
+          {"label": "결과", "text": "수정 후에는 전투에서 상점으로 이동하고 다음 전투에 진입하는 루프를 반복하며 문제가 재발하지 않는지 확인했습니다.", "verbatim": true}
+        ],
+        "visuals": [
+          {"kind": "code", "n": 1, "fp": "[DefaultExecutionOrder(-1000)]"},
+          {"kind": "code", "n": 2, "fp": "// ShipController"}
         ]
       },
       {
@@ -1158,31 +1637,17 @@
         "chapter": "cases",
         "layout": "overview",
         "tab": "선택",
-        "title": {
-          "text": "다만 이 해결책에는 한계가 있었습니다.",
-          "verbatim": true
-        },
+        "title": {"text": "다만 이 해결책에는 한계가 있었습니다.", "verbatim": true},
         "lead": null,
-        "keywords": [
-          "실행 순서 설정",
-          "숨은 의존"
-        ],
-        "sectionPath": [
-          "3. 개발 과정의 주요 사례",
-          "3.2 씬 전환과 초기화 — 객체가 존재하는 것과 준비된 것은 다르다",
-          "당시 해결 — 실행 순서 지정과 초기화 시점 변경"
-        ],
+        "keywords": ["실행 순서 설정", "숨은 의존"],
+        "sectionPath": ["3. 개발 과정의 주요 사례", "3.2 씬 전환과 초기화 — 객체가 존재하는 것과 준비된 것은 다르다", "당시 해결 — 실행 순서 지정과 초기화 시점 변경"],
         "points": [
           {
             "label": "",
             "text": "`DefaultExecutionOrder`는 Unity가 실행 순서를 관리하도록 설정하는 방법이지, 객체가 필요한 데이터를 모두 갖췄는지 보장하는 명시적인 초기화 절차는 아닙니다.",
             "verbatim": true
           },
-          {
-            "label": "",
-            "text": "클래스 사이의 의존 관계가 코드의 호출 순서에 직접 드러나지 않고 실행 순서 설정에 숨게 되었습니다.",
-            "verbatim": true
-          },
+          {"label": "", "text": "클래스 사이의 의존 관계가 코드의 호출 순서에 직접 드러나지 않고 실행 순서 설정에 숨게 되었습니다.", "verbatim": true},
           {
             "label": "",
             "text": "당시에는 문제를 해결하는 데 효과적이었지만, 시스템이 늘어날수록 어떤 객체가 먼저 초기화되어야 하는지 추적하기 어려워질 수 있다고 판단했습니다.",
@@ -1196,20 +1661,10 @@
         "chapter": "cases",
         "layout": "problem",
         "tab": "문제 해결",
-        "title": {
-          "text": "관련 문제 — 씬을 넘어 유지되는 CombatSystem의 참조",
-          "verbatim": true
-        },
+        "title": {"text": "관련 문제 — 씬을 넘어 유지되는 CombatSystem의 참조", "verbatim": true},
         "lead": null,
-        "keywords": [
-          "씬 종속 참조",
-          "SceneBinder"
-        ],
-        "sectionPath": [
-          "3. 개발 과정의 주요 사례",
-          "3.2 씬 전환과 초기화 — 객체가 존재하는 것과 준비된 것은 다르다",
-          "관련 문제 — 씬을 넘어 유지되는 CombatSystem의 참조"
-        ],
+        "keywords": ["씬 종속 참조", "SceneBinder"],
+        "sectionPath": ["3. 개발 과정의 주요 사례", "3.2 씬 전환과 초기화 — 객체가 존재하는 것과 준비된 것은 다르다", "관련 문제 — 씬을 넘어 유지되는 CombatSystem의 참조"],
         "points": [
           {
             "label": "문제",
@@ -1221,11 +1676,7 @@
             "text": "이를 해결하기 위해 `GameManager`가 씬 로드 완료를 감지하고, `SceneBinder`가 새로 생성된 함선 객체들을 찾아 `CombatSystem.InitCombatSystem()`으로 다시 연결하도록 구현했습니다.",
             "verbatim": true
           },
-          {
-            "label": "배운 점",
-            "text": "`CombatSystem`의 주요 참조는 전투 씬의 함선과 콜라이더에 종속되어 있었습니다.",
-            "verbatim": true
-          }
+          {"label": "배운 점", "text": "`CombatSystem`의 주요 참조는 전투 씬의 함선과 콜라이더에 종속되어 있었습니다.", "verbatim": true}
         ],
         "visuals": []
       },
@@ -1234,40 +1685,17 @@
         "chapter": "cases",
         "layout": "overview",
         "tab": "결과",
-        "title": {
-          "text": "결과와 배운 점",
-          "verbatim": true
-        },
+        "title": {"text": "결과와 배운 점", "verbatim": true},
         "lead": {
           "text": "다시 구현한다면 `GameContext`처럼 씬 사이에 유지해야 할 상태와 `CombatSystem`처럼 전투 씬에서 사용하는 객체를 먼저 분류하겠습니다.",
           "verbatim": true
         },
-        "keywords": [
-          "생성과 준비",
-          "지속 데이터",
-          "명시적 초기화"
-        ],
-        "sectionPath": [
-          "3. 개발 과정의 주요 사례",
-          "3.2 씬 전환과 초기화 — 객체가 존재하는 것과 준비된 것은 다르다",
-          "결과와 배운 점"
-        ],
+        "keywords": ["생성과 준비", "지속 데이터", "명시적 초기화"],
+        "sectionPath": ["3. 개발 과정의 주요 사례", "3.2 씬 전환과 초기화 — 객체가 존재하는 것과 준비된 것은 다르다", "결과와 배운 점"],
         "points": [
-          {
-            "label": "배운 점",
-            "text": "객체의 생성과 사용 가능한 상태를 구분해야 합니다.",
-            "verbatim": true
-          },
-          {
-            "label": "배운 점",
-            "text": "씬을 넘어 유지할 데이터와 씬에 종속된 객체를 구분해야 합니다.",
-            "verbatim": true
-          },
-          {
-            "label": "배운 점",
-            "text": "실행 순서 설정은 간단한 해결책이지만 의존 관계를 감출 수 있습니다.",
-            "verbatim": true
-          }
+          {"label": "배운 점", "text": "객체의 생성과 사용 가능한 상태를 구분해야 합니다.", "verbatim": true},
+          {"label": "배운 점", "text": "씬을 넘어 유지할 데이터와 씬에 종속된 객체를 구분해야 합니다.", "verbatim": true},
+          {"label": "배운 점", "text": "실행 순서 설정은 간단한 해결책이지만 의존 관계를 감출 수 있습니다.", "verbatim": true}
         ],
         "visuals": []
       },
@@ -1276,89 +1704,41 @@
         "chapter": "cases",
         "layout": "visual",
         "tab": "구조",
-        "title": {
-          "text": "초기 설계 — 승무원과 방이 서로를 참조",
-          "verbatim": true
-        },
-        "lead": {
-          "text": "이를 구현하기 위해 승무원은 자신의 `CurrentRoom`을, 방은 소속된 승무원의 `Crews` 목록을 보관하도록 했습니다.",
-          "verbatim": true
-        },
-        "keywords": [
-          "CurrentRoom",
-          "Crews 목록",
-          "서로 참조"
-        ],
-        "sectionPath": [
-          "3. 개발 과정의 주요 사례",
-          "3.3 승무원과 방 — 상태를 변경하는 책임이 여러 곳에 흩어진 문제",
-          "초기 설계 — 승무원과 방이 서로를 참조"
-        ],
+        "title": {"text": "초기 설계 — 승무원과 방이 서로를 참조", "verbatim": true},
+        "lead": {"text": "이를 구현하기 위해 승무원은 자신의 `CurrentRoom`을, 방은 소속된 승무원의 `Crews` 목록을 보관하도록 했습니다.", "verbatim": true},
+        "keywords": ["CurrentRoom", "Crews 목록", "서로 참조"],
+        "sectionPath": ["3. 개발 과정의 주요 사례", "3.3 승무원과 방 — 상태를 변경하는 책임이 여러 곳에 흩어진 문제", "초기 설계 — 승무원과 방이 서로를 참조"],
         "points": [
-          {
-            "label": "",
-            "text": "승무원은 지정된 방으로 이동하고, 그 방에 있는 시설의 상태에 따라 수리하거나 보조하는 기능이 필요했습니다.",
-            "verbatim": true
-          },
-          {
-            "label": "",
-            "text": "이 방식은 구현이 직관적이었습니다.",
-            "verbatim": true
-          },
-          {
-            "label": "",
-            "text": "승무원이 방의 시설에 접근하거나, 방에서 승무원들에게 피해를 전달하기 위해 별도의 객체를 거칠 필요가 없었습니다.",
-            "verbatim": true
-          }
+          {"label": "", "text": "승무원은 지정된 방으로 이동하고, 그 방에 있는 시설의 상태에 따라 수리하거나 보조하는 기능이 필요했습니다.", "verbatim": true},
+          {"label": "", "text": "이 방식은 구현이 직관적이었습니다.", "verbatim": true},
+          {"label": "", "text": "승무원이 방의 시설에 접근하거나, 방에서 승무원들에게 피해를 전달하기 위해 별도의 객체를 거칠 필요가 없었습니다.", "verbatim": true}
         ],
-        "visuals": [{"kind": "image", "src": "images/main-function-2.png", "w": 342, "h": 116, "caption": {"text": "방에 배치된 승무원", "verbatim": true}}]
+        "visuals": [
+          {
+            "kind": "image",
+            "src": "images/main-function-2.png",
+            "w": 342,
+            "h": 116,
+            "caption": {"text": "방에 배치된 승무원", "verbatim": true}
+          }
+        ]
       },
       {
         "key": "crew-paths",
         "chapter": "cases",
         "layout": "code",
         "tab": "구현",
-        "title": {
-          "text": "실제 구현 — 승무원 이동과 사망의 처리 경로",
-          "verbatim": true
-        },
-        "lead": {
-          "text": "이동과 사망 모두 승무원이 방에서 빠지는 동작이지만, 후처리 방식이 달랐습니다.",
-          "verbatim": true
-        },
-        "keywords": [
-          "이동 경로",
-          "사망 경로",
-          "후처리 차이"
-        ],
-        "sectionPath": [
-          "3. 개발 과정의 주요 사례",
-          "3.3 승무원과 방 — 상태를 변경하는 책임이 여러 곳에 흩어진 문제",
-          "실제 구현 — 승무원 이동과 사망의 처리 경로"
-        ],
+        "title": {"text": "실제 구현 — 승무원 이동과 사망의 처리 경로", "verbatim": true},
+        "lead": {"text": "이동과 사망 모두 승무원이 방에서 빠지는 동작이지만, 후처리 방식이 달랐습니다.", "verbatim": true},
+        "keywords": ["이동 경로", "사망 경로", "후처리 차이"],
+        "sectionPath": ["3. 개발 과정의 주요 사례", "3.3 승무원과 방 — 상태를 변경하는 책임이 여러 곳에 흩어진 문제", "실제 구현 — 승무원 이동과 사망의 처리 경로"],
         "points": [
-          {
-            "label": "",
-            "text": "이동 시: 승무원을 제거하고 방이 비었으면 시설 보조를 해제하고 수리 진행도를 초기화합니다.",
-            "verbatim": true
-          },
-          {
-            "label": "",
-            "text": "사망 시: 승무원을 목록에서 제거하지만 같은 후처리는 호출하지 않습니다.",
-            "verbatim": true
-          }
+          {"label": "", "text": "이동 시: 승무원을 제거하고 방이 비었으면 시설 보조를 해제하고 수리 진행도를 초기화합니다.", "verbatim": true},
+          {"label": "", "text": "사망 시: 승무원을 목록에서 제거하지만 같은 후처리는 호출하지 않습니다.", "verbatim": true}
         ],
         "visuals": [
-          {
-            "kind": "code",
-            "n": 1,
-            "fp": "TargetRoom = room;"
-          },
-          {
-            "kind": "code",
-            "n": 2,
-            "fp": "// CrewSystem.HandleCrewDeath — 핵심 부분"
-          }
+          {"kind": "code", "n": 1, "fp": "TargetRoom = room;"},
+          {"kind": "code", "n": 2, "fp": "// CrewSystem.HandleCrewDeath — 핵심 부분"}
         ]
       },
       {
@@ -1366,41 +1746,15 @@
         "chapter": "cases",
         "layout": "problem",
         "tab": "문제 해결",
-        "title": {
-          "text": "개발 후 검토에서 발견한 문제",
-          "verbatim": true
-        },
+        "title": {"text": "개발 후 검토에서 발견한 문제", "verbatim": true},
         "lead": null,
-        "keywords": [
-          "후처리 누락",
-          "위치 불일치"
-        ],
-        "sectionPath": [
-          "3. 개발 과정의 주요 사례",
-          "3.3 승무원과 방 — 상태를 변경하는 책임이 여러 곳에 흩어진 문제",
-          "개발 후 검토에서 발견한 문제"
-        ],
+        "keywords": ["후처리 누락", "위치 불일치"],
+        "sectionPath": ["3. 개발 과정의 주요 사례", "3.3 승무원과 방 — 상태를 변경하는 책임이 여러 곳에 흩어진 문제", "개발 후 검토에서 발견한 문제"],
         "points": [
-          {
-            "label": "문제",
-            "text": "첫째, 승무원 사망 시 시설 상태의 후처리가 누락될 수 있습니다.",
-            "verbatim": true
-          },
-          {
-            "label": "원인",
-            "text": "이는 이동과 사망의 처리 경로가 분리되어 있기 때문에 발생하는 문제입니다.",
-            "verbatim": true
-          },
-          {
-            "label": "문제",
-            "text": "둘째, 승무원의 실제 위치와 소속 방 정보가 일치하지 않을 수 있습니다.",
-            "verbatim": true
-          },
-          {
-            "label": "결과",
-            "text": "방을 기준으로 승무원 피해를 판정해 실제 위치와 다르게 처리되는 버그가 있었습니다.",
-            "verbatim": true
-          }
+          {"label": "문제", "text": "첫째, 승무원 사망 시 시설 상태의 후처리가 누락될 수 있습니다.", "verbatim": true},
+          {"label": "원인", "text": "이는 이동과 사망의 처리 경로가 분리되어 있기 때문에 발생하는 문제입니다.", "verbatim": true},
+          {"label": "문제", "text": "둘째, 승무원의 실제 위치와 소속 방 정보가 일치하지 않을 수 있습니다.", "verbatim": true},
+          {"label": "결과", "text": "방을 기준으로 승무원 피해를 판정해 실제 위치와 다르게 처리되는 버그가 있었습니다.", "verbatim": true}
         ],
         "visuals": []
       },
@@ -1409,70 +1763,32 @@
         "chapter": "cases",
         "layout": "visual",
         "tab": "구조",
-        "title": {
-          "text": "원인 분석 — 데이터의 책임과 상태 변경의 책임을 구별하지 않음",
-          "verbatim": true
-        },
+        "title": {"text": "원인 분석 — 데이터의 책임과 상태 변경의 책임을 구별하지 않음", "verbatim": true},
         "lead": null,
-        "keywords": [
-          "CrewStatus",
-          "상태 변경 세 곳"
-        ],
-        "sectionPath": [
-          "3. 개발 과정의 주요 사례",
-          "3.3 승무원과 방 — 상태를 변경하는 책임이 여러 곳에 흩어진 문제",
-          "원인 분석 — 데이터의 책임과 상태 변경의 책임을 구별하지 않음"
-        ],
+        "keywords": ["CrewStatus", "상태 변경 세 곳"],
+        "sectionPath": ["3. 개발 과정의 주요 사례", "3.3 승무원과 방 — 상태를 변경하는 책임이 여러 곳에 흩어진 문제", "원인 분석 — 데이터의 책임과 상태 변경의 책임을 구별하지 않음"],
         "points": [
-          {
-            "label": "원인",
-            "text": "문제는 상태를 참조하는 책임과 상태 변경의 일관성을 보장하는 책임을 구분하지 않았다는 점이었습니다.",
-            "verbatim": true
-          },
+          {"label": "원인", "text": "문제는 상태를 참조하는 책임과 상태 변경의 일관성을 보장하는 책임을 구분하지 않았다는 점이었습니다.", "verbatim": true},
           {
             "label": "",
             "text": "이 그림에서 볼 것은 상태를 바꾸는 곳이 `SetTargetRoom`·`UpdateCrewStatus`·`MoveToTargetRoom` 세 군데라는 점입니다.",
             "verbatim": true
           }
         ],
-        "visuals": [
-          {
-            "kind": "mermaid",
-            "n": 1,
-            "fp": "stateDiagram-v2"
-          }
-        ]
+        "visuals": [{"kind": "mermaid", "n": 1, "fp": "stateDiagram-v2"}]
       },
       {
         "key": "crew-redo",
         "chapter": "cases",
         "layout": "overview",
         "tab": "선택",
-        "title": {
-          "text": "다시 구현한다면",
-          "verbatim": true
-        },
+        "title": {"text": "다시 구현한다면", "verbatim": true},
         "lead": null,
-        "keywords": [
-          "Room 단일 메서드",
-          "TargetRoom 의미"
-        ],
-        "sectionPath": [
-          "3. 개발 과정의 주요 사례",
-          "3.3 승무원과 방 — 상태를 변경하는 책임이 여러 곳에 흩어진 문제",
-          "다시 구현한다면"
-        ],
+        "keywords": ["Room 단일 메서드", "TargetRoom 의미"],
+        "sectionPath": ["3. 개발 과정의 주요 사례", "3.3 승무원과 방 — 상태를 변경하는 책임이 여러 곳에 흩어진 문제", "다시 구현한다면"],
         "points": [
-          {
-            "label": "",
-            "text": "승무원이 현재 위치한 방에서 나갈때 이루어지는 작업을 `Room`의 단일 메서드로 모을 것입니다.",
-            "verbatim": true
-          },
-          {
-            "label": "",
-            "text": "실제 이동 중 어느 방에 속한 것으로 취급할지 게임 규칙을 먼저 정의한 뒤 데이터 갱신 시점을 결정할 것입니다.",
-            "verbatim": true
-          },
+          {"label": "", "text": "승무원이 현재 위치한 방에서 나갈때 이루어지는 작업을 `Room`의 단일 메서드로 모을 것입니다.", "verbatim": true},
+          {"label": "", "text": "실제 이동 중 어느 방에 속한 것으로 취급할지 게임 규칙을 먼저 정의한 뒤 데이터 갱신 시점을 결정할 것입니다.", "verbatim": true},
           {
             "label": "",
             "text": "승무원의 상태 처리 역시 무조건 별도 상태 패턴 클래스로 분리하기보다는, 우선 기존 enum과 switch를 유지하면서 상태 진입·갱신·이탈 시의 책임을 구분하는 방법을 검토하겠습니다.",
@@ -1486,34 +1802,17 @@
         "chapter": "cases",
         "layout": "overview",
         "tab": "결과",
-        "title": {
-          "text": "배운 점",
-          "verbatim": true
-        },
-        "lead": {
-          "text": "이 사례에서 얻은 기준은 객체 사이의 참조 관계뿐 아니라 상태를 변경하는 모든 경로에서 같은 규칙이 적용되는지 확인해야 한다는 것입니다.",
-          "verbatim": true
-        },
-        "keywords": [
-          "모든 변경 경로",
-          "공통 후처리"
-        ],
-        "sectionPath": [
-          "3. 개발 과정의 주요 사례",
-          "3.3 승무원과 방 — 상태를 변경하는 책임이 여러 곳에 흩어진 문제",
-          "배운 점"
-        ],
+        "title": {"text": "배운 점", "verbatim": true},
+        "lead": {"text": "이 사례에서 얻은 기준은 객체 사이의 참조 관계뿐 아니라 상태를 변경하는 모든 경로에서 같은 규칙이 적용되는지 확인해야 한다는 것입니다.", "verbatim": true},
+        "keywords": ["모든 변경 경로", "공통 후처리"],
+        "sectionPath": ["3. 개발 과정의 주요 사례", "3.3 승무원과 방 — 상태를 변경하는 책임이 여러 곳에 흩어진 문제", "배운 점"],
         "points": [
           {
             "label": "",
             "text": "데이터를 소유한 객체와 상태 변경을 요청하는 객체의 책임을 구분하고, 여러 경로에서 공통으로 수행해야 하는 후처리는 한곳에서 보장해야 합니다.",
             "verbatim": true
           },
-          {
-            "label": "",
-            "text": "이렇게 하면 새로운 상태 변경 경로가 추가되더라도 동일한 정리 작업을 빠뜨릴 가능성을 줄일 수 있습니다.",
-            "verbatim": true
-          }
+          {"label": "", "text": "이렇게 하면 새로운 상태 변경 경로가 추가되더라도 동일한 정리 작업을 빠뜨릴 가능성을 줄일 수 있습니다.", "verbatim": true}
         ],
         "visuals": []
       },
@@ -1522,23 +1821,10 @@
         "chapter": "cases",
         "layout": "overview",
         "tab": "개요",
-        "title": {
-          "text": "목표 — FTL의 핵심 시스템만으로 전투 경험 재현",
-          "verbatim": true
-        },
-        "lead": {
-          "text": "《FTL: Faster Than Light》에서 전력 배분, 무기 조준, 승무원 관리라는 세 가지 조작을 추려 최소 전투 루프를 구성했습니다.",
-          "verbatim": true
-        },
-        "keywords": [
-          "세 가지 조작",
-          "최소 전투 루프"
-        ],
-        "sectionPath": [
-          "3. 개발 과정의 주요 사례",
-          "3.4 핵심 루프 구현과 플레이 경험 — 기능을 줄이는 것만으로는 핵심 재미를 남길 수 없었다",
-          "목표 — FTL의 핵심 시스템만으로 전투 경험 재현"
-        ],
+        "title": {"text": "목표 — FTL의 핵심 시스템만으로 전투 경험 재현", "verbatim": true},
+        "lead": {"text": "《FTL: Faster Than Light》에서 전력 배분, 무기 조준, 승무원 관리라는 세 가지 조작을 추려 최소 전투 루프를 구성했습니다.", "verbatim": true},
+        "keywords": ["세 가지 조작", "최소 전투 루프"],
+        "sectionPath": ["3. 개발 과정의 주요 사례", "3.4 핵심 루프 구현과 플레이 경험 — 기능을 줄이는 것만으로는 핵심 재미를 남길 수 없었다", "목표 — FTL의 핵심 시스템만으로 전투 경험 재현"],
         "points": [
           {
             "label": "",
@@ -1553,44 +1839,15 @@
         "chapter": "cases",
         "layout": "overview",
         "tab": "결과",
-        "title": {
-          "text": "실제 구현 결과 — 루프는 완성했지만 선택의 폭이 좁았다",
-          "verbatim": true
-        },
-        "lead": {
-          "text": "기능을 재현한 것과 기능들이 결합해 만드는 플레이 경험을 재현한 것은 다른 목표였습니다.",
-          "verbatim": true
-        },
-        "keywords": [
-          "좁은 선택지",
-          "상호작용"
-        ],
-        "sectionPath": [
-          "3. 개발 과정의 주요 사례",
-          "3.4 핵심 루프 구현과 플레이 경험 — 기능을 줄이는 것만으로는 핵심 재미를 남길 수 없었다",
-          "실제 구현 결과 — 루프는 완성했지만 선택의 폭이 좁았다"
-        ],
+        "title": {"text": "실제 구현 결과 — 루프는 완성했지만 선택의 폭이 좁았다", "verbatim": true},
+        "lead": {"text": "기능을 재현한 것과 기능들이 결합해 만드는 플레이 경험을 재현한 것은 다른 목표였습니다.", "verbatim": true},
+        "keywords": ["좁은 선택지", "상호작용"],
+        "sectionPath": ["3. 개발 과정의 주요 사례", "3.4 핵심 루프 구현과 플레이 경험 — 기능을 줄이는 것만으로는 핵심 재미를 남길 수 없었다", "실제 구현 결과 — 루프는 완성했지만 선택의 폭이 좁았다"],
         "points": [
-          {
-            "label": "",
-            "text": "다양한 무기·시설이 만들어 내는 전투별 선택지",
-            "verbatim": true
-          },
-          {
-            "label": "",
-            "text": "화재·산소 고갈·강습 등 예기치 못한 함선 내부 상황",
-            "verbatim": true
-          },
-          {
-            "label": "",
-            "text": "텍스트 이벤트와 선택지가 제공하는 항해 맥락과 몰입",
-            "verbatim": true
-          },
-          {
-            "label": "",
-            "text": "내 프로젝트에서는 이러한 선택의 폭과 사건의 변화가 제한적이었습니다.",
-            "verbatim": true
-          }
+          {"label": "", "text": "다양한 무기·시설이 만들어 내는 전투별 선택지", "verbatim": true},
+          {"label": "", "text": "화재·산소 고갈·강습 등 예기치 못한 함선 내부 상황", "verbatim": true},
+          {"label": "", "text": "텍스트 이벤트와 선택지가 제공하는 항해 맥락과 몰입", "verbatim": true},
+          {"label": "", "text": "내 프로젝트에서는 이러한 선택의 폭과 사건의 변화가 제한적이었습니다.", "verbatim": true}
         ],
         "visuals": []
       },
@@ -1599,40 +1856,18 @@
         "chapter": "cases",
         "layout": "overview",
         "tab": "결과",
-        "title": {
-          "text": "또 다른 판단 오류 — 구현해야 할 일의 범위를 코드 중심으로 추정",
-          "verbatim": true
-        },
-        "lead": {
-          "text": "최초 일정은 핵심 기능을 순서대로 구현하는 7단계 계획이었습니다.",
-          "verbatim": true
-        },
-        "keywords": [
-          "7단계 계획",
-          "에디터 작업",
-          "약 3주"
-        ],
+        "title": {"text": "또 다른 판단 오류 — 구현해야 할 일의 범위를 코드 중심으로 추정", "verbatim": true},
+        "lead": {"text": "최초 일정은 핵심 기능을 순서대로 구현하는 7단계 계획이었습니다.", "verbatim": true},
+        "keywords": ["7단계 계획", "에디터 작업", "약 3주"],
         "sectionPath": [
           "3. 개발 과정의 주요 사례",
           "3.4 핵심 루프 구현과 플레이 경험 — 기능을 줄이는 것만으로는 핵심 재미를 남길 수 없었다",
           "또 다른 판단 오류 — 구현해야 할 일의 범위를 코드 중심으로 추정"
         ],
         "points": [
-          {
-            "label": "",
-            "text": "하지만 실제 작업은 약 3주가 걸렸고, 전력·시설 단계는 4일, 최종 통합·피드백 단계는 6일이 걸렸습니다.",
-            "verbatim": true
-          },
-          {
-            "label": "",
-            "text": "처음 접하는 Unity 에디터 작업과 데이터 연결에 예상보다 많은 시간을 사용했습니다.",
-            "verbatim": true
-          },
-          {
-            "label": "",
-            "text": "작은 기능도 메인 전투 씬에서 바로 테스트했기 때문에 프로젝트 후반으로 갈수록 재현과 확인에 걸리는 시간도 증가했습니다.",
-            "verbatim": true
-          }
+          {"label": "", "text": "하지만 실제 작업은 약 3주가 걸렸고, 전력·시설 단계는 4일, 최종 통합·피드백 단계는 6일이 걸렸습니다.", "verbatim": true},
+          {"label": "", "text": "처음 접하는 Unity 에디터 작업과 데이터 연결에 예상보다 많은 시간을 사용했습니다.", "verbatim": true},
+          {"label": "", "text": "작은 기능도 메인 전투 씬에서 바로 테스트했기 때문에 프로젝트 후반으로 갈수록 재현과 확인에 걸리는 시간도 증가했습니다.", "verbatim": true}
         ],
         "visuals": []
       },
@@ -1641,34 +1876,13 @@
         "chapter": "cases",
         "layout": "overview",
         "tab": "결과",
-        "title": {
-          "text": "결과와 다음 프로젝트에서 적용할 기준",
-          "verbatim": true
-        },
-        "lead": {
-          "text": "다음에는 기능 목록을 줄이기 전에 남길 핵심 경험과 그 경험을 만드는 상호작용을 먼저 정의하겠습니다.",
-          "verbatim": true
-        },
-        "keywords": [
-          "핵심 경험 먼저",
-          "완료 기준"
-        ],
-        "sectionPath": [
-          "3. 개발 과정의 주요 사례",
-          "3.4 핵심 루프 구현과 플레이 경험 — 기능을 줄이는 것만으로는 핵심 재미를 남길 수 없었다",
-          "결과와 다음 프로젝트에서 적용할 기준"
-        ],
+        "title": {"text": "결과와 다음 프로젝트에서 적용할 기준", "verbatim": true},
+        "lead": {"text": "다음에는 기능 목록을 줄이기 전에 남길 핵심 경험과 그 경험을 만드는 상호작용을 먼저 정의하겠습니다.", "verbatim": true},
+        "keywords": ["핵심 경험 먼저", "완료 기준"],
+        "sectionPath": ["3. 개발 과정의 주요 사례", "3.4 핵심 루프 구현과 플레이 경험 — 기능을 줄이는 것만으로는 핵심 재미를 남길 수 없었다", "결과와 다음 프로젝트에서 적용할 기준"],
         "points": [
-          {
-            "label": "결과",
-            "text": "프로젝트를 통해 전투·정비 루프의 최소 동작을 구현하는 목표는 달성했습니다.",
-            "verbatim": true
-          },
-          {
-            "label": "결과",
-            "text": "반면 원작과 유사한 전략적 경험을 제공했는지는 검증하지 못했습니다.",
-            "verbatim": true
-          },
+          {"label": "결과", "text": "프로젝트를 통해 전투·정비 루프의 최소 동작을 구현하는 목표는 달성했습니다.", "verbatim": true},
+          {"label": "결과", "text": "반면 원작과 유사한 전략적 경험을 제공했는지는 검증하지 못했습니다.", "verbatim": true},
           {
             "label": "",
             "text": "새로운 시스템을 넓게 추가하기 전에 이미 구현한 한 사이클을 실제 플레이어가 이해하고 판단할 수 있는 수준으로 완성하는 것이 우선입니다.",
@@ -1682,39 +1896,18 @@
         "chapter": "results",
         "layout": "overview",
         "tab": "선택",
-        "title": {
-          "text": "적 조준 규칙 분리 — 기획한 범위보다 큰 설계",
-          "verbatim": true
-        },
-        "lead": {
-          "text": "적 무기가 공격할 플레이어 방을 고르는 규칙을 무기 시스템 밖으로 빼기 위해 `ITargeting` 인터페이스를 두었습니다.",
-          "verbatim": true
-        },
-        "keywords": [
-          "ITargeting",
-          "과한 분리"
-        ],
-        "sectionPath": [
-          "4. 결과와 회고",
-          "4.2 무기 쪽에서 겪은 시행착오",
-          "적 조준 규칙 분리 — 기획한 범위보다 큰 설계"
-        ],
+        "title": {"text": "적 조준 규칙 분리 — 기획한 범위보다 큰 설계", "verbatim": true},
+        "lead": {"text": "적 무기가 공격할 플레이어 방을 고르는 규칙을 무기 시스템 밖으로 빼기 위해 `ITargeting` 인터페이스를 두었습니다.", "verbatim": true},
+        "keywords": ["ITargeting", "과한 분리"],
+        "sectionPath": ["4. 결과와 회고", "4.2 무기 쪽에서 겪은 시행착오", "적 조준 규칙 분리 — 기획한 범위보다 큰 설계"],
         "points": [
-          {
-            "label": "실제로 만든 것",
-            "text": "조준 규칙은 랜덤으로 방 하나를 고르는 `RandomTargeter` 하나였습니다.",
-            "verbatim": true
-          },
+          {"label": "실제로 만든 것", "text": "조준 규칙은 랜덤으로 방 하나를 고르는 `RandomTargeter` 하나였습니다.", "verbatim": true},
           {
             "label": "남은 비용",
             "text": "`EnemyController`가 Targeter를 만들어 `WeaponSystem`에 주입하는 초기화 흐름을 따로 따라가야 했습니다.",
             "verbatim": true
           },
-          {
-            "label": "배운 점",
-            "text": "인터페이스는 두 번째 규칙이 실제로 필요해질 때 나눠도 늦지 않습니다.",
-            "verbatim": true
-          }
+          {"label": "배운 점", "text": "인터페이스는 두 번째 규칙이 실제로 필요해질 때 나눠도 늦지 않습니다.", "verbatim": true}
         ],
         "visuals": []
       },
@@ -1723,23 +1916,10 @@
         "chapter": "results",
         "layout": "visual",
         "tab": "선택",
-        "title": {
-          "text": "투사체 피해 판정 시점 — 통합 테스트가 필요한 이유",
-          "verbatim": true
-        },
-        "lead": {
-          "text": "투사체가 날아가는 동안 실드 상태가 바뀔 수 있어, 발사 시점과 도착 시점 중 언제 피해를 확정할지 정해야 했습니다.",
-          "verbatim": true
-        },
-        "keywords": [
-          "도착 시 판정",
-          "통합 테스트"
-        ],
-        "sectionPath": [
-          "4. 결과와 회고",
-          "4.2 무기 쪽에서 겪은 시행착오",
-          "투사체 피해 판정 시점 — 통합 테스트가 필요한 이유"
-        ],
+        "title": {"text": "투사체 피해 판정 시점 — 통합 테스트가 필요한 이유", "verbatim": true},
+        "lead": {"text": "투사체가 날아가는 동안 실드 상태가 바뀔 수 있어, 발사 시점과 도착 시점 중 언제 피해를 확정할지 정해야 했습니다.", "verbatim": true},
+        "keywords": ["도착 시 판정", "통합 테스트"],
+        "sectionPath": ["4. 결과와 회고", "4.2 무기 쪽에서 겪은 시행착오", "투사체 피해 판정 시점 — 통합 테스트가 필요한 이유"],
         "points": [
           {
             "label": "선택",
@@ -1751,54 +1931,36 @@
             "text": "호출 흐름이 `WeaponController` → `ProjectileController` → `CombatSystem` → 실드·방으로 길어졌습니다.",
             "verbatim": true
           },
-          {
-            "label": "배운 점",
-            "text": "여러 투사체의 도착 순서를 포함한 통합 테스트가 필요합니다.",
-            "verbatim": true
-          }
+          {"label": "배운 점", "text": "여러 투사체의 도착 순서를 포함한 통합 테스트가 필요합니다.", "verbatim": true}
         ],
-        "visuals": [{"kind": "image", "src": "images/main-function-3.png", "w": 156, "h": 220, "caption": {"text": "적 함선 방 조준", "verbatim": true}}]
+        "visuals": [
+          {
+            "kind": "image",
+            "src": "images/main-function-3.png",
+            "w": 156,
+            "h": 220,
+            "caption": {"text": "적 함선 방 조준", "verbatim": true}
+          }
+        ]
       },
       {
         "key": "ts-dead-coroutine",
         "chapter": "results",
         "layout": "problem",
         "tab": "문제 해결",
-        "title": {
-          "text": "함선 사망 코루틴 중복 실행",
-          "verbatim": true
-        },
+        "title": {"text": "함선 사망 코루틴 중복 실행", "verbatim": true},
         "lead": null,
-        "keywords": [
-          "사망 코루틴",
-          "한 번만 실행"
-        ],
-        "sectionPath": [
-          "4. 결과와 회고",
-          "4.3 그 밖에 겪은 문제",
-          "함선 사망 코루틴 중복 실행"
-        ],
+        "keywords": ["사망 코루틴", "한 번만 실행"],
+        "sectionPath": ["4. 결과와 회고", "4.3 그 밖에 겪은 문제", "함선 사망 코루틴 중복 실행"],
         "points": [
-          {
-            "label": "문제",
-            "text": "게임오버 뒤 사망 코루틴이 여러 번 실행되어, 씬을 불러올 때 콘솔이 에러 로그로 도배되었습니다.",
-            "verbatim": true
-          },
+          {"label": "문제", "text": "게임오버 뒤 사망 코루틴이 여러 번 실행되어, 씬을 불러올 때 콘솔이 에러 로그로 도배되었습니다.", "verbatim": true},
           {
             "label": "원인",
             "text": "승무원 전멸과 함선 파괴를 각각 검사해 코루틴을 시작했고, 코루틴이 한 번만 실행되도록 보장하는 처리가 빠져 있었습니다.",
             "verbatim": true
           },
-          {
-            "label": "해결",
-            "text": "코루틴 실행 상태를 저장하는 멤버를 추가해 한 번만 실행되도록 했습니다.",
-            "verbatim": true
-          },
-          {
-            "label": "결과",
-            "text": "고친 뒤 결과 화면이 한 번만 뜨는 것을 확인했습니다.",
-            "verbatim": true
-          }
+          {"label": "해결", "text": "코루틴 실행 상태를 저장하는 멤버를 추가해 한 번만 실행되도록 했습니다.", "verbatim": true},
+          {"label": "결과", "text": "고친 뒤 결과 화면이 한 번만 뜨는 것을 확인했습니다.", "verbatim": true}
         ],
         "visuals": []
       },
@@ -1807,41 +1969,19 @@
         "chapter": "results",
         "layout": "problem",
         "tab": "문제 해결",
-        "title": {
-          "text": "투사체 발사 방향과 회전이 어긋남",
-          "verbatim": true
-        },
+        "title": {"text": "투사체 발사 방향과 회전이 어긋남", "verbatim": true},
         "lead": null,
-        "keywords": [
-          "targetPos",
-          "회전 방향"
-        ],
-        "sectionPath": [
-          "4. 결과와 회고",
-          "4.3 그 밖에 겪은 문제",
-          "투사체 발사 방향과 회전이 어긋남"
-        ],
+        "keywords": ["targetPos", "회전 방향"],
+        "sectionPath": ["4. 결과와 회고", "4.3 그 밖에 겪은 문제", "투사체 발사 방향과 회전이 어긋남"],
         "points": [
           {
             "label": "문제",
             "text": "적 함선의 가운데가 아닌 방을 조준하면, 투사체가 목표 방으로 날아가면서도 머리는 함선 가운데를 향해 비스듬히 날아갔습니다.",
             "verbatim": true
           },
-          {
-            "label": "원인",
-            "text": "회전 방향을 공격하는 방의 목표 지점(`targetPos`)이 아니라 함선의 중심 지점으로 계산했습니다.",
-            "verbatim": true
-          },
-          {
-            "label": "해결",
-            "text": "투사체가 가진 목표 지점을 바라보도록 회전 방향을 바꿨습니다.",
-            "verbatim": true
-          },
-          {
-            "label": "결과",
-            "text": "고친 뒤 스프라이트가 바라보는 방향이 목표 지점과 일치하는 것을 확인했습니다.",
-            "verbatim": true
-          }
+          {"label": "원인", "text": "회전 방향을 공격하는 방의 목표 지점(`targetPos`)이 아니라 함선의 중심 지점으로 계산했습니다.", "verbatim": true},
+          {"label": "해결", "text": "투사체가 가진 목표 지점을 바라보도록 회전 방향을 바꿨습니다.", "verbatim": true},
+          {"label": "결과", "text": "고친 뒤 스프라이트가 바라보는 방향이 목표 지점과 일치하는 것을 확인했습니다.", "verbatim": true}
         ],
         "visuals": []
       },
@@ -1850,26 +1990,12 @@
         "chapter": "results",
         "layout": "problem",
         "tab": "문제 해결",
-        "title": {
-          "text": "조준 중 일시정지하면 마우스 커서가 사라짐",
-          "verbatim": true
-        },
+        "title": {"text": "조준 중 일시정지하면 마우스 커서가 사라짐", "verbatim": true},
         "lead": null,
-        "keywords": [
-          "일시정지",
-          "조준 UI 초기화"
-        ],
-        "sectionPath": [
-          "4. 결과와 회고",
-          "4.3 그 밖에 겪은 문제",
-          "조준 중 일시정지하면 마우스 커서가 사라짐"
-        ],
+        "keywords": ["일시정지", "조준 UI 초기화"],
+        "sectionPath": ["4. 결과와 회고", "4.3 그 밖에 겪은 문제", "조준 중 일시정지하면 마우스 커서가 사라짐"],
         "points": [
-          {
-            "label": "문제",
-            "text": "조준 중 메뉴를 열어 게임이 멈출 때, 커서 UI와 무기 조준 UI가 초기화되지 않았습니다.",
-            "verbatim": true
-          },
+          {"label": "문제", "text": "조준 중 메뉴를 열어 게임이 멈출 때, 커서 UI와 무기 조준 UI가 초기화되지 않았습니다.", "verbatim": true},
           {
             "label": "원인",
             "text": "선택 해제(`ResetSelectedWeapon`)가 무기 정보만 비우고, 연결된 커서 스프라이트·조준점 스프라이트·무기에 저장된 목표는 되돌리지 않았습니다.",
@@ -1880,11 +2006,7 @@
             "text": "선택 해제에서 조준점·커서 스프라이트와 무기의 목표를 함께 되돌리고, Esc 입력 처리를 조작 가능 검사보다 앞으로 옮겼습니다.",
             "verbatim": true
           },
-          {
-            "label": "결과",
-            "text": "고친 뒤 조준을 해제하면 커서와 조준 스프라이트 상태가 함께 맞춰지는 것을 확인했습니다.",
-            "verbatim": true
-          }
+          {"label": "결과", "text": "고친 뒤 조준을 해제하면 커서와 조준 스프라이트 상태가 함께 맞춰지는 것을 확인했습니다.", "verbatim": true}
         ],
         "visuals": []
       },
@@ -1893,32 +2015,14 @@
         "chapter": "results",
         "layout": "full",
         "tab": "결과",
-        "title": {
-          "text": "4.4 처음 가정과 실제, 이후 기준",
-          "verbatim": true
-        },
-        "lead": {
-          "text": "네 사례를 통해 처음 세웠던 네 가지 가정을 수정했습니다.",
-          "verbatim": true
-        },
-        "keywords": [
-          "처음 가정",
-          "확인한 점",
-          "이후 기준"
-        ],
-        "sectionPath": [
-          "4. 결과와 회고",
-          "4.4 처음 가정과 실제, 이후 기준"
-        ],
+        "title": {"text": "4.4 처음 가정과 실제, 이후 기준", "verbatim": true},
+        "lead": {"text": "네 사례를 통해 처음 세웠던 네 가지 가정을 수정했습니다.", "verbatim": true},
+        "keywords": ["처음 가정", "확인한 점", "이후 기준"],
+        "sectionPath": ["4. 결과와 회고", "4.4 처음 가정과 실제, 이후 기준"],
         "points": [],
-        "visuals": [
-          {
-            "kind": "table",
-            "n": 1,
-            "fp": "초기 가정|실제로 확인한 점|이후 적용할 기준"
-          }
-        ]
+        "visuals": [{"kind": "table", "n": 1, "fp": "초기 가정|실제로 확인한 점|이후 적용할 기준"}]
       }
-    ]
+    ],
+    "applied": "aa6f03d7c77e3c25"
   }
 }
