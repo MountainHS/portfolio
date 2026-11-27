@@ -10,7 +10,7 @@ import { checkDeckPage, readPrintDeck } from './deck-checks.mjs';
 
 const usage = 'node tools/check-deck.mjs <project-id> | --all [--url <local preview>] [--browser <path>] [--output <json>] [--print] [--pdf <path>]';
 const pause = (ms) => new Promise((done) => setTimeout(done, ms));
-const probes = ['swapped-layout', 'missing-highlight', 'missing-code', 'wrong-code-text', 'wrong-retro-pair', 'uneven-link-card', 'uneven-screen-cell', 'uneven-paired-row', 'scene-count-toc', 'code-stack'];
+const probes = ['swapped-layout', 'missing-highlight', 'missing-code', 'wrong-code-text', 'wrong-retro-pair', 'uneven-link-card', 'uneven-screen-cell', 'uneven-paired-row', 'scene-count-toc', 'code-stack', 'diagram-card-overlap'];
 
 export async function run(args, { flatReport = false } = {}) {
   const { positionals, values } = parseArgs({ args, allowPositionals: true, options: {
@@ -49,6 +49,7 @@ export async function run(args, { flatReport = false } = {}) {
       projectChecks: project.checks.length, commonChecks: project.commonChecks.length,
       codeReviewScenes: project.codeReview?.length ?? 0,
       findings: checks.filter((check) => !check.pass || check.level === 'note'),
+      warnings: checks.filter((check) => !check.pass && check.level === 'warning').length,
       ...(flatReport ? { checks: checks.map(({ name, pass }) => ({ name, pass })) } : {}),
       consoleErrors: project.consoleErrors
     };
@@ -173,7 +174,7 @@ async function checkProject(projectId, base, options, cdp, errors) {
   url.searchParams.set('p', projectId);
   url.searchParams.set('view', 'scroll');
   const project = { projectId, url: url.href, sceneIds: [], commonChecks: [], checks: [] };
-  const clean = () => [...project.commonChecks, ...project.checks].every((check) => check.pass) && start === errors.length;
+  const clean = () => [...project.commonChecks, ...project.checks].every((check) => check.pass || check.level === 'warning') && start === errors.length;
   const add = (list, name, pass, expected, evidence, sceneId = null) => list.push({ name, pass, expected, evidence, sceneId });
   let pdfData;
   try {
