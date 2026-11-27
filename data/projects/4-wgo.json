@@ -382,13 +382,21 @@
           {
             "text": "게스트는 송신 주기마다 현재 키 상태를 보냅니다. 키를 놓으면 이동 값 (0, 0)이 전달되어 호스트가 팔 방향을 지웁니다.",
             "verbatim": false,
-            "label": "키를 누르지 않음"
+            "label": "키를 누르지 않음",
+            "lines": [
+              "게스트는 송신 주기마다 현재 키 상태를 보냅니다.",
+              "키를 놓으면 이동 값 (0, 0)이 전달되어 호스트가 팔 방향을 지웁니다."
+            ]
           },
           {"text": "서버는 `Interlocked.Exchange`로 `LastInput`의 최신 값을 읽으면서 비웁니다.", "verbatim": false, "label": "새 입력 도착"},
           {
             "text": "이번 틱에 새 입력이 없으면 묶음에서 빠집니다. 호스트는 해당 게스트의 마지막 팔 방향과 잡기 상태를 유지합니다.",
             "verbatim": false,
-            "label": "새 입력 지연"
+            "label": "새 입력 지연",
+            "lines": [
+              "이번 틱에 새 입력이 없으면 묶음에서 빠집니다.",
+              "호스트는 해당 게스트의 마지막 팔 방향과 잡기 상태를 유지합니다."
+            ]
           }
         ],
         "visuals": [
@@ -481,13 +489,17 @@
         "keywords": ["9초 제한", "송신 실패"],
         "sectionPath": ["4. 핵심 기능 구현", "4.4 방 수명과 연결 예외 처리"],
         "points": [
-          {"text": "9초 제한 토큰을 만들어 송신 대기와 송신에 함께 넘깁니다.", "verbatim": false, "label": "9초 제한"},
+          {"text": "9초 제한 토큰을 만들어 송신 대기와 송신에 함께 넘깁니다.", "verbatim": false, "label": "9초 제한", "lines": ["9초 제한 토큰을 만들어", "송신 대기와 송신에 함께 넘깁니다."]},
           {
             "text": "소켓별 `SemaphoreSlim`을 얻은 뒤 송신합니다. 시간 초과나 `WebSocketException`은 송신 실패로 처리하고 `finally`에서 해제합니다.",
             "verbatim": false,
-            "label": "동시 송신 방지"
+            "label": "동시 송신 방지",
+            "lines": [
+              "소켓별 `SemaphoreSlim`을 얻은 뒤 송신합니다.",
+              "시간 초과나 `WebSocketException`은 송신 실패로 처리하고 `finally`에서 해제합니다."
+            ]
           },
-          {"text": "`Interlocked.Exchange`로 첫 실패만 기록하고 소켓을 종료합니다.", "verbatim": false, "label": "중복 실패 방지"}
+          {"text": "`Interlocked.Exchange`로 첫 실패만 기록하고 소켓을 종료합니다.", "verbatim": false, "label": "중복 실패 방지", "lines": ["`Interlocked.Exchange`로 첫 실패만 기록하고", "소켓을 종료합니다."]}
         ],
         "visuals": [
           {
@@ -518,7 +530,7 @@
         "sectionPath": ["4. 핵심 기능 구현", "4.5 RoomClient: 받는 시점과 보내는 시점 고정"],
         "points": [
           {"text": "수신 값은 `PlayerLoopTiming.Update`까지 기다린 뒤 반영합니다.", "verbatim": false, "label": "수신 반영"},
-          {"text": "게임 로직이 끝난 `LastUpdate`에서 스냅샷 또는 입력을 보냅니다.", "verbatim": false, "label": "송신"},
+          {"text": "게임 로직이 끝난 `LastUpdate`에서 스냅샷 또는 입력을 보냅니다.", "verbatim": false, "label": "송신", "lines": ["게임 로직이 끝난 `LastUpdate`에서", "스냅샷 또는 입력을 보냅니다."]},
           {
             "text": "게스트에서는 원격 플레이어의 `PlayerInputBranch`를 끄고, 자식 Rigidbody2D를 `Kinematic`으로 설정합니다.",
             "verbatim": false,
@@ -588,8 +600,8 @@
         "keywords": ["꼭 필요한 재료", "필요 가치 합", "최소 낭비"],
         "sectionPath": ["4. 핵심 기능 구현", "4.7 다리 건설 조건 개편과 비용 계산"],
         "points": [
-          {"text": "정해 둔 재료를 모으려 새 구역을 탐험하게 합니다.", "verbatim": false, "label": "필수 재료"},
-          {"text": "필수 재료 외의 가치는 플레이어가 모은 낚시 자원으로 채웁니다.", "verbatim": false, "label": "필요 가치 합"},
+          {"text": "다리 건설에 필요한 필수 자원이 존재합니다.", "verbatim": false, "label": "필수 재료"},
+          {"text": "필수 재료 외의 가치는 플레이어가 모은 낚시 자원으로 채웁니다.", "verbatim": false, "label": "필요 가치 합", "lines": ["필수 재료 외의 가치는", "플레이어가 모은 낚시 자원으로 채웁니다."]},
           {"text": "시스템이 건설에 쓸 재료를 고릅니다.", "verbatim": false, "label": "최소 낭비"},
           {"text": "직접 정한 명세를 바탕으로 비용 계산 모듈과 TSV 데이터 변환에 AI를 사용했습니다.", "verbatim": false, "label": "AI 활용"}
         ],
@@ -1527,9 +1539,9 @@
         "keywords": ["LastInput", "Interlocked"],
         "sectionPath": ["4. 핵심 기능 구현", "4.1 게스트 입력 모아서 호스트에게 보내기"],
         "points": [
-          {"label": "", "text": "게스트 입력이 올 때마다 그 멤버의 LastInput을 최신 값으로 덮어씁니다.", "verbatim": true},
+          {"label": "", "text": "게스트는 송신 주기마다 현재 키 상태를 보냅니다. 키를 놓으면 이동 값 (0, 0)이 전달되어 호스트가 팔 방향을 지웁니다.", "verbatim": false, "lines": ["게스트는 송신 주기마다 현재 키 상태를 보냅니다.", "키를 놓으면 이동 값 (0, 0)이 전달되어 호스트가 팔 방향을 지웁니다."]},
           {"label": "", "text": "RoomHub 타이머가 틱마다 모든 방의 SendGuestInputsToHostAsync를 동시에 부릅니다.", "verbatim": true},
-          {"label": "", "text": "방은 게스트마다 LastInput을 \"꺼내면서 비우고\", 입력이 하나라도 있으면 묶어서 호스트에게 보냅니다", "verbatim": true}
+          {"label": "", "text": "이번 틱에 새 입력이 없으면 묶음에서 빠집니다. 호스트는 해당 게스트의 마지막 팔 방향과 잡기 상태를 유지합니다.", "verbatim": false, "lines": ["이번 틱에 새 입력이 없으면 묶음에서 빠집니다.", "호스트는 해당 게스트의 마지막 팔 방향과 잡기 상태를 유지합니다."]}
         ],
         "visuals": [{"kind": "code", "n": 1, "lines": [8, 28], "fp": "public async Task SendGuestInputsToHostAsync()"}]
       },
@@ -1680,8 +1692,12 @@
         "points": [
           {
             "label": "",
-            "text": "소켓 연결 중 예외로 한쪽이 비정상 종료되면 반대편도 이상해질 수 있어, 송신 실패는 반드시 한 곳에서 처리하게 했습니다.",
-            "verbatim": true
+            "text": "9초 제한 토큰을 만들어 송신 대기와 송신에 함께 넘깁니다.",
+            "verbatim": false,
+            "lines": [
+              "9초 제한 토큰을 만들어",
+              "송신 대기와 송신에 함께 넘깁니다."
+            ]
           }
         ],
         "visuals": [
@@ -1784,8 +1800,8 @@
         "keywords": ["꼭 필요한 재료", "필요 가치 합", "최소 낭비"],
         "sectionPath": ["4. 핵심 기능 구현", "4.7 다리 건설 조건 개편과 비용 계산"],
         "points": [
-          {"label": "꼭 필요한 재료", "text": "다리마다 정해 둔 재료를 반드시 모아야 합니다. 플레이어가 새 지역을 탐험하게 만듭니다.", "verbatim": true},
-          {"label": "필요 가치 합", "text": "필수 재료 외에는 플레이어가 스스로 낚시해 모은 자원으로 자유롭게 채웁니다.", "verbatim": true},
+          {"label": "꼭 필요한 재료", "text": "다리 건설에 필요한 필수 자원이 존재합니다.", "verbatim": false},
+          {"label": "필요 가치 합", "text": "필수 재료 외의 가치는 플레이어가 모은 낚시 자원으로 채웁니다.", "verbatim": false, "lines": ["필수 재료 외의 가치는", "플레이어가 모은 낚시 자원으로 채웁니다."]},
           {"label": "최소 낭비", "text": "건설에 쓸 재료는 시스템이 골라, 모은 자원을 아낍니다.", "verbatim": true}
         ],
         "visuals": [{"kind": "mermaid", "n": 1, "fp": "classDiagram"}]
@@ -2528,6 +2544,6 @@
         "visuals": []
       }
     ],
-    "applied": "dee3f140e1ed12ac"
+    "applied": "02279b7902d428c3"
   }
 }

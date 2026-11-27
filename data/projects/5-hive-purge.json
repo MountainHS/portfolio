@@ -1016,8 +1016,8 @@
         "keywords": ["StartTime", "앞당기지 않음", "Finished"],
         "sectionPath": ["3. 핵심 기능", "3.2 몬스터 관리", "3.2.5 스테이지: 웨이브를 시작 시각에 맞춰"],
         "points": [
-          {"label": "시간", "text": "스테이지 시작 뒤 경과 시간을 매 틱 더합니다.", "verbatim": false},
-          {"label": "시작", "text": "StartTime이 지난 웨이브를 순서대로 실행 목록에 넣습니다.", "verbatim": false}
+          {"label": "시간", "text": "스테이지 시작 뒤 경과 시간을 매 틱 더합니다.", "verbatim": false, "lines": ["스테이지 시작 뒤 경과 시간을", "매 틱 더합니다."]},
+          {"label": "시작", "text": "StartTime이 지난 웨이브를 순서대로 실행 목록에 넣습니다.", "verbatim": false, "lines": ["StartTime이 지난 웨이브를", "순서대로 실행 목록에 넣습니다."]}
         ],
         "visuals": [
           {
@@ -2280,8 +2280,8 @@
         "keywords": ["StartTime", "앞당기지 않음", "Finished"],
         "sectionPath": ["3. 핵심 기능", "3.2 몬스터 관리", "3.2.5 스테이지: 웨이브를 시작 시각에 맞춰"],
         "points": [
-          {"label": "", "text": "앞 웨이브가 일찍 끝나도 다음 웨이브를 앞당기지 않습니다.", "verbatim": true},
-          {"label": "", "text": "스테이지의 Finished는 \"더 소환할 것이 없다\"는 뜻입니다.", "verbatim": true}
+          {"label": "", "text": "스테이지 시작 뒤 경과 시간을 매 틱 더합니다.", "verbatim": false, "lines": ["스테이지 시작 뒤 경과 시간을", "매 틱 더합니다."]},
+          {"label": "", "text": "StartTime이 지난 웨이브를 순서대로 실행 목록에 넣습니다.", "verbatim": false, "lines": ["StartTime이 지난 웨이브를", "순서대로 실행 목록에 넣습니다."]}
         ],
         "visuals": [{"kind": "code", "n": 1, "fp": "// code/MonsterWaveStage.cs:75-82, 108-117"}]
       },
@@ -2505,7 +2505,7 @@
         "visuals": [{"kind": "table", "n": 1, "fp": "부채|내용"}]
       }
     ],
-    "applied": "dc243021ca4cdd30",
+    "applied": "1759a864726aa95d",
     "aliases": {
       "why": "intro",
       "core-exp": "intro",

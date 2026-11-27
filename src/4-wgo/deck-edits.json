@@ -1300,6 +1300,70 @@
       "value": "자원을 더 얻으려 위험을 감수할지, 지금 모은 자원으로 돌아갈지 고민하게 했습니다.",
       "from": "자원을 더 얻으려 위험을 감수할지, 지금 모은 자원으로 돌아갈지 고민하게 했습니다. 낮과 밤에 따라 물고기 종류도 달라집니다.",
       "sourceDigest": "6db964a0b02d"
+    },
+    {
+      "slide": "input-relay",
+      "field": "point",
+      "n": 1,
+      "value": "게스트는 송신 주기마다 현재 키 상태를 보냅니다.\n키를 놓으면 이동 값 (0, 0)이 전달되어 호스트가 팔 방향을 지웁니다.",
+      "from": "게스트는 송신 주기마다 현재 키 상태를 보냅니다. 키를 놓으면 이동 값 (0, 0)이 전달되어 호스트가 팔 방향을 지웁니다.",
+      "sourceDigest": "033ab853520a"
+    },
+    {
+      "slide": "input-relay",
+      "field": "point",
+      "n": 3,
+      "value": "이번 틱에 새 입력이 없으면 묶음에서 빠집니다.\n호스트는 해당 게스트의 마지막 팔 방향과 잡기 상태를 유지합니다.",
+      "from": "이번 틱에 새 입력이 없으면 묶음에서 빠집니다. 호스트는 해당 게스트의 마지막 팔 방향과 잡기 상태를 유지합니다.",
+      "sourceDigest": "033ab853520a"
+    },
+    {
+      "slide": "send-timeout",
+      "field": "point",
+      "n": 1,
+      "value": "9초 제한 토큰을 만들어\n송신 대기와 송신에 함께 넘깁니다.",
+      "from": "9초 제한 토큰을 만들어 송신 대기와 송신에 함께 넘깁니다.",
+      "sourceDigest": "17ff71d04a4c"
+    },
+    {
+      "slide": "send-timeout",
+      "field": "point",
+      "n": 2,
+      "value": "소켓별 `SemaphoreSlim`을 얻은 뒤 송신합니다.\n시간 초과나 `WebSocketException`은 송신 실패로 처리하고 `finally`에서 해제합니다.",
+      "from": "소켓별 `SemaphoreSlim`을 얻은 뒤 송신합니다. 시간 초과나 `WebSocketException`은 송신 실패로 처리하고 `finally`에서 해제합니다.",
+      "sourceDigest": "17ff71d04a4c"
+    },
+    {
+      "slide": "send-timeout",
+      "field": "point",
+      "n": 3,
+      "value": "`Interlocked.Exchange`로 첫 실패만 기록하고\n소켓을 종료합니다.",
+      "from": "`Interlocked.Exchange`로 첫 실패만 기록하고 소켓을 종료합니다.",
+      "sourceDigest": "17ff71d04a4c"
+    },
+    {
+      "slide": "timing",
+      "field": "point",
+      "n": 2,
+      "value": "게임 로직이 끝난 `LastUpdate`에서\n스냅샷 또는 입력을 보냅니다.",
+      "from": "게임 로직이 끝난 `LastUpdate`에서 스냅샷 또는 입력을 보냅니다.",
+      "sourceDigest": "71118ee48ae6"
+    },
+    {
+      "slide": "bridge-classes",
+      "field": "point",
+      "n": 1,
+      "value": "다리 건설에 필요한 필수 자원이 존재합니다.",
+      "from": "정해 둔 재료를 모으려 새 구역을 탐험하게 합니다.",
+      "sourceDigest": "d267a27a96bc"
+    },
+    {
+      "slide": "bridge-classes",
+      "field": "point",
+      "n": 2,
+      "value": "필수 재료 외의 가치는\n플레이어가 모은 낚시 자원으로 채웁니다.",
+      "from": "필수 재료 외의 가치는 플레이어가 모은 낚시 자원으로 채웁니다.",
+      "sourceDigest": "d267a27a96bc"
     }
   ]
 }

@@ -1418,5 +1418,22 @@
     }
   ],
   "retro": {"hideAchieved": true, "omitPairs": [4]},
-  "deckText": null
+  "deckText": [
+    {
+      "slide": "stage",
+      "field": "point",
+      "n": 1,
+      "value": "스테이지 시작 뒤 경과 시간을\n매 틱 더합니다.",
+      "from": "스테이지 시작 뒤 경과 시간을 매 틱 더합니다.",
+      "sourceDigest": "f2c69a446fb7"
+    },
+    {
+      "slide": "stage",
+      "field": "point",
+      "n": 2,
+      "value": "StartTime이 지난 웨이브를\n순서대로 실행 목록에 넣습니다.",
+      "from": "StartTime이 지난 웨이브를 순서대로 실행 목록에 넣습니다.",
+      "sourceDigest": "f2c69a446fb7"
+    }
+  ]
 }
