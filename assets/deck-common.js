@@ -286,7 +286,8 @@
     if (arr === 'one' || n === 1) out[0] = contain(0, W, H - caps[0]);
     else if (arr === 'col') {
       // 세로로 쌓기: 표는 똑같이 나눈 몫까지 받되 칸 폭에서의 실제 높이가 더 작으면 그만큼만(남는 높이는 다이어그램·그림에)
-      const avail = H - GAP * (n - 1) - caps.reduce((a, c) => a + c, 0);
+      // [포크] 코드 높이는 contain에서 올림(ceil)하므로 코드 상자마다 1px 여유를 뺌(코드 둘을 쌓으면 1~2px 넘쳤음, 2026-11-27 WGO d-timing)
+      const avail = H - GAP * (n - 1) - caps.reduce((a, c) => a + c, 0) - nat.filter((t) => t.k === 'code').length;
       const need = nat.map((t) => (t.table ? Math.min(avail / n, t.hAt(W)) : t.k === 'code' ? t.nh : W / t.ar));
       const f = Math.min(1, avail / Math.max(1, need.reduce((a, x) => a + x, 0)));
       nat.forEach((t, i) => { out[i] = contain(i, W, need[i] * f); });

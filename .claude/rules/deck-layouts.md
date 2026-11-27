@@ -182,13 +182,17 @@ paths:
 
 ### `code` — 코드 + 번호 카드
 ```
-[코드 ─ ①②③ 강조]  (1)
-[               ]  (2)
-캡션: 클래스.메서드() · 파일:줄
+[코드 A ─ ①② 강조]  (1)
+ 캡션 A              (2)
+[코드 B ─ ③ 강조 ]  (3)
+ 캡션 B
 ```
 - 조건: `layout: "code"`, V에 코드 1개 이상, 24줄 넘으면 이어지는 장면으로 나뉨. 카드마다 실행 줄을 대면 `codeEvidence: "all-points"`와 `view.highlights` 번호.
-- 검사: `every code explanation card has a matching execution-line highlight` · `code caption shows source location`.
-- 예: `5-hive-purge/attack-state`.
+- 배치(요점이 있을 때 고정, 2026-11-27 WGO `timing`): 코드 열은 왼쪽, 코드가 둘 이상이면 위·아래로 쌓음. 번호 카드 열은 오른쪽에 위·아래. 렌더러 `fitSlide`의 `codeSide`가 stack 변형을 빼고, `bodyHtml`이 코드 칸에 `data-arr="col"`을 달아 `PF.fitVisuals`가 코드를 가로로 놓지 못하게 합니다.
+  - 예외: 코드 줄이 넓어 왼쪽 칸에 하한 글자(12px)로도 안 들어가면 그때만 코드 위·카드 아래로 물러섭니다(장면에 `data-pf-code-stack="wide"`, 알림 `code-stack`). 지금 Hive `attack-hooks`·`factory`·`wave-start`.
+  - 요점이 없는 나뉜 뒤쪽 장면(`-2`)은 코드만 가로 전체입니다.
+- 검사: `every code explanation card has a matching execution-line highlight` · `code caption shows source location` · `code scene keeps code column left and cards column right`(넓은 코드 예외는 참고) · probe `code-stack`.
+- 예: `4-wgo/timing`(코드 둘), `5-hive-purge/attack-state`(코드 하나).
 
 ## 5. 전후·선택 비교
 

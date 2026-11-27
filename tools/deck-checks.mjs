@@ -48,6 +48,10 @@ export async function checkDeckPage(projectId, probe) {
     for (const flow of first('.dk-paired').querySelectorAll('.paired-panel > .flow')) Object.assign(flow.style, { gridRow: 'auto', gridTemplateRows: 'none' });
     panels[0].querySelector('.panel-header').style.paddingBottom = '40px';
   }
+  if (probe === 'code-stack') {   // [포크] 첫 code 장면의 카드 열을 코드 열 왼쪽으로
+    const layout = first('.l-code .dk-side');
+    layout.prepend(layout.querySelector(':scope > .cards'));
+  }
   if (probe === 'uneven-screen-cell') {
     const media = first('.scr-row > .fe-card > .vis > figure.vbox[data-kind="image"] > .vmedia');
     media.style.height = `${parseFloat(media.style.height) / 2}px`;
@@ -282,6 +286,16 @@ export async function checkDeckPage(projectId, probe) {
     const sceneText = squeeze(parts.map((part) => part.textContent).join(''));
     const missingPoints = (slide.points || []).map((point) => squeeze(point.text).slice(0, 8)).filter((head) => head && sceneText.includes(head) === false);
     add('points rendered', missingPoints.length === 0, 'Every slide point text appears in the scene', { missingPoints, presentation: slide.presentation }, id);
+    // [포크] code 틀: 코드 열은 왼쪽(코드가 여럿이면 위·아래), 설명 카드 열은 오른쪽(카드도 위·아래)(2026-11-27 WGO d-timing)
+    if (slide.layout === 'code' && !slide.presentation && (slide.points || []).length) {
+      const codes = all(root, 'figure[data-kind="code"]').map(rect);
+      const cards = all(root, '.cards > .ncard').map(rect);
+      const leftOf = codes.length > 0 && cards.length > 0 && Math.max(...codes.map((box) => box.right)) <= Math.min(...cards.map((box) => box.left)) + tol;
+      const stacked = (boxes) => boxes.every((box, i) => i === 0 || box.top >= boxes[i - 1].bottom - tol);
+      const wide = root.dataset.pfCodeStack === 'wide';   // 렌더러가 넓은 코드라 위·아래로 물러선 장면 → 참고
+      add('code scene keeps code column left and cards column right', wide || (Boolean(root.querySelector('.dk-side')) && leftOf && stacked(codes) && stacked(cards)),
+        'Code blocks stacked in the left column, numbered cards stacked in the right column', { codes, cards, wide }, id, wide ? 'note' : 'required');
+    }
     if (slide.presentation === 'flow-table') {
       const cards = all(root, '.ft-card p');
       const bracketed = (slide.points || []).map((point, i) => ({ i, wants: /\S\s*\([^()]+\)$/.test(point.text || '') }));
