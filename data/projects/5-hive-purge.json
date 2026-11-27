@@ -2264,7 +2264,7 @@
         "keywords": ["함께 시작", "SpawnNest", "StartDelay"],
         "sectionPath": ["3. 핵심 기능", "3.2 몬스터 관리", "3.2.4 웨이브: 스포너를 함께 시작"],
         "points": [
-          {"label": "", "text": "스포너 사이의 시차는 각 스포너의 StartDelay로만 생깁니다.", "verbatim": true},
+          {"label": "", "text": "웨이브 생성 시 각 스포너를 만들어 실행 목록에 넣습니다.", "verbatim": false},
           {"label": "", "text": "같은 StartDelay의 Nest 스포너들은 둥지(SpawnNest) 하나를 나눠 씁니다.", "verbatim": true}
         ],
         "visuals": [{"kind": "code", "n": 1, "fp": "// code/MonsterWave.cs:44-58"}]
