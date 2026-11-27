@@ -133,7 +133,7 @@
     ],
     "plans": [
       "Protocol.cs를 한 곳에서만 관리합니다.",
-      "‘상태 스냅샷’에는 계속 갱신되는 현재 상태를 담습니다. 획득·건설·승패·이펙트와 리스폰 같은 일회성 입력은 ‘사건 이벤트’로 보냅니다.",
+      "‘상태 스냅샷’에는 계속 갱신되는 현재 상태를 담습니다.\n획득·건설·승패·이펙트와 리스폰 같은 일회성 입력은 ‘사건 이벤트’로 보냅니다.",
       "보간을 실제 스냅샷 도착 간격 기준으로 계산합니다.",
       "호스트 로직 / 게스트 적용 로직을 나누고, 중복된 판정 속성을 한곳으로 모읍니다."
     ]
@@ -176,14 +176,24 @@
         "layout": "overview",
         "tab": "개요",
         "title": {"text": "협동과 불협화음을 중심으로 한 게임 기획", "verbatim": false},
-        "lead": {"text": "서로 의지하면서도 상대의 행동을 방해할 수 있는 상호작용에서 출발했습니다.", "verbatim": false},
+        "lead": {"text": "팀원 모두 협동 게임을 선호해, 협동 게임이 주는 플레이어 간 상호작용과 경험에 집중했습니다.", "verbatim": false},
         "keywords": ["협동", "불협화음", "상호작용"],
         "sectionPath": ["1. 개요", "1.2 주제 선정 배경 및 기획 의도", "1.2.1 핵심 경험 선정 — 협동과 불협화음"],
         "points": [
-          {"text": "각자 맡은 역할이 맞물릴 때 협동의 재미가 생깁니다.", "verbatim": false, "label": "Overcooked"},
-          {"text": "불편한 조작과 물리적 제약이 예기치 않은 혼란을 만듭니다.", "verbatim": false, "label": "Mount Your Friends · WASD"},
-          {"text": "서로의 몸을 붙잡아 물고기를 포획하고 함께 운반하도록 했습니다.", "verbatim": false, "label": "인간 낚싯대"},
-          {"text": "포획과 운반을 반복하면서 공동 목표인 다리를 완성합니다.", "verbatim": false, "label": "장기 목표"}
+          {"text": "각자 맡은 역할이 톱니바퀴처럼 맞물려 돌아가는 협동의 재미", "verbatim": false, "label": "Overcooked"},
+          {"text": "의도적으로 불편한 조작과 물리적 제약에서 생기는 혼란", "verbatim": false, "label": "Mount Your Friends · WASD"},
+          {
+            "text": "협동과 불협화음을 핵심 경험으로 정했습니다. 행동이 부딪히고, 소통하고 협력해 극복하는 순간을 느끼게 하고 싶었습니다.",
+            "verbatim": false,
+            "label": "핵심 경험",
+            "lines": ["협동과 불협화음을 핵심 경험으로 정했습니다.", "행동이 부딪히고, 소통하고 협력해 극복하는 순간을 느끼게 하고 싶었습니다."]
+          },
+          {
+            "text": "서로 의지하면서도 방해할 수 있는 상호작용을 출발점으로, 서로의 몸을 붙잡아 물고기를 잡는 인간 낚싯대를 기획했습니다.",
+            "verbatim": false,
+            "label": "기획 출발점",
+            "lines": ["서로 의지하면서도 방해할 수 있는 상호작용을 출발점으로,", "서로의 몸을 붙잡아 물고기를 잡는 인간 낚싯대를 기획했습니다."]
+          }
         ],
         "visuals": [],
         "edited": true
@@ -194,7 +204,7 @@
         "layout": "full",
         "tab": "흐름",
         "title": {"text": "핵심 플레이 경험", "verbatim": false},
-        "lead": {"text": "물리적 간섭으로 혼란이 생기고, 이를 협동으로 극복하며 유대감이 쌓이는 흐름을 반복합니다.", "verbatim": false},
+        "lead": {"text": "인간 낚싯대에서는 서로의 행동이 부딪혀 불협화음이 생기고, 이를 함께 극복하며 성취감과 유대감이 쌓입니다.", "verbatim": false},
         "keywords": ["불협화음", "유대감", "탐욕과 도전"],
         "sectionPath": ["1. 개요", "1.3 핵심 플레이 경험"],
         "points": [
@@ -213,7 +223,7 @@
         "layout": "visual",
         "tab": "개요",
         "title": {"text": "혼란에서 협력으로 이어지는 경험", "verbatim": false},
-        "lead": {"text": "같은 목표를 향한 행동에서 혼란이 생기고, 함께 극복하는 과정에서 유대감이 생깁니다.", "verbatim": false},
+        "lead": {"text": "협력하려는 행동이 오히려 혼란을 만들고, 그 혼란을 다시 협력으로 극복하는 과정이 불협화음의 핵심입니다.", "verbatim": false},
         "keywords": ["혼란과 웃음", "돌발 상황", "협력으로 극복"],
         "sectionPath": ["1. 개요", "1.3 핵심 플레이 경험", "1.3.1 불협화음 — 예측하지 못한 혼란과 극복"],
         "points": [
@@ -263,18 +273,6 @@
         "points": [],
         "visuals": [{"kind": "mermaid", "n": 1, "fp": "flowchart LR"}, {"kind": "table", "n": 1, "fp": "종료 조건|언제"}],
         "edited": true
-      },
-      {
-        "key": "win-lose",
-        "chapter": "overview",
-        "layout": "full",
-        "tab": "결과",
-        "title": {"text": "승리·패배 화면", "verbatim": false},
-        "lead": null,
-        "keywords": ["승리 화면", "패배 화면"],
-        "sectionPath": ["1. 개요", "1.4 핵심 게임 루프", "1.4.2 전체 게임 루프 — 자원 수집과 다리 확장"],
-        "points": [],
-        "visuals": [{"kind": "table", "n": 2, "fp": "승리 화면|패배 화면"}]
       },
       {
         "key": "team",
@@ -468,7 +466,12 @@
         "sectionPath": ["4. 핵심 기능 구현", "4.4 방 수명과 연결 예외 처리"],
         "points": [
           {"text": "RoomHub가 lock으로 인원을 세어 최대 4명까지 받습니다. 첫 입장자가 호스트입니다.", "verbatim": false, "label": "입장"},
-          {"text": "welcome 수신 시 플레이어 목록과 승패 집계 등 이전 판 정보를 초기화합니다.", "verbatim": false, "label": "재입장"},
+          {
+            "text": "입장하면 서버가 welcome(방 코드·내 정보·기존 접속자 목록)을 보냅니다. 받으면 이전 판의 원격 플레이어·도착·리스폰 기록과 승패 집계를 지우고 접속자를 다시 생성합니다.",
+            "verbatim": false,
+            "label": "재입장",
+            "lines": ["입장하면 서버가 welcome(방 코드·내 정보·기존 접속자 목록)을 보냅니다.", "받으면 이전 판의 원격 플레이어·도착·리스폰 기록과 승패 집계를 지우고 접속자를 다시 생성합니다."]
+          },
           {"text": "방 토큰을 취소해 남은 연결을 종료합니다. 호스트 승계는 구현하지 않았습니다.", "verbatim": false, "label": "호스트 퇴장"},
           {
             "text": "초기 호스트 인식 오류의 정확한 원인은 확인하지 못했습니다. 공유 상태를 원자적으로 처리해 유사 문제를 예방했습니다.",
@@ -571,23 +574,14 @@
       {
         "key": "world-item-sync",
         "chapter": "features",
-        "layout": "visual",
-        "presentation": "visual-notes",
+        "layout": "full",
         "tab": "구현",
         "title": {"text": "월드 아이템 식별과 상태 반영", "verbatim": false},
-        "lead": {"text": "나무와 물고기는 생성 방식에 따라 서로 다른 방법으로 ID를 부여합니다.", "verbatim": false},
+        "lead": {"text": "나무와 물고기는 생성 방식에 따라 ID를 부여하는 방법이 다릅니다.", "verbatim": false},
         "keywords": ["WorldItemId", "고정 번호", "오브젝트 풀"],
         "sectionPath": ["4. 핵심 기능 구현", "4.6 월드 아이템(물고기·나무) 동기화: WorldItemId"],
-        "points": [
-          {"text": "씬에 미리 배치된 나무를 동일한 순서로 재귀 순회하며 0번부터 ID를 부여합니다.", "verbatim": false, "label": "나무"},
-          {
-            "text": "시간에 따라 동적으로 생성됩니다. 호스트가 ID를 발급하고, 게스트는 처음 보는 ID의 물고기를 풀에서 꺼내 같은 ID로 등록합니다.",
-            "verbatim": false,
-            "label": "물고기"
-          },
-          {"text": "이번 스냅샷에 없는 물고기는 등록을 해제하고 풀에 반환합니다.", "verbatim": false, "label": "사라진 물고기"}
-        ],
-        "visuals": [{"kind": "mermaid", "n": 1, "fp": "flowchart TD"}],
+        "points": [],
+        "visuals": [{"kind": "html", "n": 1, "fp": "<div class=\"dg\" data-dg=\"world-item-id\">"}],
         "edited": true
       },
       {
@@ -602,10 +596,10 @@
         "points": [
           {"text": "다리 건설에 필요한 필수 자원이 존재합니다.", "verbatim": false, "label": "필수 재료"},
           {"text": "필수 재료 외의 가치는 플레이어가 모은 낚시 자원으로 채웁니다.", "verbatim": false, "label": "필요 가치 합", "lines": ["필수 재료 외의 가치는", "플레이어가 모은 낚시 자원으로 채웁니다."]},
-          {"text": "시스템이 건설에 쓸 재료를 고릅니다.", "verbatim": false, "label": "최소 낭비"},
-          {"text": "직접 정한 명세를 바탕으로 비용 계산 모듈과 TSV 데이터 변환에 AI를 사용했습니다.", "verbatim": false, "label": "AI 활용"}
+          {"text": "시스템이 건설에 쓸 재료를 고릅니다.", "verbatim": false, "label": "최소 낭비"}
         ],
         "visuals": [{"kind": "mermaid", "n": 1, "fp": "classDiagram"}],
+        "footnote": {"text": "AI 활용: 직접 정한 명세를 바탕으로 비용 계산 모듈과 TSV 데이터 변환에 AI를 사용했습니다.", "verbatim": false},
         "edited": true
       },
       {
@@ -645,23 +639,14 @@
       {
         "key": "bridge-build",
         "chapter": "features",
-        "layout": "visual",
-        "presentation": "visual-notes",
+        "layout": "full",
         "tab": "구현",
         "title": {"text": "소비 계획 생성과 일괄 소비", "verbatim": false},
-        "lead": {"text": "호스트는 건설 조건을 확인하고, 소비 계획을 만들 수 있을 때만 자원을 변경합니다.", "verbatim": false},
-        "keywords": ["필수 자원", "최소 필요 점수", "추가 자원"],
+        "lead": {"text": "실제 자원을 바꾸지 않고 소비 계획을 만든 뒤, 모든 건설 조건을 충족하면 적용합니다.", "verbatim": false},
+        "keywords": ["소비 계획", "필수 재료", "일괄 소비"],
         "sectionPath": ["4. 핵심 기능 구현", "4.7 다리 건설 조건 개편과 비용 계산"],
-        "points": [
-          {"text": "나무 1개(1점)와 열대어 1마리(4점)부터 확보합니다. 필수 재료가 빠지면 건설할 수 없습니다.", "verbatim": false, "label": "필수 자원 확인"},
-          {
-            "text": "목표 8점까지 3점이 부족해 핑크 물고기 1마리만 더 고릅니다. 같은 점수라면 가치가 낮은 물고기를 우선합니다.",
-            "verbatim": false,
-            "label": "추가 자원 선택"
-          },
-          {"text": "계획한 재료만 한 번에 소비해 핑크 물고기 1마리를 남깁니다. 다리 개수는 즉시 올립니다.", "verbatim": false, "label": "성공 후 반영"}
-        ],
-        "visuals": [{"kind": "mermaid", "n": 5, "fp": "flowchart TB"}],
+        "points": [],
+        "visuals": [{"kind": "html", "n": 1, "fp": "<div class=\"dg\" data-dg=\"bridge-consume-plan\">"}],
         "edited": true
       },
       {
@@ -762,18 +747,12 @@
         "chapter": "decisions",
         "layout": "full",
         "tab": "선택",
-        "title": {"text": "호스트·게스트 코드 분리의 비용", "verbatim": false},
-        "lead": {"text": "기존 싱글 플레이 코드에 IsHost 분기를 추가해 일정 안에 기능을 연동했습니다.", "verbatim": false},
+        "title": {"text": "호스트·게스트 코드 구조 선택", "verbatim": false},
+        "lead": {"text": "2주 일정 안에 기존 싱글 플레이 기능을 네트워크와 연동해야 했습니다.", "verbatim": false},
         "keywords": ["IsHost", "연동 가이드", "협업 이슈"],
         "sectionPath": ["5. 기술적 고민과 선택", "5.1 호스트·게스트 역할별 코드 구조"],
-        "points": [
-          {
-            "text": "역할별 책임과 데이터 계약을 미리 정하거나, 서버 권한형으로 클라이언트 책임을 단순하게 만드는 방안을 검토했습니다.",
-            "verbatim": false,
-            "label": "사후 판단"
-          }
-        ],
-        "visuals": [{"kind": "table", "n": 1, "fp": "대안|장점|단점"}],
+        "points": [],
+        "visuals": [{"kind": "html", "n": 1, "fp": "<div class=\"dg\" data-dg=\"host-guest-structure\">"}],
         "edited": true
       },
       {
@@ -858,17 +837,31 @@
         "layout": "full",
         "tab": "문제 해결",
         "title": {"text": "호스트·게스트별 연동 명세 부족", "verbatim": true},
-        "lead": {"text": "호스트 권한형에서는 호스트가 게임 상태를 계산하고, 게스트는 계산된 결과를 받아 화면에 반영합니다.", "verbatim": true},
+        "lead": {"text": "호스트 권한형에서는 같은 플레이어 객체라도 세 가지 경우로 나눠 동작해야 했습니다.", "verbatim": false},
         "keywords": ["세 가지 경우", "연동 가이드"],
         "sectionPath": ["2. 프로젝트 진행 및 협업", "2.4 기능별 독립 개발과 시스템 통합", "호스트·게스트별 연동 명세 부족"],
         "points": [
           {
+            "text": "경우마다 실행할 로직과 주고받을 정보가 정리되지 않았습니다. 연동 가이드만으로는 팀원이 네트워크 구조와 역할별 동작을 따로 파악해야 했습니다.",
+            "verbatim": false,
             "label": "문제",
-            "text": "연동 가이드를 작성했지만, 팀원들이 자신의 기능을 동기화하려면 네트워크 구조와 역할별 동작을 추가로 파악해야 했습니다.",
-            "verbatim": true
+            "lines": ["경우마다 실행할 로직과 주고받을 정보가 정리되지 않았습니다.", "연동 가이드만으로는 팀원이 네트워크 구조와 역할별 동작을 따로 파악해야 했습니다."]
+          },
+          {
+            "text": "네트워크 담당인 제가 팀원 기능 연동에 직접 참여했고, 네트워크 통합은 계획보다 사흘 늦게 끝났습니다.",
+            "verbatim": false,
+            "label": "결과",
+            "lines": ["네트워크 담당인 제가 팀원 기능 연동에 직접 참여했고,", "네트워크 통합은 계획보다 사흘 늦게 끝났습니다."]
+          },
+          {
+            "text": "역할과 데이터 규약을 먼저 정의해, 담당자가 공통 시스템 전체를 몰라도 작업할 수 있게 해야 했습니다.",
+            "verbatim": false,
+            "label": "배운 점",
+            "lines": ["역할과 데이터 규약을 먼저 정의해,", "담당자가 공통 시스템 전체를 몰라도 작업할 수 있게 해야 했습니다."]
           }
         ],
-        "visuals": [{"kind": "table", "n": 1, "fp": "구분|역할"}]
+        "visuals": [{"kind": "table", "n": 1, "fp": "구분|역할"}],
+        "edited": true
       },
       {
         "key": "snapshot-compare",
@@ -968,10 +961,23 @@
         "layout": "full",
         "tab": "선택",
         "title": {"text": "상태와 이벤트 분리의 판단", "verbatim": false},
-        "lead": {"text": "초기 플레이 루프에는 효과음과 이펙트 정보가 없어 스냅샷 하나로 구현했습니다.", "verbatim": false},
+        "lead": {"text": "이벤트 분리는 처음부터 생각했지만, 모든 상태를 스냅샷 하나에 넣는 A안으로 구현했습니다.", "verbatim": false},
         "keywords": ["스냅샷 vs 이벤트"],
         "sectionPath": ["5. 기술적 고민과 선택", "5.3 모든 상태를 스냅샷 하나에 vs 스냅샷 + 이벤트 분리"],
-        "points": [{"text": "후반에 효과음과 이펙트를 넣으며 분리 필요성을 확인했지만 남은 시간에 구현하지 못했습니다.", "verbatim": false, "label": "미룬 이유"}],
+        "points": [
+          {
+            "text": "1차 빌드 목표인 핵심 플레이 루프에는 효과음·이펙트 같은 이벤트가 없어, 스냅샷에 모두 넣어도 문제가 없었습니다. 그래서 이벤트 분리를 뒤로 미뤘습니다.",
+            "verbatim": false,
+            "label": "미룬 이유",
+            "lines": ["1차 빌드 목표인 핵심 플레이 루프에는 효과음·이펙트 같은 이벤트가 없어,", "스냅샷에 모두 넣어도 문제가 없었습니다. 그래서 이벤트 분리를 뒤로 미뤘습니다."]
+          },
+          {
+            "text": "후반 폴리싱에서 효과음·이펙트를 넣으며 문제가 커졌지만, 남은 시간이 부족해 분리를 진행하지 못했습니다.",
+            "verbatim": false,
+            "label": "드러난 시점",
+            "lines": ["후반 폴리싱에서 효과음·이펙트를 넣으며 문제가 커졌지만,", "남은 시간이 부족해 분리를 진행하지 못했습니다."]
+          }
+        ],
         "visuals": [{"kind": "table", "n": 1, "fp": "대안|장점|단점"}],
         "edited": true
       },
@@ -981,12 +987,19 @@
         "layout": "full",
         "tab": "선택",
         "title": {"text": "스냅샷 반영 책임의 설계 대안", "verbatim": false},
-        "lead": {"text": "실제 구현은 두 방식이 섞였고, 게임 상태 반영은 RoomClient.OnSnapshot에 모였습니다.", "verbatim": false},
+        "lead": {"text": "OnSnapshot에서 Invoke만 하는 델리게이트 구독도 따져 봤지만, 반영 대상 7개 규모에서는 지금 구조가 낫다고 판단했습니다.", "verbatim": false},
         "keywords": ["반영 지점", "OnSnapshot"],
         "sectionPath": ["5. 기술적 고민과 선택", "5.4 스냅샷 반영 지점: RoomClient 한곳에서 vs 각 매니저가 직접"],
         "points": [
-          {"text": "구독 순서와 해제 시점을 관리해야 하며, 구독 전에 첫 스냅샷을 놓칠 수 있습니다.", "verbatim": false, "label": "델리게이트 구독"},
-          {"text": "반영 대상 7개 규모에서는 OnSnapshot에서 상태를 반영하고 다른 곳은 읽기만 하는 편을 선택했습니다.", "verbatim": false, "label": "사후 판단"}
+          {"text": "구독 순서가 각 객체의 Awake·Start 순서를 따라, 반영 순서가 코드에서 보이지 않습니다.", "verbatim": false, "label": "반영 순서"},
+          {"text": "누가 반영하는지 찾으려면 구독 코드를 모두 검색해야 합니다.", "verbatim": false, "label": "반영 흐름"},
+          {"text": "구독 전에 온 첫 스냅샷을 놓치거나, 씬을 다시 불러올 때 해제를 빠뜨릴 수 있습니다.", "verbatim": false, "label": "생명주기"},
+          {
+            "text": "필요했던 것은 \"반영은 OnSnapshot에서만, 다른 곳은 읽기만\" 규칙과 객체마다 스냅샷에 넣을 상태·이벤트 명세였습니다.",
+            "verbatim": false,
+            "label": "사후 판단",
+            "lines": ["필요했던 것은 \"반영은 OnSnapshot에서만, 다른 곳은 읽기만\" 규칙과", "객체마다 스냅샷에 넣을 상태·이벤트 명세였습니다."]
+          }
         ],
         "visuals": [{"kind": "table", "n": 1, "fp": "대안|장점|단점"}],
         "edited": true
@@ -1539,9 +1552,19 @@
         "keywords": ["LastInput", "Interlocked"],
         "sectionPath": ["4. 핵심 기능 구현", "4.1 게스트 입력 모아서 호스트에게 보내기"],
         "points": [
-          {"label": "", "text": "게스트는 송신 주기마다 현재 키 상태를 보냅니다. 키를 놓으면 이동 값 (0, 0)이 전달되어 호스트가 팔 방향을 지웁니다.", "verbatim": false, "lines": ["게스트는 송신 주기마다 현재 키 상태를 보냅니다.", "키를 놓으면 이동 값 (0, 0)이 전달되어 호스트가 팔 방향을 지웁니다."]},
+          {
+            "label": "",
+            "text": "게스트는 송신 주기마다 현재 키 상태를 보냅니다. 키를 놓으면 이동 값 (0, 0)이 전달되어 호스트가 팔 방향을 지웁니다.",
+            "verbatim": false,
+            "lines": ["게스트는 송신 주기마다 현재 키 상태를 보냅니다.", "키를 놓으면 이동 값 (0, 0)이 전달되어 호스트가 팔 방향을 지웁니다."]
+          },
           {"label": "", "text": "RoomHub 타이머가 틱마다 모든 방의 SendGuestInputsToHostAsync를 동시에 부릅니다.", "verbatim": true},
-          {"label": "", "text": "이번 틱에 새 입력이 없으면 묶음에서 빠집니다. 호스트는 해당 게스트의 마지막 팔 방향과 잡기 상태를 유지합니다.", "verbatim": false, "lines": ["이번 틱에 새 입력이 없으면 묶음에서 빠집니다.", "호스트는 해당 게스트의 마지막 팔 방향과 잡기 상태를 유지합니다."]}
+          {
+            "label": "",
+            "text": "이번 틱에 새 입력이 없으면 묶음에서 빠집니다. 호스트는 해당 게스트의 마지막 팔 방향과 잡기 상태를 유지합니다.",
+            "verbatim": false,
+            "lines": ["이번 틱에 새 입력이 없으면 묶음에서 빠집니다.", "호스트는 해당 게스트의 마지막 팔 방향과 잡기 상태를 유지합니다."]
+          }
         ],
         "visuals": [{"kind": "code", "n": 1, "lines": [8, 28], "fp": "public async Task SendGuestInputsToHostAsync()"}]
       },
@@ -1694,10 +1717,7 @@
             "label": "",
             "text": "9초 제한 토큰을 만들어 송신 대기와 송신에 함께 넘깁니다.",
             "verbatim": false,
-            "lines": [
-              "9초 제한 토큰을 만들어",
-              "송신 대기와 송신에 함께 넘깁니다."
-            ]
+            "lines": ["9초 제한 토큰을 만들어", "송신 대기와 송신에 함께 넘깁니다."]
           }
         ],
         "visuals": [
@@ -1801,7 +1821,12 @@
         "sectionPath": ["4. 핵심 기능 구현", "4.7 다리 건설 조건 개편과 비용 계산"],
         "points": [
           {"label": "꼭 필요한 재료", "text": "다리 건설에 필요한 필수 자원이 존재합니다.", "verbatim": false},
-          {"label": "필요 가치 합", "text": "필수 재료 외의 가치는 플레이어가 모은 낚시 자원으로 채웁니다.", "verbatim": false, "lines": ["필수 재료 외의 가치는", "플레이어가 모은 낚시 자원으로 채웁니다."]},
+          {
+            "label": "필요 가치 합",
+            "text": "필수 재료 외의 가치는 플레이어가 모은 낚시 자원으로 채웁니다.",
+            "verbatim": false,
+            "lines": ["필수 재료 외의 가치는", "플레이어가 모은 낚시 자원으로 채웁니다."]
+          },
           {"label": "최소 낭비", "text": "건설에 쓸 재료는 시스템이 골라, 모은 자원을 아낍니다.", "verbatim": true}
         ],
         "visuals": [{"kind": "mermaid", "n": 1, "fp": "classDiagram"}]
@@ -2544,6 +2569,6 @@
         "visuals": []
       }
     ],
-    "applied": "02279b7902d428c3"
+    "applied": "69369833ca03bb4e"
   }
 }

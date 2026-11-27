@@ -311,6 +311,11 @@
       rows.forEach((r, i) => { r.dataset.sourceRow = i; if (chunk && (i < chunk[0] || i >= chunk[1])) r.remove(); });
       return `<figure class="vbox" data-kind="table" data-visual-index="${v.index}"><div class="vmedia"><div class="fit-in">${dropRefs(t.outerHTML)}</div></div>${cap(v.ref.caption?.text ? inline(v.ref.caption.text) : '')}${warn}</figure>`;
     }
+    // [포크] 슬라이드 전용 HTML 그림(프로젝트 문서의 ```html + <!-- deck-only --> 블록). 표처럼 칸 폭을 채우고 높이가 넘치면 zoom으로 줄임
+    if (k === 'html') {
+      const html = (v.el.querySelector('code')?.textContent || '').replace(/^\s*<!--\s*deck-only\s*-->\s*$/m, '');
+      return `<figure class="vbox" data-kind="html" data-visual-index="${v.index}"><div class="vmedia"><div class="fit-in"><div class="dg">${html}</div></div></div>${cap(v.ref.caption?.text ? inline(v.ref.caption.text) : '')}${warn}</figure>`;
+    }
     return '';
   }
 
@@ -510,7 +515,8 @@
       s.classList.add(`l-${sl.layout || 'visual'}`);
       if (meta.err) s.dataset.pfErr = meta.err;
       if (sl.edited) s.dataset.pfEdited = '1';                       // 장면 고치기로 고친 장면(미리보기 개요에 ✎)
-      PF.body(s).innerHTML = `<div class="pf-fill">${bodyHtml(sl, vs, v)}</div>`;
+      const footnote = sl.footnote ? `<p class="dk-footnote">${inline(txt(sl.footnote))}</p>` : '';   // [포크] 장면 각주: 본문 흐름과 결이 다른 보충(예: AI 활용)
+      PF.body(s).innerHTML = `<div class="pf-fill">${bodyHtml(sl, vs, v)}${footnote}</div>`;
       if (meta.auto) s.querySelector('.pf-foot > span').insertAdjacentHTML('beforeend', '<span class="pf-autoband" data-pf-ui="note">예전 데이터로 자동 구성 — /portfolio-build를 다시 실행하면 슬라이드가 됩니다</span>');
       PF.fitVisuals(s);
       alignScreenCells(s);   // [포크] 사진 칸 틀 맞춤
@@ -722,13 +728,14 @@
   // 결과와 회고: ✓ 달성 카드 │ 아쉬운 점 → 개선 계획 표. 안 들어가면 두 장으로
   function buildRetro(r, p, foot, auto) {
     const ach = p.deck?.retro?.hideAchieved ? [] : r.achieved || [], reg = r.regrets || [], plan = r.plans || [];
+    const retroCell = (text) => String(text).split('\n').map((line) => inline(line)).join('<br>');   // [포크] 회고 칸 두 줄(편집 모드에서 줄바꿈으로 저장한 글)
     const n = Math.max(reg.length, plan.length);
     const omitted = new Set(p.deck?.retro?.omitPairs || []);
     const pairs = Array.from({ length: n }, (_, i) => ({ regret: reg[i] || '', plan: plan[i] || '' }))
       .filter((_, i) => !omitted.has(i + 1));
     if (!ach.length && !pairs.length) return [];
     const achHtml = ach.length ? `<div class="rt-ach card"><p class="rt-h ok">✓ ${esc(PF.t('deck.achieved'))}</p><ul>${ach.map((x) => `<li>${inline(x)}</li>`).join('')}</ul></div>` : '';
-    const pairHtml = pairs.length ? `<table class="mini"><thead><tr><th scope="col">△ ${esc(PF.t('deck.regrets'))}</th><th scope="col">→ ${esc(PF.t('deck.plans'))}</th></tr></thead><tbody>${pairs.map(({ regret, plan }) => `<tr><td>${inline(regret)}</td><td class="p">${inline(plan)}</td></tr>`).join('')}</tbody></table>` : '';
+    const pairHtml = pairs.length ? `<table class="mini"><thead><tr><th scope="col">△ ${esc(PF.t('deck.regrets'))}</th><th scope="col">→ ${esc(PF.t('deck.plans'))}</th></tr></thead><tbody>${pairs.map(({ regret, plan }) => `<tr><td>${retroCell(regret)}</td><td class="p">${retroCell(plan)}</td></tr>`).join('')}</tbody></table>` : '';
     const make = (html, one, i, cnt) => {
       const s = PF.scene({ id: i === 0 ? 'retro' : `retro-${i + 1}`, tpl: 'P6', eyebrow: PF.t('deck.retro-eyebrow'), rlabel: p.title, title: PF.t('deck.retro'), sub: cnt > 1 ? `${i + 1}/${cnt}` : '', foot,
         sec: PF.t('deck.retro'), group: PF.t('deck.retro') });

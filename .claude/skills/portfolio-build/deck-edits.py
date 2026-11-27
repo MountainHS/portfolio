@@ -42,11 +42,11 @@ VERSION = 1
 KEY_RE = re.compile(r'^[a-z][a-z0-9-]{1,31}$')
 LAYOUTS = ('overview', 'visual', 'code', 'full', 'screens', 'problem')
 TABS = ('개요', '구조', '흐름', '구현', '선택', '문제 해결', '결과', '')
-KINDS = ('mermaid', 'code', 'table', 'image')
-SLIDE_FIELDS = ('key', 'chapter', 'layout', 'presentation', 'panels', 'tab', 'title', 'lead', 'keywords', 'sectionPath', 'points', 'visuals', 'codeEvidence')
+KINDS = ('mermaid', 'code', 'table', 'image', 'html')   # [포크] html = 프로젝트 문서 ```html + <!-- deck-only --> 슬라이드 전용 그림
+SLIDE_FIELDS = ('key', 'chapter', 'layout', 'presentation', 'panels', 'tab', 'title', 'lead', 'keywords', 'sectionPath', 'points', 'visuals', 'codeEvidence', 'footnote')   # [포크] footnote = 장면 각주(글 조각)
 PRESENTATIONS = ('steps', 'stack', 'comparison', 'columns', 'pair', 'cycle', 'side-notes', 'stage-table', 'paired', 'visual-notes', 'feature-rows', 'phase-timeline', 'visual-pair-table', 'result-rows', 'flow-table')
 NO_POINT_PRESENTATIONS = ('pair', 'comparison', 'visual-pair-table')     # [포크] 렌더러(project-deck.js)가 points를 출력하지 않는 배치
-KIND_KO = {'mermaid': '다이어그램', 'code': '코드', 'table': '표', 'image': '그림'}
+KIND_KO = {'mermaid': '다이어그램', 'code': '코드', 'table': '표', 'image': '그림', 'html': 'HTML 그림'}
 
 for _s in (sys.stdout, sys.stderr):                                # Claude가 읽는 파이프는 UTF-8로(한글 깨짐 방지)
     if not _s.isatty():
@@ -153,11 +153,13 @@ class Doc:
             stack.append(node)
 
         def end_fence():
-            kind = 'mermaid' if (finfo.split() or [''])[0].lower() == 'mermaid' else 'code'
+            lang = (finfo.split() or [''])[0].lower()
+            is_deck_html = lang == 'html' and any(re.fullmatch(r'\s*<!--\s*deck-only\s*-->\s*', x) for x in fbody)
+            kind = 'mermaid' if lang == 'mermaid' else 'html' if is_deck_html else 'code'
             first = ''
             for x in fbody:
                 y = x.strip()
-                if y and not (kind == 'mermaid' and y.startswith('%%')):
+                if y and not (kind == 'mermaid' and y.startswith('%%')) and not (kind == 'html' and y.startswith('<!--')):
                     first = y
                     break
             self.blocks.append({'kind': kind, 'line': fstart, 'fp': squash(first)[:60]})
@@ -441,6 +443,8 @@ def validate(p, chapters, doc):
     presentation = p.get('presentation')
     if presentation is not None and presentation not in PRESENTATIONS:
         errs.append('presentation은 %s 중 하나여야 함' % ' · '.join(PRESENTATIONS))
+    if p.get('footnote') is not None and not is_piece(p.get('footnote')):
+        errs.append('footnote는 글 조각이어야 함')
     if p.get('codeEvidence') not in (None, 'all-points'):
         errs.append('codeEvidence는 all-points만 지원')
     if p.get('tab', '') not in TABS:
@@ -621,6 +625,7 @@ def validate(p, chapters, doc):
 
     piece(p.get('title'), '제목', body)
     piece(p.get('lead'), '도입', body)
+    piece(p.get('footnote'), '각주', body)
     if keywords:                                                   # 키워드는 Claude가 고른 낱말 → 늘 "확인해 주세요"
         pieces.append(('키워드', ' · '.join(keywords)))
     for x in pts:

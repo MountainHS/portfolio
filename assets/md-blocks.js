@@ -34,11 +34,18 @@
     return { frag, headings, md, index: null };
   }
 
+  // [포크] 슬라이드 전용 HTML 그림: ```html 코드 블록 안에 <!-- deck-only --> 줄이 있음. 상세 문서(doc.js)는 이 블록을 빼고, 슬라이드는 visuals kind "html"로 그림
+  const DECK_ONLY_HTML = /^\s*<!--\s*deck-only\s*-->\s*$/m;
+  function isDeckHtml(code) {
+    const isHtmlBlock = /\blanguage-html\b/.test(code.className);
+    return isHtmlBlock && DECK_ONLY_HTML.test(code.textContent || '');
+  }
+
   // 제목마다 그 절 범위(다음 제목 전까지, 수준 무관)의 블록 목록. 표 안 이미지는 표째로만
   function index(P) {
     if (P.index) return P.index;
     const map = new Map();
-    const bucket = () => ({ mermaid: [], code: [], table: [], image: [] });
+    const bucket = () => ({ mermaid: [], code: [], table: [], image: [], html: [] });
     let cur = bucket();
     map.set(null, cur);
     const byEl = new Map(P.headings.map((h) => [h.el, h]));
@@ -47,7 +54,9 @@
       if (byEl.has(el)) { cur = bucket(); map.set(byEl.get(el), cur); continue; }
       if (el.tagName === 'PRE') {
         const code = el.querySelector(':scope > code');
-        if (code && /\blanguage-mermaid\b/.test(code.className)) cur.mermaid.push(el); else cur.code.push(el);
+        if (code && /\blanguage-mermaid\b/.test(code.className)) cur.mermaid.push(el);
+        else if (code && isDeckHtml(code)) cur.html.push(el);          // [포크] ```html + <!-- deck-only --> = 슬라이드 전용 HTML 그림
+        else cur.code.push(el);
       } else if (el.tagName === 'TABLE') cur.table.push(el);
       else if (el.tagName === 'IMG' && !el.closest('table')) cur.image.push(el);
     }
@@ -74,7 +83,7 @@
   const squash = (s) => String(s || '').replace(/\s+/g, ' ').trim();
   function fpOf(el, kind) {
     if (kind === 'table') { const row = el.querySelector('tr'); return row ? squash([...row.children].map((c) => squash(c.textContent)).join('|')) : ''; }
-    const line = (el.textContent || '').split('\n').map((x) => x.trim()).find((x) => x && !(kind === 'mermaid' && x.startsWith('%%'))) || '';   // mermaid는 %%{init…}%% 지시 줄을 건너뜀
+    const line = (el.textContent || '').split('\n').map((x) => x.trim()).find((x) => x && !(kind === 'mermaid' && x.startsWith('%%')) && !(kind === 'html' && x.startsWith('<!--'))) || '';   // mermaid는 %%{init…}%% 지시 줄, html은 <!-- deck-only --> 주석 줄을 건너뜀
     return squash(line).slice(0, 60);
   }
   const fpSame = (a, b, kind) => { const x = squash(a), y = squash(b); return kind === 'table' ? x === y : x.slice(0, 60) === y.slice(0, 60); };
@@ -149,5 +158,5 @@
     });
   }
 
-  PF.md = { parse, index, findSection, pick, fpOf, firstVisual, isRelative, decode, sectionNumbers, dropRefs, SECTION_NUMBER, FILE_PATH };
+  PF.md = { parse, index, isDeckHtml, findSection, pick, fpOf, firstVisual, isRelative, decode, sectionNumbers, dropRefs, SECTION_NUMBER, FILE_PATH };
 })();

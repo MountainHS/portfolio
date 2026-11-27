@@ -165,6 +165,8 @@
     });
 
     // ⑦ Mermaid (theme default, securityLevel loose). 글꼴을 먼저 받아 글자 폭을 맞춤
+    // [포크] ```html 블록 안에 <!-- deck-only --> 줄이 있으면 슬라이드 전용 HTML 그림 — 상세 문서에서는 뺌(md-blocks.js isDeckHtml)
+    doc.querySelectorAll('code.language-html').forEach((code) => { if (PF.md.isDeckHtml(code)) (code.closest('pre') || code).remove(); });
     let n = 0;
     const figs = [];
     doc.querySelectorAll('code.language-mermaid').forEach((code) => {

@@ -164,3 +164,10 @@ paths:
 - 슬라이드(`project.html`·`deck-theme.css`)는 고치지 않았습니다. 장면마다 글자 폭을 재서 배치하므로 코드 글꼴·크기를 바꾸면 배치 점검이 달라집니다.
 - 되돌리기: 색은 `/portfolio-theme 되돌리기`, 배치는 위 `[포크]` 줄을 원본 값으로(또는 그 커밋 `git revert`).
 - 원 레포 머지 뒤 확인: `index.html`이 B안 카드 3열·상세 패널 구조인지, `doc.html?p=<id>` 본문 폭이 약 704px인지.
+
+## 슬라이드 전용 HTML 그림·장면 각주·회고 두 줄 (이 포크 전용, 2026-11-27)
+
+- **HTML 그림**: 프로젝트 문서의 ` ```html ` 블록 첫 줄이 `<!-- deck-only -->`이면 상세 문서에서 빠지고(`assets/doc.js`), 슬라이드는 `visuals` `kind: "html"`로 그 HTML을 그대로 넣습니다. 사용법·`dg-*` 클래스는 `.claude/rules/deck-layouts.md` 「7. HTML 그림」. Mermaid `%% deck-only`와 같은 원리입니다.
+- **장면 각주**: `deck.slides[].footnote`(글 조각) → 본문 아래 `※` 한 줄(`.dk-footnote`).
+- **회고 칸 두 줄**: 편집 모드에서 회고 칸(`regret`·`plan`)도 Enter로 두 줄까지. data에는 줄바꿈 든 글자, `buildRetro`의 `retroCell`이 `<br>`로 그립니다. 공통 검사 `retrospective follows source order…`는 칸 `innerText`로 비교합니다.
+- `/portfolio-update`·원본 머지가 덮으면 다시 넣을 곳: `assets/md-blocks.js`(`isDeckHtml`·`html` 묶음·지문), `assets/project-deck.js`(`vboxHtml` html 분기·`footnote`·`retroCell`), `assets/deck-common.js`(`natOf` html·`pad`), `assets/doc.js`(html 블록 제거), `assets/deck-theme.css` 끝 `[포크]` 두 묶음, `deck-edits.py`(`KINDS`·`KIND_KO`·`end_fence`·`SLIDE_FIELDS` footnote·검증), `portfolio-edits.py`·`assets/deck-edit.js`(`RETRO_TWO_LINE_FIELDS`), `tools/deck-checks.mjs` 회고 칸 `innerText`.

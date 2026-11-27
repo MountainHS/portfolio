@@ -253,6 +253,7 @@
     if (k === 'code') return { k, ar: fin.offsetWidth / Math.max(1, fin.offsetHeight), nw: fin.offsetWidth, nh: fin.offsetHeight, max: 1, min: 12 / 14 };
     // 표: 높이는 놓일 폭에 따라 달라지므로 hAt(w)로 잼(배율 1)
     const hAt = (w) => { Object.assign(fin.style, { zoom: '1', width: `${Math.max(1, Math.floor(w))}px` }); return fin.offsetHeight; };
+    if (k === 'html') return { k, table: true, min: 0.8, max: 1, hAt, pad: 6 };   // [포크] 슬라이드 전용 HTML 그림은 표와 같은 방식(폭 채움, 넘치면 0.8배까지 줄임). zoom 반올림으로 1~2px 넘쳐 높이 6px 여유(pad)
     return { k, table: true, min: 14 / 15, max: 1, hAt };
   }
   // 시각 자료 상자 안에서 그림 말고 차지하는 높이: 캡션 + 원문 문제 띠(visual-changed). 상자 안 간격 6px씩
@@ -299,7 +300,7 @@
     nat.forEach((t, i) => {
       if (!t.table) return;
       const fin = boxes[i].querySelector(':scope > .vmedia > .fit-in'), o = out[i];
-      const z = fitTable(fin, o.w, o.h, t.min);
+      const z = fitTable(fin, o.w, o.h - (t.pad || 0), t.min);
       o.z = fin.offsetHeight * z <= o.h + 0.5 && fin.scrollWidth <= o.w / z + 1 ? z : 0.01;
     });
     return { out, nat, caps };
@@ -351,7 +352,7 @@
           const fin = media.querySelector(':scope > .fit-in');
           let z;
           if (t.k === 'code') { z = Math.max(t.min, Math.min(1, o.w / t.nw, o.h / t.nh)); Object.assign(fin.style, { zoom: String(z), width: `${o.w / z}px` }); }
-          else z = fitTable(fin, o.w, o.h, t.min);
+          else z = fitTable(fin, o.w, o.h - (t.pad || 0), t.min);
           fin.dataset.pfFz = z.toFixed(3);
           box.dataset.sc = z.toFixed(3);
         }

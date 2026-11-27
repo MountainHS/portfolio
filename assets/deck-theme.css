@@ -442,3 +442,84 @@ table.md-table img { max-height: 120px; max-width: 100%; height: auto; }   /* wi
 /* 원칙 5 ② 축소용 감싸개 */
 .pf-zoomwrap { display: inherit; flex-direction: inherit; justify-content: inherit; align-items: inherit; align-content: inherit;
                grid-template-columns: inherit; grid-template-rows: inherit; gap: inherit; }
+
+/* ── [포크] 장면 각주(deck.slides[].footnote): 본문 흐름과 결이 다른 보충 한 줄 ── */
+.dk-footnote { margin-top: 14px; padding-top: 10px; border-top: 1px dashed var(--line); font-size: 15px; line-height: 1.5; color: var(--muted); }
+.dk-footnote::before { content: '※ '; }
+.pf-sizing .pf-fill > .dk-footnote { flex: none; }
+
+/* ── [포크] 슬라이드 전용 HTML 그림(visuals kind "html", 프로젝트 문서 ```html + <!-- deck-only -->) ──
+   장면 HTML은 아래 dg-* 클래스만 씀. 색은 테마 변수(보라 = 계획·주 대상, 청록 = 실제 변경). 크기는 표처럼 칸 폭을 채우고 넘치면 zoom으로 줄임 */
+.vbox[data-kind="html"] .fit-in { width: 100%; }
+.dg { --dg-teal: var(--accent-3, #14B8A6); --dg-teal-soft: color-mix(in srgb, var(--dg-teal) 12%, var(--card)); --dg-plan-soft: color-mix(in srgb, var(--accent) 9%, var(--card));
+      display: grid; gap: 12px; font-size: 16px; line-height: 1.4; color: var(--ink); text-align: left; }
+.dg-row { display: grid; grid-template-columns: repeat(var(--n, 2), minmax(0, 1fr)); gap: 16px; align-items: stretch; }
+.dg-panel { display: grid; grid-template-rows: auto 1fr auto; gap: 10px; padding: 14px 18px; background: var(--card); border: 1px solid var(--line); border-radius: calc(var(--radius) * .7); min-width: 0; }
+.dg-panel.is-main { border-color: var(--accent); }
+.dg-h { display: flex; align-items: center; gap: 8px; font-size: 18px; font-weight: 800; color: var(--ink); }
+.dg-sub { font-size: 14px; color: var(--muted); font-weight: 500; }
+.dg-tag { margin-left: auto; padding: 1px 10px; border-radius: var(--pill); background: var(--accent-soft); color: var(--accent-ink); font-size: 13px; font-weight: 700; white-space: nowrap; }
+.dg-note { padding-top: 8px; border-top: 1px solid var(--line); font-size: 15px; font-weight: 700; color: var(--accent-ink); }
+.dg-note.is-teal { color: var(--dg-teal); }
+.dg-title { font-size: 17px; font-weight: 800; }
+/* 호스트·게스트 두 칸(가운데 화살표 칸 선택) */
+.dg-pair { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); align-items: center; gap: 10px; }
+.dg-pair.no-arrow { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+.dg-side { display: grid; justify-items: center; gap: 8px; text-align: center; }
+.dg-side-h { font-size: 15px; font-weight: 700; color: var(--body, var(--ink)); }
+.dg-tiles { display: flex; gap: 6px; justify-content: center; }
+.dg-tile { display: grid; justify-items: center; gap: 2px; min-width: 46px; padding: 6px 6px 4px; border: 1px solid var(--line); border-radius: 8px; background: var(--dg-teal-soft); font-size: 13px; font-weight: 700; }
+.dg-tile.is-plan { background: var(--dg-plan-soft); border-color: var(--accent); }
+.dg-tile svg { width: 30px; height: 26px; display: block; }
+.dg-cap { font-size: 14px; color: var(--muted); }
+.dg-cap b { color: var(--ink); }
+.dg-arrow { display: grid; justify-items: center; gap: 2px; font-size: 13px; font-weight: 700; color: var(--accent-ink); }
+.dg-arrow::after { content: ''; width: 78px; height: 2px; background: var(--accent); clip-path: none; }
+.dg-arrow i { font-style: normal; font-size: 18px; line-height: 1; color: var(--accent); }
+/* 조건 갈래: 시작 칸 하나에서 같은 크기 칸 여러 개로 */
+.dg-branch { display: grid; grid-template-columns: 170px minmax(0, 1fr); gap: 16px; align-items: center; }
+.dg-start { padding: 14px 12px; border-radius: 10px; background: var(--accent-soft); color: var(--accent-ink); font-weight: 800; text-align: center; }
+.dg-start small { display: block; margin-top: 2px; font-size: 13px; font-weight: 600; color: var(--muted); }
+.dg-cases { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; position: relative; }
+.dg-case { padding: 12px 14px; border: 1px solid var(--line); border-left: 4px solid var(--accent); border-radius: 8px; background: var(--card); }
+.dg-case b { display: block; font-size: 16px; font-weight: 800; }
+.dg-case span { display: block; margin-top: 3px; font-size: 14px; color: var(--body, var(--ink)); }
+/* 단계 카드(그룹 머리 + 카드 + 화살표) */
+.dg-steps { display: grid; grid-template-columns: minmax(0, 1fr) 28px minmax(0, 1fr) 28px minmax(0, 1fr); column-gap: 0; row-gap: 10px; align-items: stretch; }
+.dg-group { padding: 8px 12px; border-radius: 8px; text-align: center; font-size: 15px; font-weight: 700; background: var(--dg-plan-soft); color: var(--accent-ink); }
+.dg-group.is-teal { background: var(--dg-teal-soft); color: var(--dg-teal); }
+.dg-step { display: grid; grid-template-rows: auto auto 1fr auto; gap: 10px; padding: 14px 16px; background: var(--card); border: 1px solid var(--line); border-radius: 10px; min-width: 0; }
+.dg-step-h { display: flex; align-items: center; gap: 8px; font-size: 17px; font-weight: 800; }
+.dg-num { flex: none; width: 24px; height: 24px; border-radius: 50%; background: var(--accent); color: #fff; font-size: 13px; font-weight: 800; display: grid; place-items: center; }
+.dg-step.is-teal .dg-num { background: var(--dg-teal); }
+.dg-rule { font-size: 15px; color: var(--body, var(--ink)); text-align: center; }
+.dg-example { display: grid; align-content: center; justify-items: center; gap: 4px; padding: 12px 10px; border-radius: 8px; background: var(--dg-plan-soft); text-align: center; font-size: 14px; }
+.dg-step.is-teal .dg-example { background: var(--dg-teal-soft); }
+.dg-big { font-size: 34px; font-weight: 800; line-height: 1.15; color: var(--accent); }
+.dg-step.is-teal .dg-big { color: var(--dg-teal); }
+.dg-small { font-size: 13px; color: var(--muted); }
+.dg-foot { font-size: 14px; color: var(--muted); text-align: center; }
+.dg-to { display: grid; place-items: center; color: var(--muted); font-size: 20px; }
+.dg-bar { padding: 10px 14px; border-radius: 8px; background: color-mix(in srgb, var(--muted) 10%, var(--card)); text-align: center; font-size: 15px; font-weight: 700; color: var(--body, var(--ink)); }
+/* 구조도(노드 + 세로선) */
+.dg-tree { display: grid; justify-items: center; gap: 0; }
+.dg-node { padding: 7px 14px; border: 1px solid var(--line-2, var(--line)); border-radius: 8px; background: var(--card); font-size: 15px; font-weight: 600; text-align: center; }
+.dg-node.is-main { background: var(--dg-plan-soft); border-color: var(--accent); font-weight: 800; }
+.dg-node.is-dashed { border-style: dashed; color: var(--muted); }
+.dg-vl { width: 2px; height: 14px; background: var(--line-2, var(--line)); }
+.dg-fork { display: grid; grid-template-columns: repeat(var(--n, 2), minmax(0, 1fr)); gap: 10px; width: 100%; padding-top: 14px; border-top: 2px solid var(--line-2, var(--line)); position: relative; }
+.dg-fork > * { justify-self: center; }
+.dg-fork small { display: block; font-size: 12px; color: var(--muted); font-weight: 600; }
+.dg-pros { display: grid; grid-template-columns: 54px minmax(0, 1fr); gap: 4px 10px; padding-top: 10px; border-top: 1px solid var(--line); font-size: 15px; }
+.dg-pros dt { font-size: 13px; font-weight: 700; color: var(--muted); }
+.dg-pros dd { margin: 0; }
+.dg-stats { display: grid; grid-template-columns: auto repeat(2, minmax(0, 1fr)); gap: 16px; align-items: center; padding: 12px 18px; border-radius: 10px; background: var(--card); border: 1px solid var(--line); }
+.dg-stats > p { font-size: 15px; font-weight: 700; }
+.dg-stat { display: flex; align-items: baseline; gap: 10px; }
+.dg-stat b { font-size: 30px; font-weight: 800; color: var(--ink); }
+.dg-stat span { font-size: 15px; color: var(--muted); }
+.dg-after { padding: 12px 16px; border-left: 4px solid var(--accent); background: var(--dg-plan-soft); border-radius: 0 8px 8px 0; font-size: 15px; }
+.dg-after b { display: block; margin-bottom: 2px; font-size: 16px; }
+.dg-tile svg { color: var(--dg-teal); }
+.dg-tile.is-plan svg { color: var(--accent); }
+.dg-node small { display: block; margin-top: 2px; font-size: 13px; font-weight: 500; color: var(--muted); }

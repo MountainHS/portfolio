@@ -544,6 +544,7 @@ DECK_TEXT_FIELDS = ("title", "lead", "point", "point-label", "caption", "keyword
                     "panel-title", "panel-lead", "panel-point", "achieved", "regret", "plan")
 NUMBERED_FIELDS = ("point", "point-label", "caption", "panel-title", "panel-lead", "panel-point", "achieved", "regret", "plan")   # n이 붙는 칸
 TWO_LINE_FIELDS = ("point", "panel-point")                         # 두 줄까지 쓸 수 있는 칸(data 글 조각의 lines = 화면 두 줄, project-deck.js pointHtml)
+RETRO_TWO_LINE_FIELDS = ("regret", "plan")                         # [포크] 회고 칸도 두 줄까지(문장 둘을 줄 나눔). data에는 줄바꿈 든 글자 그대로, project-deck.js buildRetro가 <br>로
 RETRO_SLIDE = "retro"                                              # 회고 장면 자리 이름 — 장면이 아니라 data.retro를 고침
 RETRO_LISTS = {"achieved": "achieved", "regret": "regrets", "plan": "plans"}
 DECK_KEYWORDS_MAX = 3                                              # deck-edits.py 검사와 같은 개수 상한
@@ -732,7 +733,7 @@ def clean_deck_text_value(field, value):
     lines = [line.strip() for line in str(value).replace("\r\n", "\n").split("\n") if line.strip() != ""]
     if lines == []:
         raise EditError(400, "빈 글은 저장할 수 없습니다. 장면을 숨기려면 /portfolio-edit를 쓰세요.")
-    max_lines = 2 if field in TWO_LINE_FIELDS else 1
+    max_lines = 2 if field in TWO_LINE_FIELDS or field in RETRO_TWO_LINE_FIELDS else 1
     if len(lines) > max_lines:
         raise EditError(400, "요점은 두 줄까지 쓸 수 있습니다." if max_lines == 2 else "이 칸은 한 줄 글입니다. 줄바꿈을 빼고 다시 저장해 주세요.")
     return "\n".join(lines)

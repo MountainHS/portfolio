@@ -26,6 +26,7 @@
   // 요점 하나를 한 칸에 그리는 배치(project-deck.js bodyHtml) — 장면 안 순서 = data points 순서. 안의 h3 = 이름표, 나머지 글 = 요점 글
   const POINT_ROW_SELECTOR = '.fe-card, .result-row, .feature-row, .dk-column';
   const TWO_LINE_FIELDS = ['point', 'panel-point'];   // 줄바꿈 하나까지 되는 칸(portfolio-edits.py TWO_LINE_FIELDS와 같음)
+  const RETRO_TWO_LINE_FIELDS = ['regret', 'plan'];   // [포크] 회고 칸 두 줄(portfolio-edits.py RETRO_TWO_LINE_FIELDS와 같음)
   const RETRO_SCENE_ID = /^retro(-\d+)?$/;           // 회고 장면 id(project-deck.js buildRetro: retro, retro-2)
   const EDITABLE_FIGURE_SELECTOR = 'figure.vbox:is([data-kind="table"], [data-kind="code"], [data-kind="mermaid"])';   // 그림(image)은 편집에서 뺌
   const IMAGE_CAPTION_SELECTOR = 'figure.vbox[data-kind="image"] > figcaption.cap';   // 그림 아래 설명 글(코드 캡션은 렌더러가 만든 라벨이라 제외)
@@ -488,7 +489,7 @@
     });
     form.querySelector('.pf-edit-cancel').addEventListener('click', close);
     deckOnly.addEventListener('change', () => showDestination(spot, deckOnly.checked, form));
-    const allowsLineBreak = spot.kind === 'md' || TWO_LINE_FIELDS.includes(spot.request?.field);
+    const allowsLineBreak = spot.kind === 'md' || TWO_LINE_FIELDS.includes(spot.request?.field) || RETRO_TWO_LINE_FIELDS.includes(spot.request?.field);
     textarea.addEventListener('keydown', (event) => {
       if (event.key === 'Escape') close();
       if (event.key === 'Enter' && event.ctrlKey) { form.requestSubmit(); return; }
@@ -517,7 +518,7 @@
       textarea.wrap = 'off';                           // 표·코드 줄이 접히지 않게(md 한 줄 = 입력창 한 줄)
       return;
     }
-    const isTwoLine = TWO_LINE_FIELDS.includes(spot.request.field);
+    const isTwoLine = TWO_LINE_FIELDS.includes(spot.request.field) || RETRO_TWO_LINE_FIELDS.includes(spot.request.field);
     const hint = spot.kind === 'keywords' ? ' · 쉼표(,)로 나눕니다 (3개까지)' : isTwoLine ? ' · Enter로 두 줄까지' : '';
     head.textContent = `${spot.label} 고치기${hint}`;
     where.textContent = '저장 위치를 묻는 중…';

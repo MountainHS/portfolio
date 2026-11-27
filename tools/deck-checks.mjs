@@ -207,8 +207,9 @@ export async function checkDeckPage(projectId, probe) {
     section: project.retro?.section || '', sceneIds: retroIds,
     achieved: retroIds.flatMap((id) => all(scene(id), '.rt-ach li').map((item) => normalize(item.textContent))),
     pairs: retroIds.flatMap((id) => all(scene(id), '.rt tbody tr').map((row) => ({
-      sceneId: id, page: pages.get(id), regret: normalize(row.cells[0]?.textContent || ''),
-      plan: normalize(row.cells[1]?.textContent || '')
+      // [포크] 회고 칸 두 줄(<br>)은 낱말 사이 띄어쓰기로 셈 — innerText가 <br>을 줄바꿈으로 돌려줌
+      sceneId: id, page: pages.get(id), regret: normalize(row.cells[0]?.innerText || ''),
+      plan: normalize(row.cells[1]?.innerText || '')
     })))
   };
   const expectedPairs = Array.from({ length: Math.max(regrets.length, plans.length) }, (_, i) => ({
