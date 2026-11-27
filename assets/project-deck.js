@@ -439,7 +439,9 @@
     }
     // 요점이 없으면(나눈 장면 등) 옆 칸이 비지 않게 시각 자료를 가로 전체로
     if (sl.layout === 'full' || variant.stack || !points.length) return `<div class="dk dk-stack${tight}">${vis(vs)}${ncards(points, { row: true, num: sl.layout !== 'full' })}</div>`;
-    return `<div class="dk dk-side${tight}" style="--vw:${variant.vw}fr">${vis(vs)}${ncards(points, { num: true })}</div>`;
+    // [포크] code 틀은 코드 열 왼쪽(코드끼리 위·아래, data-arr="col"로 fitVisuals 고정)·카드 열 오른쪽(2026-11-27 WGO d-timing)
+    const visCol = sl.layout === 'code' ? `<div class="vis" data-arr="col">${vs.join('')}</div>` : vis(vs);
+    return `<div class="dk dk-side${tight}" style="--vw:${variant.vw}fr">${visCol}${ncards(points, { num: true })}</div>`;
   }
 
   // 장면 하나(나뉠 수 있음): 코드 줄 범위 MAXL줄 단위, 표는 넘치면 행을 반으로
@@ -503,7 +505,10 @@
   function fitSlide(sl, vis, sid, part, codeChunk, meta, tsplit = null, depth = 0) {
     const vs = vis.map((v) => vboxHtml(v, v.ref.kind === 'code' ? codeChunk(v) : v.ref.kind === 'table' && tsplit && tsplit.v === v ? tsplit.rows : null));
     const codeWidths = vis.some((v) => v.ref.kind === 'code' && v.ref.view?.highlights?.length) ? [{ vw: 2.2 }, { vw: 2.4 }, { vw: 2.2, tight: true }, { vw: 2.4, tight: true }] : [];
+    // [포크] code 틀(요점 있음)은 stack 변형을 빼서 늘 코드 왼쪽·카드 오른쪽. 넓은 코드용 폭 후보는 강조 번호가 없어도 씀
+    const codeSide = sl.layout === 'code' && !sl.presentation && (sl.points || []).length > 0 && vis.some((v) => v.ref.kind === 'code');
     const V = sl.presentation || sl.layout === 'full' || sl.layout === 'screens' ? [{}, { tight: true }]
+      : codeSide ? [{ vw: 1.4 }, { vw: 1.7 }, { vw: 1.15 }, { vw: 1.4, tight: true }, { vw: 2.2 }, { vw: 2.4 }, { vw: 2.2, tight: true }, { vw: 2.4, tight: true }]
       : [{ vw: 1.4 }, { vw: 1.7 }, { vw: 1.15 }, { vw: 1.4, tight: true }, ...codeWidths, { stack: true }, { stack: true, tight: true }];
     const build = (v) => {
       const s = PF.scene({ id: sid, tpl: 'D', eyebrow: meta.chapter, rlabel: meta.rlabel, title: txt(sl.title) || meta.chapter, sub: part, lead: part && part !== `1/${part.split('/')[1]}` ? '' : txt(sl.lead), foot: meta.foot, sec: meta.chapter, group: meta.chapter, stitle: txt(sl.title) });
@@ -527,6 +532,11 @@
     let best = null;
     for (const v of V) { const s = build(v); if (!PF.fitsM(s)) continue; const sc = PF.visScore(s); if (!best || sc > best.sc + 0.05) best = { s, sc }; }
     if (best) return [best.s];
+    // [포크] 줄이 넓어 코드 왼쪽 칸에 하한 글자로도 안 들어가면 그때만 코드 위·카드 아래(검사는 data-pf-code-stack이면 참고로만 봄)
+    if (codeSide) {
+      for (const v of [{ stack: true }, { stack: true, tight: true }]) { const s = build(v); if (!PF.fitsM(s)) continue; const sc = PF.visScore(s); if (!best || sc > best.sc + 0.05) best = { s, sc }; }
+      if (best) { best.s.dataset.pfCodeStack = 'wide'; PF.note(sid, 'code-stack', 1, '코드 줄이 넓어 왼쪽 칸에 들어가지 않아 코드 위·카드 아래로 둠'); return [best.s]; }
+    }
     // 표가 하한에서도 안 들어가면 행을 반으로 나눠 "계속" 장면으로
     //   표가 여럿이면 행이 가장 많은 표 하나만 나눕니다(같으면 앞의 것). 나머지 표는 앞 장면에 온전히 남음
     const nrows = (v) => v.el.querySelectorAll('tbody tr').length;
