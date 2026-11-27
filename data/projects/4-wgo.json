@@ -1010,7 +1010,15 @@
             "label": "지연 측정 범위"
           }
         ],
-        "visuals": [],
+        "visuals": [
+          {
+            "kind": "image",
+            "src": "images/asana-e11-before-after.png",
+            "w": 2179,
+            "h": 878,
+            "caption": {"text": "Asana E11. 서버 Epic 일정(8월 20일~9월 14일): 작업 17개 중 15개 완료(88%), 빨간 빗금은 목표일을 넘긴 구간", "verbatim": true}
+          }
+        ],
         "edited": true
       },
       {
@@ -2528,6 +2536,6 @@
         "visuals": []
       }
     ],
-    "applied": "5cb6bd555ec2a760"
+    "applied": "7644d7c1476eb852"
   }
 }
