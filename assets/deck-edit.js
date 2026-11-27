@@ -13,7 +13,15 @@
   const PING_URL = '/__edit/ping';
   const MD_SAVE_URL = '/__edit/save';
   const TEXT_SAVE_URL = '/__edit/deck';
+  const EDITED_URL = '/__edit/edited';                 // 고친 칸 표시: 칸마다 deck-edits.json 메모 상태를 묻는 주소(로컬 편집 서버에만 있음)
+  const REVIEW_URL = '/__edit/review';                 // 확인 필요 칸의 [내 글 유지]·[새 글로 바꾸기]
   const RESTORE_KEY = 'pf-deck-edit-restore';         // 저장 뒤 새로고침에서 편집 모드를 다시 켜는 sessionStorage 키
+  // 고친 칸에 마우스를 올렸을 때 설명(상태 이름은 portfolio-edits.py edited_states와 같음). 테두리 색은 assets/portfolio-edit.css
+  const EDITED_TIPS = {
+    applied: '고친 글 — deck-edits.json 메모가 화면에 반영되어 있습니다',
+    review: '확인 필요 — 원문 절이 바뀌어 빌드가 새 글을 만들었습니다. 눌러서 [내 글 유지]·[새 글로 바꾸기]를 고르세요',
+    stale: '고친 글 메모는 있지만 화면은 다른 글입니다 — 빌드 뒤 메모 다시 입히기(apply)가 안 됐습니다',
+  };
   const POINT_SELECTOR = '.ncard, .fstep';             // 요점 카드·흐름 칸(문제 해결) — 짝 패널 밖에서 장면 안 순서 = data points 순서
   // 요점 하나를 한 칸에 그리는 배치(project-deck.js bodyHtml) — 장면 안 순서 = data points 순서. 안의 h3 = 이름표, 나머지 글 = 요점 글
   const POINT_ROW_SELECTOR = '.fe-card, .result-row, .feature-row, .dk-column';
@@ -38,7 +46,7 @@
     const isDeckData = PFScene.info.mode === 'deck';
     if (isDeckData === false) return;
     const source = await loadSource(PFScene.info.id);
-    const session = { source, toggleButton: null, openEditor: null };
+    const session = { source, toggleButton: null, openEditor: null, editedByRequest: new Map() };
     listenForClicks(session);
     addToggleButton(session);
     restoreAfterSave(session);
@@ -369,6 +377,81 @@
     session.toggleButton.textContent = isEditing ? '편집 끝내기' : '✎ 편집 모드';
     session.toggleButton.setAttribute('aria-pressed', String(isEditing));
     if (isEditing === false) session.openEditor?.close();
+    if (isEditing) showEditedSpots(session);
+    else hideEditedTips();
+  }
+
+  // ── 고친 칸 표시 · 확인 필요 ──
+
+  /**
+   * 편집 모드를 켤 때마다 덱 위 글 칸을 모아 편집 서버(/__edit/edited)에 메모 상태를 묻고, 고친 칸에 표시(data-pf-memo, 색은 portfolio-edit.css)와 설명(title)을 답니다.
+   * 칸은 누를 때와 같은 findSpot으로 찾습니다(글자가 직접 든 요소마다 한 번, 같은 칸은 한 번만). 덱은 늦게 온 글꼴로 다시 그려질 수 있어 켤 때마다 다시 찾습니다.
+   * 편집 서버가 없는 공개 페이지에는 이 파일이 실리지 않습니다.
+   */
+  async function showEditedSpots(session) {
+    const spots = findTextSpots(session);
+    const result = await postJson(EDITED_URL, { kind: 'deck', requests: spots.map((spot) => spot.request) });
+    if (result.ok === false) { console.warn('[deck-edit] 고친 칸 상태를 읽지 못했습니다:', result.error); return; }
+    session.editedByRequest = new Map();
+    spots.forEach((spot, index) => {
+      const edited = result.states[index];
+      if (edited === null) return;
+      session.editedByRequest.set(requestKey(spot.request), edited);
+      spot.element.dataset.pfMemo = edited.state;
+      spot.element.title = EDITED_TIPS[edited.state];
+    });
+  }
+
+  /** 편집 모드를 끄면 고친 칸 설명(title)을 뗍니다(표시 색은 CSS가 편집 모드에서만 칠함). */
+  function hideEditedTips() {
+    document.querySelectorAll('[data-pf-memo]').forEach((element) => element.removeAttribute('title'));
+  }
+
+  /** 덱 위 장면 글 칸(kind 'text'·'keywords') 목록. 원문 블록(표·코드·다이어그램) 안은 장면 글이 아니라 건너뜁니다. */
+  function findTextSpots(session) {
+    const spotsByElement = new Map();
+    for (const element of document.querySelectorAll('.pf-scene[id] *, .ch-list .ld')) {
+      const hasOwnText = [...element.childNodes].some((node) => node.nodeType === Node.TEXT_NODE && node.textContent.trim() !== '');
+      const isInsideSourceBlock = element.closest(EDITABLE_FIGURE_SELECTOR) !== null;
+      if (hasOwnText === false || isInsideSourceBlock) continue;
+      const spot = findSpot(session, element);
+      const isSceneText = spot !== null && spot.kind !== 'md';
+      if (isSceneText && spotsByElement.has(spot.element) === false) spotsByElement.set(spot.element, spot);
+    }
+    return [...spotsByElement.values()];
+  }
+
+  /** 칸 요청을 비교할 열쇠(장면·칸·번호). 누를 때 새로 찾은 칸과 켤 때 모은 칸을 같은 칸으로 맞춥니다. */
+  function requestKey(request) {
+    return JSON.stringify([request.slide, request.field, request.n ?? null, request.m ?? null]);
+  }
+
+  /** 확인 필요 칸의 입력창에 새 빌드 글과 [내 글 유지]·[새 글로 바꾸기]를 답니다(저장 위치 줄 바로 아래). */
+  function addReviewChoice(spot, edited, form) {
+    const box = document.createElement('div');
+    box.className = 'pf-edit-review';
+    box.innerHTML = `
+      <p class="pf-edit-review-head">확인 필요 · 원문 절이 바뀐 뒤 빌드가 새로 만든 글</p>
+      <p class="pf-edit-review-text"></p>
+      <div class="pf-edit-actions">
+        <button type="button" class="btn primary" data-choice="keep">내 글 유지</button>
+        <button type="button" class="btn" data-choice="useBuild">새 글로 바꾸기</button>
+      </div>`;
+    box.querySelector('.pf-edit-review-text').textContent = Array.isArray(edited.newBuild) ? edited.newBuild.join(', ') : edited.newBuild;
+    box.querySelectorAll('[data-choice]').forEach((button) => {
+      button.addEventListener('click', () => chooseReview(spot, button.dataset.choice, form));
+    });
+    form.querySelector('.pf-edit-where').after(box);
+  }
+
+  /** 고른 것(keep | useBuild)을 서버에 보내고, 성공하면 편집 모드를 남기고 새로고침합니다(같은 장면으로 돌아옴). */
+  async function chooseReview(spot, choice, form) {
+    const errorLine = form.querySelector('.pf-edit-error');
+    errorLine.textContent = '저장하는 중…';
+    const result = await postJson(REVIEW_URL, { kind: 'deck', ...spot.request, choice });
+    if (result.ok === false) { errorLine.textContent = `저장하지 못했습니다: ${result.error}`; return; }
+    sessionStorage.setItem(RESTORE_KEY, '1');
+    location.reload();
   }
 
   /**
@@ -412,6 +495,9 @@
       if (event.key === 'Enter' && allowsLineBreak === false) event.preventDefault();   // 한 줄 칸: 줄바꿈을 넣지 않음(긴 글은 입력창 안에서 접혀 보임)
     });
 
+    const edited = spot.kind === 'md' ? undefined : session.editedByRequest.get(requestKey(spot.request));
+    const needsReview = edited !== undefined && edited.state === 'review';
+    if (needsReview) addReviewChoice(spot, edited, form);
     document.body.appendChild(form);
     spot.element.classList.add('pf-edit-current');
     session.openEditor = { close };

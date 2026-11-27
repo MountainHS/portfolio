@@ -13,6 +13,8 @@
   어디에 쓸지는 .claude/skills/portfolio-build/portfolio-edits.py가 정합니다(assets/portfolio-edit.js가 부름).
 - POST /__edit/deck : 슬라이드(project.html) 장면 글(제목·도입·요점·키워드·짝 패널·회고 등) 한 칸을 deck-edits.json(+ 프로젝트 문서 줄)과 data/에 씁니다.
   규칙은 같은 portfolio-edits.py의 save_deck_text(assets/deck-edit.js가 부름). 덱의 표·그림·코드는 /__edit/save(md 줄)로 고칩니다.
+- POST /__edit/edited : 편집 모드를 켤 때 화면 칸마다 deck-edits.json에 고친 글 메모가 있는지(반영됨·확인 필요·반영 안 됨) 알려 줍니다(고친 칸 표시).
+- POST /__edit/review : 확인 필요 칸에서 [내 글 유지]·[새 글로 바꾸기]를 씁니다. 규칙은 portfolio-edits.py의 edited_states·resolve_review.
 - GET  /__edit/base?path=src/<폴더>/<문서>.md&base=HEAD : 그 프로젝트 문서의 git 기준판(base 커밋) 글. assets/doc-diff.js가 [± 바뀐 점]에서 지금 글과 비교합니다.
 - GET  /__edit/history?path=src/<폴더>/<문서>.md : 현재 브랜치에서 그 프로젝트 문서를 바꾼 커밋 목록(해시·날짜·제목만, 글은 안 보냄). [± 바뀐 점]의 기준 고르기 목록입니다.
 127.0.0.1에만 열어 같은 PC에서만 저장할 수 있습니다. GitHub Pages에는 이 서버가 없으므로 편집 버튼이 나오지 않습니다.
@@ -176,7 +178,7 @@ def requested_file(request_path):
 
 
 class EditHandler(SimpleHTTPRequestHandler):
-    """정적 파일 + /__edit/ping · /__edit/save · /__edit/portfolio · /__edit/deck 주소만 더한 http.server 처리기입니다."""
+    """정적 파일 + /__edit/ping · /__edit/save · /__edit/portfolio · /__edit/deck · /__edit/edited · /__edit/review 주소만 더한 http.server 처리기입니다."""
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, directory=str(ROOT), **kwargs)
@@ -265,6 +267,9 @@ class EditHandler(SimpleHTTPRequestHandler):
         if self.path == "/__edit/deck":
             self.save_deck_text(request)
             return
+        if self.path in ("/__edit/edited", "/__edit/review"):
+            self.answer_edited(request)
+            return
         if self.path != "/__edit/save":
             self.send_json(404, {"ok": False, "error": "없는 주소입니다."})
             return
@@ -299,6 +304,22 @@ class EditHandler(SimpleHTTPRequestHandler):
             return
         if request.get("dryRun") != True:
             print(f"[edit] 슬라이드 저장: {request.get('slide')} {request.get('field')} → {answer['where']}")
+        self.send_json(200, answer)
+
+    def answer_edited(self, request):
+        """편집 모드 고친 칸 표시(/__edit/edited)와 확인 필요 고르기(/__edit/review). 규칙은 portfolio-edits.py의 edited_states·resolve_review.
+
+        로컬 편집 서버에만 있는 주소라 GitHub Pages에는 표시도 고르기도 없습니다.
+        """
+        portfolio_edits = load_portfolio_edits()                  # 요청마다 다시 읽음 → 규칙을 고쳐도 서버를 다시 켜지 않아도 됨
+        is_review = self.path == "/__edit/review"
+        try:
+            answer = portfolio_edits.resolve_review(request) if is_review else portfolio_edits.edited_states(request)
+        except portfolio_edits.EditError as error:
+            self.send_json(error.status, {"ok": False, "error": str(error)})
+            return
+        if is_review:
+            print(f"[edit] 확인 필요 고름: {request.get('kind')} {request.get('field')} → {request.get('choice')}")
         self.send_json(200, answer)
 
     def send_json(self, status, body):

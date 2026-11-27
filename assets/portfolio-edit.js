@@ -7,7 +7,15 @@
 (() => {
   const PING_URL = '/__edit/ping';
   const SAVE_URL = '/__edit/portfolio';
+  const EDITED_URL = '/__edit/edited';             // 고친 칸 표시: 칸마다 deck-edits.json 메모 상태를 묻는 주소(로컬 편집 서버에만 있음)
+  const REVIEW_URL = '/__edit/review';             // 확인 필요 칸의 [내 글 유지]·[새 글로 바꾸기]
   const RESTORE_KEY = 'pf-portfolio-edit-restore';  // 저장 뒤 새로고침에서 편집 모드를 다시 켜는 sessionStorage 키(스크롤 위치는 portfolio.js가 되살림)
+  // 고친 칸에 마우스를 올렸을 때 설명(상태 이름은 portfolio-edits.py edited_states와 같음). 테두리 색은 assets/portfolio-edit.css
+  const EDITED_TIPS = {
+    applied: '고친 글 — deck-edits.json 메모가 화면에 반영되어 있습니다',
+    review: '확인 필요 — 원문이 바뀌어 빌드가 새 글을 만들었습니다. 눌러서 [내 글 유지]·[새 글로 바꾸기]를 고르세요',
+    stale: '고친 글 메모는 있지만 화면은 다른 글입니다 — 빌드 뒤 메모 다시 입히기(apply)가 안 됐습니다',
+  };
 
   start();
 
@@ -22,7 +30,7 @@
     const data = await loadData();
     const spots = findEditableSpots(data);
     if (spots.length === 0) return;
-    const session = { spots, toggleButton: null, openEditor: null };
+    const session = { spots, toggleButton: null, openEditor: null, hasEditedStates: false };
     markEditableSpots(session);
     addToggleButton(session);
     restoreAfterSave(session);
@@ -67,14 +75,15 @@
     const contact = document.getElementById('contact');
 
     // ① 머리 · 자기소개 · 연락처 → profile.md  ([포크] B안 배치: 인사 문구는 문구 표라 이름만 .nm 칸)
-    add(contact?.querySelector('.ct-name [lang="en"]') ?? null, '영문 이름', { field: 'profile.nameEn' }, profile.nameEn);
+    //    선택자는 B안 배치와 원본 템플릿 배치(/edit-mode-install로 받은 레포)를 함께 찾습니다. 원본 머리의 이름은 영문 이름과 한 칸(h1)이라 대상이 아님
+    add(document.querySelector('#contact .ct-name [lang="en"], #cover h1 [lang="en"]'), '영문 이름', { field: 'profile.nameEn' }, profile.nameEn);
     add(cover?.querySelector('h1 .nm') ?? null, '이름', { field: 'profile.name' }, profile.name);
     add(cover?.querySelector('.headline') ?? null, '한 줄 정체성', { field: 'profile.headline' }, profile.headline);
     document.querySelectorAll('#cover a[href^="mailto:"], #contact .em a').forEach((element) => add(element, '이메일', { field: 'profile.email' }, profile.email));
-    document.querySelectorAll('#cover .links a, #contact > a').forEach((element) => {
+    document.querySelectorAll('#cover .links a, #cover .btns a, #contact > a, #contact .ct-me > p > a').forEach((element) => {
       if (element.getAttribute('href') === profile.github) add(element, 'GitHub 주소', { field: 'profile.github' }, profile.github);
     });
-    add(document.querySelector('#cover .about'), '자기소개', { field: 'profile.intro' }, profile.intro, 'lines');
+    add(document.querySelector('#cover .about, #intro .about'), '자기소개', { field: 'profile.intro' }, profile.intro, 'lines');
 
     // ② 기술 역량: 분류 이름 · 기술 키워드
     document.querySelectorAll('#stack .skill').forEach((skillElement, skillIndex) => {
@@ -93,7 +102,12 @@
     return spots;
   }
 
-  /** 프로젝트 카드(.card)와 상세 패널(#p-<폴더>)의 글 칸. 카드 메타(연도·개발 기간·엔진)는 잘라 보인 값이라 편집 대상이 아님 */
+  /**
+   * 프로젝트 카드(.card)와 상세 패널(#p-<폴더>)의 글 칸. 카드 메타(연도·개발 기간·엔진)는 잘라 보인 값이라 편집 대상이 아님
+   * 상세는 두 배치를 함께 찾습니다.
+   *   B안(이 포크): article#p-<폴더> 안에 h3 제목 · .d-role · .meta · .features > li(h4 · .what)
+   *   원본 템플릿: section#p-<폴더>(.sec-head h2 제목 · .meta 끝 .wide 줄이 내 역할) + 기능 소개 절 #p-<폴더>-core(.flist > li의 .fr-t h3 · p)
+   */
   function addProjectSpots(add, project, card, detail) {
     const ask = (field, extra = {}) => ({ field, project: project.id, ...extra });
     if (card !== null) {
@@ -102,18 +116,21 @@
       add(card.querySelector('.intent'), '개발 의도', ask('intent'), project.intent?.text);
     }
     if (detail === null) return;
-    add(detail.querySelector('h3'), '프로젝트 이름', ask('title'), project.title);
-    add(detail.querySelector('.d-role'), '내 역할', ask('team.role'), project.team?.role);
+    add(detail.querySelector(':scope > h3, .sec-head h2'), '프로젝트 이름', ask('title'), project.title);
+    add(detail.querySelector('.d-role, .meta > .wide dd'), '내 역할', ask('team.role'), project.team?.role);
     add(detail.querySelector('.tagline'), '한 줄 소개', ask('tagline'), project.tagline);
-    detail.querySelectorAll('.meta > div').forEach((row, index) => {
+    detail.querySelectorAll('.meta > div:not(.wide)').forEach((row, index) => {
       add(row.querySelector('dd'), project.meta[index].label, ask('meta', { index }), project.meta[index].value);
     });
     add(detail.querySelector('.tags'), '태그', ask('tags'), project.tags, 'tags');
-    detail.querySelectorAll('.features > li[data-fi]').forEach((row) => {
+    const featureRows = [...detail.querySelectorAll('.features > li[data-fi]')];
+    const templateFeatureSection = document.getElementById(`p-${project.id}-core`);
+    if (templateFeatureSection !== null) featureRows.push(...templateFeatureSection.querySelectorAll('.flist > li[data-fi]'));
+    featureRows.forEach((row) => {
       const index = Number(row.dataset.fi);
       const highlight = project.highlights[index];
-      add(row.querySelector('h4'), `기능 ${index + 1} 제목`, ask('highlight.title', { index }), highlight.title);
-      add(row.querySelector('.what'), `기능 ${index + 1} 설명`, ask('highlight.what', { index }), highlight.what);
+      add(row.querySelector('h4, .fr-t h3'), `기능 ${index + 1} 제목`, ask('highlight.title', { index }), highlight.title);
+      add(row.querySelector('.what, .fr-t > p:not(.fk)'), `기능 ${index + 1} 설명`, ask('highlight.what', { index }), highlight.what);
     });
   }
   // ── 화면 ──
@@ -154,6 +171,58 @@
     session.toggleButton.textContent = isEditing ? '편집 끝내기' : '✎ 편집 모드';
     session.toggleButton.setAttribute('aria-pressed', String(isEditing));
     if (isEditing === false) session.openEditor?.close();
+    showEditedSpots(session, isEditing);
+  }
+
+  // ── 고친 칸 표시 · 확인 필요 ──
+
+  /**
+   * 편집 모드를 켜면 deck-edits.json에 고친 글 메모가 있는 칸에 표시(data-pf-memo, 색은 portfolio-edit.css)와 설명(title)을 답니다. 끄면 설명을 뗍니다.
+   * 상태는 처음 켤 때 편집 서버(/__edit/edited)에 한 번만 묻습니다(저장·고르기 뒤에는 새로고침으로 다시 물음). 편집 서버가 없는 공개 페이지에는 이 파일이 실리지 않습니다.
+   */
+  async function showEditedSpots(session, isEditing) {
+    if (isEditing && session.hasEditedStates === false) {
+      session.hasEditedStates = true;
+      const result = await postEdit({ kind: 'portfolio', requests: session.spots.map((spot) => spot.request) }, EDITED_URL);
+      if (result.ok === false) { console.warn('[portfolio-edit] 고친 칸 상태를 읽지 못했습니다:', result.error); return; }
+      session.spots.forEach((spot, index) => { spot.edited = result.states[index]; });
+    }
+    const isStillEditing = document.body.classList.contains('pf-editing');
+    for (const spot of session.spots) {
+      if (Boolean(spot.edited) === false) continue;
+      spot.element.dataset.pfMemo = spot.edited.state;
+      if (isStillEditing) spot.element.title = EDITED_TIPS[spot.edited.state];
+      else spot.element.removeAttribute('title');
+    }
+  }
+
+  /** 확인 필요 칸의 입력창에 새 빌드 글과 [내 글 유지]·[새 글로 바꾸기]를 답니다(저장 위치 줄 바로 아래). */
+  function addReviewChoice(spot, form) {
+    const box = document.createElement('div');
+    box.className = 'pf-edit-review';
+    box.innerHTML = `
+      <p class="pf-edit-review-head">확인 필요 · 원문이 바뀐 뒤 빌드가 새로 만든 글</p>
+      <p class="pf-edit-review-text"></p>
+      <div class="pf-edit-actions">
+        <button type="button" class="btn primary" data-choice="keep">내 글 유지</button>
+        <button type="button" class="btn" data-choice="useBuild">새 글로 바꾸기</button>
+      </div>`;
+    const newBuild = spot.edited.newBuild;
+    box.querySelector('.pf-edit-review-text').textContent = Array.isArray(newBuild) ? newBuild.join(', ') : newBuild;
+    box.querySelectorAll('[data-choice]').forEach((button) => {
+      button.addEventListener('click', () => chooseReview(spot, button.dataset.choice, form));
+    });
+    form.querySelector('.pf-edit-where').after(box);
+  }
+
+  /** 고른 것(keep | useBuild)을 서버에 보내고, 성공하면 편집 모드를 남기고 새로고침합니다. */
+  async function chooseReview(spot, choice, form) {
+    const errorLine = form.querySelector('.pf-edit-error');
+    errorLine.textContent = '저장하는 중…';
+    const result = await postEdit({ kind: 'portfolio', ...spot.request, choice }, REVIEW_URL);
+    if (result.ok === false) { errorLine.textContent = `저장하지 못했습니다: ${result.error}`; return; }
+    sessionStorage.setItem(RESTORE_KEY, '1');
+    location.reload();
   }
 
   /**
@@ -196,6 +265,8 @@
       if (event.key === 'Enter' && event.ctrlKey) form.requestSubmit();
     });
 
+    const needsReview = Boolean(spot.edited) && spot.edited.state === 'review';
+    if (needsReview) addReviewChoice(spot, form);
     document.body.appendChild(form);
     spot.element.classList.add('pf-edit-current');
     session.openEditor = { close };
@@ -229,9 +300,9 @@
     location.reload();
   }
 
-  /** /__edit/portfolio에 요청 하나를 보내고 JSON 답을 돌려줍니다. 서버가 JSON이 아닌 답(처리 중 오류)을 주면 { ok: false, error }. */
-  async function postEdit(body) {
-    const response = await fetch(SAVE_URL, {
+  /** 편집 서버에 요청 하나를 보내고 JSON 답을 돌려줍니다(기본 주소 /__edit/portfolio). 서버가 JSON이 아닌 답(처리 중 오류)을 주면 { ok: false, error }. */
+  async function postEdit(body, url = SAVE_URL) {
+    const response = await fetch(url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body),

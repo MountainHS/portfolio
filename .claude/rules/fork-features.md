@@ -29,6 +29,10 @@ paths:
 - `index.html`의 `</body>` 위 로더 한 줄(`assets/edit-loader.js`)은 디스크에 없습니다. 편집 서버가 보낼 때만 메모리에서 넣습니다(`.claude/skills/edit-mode-install/edit-mode-patch.py`의 `GROUPS`). 편집 CSS·JS는 로더가 편집 서버가 있을 때만 싣습니다(포트폴리오 페이지는 전역 `PFPage`로 알아봄). 그래서 `/portfolio-update` 뒤에도 할 일이 없습니다. 원본이 `</body>` 줄을 바꾸면 서버 창에 `[멈춤]`이 뜨고 그 페이지만 편집 버튼이 없습니다 → `GROUPS`의 기준 줄을 고칩니다.
 - `/portfolio-update`가 템플릿 원본으로 덮는 이 기능의 파일: `.claude/skills/portfolio-build/SKILL.md`·`schema.md`·`deck-edits.py`(설명 몇 줄). 새 파일(`assets/edit-loader.js`·`assets/portfolio-edit.js`·`assets/portfolio-edit.css`·`portfolio-edits.py`)과 `edit-server.py`는 남습니다.
 - 편집 서버를 이 기능 전에 켜 두었으면 저장 때 "편집 서버가 이 기능 전의 것입니다"가 뜹니다 → `.\preview.ps1 stop` 뒤 다시 켭니다.
+- **고친 칸 표시**(2026-11-27, 포트폴리오 페이지·슬라이드 공통, 로컬 전용): 편집 모드를 켜면 `POST /__edit/edited`(`portfolio-edits.py` `edited_states`)로 칸마다 `deck-edits.json` 메모 상태를 물어 `data-pf-memo="applied|review|stale"`과 `title`을 답니다. 색은 `assets/portfolio-edit.css`(주황 실선 = 반영됨, 노랑 = 확인 필요, 빨간 점선 = 메모는 있는데 화면은 다른 글 → apply 안 됨). outline·배경만 써서 슬라이드 배치를 바꾸지 않습니다. 슬라이드는 누를 때와 같은 `findSpot`을 글자가 직접 든 요소마다 돌려 칸을 모읍니다(`findTextSpots`).
+  - **배포에 절대 안 나와야 합니다**(사용자 요구). 표시 코드는 편집 JS·CSS에만 있고 로더가 편집 서버가 있을 때만 싣습니다. 상태는 서버 주소에서만 받고 `data/`·`*.html`에 쓰지 않습니다. 확인: `python -m http.server`로 연 페이지에 `[data-pf-memo]` 0개·편집 스크립트 없음.
+  - 속성 이름은 `data-pf-memo`입니다. `data-pf-edited`는 렌더러(`project-deck.js`)가 장면 고치기로 고친 장면에 이미 씁니다(겹쳐서 장면 전체가 칠해졌던 적 있음).
+- `assets/portfolio-edit.js`의 칸 선택자는 이 포크의 B안 DOM과 **원본 템플릿 DOM**(`/edit-mode-install`로 받은 레포)을 함께 찾습니다(2026-11-27: B안 선택자만 두었더니 원본 `.meta`의 내 역할 줄(`.wide`) 때문에 예외가 나서 원본 레포에서 편집 버튼이 안 떴음). 원본 쪽: 제목 `.sec-head h2`, 내 역할 `.meta > .wide dd`, 자기소개 `#intro .about`, 기능 `#p-<폴더>-core .flist > li`(`.fr-t h3`·`.fr-t > p`). 원본 머리의 이름은 영문 이름과 한 `h1`이라 대상이 아닙니다. `portfolio.js`의 DOM을 바꾸면 원본 템플릿 레포에서도 버튼과 칸이 뜨는지 확인합니다.
 
 ## 슬라이드 장 표지 키워드 (이 포크 전용)
 
@@ -47,7 +51,9 @@ paths:
 - 2번 칸 자리(`deckText` 한 줄): `{slide, field, n?, m?, value, from, sourceDigest?}`. field = `title`·`lead`·`point`·`point-label`·`caption`·`keywords`·`panel-title`·`panel-lead`·`panel-point`(n 패널, m 카드)·`achieved`·`regret`·`plan`(회고는 `slide: "retro"`, data `retro.achieved|regrets|plans[n-1]`).
   - 화면 위치 → data 번호는 배치마다 다르게 셉니다(`pointPlace`): 단계 표는 열 번호, 단계 설명은 줄 순서, `.fe-card`·`.result-row`·`.feature-row`·`.dk-column`은 칸 순서, 그 밖은 짝 패널 밖 `.ncard`·`.fstep` 순서. 회고 표 행은 `omitPairs`로 숨긴 짝을 건너뛴 원래 번호. 원본 `project-deck.js` 배치 HTML이 바뀌면 이 셈이 **조용히** 어긋날 수 있습니다.
   - 요점(`point`·`panel-point`)은 Enter로 두 줄까지: data 글 조각의 `lines`(화면 두 줄, `pointHtml`)와 `text`(두 줄을 한 칸 띄워 이음)를 함께 씁니다. 두 줄 글은 프로젝트 문서 줄에 쓰지 않고 슬라이드에만 둡니다. 다른 칸은 한 줄입니다.
-  - `sourceDigest` = 고칠 때 그 장면 `sectionPath` 절(회고는 `retro.section` 절) md의 지문(`deck-edits.py` `Doc.range_text` → 공백 정리 → sha1 앞 12자). apply 때 지금 원문 절의 지문과 다르면 덮지 않고 `[권장]`으로 알립니다. 원문을 크게 고친 뒤 예전 고친 글이 남지 않게 하려는 것입니다(빌드 글과 비교하지 않는 이유: 원문이 같아도 다시 빌드하면 표현이 바뀜). 지문이 없는 예전 줄은 늘 덮습니다.
+  - `sourceDigest` = 고칠 때 그 장면 `sectionPath` 절(회고는 `retro.section` 절) md의 지문(`deck-edits.py` `Doc.range_text` → 공백 정리 → sha1 앞 12자). apply 때 지금 원문 절의 지문과 다르면 **고친 글은 그대로 덮고** 그 줄에 `"newBuild": <방금 빌드 글>`을 적어 `[확인 필요]`로 알립니다(2026-11-27 사용자 결정: 예전에는 덮지 않아 원문 한 글자만 바뀌어도 고친 글이 사라졌음. 시스템이 정하지 않고 사용자가 고름). 빌드 글과 비교하지 않는 이유: 원문이 같아도 다시 빌드하면 표현이 바뀜. 지문이 없는 예전 줄은 묻지 않고 덮습니다.
+  - 확인 필요 고르기: 편집 모드에서 그 칸을 누르면 새 빌드 글과 [내 글 유지]·[새 글로 바꾸기] → `POST /__edit/review` → `portfolio-edits.py` `resolve_review`. keep = `from` := `newBuild`·지문 갱신, useBuild = 줄 삭제·data에 새 글. 확인 필요 칸을 그냥 다시 고쳐 저장해도 `from` := `newBuild`로 끝납니다. 포트폴리오 페이지(`editModePortfolio`)도 같은 방식이고, 지문이 없어 "빌드 글 ≠ `from`"이 기준입니다(표현만 바뀌어도 뜸 → keep 한 번이면 같은 글로는 다시 안 뜸).
+  - `/portfolio-build`·`/portfolio-edit` 뒤 apply 출력에 `[확인 필요]` 줄이 있으면 사용자에게 칸 목록을 알립니다.
 - **`/portfolio-build`와 `/portfolio-edit` 뒤에는 반드시** `deck-edits.py apply --all` 다음에 `python .claude/skills/portfolio-build/portfolio-edits.py apply --all`을 실행합니다(`deckText`를 data에 다시 덮음, 멱등). 특히 `/portfolio-edit`로 고정(pin)한 장면은 고치기 파일의 글로 다시 만들어지므로 이 apply가 없으면 덱 편집 모드에서 고친 글이 빠집니다.
 - 장면 배치(틀·나누기·합치기·숨기기·순서)와 그림 파일 바꾸기는 편집 모드에 없습니다. 배치는 `/portfolio-edit`, 새 그림은 `src/<폴더>/images/`에 넣은 뒤 그림 줄의 경로를 고칩니다.
 - 템플릿 파일에 넣는 줄은 디스크에 없습니다. 편집 서버가 보낼 때만 메모리에서 넣으므로(`.claude/skills/edit-mode-install/edit-mode-patch.py`의 `GROUPS`) `/portfolio-update`가 덮어도 다시 넣을 것이 없습니다. 원본이 `</body>` 줄을 바꿔 서버 창에 `[멈춤]`이 뜨면 `GROUPS`의 기준 줄을 고칩니다.

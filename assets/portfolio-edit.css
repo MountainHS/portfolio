@@ -8,6 +8,17 @@
 .pf-edit-only { display: flex; gap: 6px; align-items: center; margin-top: 6px; font-size: 13px; }
 .pf-edit-only[hidden] { display: none; }
 
+/* 고친 칸 표시(편집 모드에서만, 슬라이드도 이 파일을 씀): 상태는 portfolio-edits.py edited_states가 정함. outline·배경만 써서 배치를 바꾸지 않음
+   주황 = 고친 글 반영됨 · 노랑 = 확인 필요(원문이 바뀌어 빌드가 새 글을 만듦) · 빨간 점선 = 메모는 있는데 화면은 다른 글(apply 안 됨) */
+.pf-editing [data-pf-memo="applied"] { outline: 2px solid #e8892b; outline-offset: 3px; }
+.pf-editing [data-pf-memo="review"] { outline: 3px solid #f2b705; outline-offset: 3px; background: rgba(242, 183, 5, .14); }
+.pf-editing [data-pf-memo="stale"] { outline: 2px dashed #d33; outline-offset: 3px; }
+
+/* 확인 필요 칸의 입력창: 새 빌드 글과 [내 글 유지]·[새 글로 바꾸기] */
+.pf-edit-review { margin: 0 0 8px; padding: 8px 10px; border-left: 4px solid #f2b705; background: rgba(242, 183, 5, .12); border-radius: 4px; }
+.pf-edit-review-head { margin: 0 0 4px; font-size: 12.5px; font-weight: 700; }
+.pf-edit-review-text { margin: 0; font-size: 13.5px; white-space: pre-wrap; }
+
 /* 지금 고치는 글 */
 .pf-editing .pf-edit-current { outline: 2px solid var(--accent, #36c); outline-offset: 4px; }
 

@@ -13,13 +13,16 @@
          · skill.evidence(+skill, n = 그 기술에서 이 프로젝트 근거의 몇 번째인지, 1부터)
   자리 이름(label·section·skill)은 다시 빌드해도 그대로인 값이라 번호가 바뀌어도 같은 칸을 찾습니다.
   value를 빌드 글(from)과 같게 고치면 그 줄은 지워집니다(= 되돌리기).
+  다시 빌드가 from과 다른 글을 만들면 apply는 고친 글을 그대로 덮고 그 줄에 "newBuild": 새 빌드 글을 적습니다(= 확인 필요).
+  편집 모드에서 [내 글 유지](from := newBuild) 또는 [새 글로 바꾸기](줄 삭제, data = newBuild)를 고르면 newBuild가 사라집니다(resolve_review).
 
 슬라이드(project.html) 편집 모드의 장면 글(제목·도입·요점·그림 설명·키워드·짝 패널·회고)도 여기서 씁니다(save_deck_text).
   - 고친 글은 늘 src/<폴더>/deck-edits.json의 "deckText" 목록에 남기고, 프로젝트 문서에 같은 글이 한 번만 있으면 그 줄도 고칩니다(한 줄 글만).
-  - "deckText" 목록 한 줄 = { "slide": 장면 key(회고는 "retro"), "field", "n"?, "m"?, "value", "from", "sourceDigest"? }
+  - "deckText" 목록 한 줄 = { "slide": 장면 key(회고는 "retro"), "field", "n"?, "m"?, "value", "from", "sourceDigest"?, "newBuild"? }
     field: title · lead · point · point-label · caption · keywords · panel-title · panel-lead · panel-point · achieved · regret · plan
     n: 요점·그림·패널·회고 줄 번호(1부터), m: 패널 안 요점 번호(panel-point만). 요점(point·panel-point)의 value는 줄바꿈 하나까지 = 화면 두 줄(data lines).
-    sourceDigest: 고칠 때 그 장면 원문 절의 지문. 원문 절이 바뀌면 apply가 예전 고친 글을 덮지 않고 [권장]으로 알립니다.
+    sourceDigest: 고칠 때 그 장면 원문 절의 지문. 원문 절이 바뀌면 apply가 고친 글은 그대로 덮고 "newBuild"에 새 빌드 글을 적어 [확인 필요]로 알립니다.
+    newBuild: 확인 필요 표시. 편집 모드에서 [내 글 유지](from := newBuild, 지문 갱신) 또는 [새 글로 바꾸기](줄 삭제)를 고르면 사라집니다.
   - data에는 deck.slides와 deck.base(장면 고치기 전 빌드 장면, 있으면) 둘 다에 씁니다 → deck-edits.py apply가 base에서 장면을 다시 만들어도 남음.
     다만 /portfolio-edit로 고정한(pin) 장면은 고치기 파일의 글로 다시 만들어지므로, deck-edits.py apply 뒤에는 늘 이 스크립트의 apply를 실행합니다.
 
@@ -372,7 +375,10 @@ def rename_skill_in_overrides(old_name, new_name):
 
 
 def write_override(edits_path, target, new_value):
-    """deck-edits.json의 "editModePortfolio" 목록에 고친 글을 넣습니다. 같은 자리 줄이 있으면 값만 바꾸고, 빌드 글로 되돌렸으면 그 줄을 지웁니다."""
+    """deck-edits.json의 "editModePortfolio" 목록에 고친 글을 넣습니다. 같은 자리 줄이 있으면 값만 바꾸고, 빌드 글로 되돌렸으면 그 줄을 지웁니다.
+
+    확인 필요(newBuild) 칸을 다시 고쳐 저장하면 새 빌드 글을 기준(from)으로 삼아 확인 필요를 끝냅니다.
+    """
     edits = read_json(edits_path) if edits_path.exists() else {"schemaVersion": 1, "pin": [], "hide": []}
     entries = edits.get(PORTFOLIO_TEXT_LIST) if isinstance(edits.get(PORTFOLIO_TEXT_LIST), list) else []
     entry = find_entry(entries, target["entryKey"])
@@ -381,6 +387,8 @@ def write_override(edits_path, target, new_value):
         entries.append(entry)
     else:
         entry["value"] = new_value
+    if "newBuild" in entry:
+        entry["from"] = entry.pop("newBuild")
     if entry["value"] == entry["from"]:
         entries.remove(entry)
     edits[PORTFOLIO_TEXT_LIST] = entries if entries != [] else None
@@ -470,10 +478,13 @@ def replace_lines(path, start, end, new_lines):
 def apply_project(project_id):
     """한 프로젝트의 "editModePortfolio" 목록을 data/projects/<폴더>.json·data/portfolio.json에 덮습니다(멱등).
 
-    반환: 보고 줄 목록([참고]·[권장]). 빌드 글이 처음 고칠 때(from)와 달라졌거나 자리를 잃은 줄을 알려 줍니다.
+    빌드 글이 처음 고칠 때(from)와 달라졌으면 고친 글은 그대로 덮고, 그 줄에 newBuild(새 빌드 글)를 적어 확인 필요로 남깁니다.
+    반환: 보고 줄 목록([참고]·[확인 필요]·[권장]).
     """
-    entries = read_portfolio_entries(ROOT / "src" / project_id / EDITS_FILE_NAME)
+    edits_path = ROOT / "src" / project_id / EDITS_FILE_NAME
+    entries = read_portfolio_entries(edits_path)
     messages = []
+    has_new_review = False
     for entry in entries:
         data_path, json_path = entry_location(entry, project_id)
         if json_path is None:
@@ -486,10 +497,28 @@ def apply_project(project_id):
         is_build_text_changed = current != entry.get("from")
         write_data_value(data_path, json_path, entry["value"])
         if is_build_text_changed:
-            messages.append(f"[참고] {describe_entry(entry)}: 빌드가 새 글({current})을 만들었지만 고친 글로 덮었습니다. 빌드 글을 쓰려면 src/{project_id}/{EDITS_FILE_NAME}의 그 줄을 지우세요")
+            entry["newBuild"] = current
+            has_new_review = True
+            messages.append(review_message(describe_entry(entry), "빌드가 처음과 다른 글을 만들었습니다", current))
         else:
             messages.append(f"[참고] {describe_entry(entry)}: 고친 글을 반영했습니다")
+    if has_new_review:
+        write_edit_list(edits_path, PORTFOLIO_TEXT_LIST, entries)
     return messages
+
+
+def review_message(place, reason, new_build):
+    """확인 필요 보고 줄 하나. apply 뒤 Claude가 이 줄을 모아 사용자에게 알립니다."""
+    shown = new_build if isinstance(new_build, str) else ", ".join(new_build)
+    return (f"[확인 필요] {place}: {reason} → 고친 글을 그대로 두었습니다. 편집 모드에서 그 칸을 눌러 [내 글 유지]·[새 글로 바꾸기]를 고르세요. "
+            f"새 빌드 글: {shown.replace(chr(10), ' / ')}")
+
+
+def write_edit_list(edits_path, list_name, entries):
+    """deck-edits.json의 고친 글 목록 하나("editModePortfolio"·"deckText")를 통째로 다시 씁니다. 빈 목록이면 null."""
+    edits = read_json(edits_path)
+    edits[list_name] = entries if entries != [] else None
+    write_text(edits_path, deck_edits_module().dump(edits) + "\n")
 
 
 def entry_location(entry, project_id):
@@ -735,7 +764,8 @@ def deck_source_digest(project_id, data, entry_key):
 def write_deck_text_entry(edits_path, entry_key, current, new_value, source_digest):
     """deck-edits.json의 "deckText" 목록에 고친 글을 넣습니다. 같은 자리 줄이 있으면 값·지문만 바꾸고, 빌드 글(from)로 되돌렸으면 그 줄을 지웁니다.
 
-    source_digest: 고칠 때의 원문 절 지문(deck_source_digest). None이면 지문 칸을 두지 않습니다(= 원문이 바뀌어도 늘 덮음).
+    source_digest: 고칠 때의 원문 절 지문(deck_source_digest). None이면 지문 칸을 두지 않습니다(= 원문이 바뀌어도 확인 필요로 묻지 않음).
+    확인 필요(newBuild) 칸을 다시 고쳐 저장하면 새 빌드 글을 기준(from)으로 삼아 확인 필요를 끝냅니다.
     """
     edits = read_json(edits_path) if edits_path.exists() else {"schemaVersion": 1, "pin": [], "hide": []}
     entries = edits.get(DECK_TEXT_LIST) if isinstance(edits.get(DECK_TEXT_LIST), list) else []
@@ -745,6 +775,8 @@ def write_deck_text_entry(edits_path, entry_key, current, new_value, source_dige
         entries.append(entry)
     else:
         entry["value"] = new_value
+    if "newBuild" in entry:
+        entry["from"] = entry.pop("newBuild")
     entry.pop("sourceDigest", None)
     if source_digest is not None:
         entry["sourceDigest"] = source_digest
@@ -816,16 +848,17 @@ def refresh_applied_digest(data_path):
 def apply_deck_text(project_id):
     """한 프로젝트의 "deckText" 목록을 data/projects/<폴더>.json의 슬라이드(회고는 data.retro)에 덮습니다(멱등). deck-edits.py apply 뒤에 실행합니다.
 
-    줄에 원문 절 지문(sourceDigest)이 있고 지금 원문 절의 지문과 다르면 덮지 않고 [권장]으로 알립니다
-    (원문을 크게 고친 뒤 예전에 고친 슬라이드 글이 남지 않게). 지문이 없는 예전 줄은 늘 덮습니다.
-    반환: 보고 줄 목록([참고]·[권장]).
+    고친 글은 늘 덮습니다. 줄에 원문 절 지문(sourceDigest)이 있고 지금 원문 절의 지문과 다르면, 그 줄에 newBuild(새 빌드 글)를 적어
+    확인 필요로 남깁니다(원문을 고친 뒤 예전 고친 글을 쓸지 새 글을 쓸지 사용자가 편집 모드에서 고름). 지문이 없는 예전 줄은 묻지 않습니다.
+    반환: 보고 줄 목록([참고]·[확인 필요]·[권장]).
     """
     edits_path = ROOT / "src" / project_id / EDITS_FILE_NAME
-    entries = read_json(edits_path).get(DECK_TEXT_LIST) if edits_path.exists() else None
-    if isinstance(entries, list) == False:
+    entries = read_deck_text_entries(edits_path)
+    if entries == []:
         return []
     data_path = project_data_path(project_id)
     messages = []
+    has_new_review = False
     for entry in entries:
         place = describe_deck_text_entry(entry)
         slides_path, base_path = deck_text_json_paths(read_json(data_path), entry)
@@ -841,15 +874,18 @@ def apply_deck_text(project_id):
             continue
         has_source_digest = "sourceDigest" in entry
         is_source_changed = has_source_digest and deck_source_digest(project_id, data, entry) != entry["sourceDigest"]
-        if is_source_changed:
-            messages.append(f"[권장] {place}: 고친 뒤 원문 절이 바뀌어 예전 고친 글({entry['value'].replace(chr(10), ' / ')})을 적용하지 않았습니다. "
-                            f"편집 모드에서 다시 고치거나 src/{project_id}/{EDITS_FILE_NAME}의 그 줄을 지우세요")
-            continue
+        is_build_text_shown = is_slides_done == False
         write_deck_text_to_data(data_path, entry, entry["value"])
-        if current != entry.get("from"):
+        if is_source_changed and is_build_text_shown:
+            entry["newBuild"] = current
+            has_new_review = True
+            messages.append(review_message(place, "고친 뒤 원문 절이 바뀌었습니다", current))
+        elif current != entry.get("from"):
             messages.append(f"[참고] {place}: 빌드가 새 글({current})을 만들었지만 고친 글로 덮었습니다. 빌드 글을 쓰려면 src/{project_id}/{EDITS_FILE_NAME}의 그 줄을 지우세요")
         else:
             messages.append(f"[참고] {place}: 고친 글을 반영했습니다")
+    if has_new_review:
+        write_edit_list(edits_path, DECK_TEXT_LIST, entries)
     return messages
 
 
@@ -857,6 +893,104 @@ def describe_deck_text_entry(entry):
     """보고 줄에 쓸 자리 이름(예: `장면 core-loop point 3`, `장면 spec-level panel-point 1-2`)."""
     numbers = "-".join(str(entry[name]) for name in ("n", "m") if entry.get(name))
     return f"장면 {entry.get('slide')} {entry.get('field')}{' ' + numbers if numbers else ''}"
+
+
+# ════════════════════════════════════════════════════════════════
+# 편집 모드 고친 칸 표시 · 확인 필요 고르기 (로컬 편집 서버에서만 부름)
+# ════════════════════════════════════════════════════════════════
+
+def edited_states(request):
+    """편집 모드를 켤 때 화면 칸마다 고친 글 메모가 있는지 알려 줍니다. edit-server.py의 /__edit/edited가 부릅니다.
+
+    request: { kind: "portfolio" | "deck", requests: [칸 요청 — 저장 요청과 같은 칸 이름·번호] }
+    반환: { ok, states: [칸마다 None(메모 없음) | { state, newBuild? }] }
+      state: "review" = 확인 필요(newBuild 있음) · "applied" = 고친 글이 화면에 있음 · "stale" = 메모는 있는데 화면은 다른 글(apply가 안 돌았음)
+    """
+    kind = request.get("kind")
+    if kind not in ("portfolio", "deck"):
+        raise EditError(400, f"모르는 페이지 종류입니다: {kind}")
+    return {"ok": True, "states": [edited_state(kind, spot_request) for spot_request in request.get("requests") or []]}
+
+
+def edited_state(kind, spot_request):
+    """칸 하나의 고친 글 상태(edited_states 참고). 그 칸을 data에서 못 찾으면 None."""
+    try:
+        entry, current = find_edited_entry(kind, spot_request)
+    except EditError:
+        return None
+    if entry is None:
+        return None
+    if "newBuild" in entry:
+        return {"state": "review", "newBuild": entry["newBuild"]}
+    if entry["value"] == current:
+        return {"state": "applied"}
+    return {"state": "stale"}
+
+
+def find_edited_entry(kind, spot_request):
+    """칸 요청 → (deck-edits.json의 그 칸 메모 줄 | None, 지금 data 값). profile.md로 저장되는 칸은 메모가 없어 늘 None."""
+    if kind == "portfolio":
+        target = find_target(spot_request)
+        if target["entryKey"] is None:
+            return None, target["current"]
+        entries = read_portfolio_entries(ROOT / "src" / target["projectId"] / EDITS_FILE_NAME)
+        return find_entry(entries, target["entryKey"]), target["current"]
+    project_id = spot_request["project"]
+    entry_key = deck_text_entry_key(spot_request)
+    current = deck_text_value(read_json(project_data_path(project_id)), entry_key)
+    entries = read_deck_text_entries(ROOT / "src" / project_id / EDITS_FILE_NAME)
+    return find_entry(entries, entry_key), current
+
+
+def resolve_review(request):
+    """확인 필요 칸에서 사용자가 고른 것을 씁니다. edit-server.py의 /__edit/review가 부릅니다.
+
+    request: { kind: "portfolio" | "deck", choice: "keep" | "useBuild", …칸 요청 }
+      keep = 내 글 유지: from := newBuild(같은 새 글로는 다시 묻지 않음), 슬라이드는 지문을 지금 원문 절로 갱신
+      useBuild = 새 글로 바꾸기: 메모 줄을 지우고 data에 새 빌드 글을 씀(그 뒤로는 원문을 따라감)
+    반환: { ok }
+    """
+    kind = request.get("kind")
+    choice = request.get("choice")
+    if choice not in ("keep", "useBuild"):
+        raise EditError(400, f"모르는 고르기입니다: {choice}")
+    if kind == "portfolio":
+        target = find_target(request)
+        edits_path = ROOT / "src" / str(target["projectId"]) / EDITS_FILE_NAME
+        list_name, entries, entry_key = PORTFOLIO_TEXT_LIST, read_portfolio_entries(edits_path), target["entryKey"]
+    elif kind == "deck":
+        project_id = request["project"]
+        edits_path = ROOT / "src" / project_id / EDITS_FILE_NAME
+        list_name, entries, entry_key = DECK_TEXT_LIST, read_deck_text_entries(edits_path), deck_text_entry_key(request)
+    else:
+        raise EditError(400, f"모르는 페이지 종류입니다: {kind}")
+    entry = None if entry_key is None else find_entry(entries, entry_key)
+    if entry is None or "newBuild" not in entry:
+        raise EditError(409, "확인할 새 빌드 글이 없습니다. 새로고침해 주세요.")
+
+    new_build = entry.pop("newBuild")
+    if choice == "keep":
+        entry["from"] = new_build
+        if kind == "deck" and "sourceDigest" in entry:
+            refresh_source_digest(request["project"], entry, entry_key)
+        if entry["value"] == entry["from"]:
+            entries.remove(entry)
+    else:
+        entries.remove(entry)
+        if kind == "portfolio":
+            write_data_value(target["dataPath"], target["jsonPath"], new_build)
+        else:
+            write_deck_text_to_data(project_data_path(request["project"]), entry_key, new_build)
+    write_edit_list(edits_path, list_name, entries)
+    return {"ok": True}
+
+
+def refresh_source_digest(project_id, entry, entry_key):
+    """[내 글 유지] 뒤 슬라이드 메모의 지문을 지금 원문 절로 바꿉니다. 절을 못 찾으면 지문 칸을 뺍니다(그 뒤로는 묻지 않음)."""
+    source_digest = deck_source_digest(project_id, read_json(project_data_path(project_id)), entry_key)
+    entry.pop("sourceDigest", None)
+    if source_digest is not None:
+        entry["sourceDigest"] = source_digest
 
 
 # ════════════════════════════════════════════════════════════════
@@ -868,6 +1002,14 @@ def read_portfolio_entries(edits_path):
     if edits_path.exists() == False:
         return []
     entries = read_json(edits_path).get(PORTFOLIO_TEXT_LIST)
+    return entries if isinstance(entries, list) else []
+
+
+def read_deck_text_entries(edits_path):
+    """deck-edits.json의 "deckText" 목록(없거나 null이면 빈 목록)."""
+    if edits_path.exists() == False:
+        return []
+    entries = read_json(edits_path).get(DECK_TEXT_LIST)
     return entries if isinstance(entries, list) else []
 
 
