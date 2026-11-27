@@ -532,7 +532,12 @@
     let best = null;
     for (const v of V) { const s = build(v); if (!PF.fitsM(s)) continue; const sc = PF.visScore(s); if (!best || sc > best.sc + 0.05) best = { s, sc }; }
     if (best) return [best.s];
-    // [포크] 줄이 넓어 코드 왼쪽 칸에 하한 글자로도 안 들어가면 그때만 코드 위·카드 아래(검사는 data-pf-code-stack이면 참고로만 봄)
+    // [포크] 줄이 넓은 코드는 먼저 코드 칸을 더 넓힌 좌우(카드 열이 좁아짐)를 시도(2026-11-27 Hive attack-hooks·factory·wave-start)
+    if (codeSide) {
+      for (const v of [{ vw: 2.8 }, { vw: 2.8, tight: true }, { vw: 3.2 }, { vw: 3.2, tight: true }]) { const s = build(v); if (!PF.fitsM(s)) continue; const sc = PF.visScore(s); if (!best || sc > best.sc + 0.05) best = { s, sc }; }
+      if (best) return [best.s];
+    }
+    // [포크] 그래도 하한 글자로 안 들어가면 그때만 코드 위·카드 아래(검사는 data-pf-code-stack이면 참고로만 봄)
     if (codeSide) {
       for (const v of [{ stack: true }, { stack: true, tight: true }]) { const s = build(v); if (!PF.fitsM(s)) continue; const sc = PF.visScore(s); if (!best || sc > best.sc + 0.05) best = { s, sc }; }
       if (best) { best.s.dataset.pfCodeStack = 'wide'; PF.note(sid, 'code-stack', 1, '코드 줄이 넓어 왼쪽 칸에 들어가지 않아 코드 위·카드 아래로 둠'); return [best.s]; }

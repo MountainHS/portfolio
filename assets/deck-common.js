@@ -250,7 +250,9 @@
     }
     const fin = media.querySelector(':scope > .fit-in');
     Object.assign(fin.style, { zoom: '1', width: 'max-content' });
-    if (k === 'code') return { k, ar: fin.offsetWidth / Math.max(1, fin.offsetHeight), nw: fin.offsetWidth, nh: fin.offsetHeight, max: 1, min: 12 / 14 };
+    // [포크] 긴 줄이 .fit-in 밖으로 넘친 폭(scrollWidth)까지 원래 폭으로 셈(offsetWidth만 쓰면 줄여야 할 배율이 모자라 좌우 배치에서 넘쳤음, 2026-11-27 Hive d-factory)
+    const codeW = Math.max(fin.offsetWidth, fin.scrollWidth);
+    if (k === 'code') return { k, ar: codeW / Math.max(1, fin.offsetHeight), nw: codeW, nh: fin.offsetHeight, max: 1, min: 12 / 14 };
     // 표: 높이는 놓일 폭에 따라 달라지므로 hAt(w)로 잼(배율 1)
     const hAt = (w) => { Object.assign(fin.style, { zoom: '1', width: `${Math.max(1, Math.floor(w))}px` }); return fin.offsetHeight; };
     return { k, table: true, min: 14 / 15, max: 1, hAt };
