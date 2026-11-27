@@ -383,7 +383,14 @@ table.md-table img { max-height: 120px; max-width: 100%; height: auto; }   /* wi
 .dk-visual-notes > .vis { justify-content: center; }
 .dk-visual-notes > .cards { grid-template-columns: minmax(0, 1fr); align-content: start; align-self: center; }
 .dk-paired { grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; }
-.paired-panel { min-width: 0; display: grid; gap: 12px; align-content: start; }
+/* [포크] 두 패널이 같은 행 틀을 씀(subgrid): 제목 줄·그림·카드·흐름 칸이 패널끼리 같은 높이에서 시작. 행 수 = 1 + --body-rows(project-deck.js가 정함) */
+.dk-paired { grid-template-rows: auto repeat(var(--body-rows, 1), auto); row-gap: 12px; align-content: start; }
+.paired-panel { min-width: 0; display: grid; grid-row: 1 / -1; grid-template-rows: subgrid; row-gap: 12px; align-items: start; }
+.dk-paired.rows-shared { row-gap: 8px; }
+.dk-paired.rows-shared .paired-panel { row-gap: 8px; }
+.dk-paired.rows-shared .panel-header { margin-bottom: 4px; }
+.dk-paired.rows-shared .paired-panel > .flow { grid-row: 2 / -1; display: grid; grid-template-rows: subgrid; align-self: stretch; }
+.dk-paired.rows-centered .paired-panel > .flow { align-self: center; }
 .panel-header { display: grid; gap: 8px; }
 .panel-header > h3 { font-size: 22px; line-height: 1.3; margin: 0; color: var(--accent-ink); }
 .panel-lead { font-size: 15px; line-height: 1.5; margin: 0; color: var(--muted); }
@@ -393,8 +400,8 @@ table.md-table img { max-height: 120px; max-width: 100%; height: auto; }   /* wi
 .dk-paired.tight .flow.col .fstep { padding-block: 9px; }
 .dk-paired.tight .fstep p { font-size: 15px; }
 .paired-panel .flow { gap: 8px; }
-.pf-sizing .dk-paired { align-items: stretch; grid-template-rows: minmax(0, 1fr); }
-.pf-sizing .paired-panel:has(> .vis) { grid-template-rows: auto minmax(0, 1fr) auto; }
+.pf-sizing .dk-paired.has-vis { grid-template-rows: auto minmax(0, 1fr) auto; align-content: stretch; }
+.pf-sizing .dk-paired.has-vis .paired-panel > .vis { align-self: stretch; }
 .paired-panel > .vis { justify-content: flex-start; }
 .point-line { display: block; }
 .point-line code, .paired-panel code, .dk-visual-notes .ncard code { white-space: nowrap; }

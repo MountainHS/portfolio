@@ -406,7 +406,10 @@
     const tight = variant.tight ? ' tight' : '';
     if (sl.presentation === 'paired') {
       if (sl.panels.length !== 2 || (vs.length && vs.length !== 2)) throw new Error('paired 배치에는 패널 2개와 시각자료 0개 또는 2개가 필요합니다');
-      return `<div class="dk dk-paired${tight}">${sl.panels.map((panel, i) => `<section class="paired-panel" data-panel="${i + 1}"><header class="panel-header"><h3>${inline(txt(panel.title))}</h3>${panel.lead ? `<p class="panel-lead">${inline(txt(panel.lead))}</p>` : ''}</header>${vs.length ? `${vis([vs[i]])}${ncards(panel.points || [], { num: false })}` : flowHtml(panel.points || [], 'col')}</section>`).join('')}</div>`;
+      // [포크] 두 패널이 같은 행 틀(subgrid)을 씀: 그림 있음 = 제목·그림·카드 3행, 흐름 칸 수가 같음 = 칸마다 한 행, 다름 = 짧은 쪽 세로 가운데
+      const counts = sl.panels.map((panel) => (panel.points || []).length);
+      const rows = vs.length ? 'has-vis' : counts[0] === counts[1] && counts[0] ? 'rows-shared' : 'rows-centered';
+      return `<div class="dk dk-paired ${rows}${tight}" style="--body-rows:${rows === 'rows-shared' ? counts[0] : rows === 'has-vis' ? 2 : 1}">${sl.panels.map((panel, i) => `<section class="paired-panel" data-panel="${i + 1}"><header class="panel-header"><h3>${inline(txt(panel.title))}</h3>${panel.lead ? `<p class="panel-lead">${inline(txt(panel.lead))}</p>` : ''}</header>${vs.length ? `${vis([vs[i]])}${ncards(panel.points || [], { num: false })}` : flowHtml(panel.points || [], 'col')}</section>`).join('')}</div>`;
     }
     if (sl.presentation === 'visual-notes') return `<div class="dk dk-visual-notes${tight}">${vis(vs)}${ncards(points)}</div>`;
     if (sl.presentation === 'result-rows') return `<div class="dk dk-result-rows${tight}">${points.map((point) => `<section class="result-row"><h3>${esc(PF.label(point.label))}</h3><p>${inline(txt(point))}</p></section>`).join('')}</div>`;
