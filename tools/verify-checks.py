@@ -30,7 +30,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / "output" / "check" / "verify"
 PROJECTS = sorted(path.stem for path in (ROOT / "data" / "projects").glob("*.json"))
-PROBES = ["swapped-layout", "missing-highlight", "missing-code", "wrong-code-text", "wrong-retro-pair", "uneven-link-card"]
+PROBES = ["swapped-layout", "missing-highlight", "missing-code", "wrong-code-text", "wrong-retro-pair", "uneven-link-card", "uneven-screen-cell", "scene-count-toc"]
 PREVIEW_URL = "http://127.0.0.1:4600"
 RUN_TIMEOUT_SECONDS = 600
 

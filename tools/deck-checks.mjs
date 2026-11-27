@@ -40,6 +40,11 @@ export async function checkDeckPage(projectId, probe) {
     card.style.alignSelf = 'flex-start';
     card.querySelector('.url')?.append(' changed-long-address-'.repeat(4));
   }
+  if (probe === 'scene-count-toc') first('#toc .toc-list a .d').textContent = '장면 7장';
+  if (probe === 'uneven-screen-cell') {
+    const media = first('.scr-row > .fe-card > .vis > figure.vbox[data-kind="image"] > .vmedia');
+    media.style.height = `${parseFloat(media.style.height) / 2}px`;
+  }
 
   add('screen deck is ready', report.ready === 'yes' && report.scenes > 0 && report.scenes === pages.size &&
     report.info.id === projectId && ['cover', 'toc', 'end'].every((id) => pages.has(id)),
@@ -90,6 +95,26 @@ export async function checkDeckPage(projectId, probe) {
     { groups: linkGroups.length, uneven: unevenGroups.length });
   for (const group of unevenGroups) add('uneven link cards', false, 'Same width and height within the group', group, group.sceneId);
 
+  // [포크] screens 사진 칸: 칸마다 사진 틀(top·폭·높이)과 FEATURE·제목·설명 줄의 top이 같아야 함(표의 칸처럼)
+  const spreadOf = (values) => (values.length ? Math.max(...values) - Math.min(...values) : 0);
+  const screenRows = all(document, '#deck .scr-row').map((row) => {
+    const scale = row.closest('.pf-scene').getBoundingClientRect().width / 1280;
+    const cards = all(row, ':scope > .fe-card');
+    const medias = cards.map((card) => card.querySelector(':scope > .vis > figure.vbox[data-kind="image"] > .vmedia')).filter(Boolean);
+    const frames = medias.map((media) => media.getBoundingClientRect());
+    const textTops = ['.fe-k', 'h3', 'p:not(.fe-k)'].map((selector) =>
+      cards.map((card) => card.querySelector(`:scope > ${selector}`)).filter(Boolean).map((node) => node.getBoundingClientRect().top));
+    const spreads = { top: spreadOf(frames.map((box) => box.top)), width: spreadOf(frames.map((box) => box.width)),
+      height: spreadOf(frames.map((box) => box.height)), text: Math.max(...textTops.map(spreadOf)) };
+    const imageOnly = medias.length === cards.length && cards.length > 1;
+    return { sceneId: row.closest('.pf-scene').id, imageOnly, tol: 2 * scale, spreads };
+  }).filter((row) => row.imageOnly);
+  const unevenScreens = screenRows.filter((row) => Object.values(row.spreads).some((value) => value > row.tol));
+  add('screen cells share one frame and text rows', !unevenScreens.length,
+    'Every image cell in a screens row has the same frame top, width and height, and FEATURE/title/text start on the same rows',
+    { rows: screenRows.length, uneven: unevenScreens.length });
+  for (const row of unevenScreens) add('uneven screen cells', false, 'Same frame and text rows across cells', row, row.sceneId);
+
   const rect = (node) => node?.getBoundingClientRect().toJSON();
   const isVisible = (box) => box?.width > 0 && box?.height > 0;
   const normalize = (text) => text.replace(/\s+/g, ' ').trim();
@@ -137,12 +162,42 @@ export async function checkDeckPage(projectId, probe) {
         else groups.push({ title, target, count });
       }
       if (groups.length < slides.length) candidates.push(groups.map(({ title, target, count }) => ({
-        title: inlineText(title), target, description: normalize(PF.t('deck.toc-count', { n: count })), numbered: true
+        title: inlineText(title), target, description: '', numbered: true
       })));
     }
     add('chapter contents reflect scenes or section groups', candidates.some((expected) => json(expected) === json(actual)),
       candidates, actual, id);
   }
+
+  // 목차 장 줄 = 그 장 장면 keywords를 라운드 로빈으로 모은 3~5개(assets/project-deck.js chapterKeywordLine과 같은 규칙)
+  const chapterKeywords = (chapterSlides) => {
+    const keywordLists = chapterSlides.map((slide) => (Array.isArray(slide.keywords) ? slide.keywords : []));
+    const longest = Math.max(0, ...keywordLists.map((list) => list.length));
+    const picked = [];
+    for (let round = 0; round < longest; round++) {
+      for (const list of keywordLists) {
+        const word = normalize(String(list[round] || ''));
+        if (word && !picked.includes(word) && picked.length < 5) picked.push(word);
+      }
+    }
+    return picked;
+  };
+  const tocRows = new Map(all(scene('toc') || document.createElement('div'), '.toc-list a').map((row) => [row.dataset.pfRef,
+    normalize(row.querySelector('.d')?.textContent || '')]));
+  for (const chapter of deck?.chapters || []) {
+    const id = `ch-${chapter.key}`;
+    if (!pages.has(id)) continue;
+    const expected = chapterKeywords(deck.slides.filter((slide) => slide.chapter === chapter.key));
+    const shown = (tocRows.get(id) || '').split(' · ').filter(Boolean);
+    add('contents rows show chapter keywords', shown.length >= 3 && shown.length <= 5 && json(shown) === json(expected),
+      '3~5 keywords gathered from the chapter scene keywords (fill deck.slides[].keywords if fewer than 3)',
+      { chapter: chapter.title, expected, shown }, 'toc');
+  }
+  const sceneCountText = /장면\s*\d+\s*[장개]/;
+  const countScenes = ['toc', ...all(document, '#deck .pf-scene.t-CH').map((node) => node.id)]
+    .filter((sceneId) => scene(sceneId) && (sceneCountText.test(scene(sceneId).textContent) || scene(sceneId).querySelector('.toprow .rl')));
+  add('no scene counts on contents or chapter covers', !countScenes.length,
+    'Contents and chapter covers show no "장면 N장/N개" counts', { scenes: countScenes });
 
   const retroIds = report.ids.filter((id) => /^retro(?:-\d+)?$/.test(id));
   const achieved = deck?.retro?.hideAchieved ? [] : project.retro?.achieved || [];

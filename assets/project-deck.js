@@ -431,7 +431,7 @@
       return `<div class="dk dk-text${tight}">${ncards(points, { two: points.length >= 3 && !variant.stack, num: sl.layout !== 'overview' })}</div>`;
     }
     if (sl.layout === 'screens') {
-      return `<div class="dk scr-row${tight}" style="--n:${vs.length}">${vs.map((v, i) => `<div class="fe-card">${vis([v])}${points[i] ? `<p class="fe-k">${esc(PF.t('en.feature'))} ${String(i + 1).padStart(2, '0')}</p>${points[i].label ? `<h3>${esc(PF.label(points[i].label))}</h3>` : ''}${txt(points[i]) ? `<p>${inline(txt(points[i]))}</p>` : ''}` : ''}</div>`).join('')}</div>`;
+      return `<div class="dk scr-row${points.length ? ' has-text' : ''}${tight}" style="--n:${vs.length}">${vs.map((v, i) => `<div class="fe-card">${vis([v])}${points[i] ? `<p class="fe-k">${esc(PF.t('en.feature'))} ${String(i + 1).padStart(2, '0')}</p>${points[i].label ? `<h3>${esc(PF.label(points[i].label))}</h3>` : ''}${txt(points[i]) ? `<p>${inline(txt(points[i]))}</p>` : ''}` : ''}</div>`).join('')}</div>`;
     }
     if (sl.layout === 'problem') {
       if (variant.stack || !points.length) return `<div class="dk dk-stack${tight}">${vis(vs)}${points.length ? flowHtml(points, 'row') : ''}</div>`;
@@ -482,6 +482,23 @@
     });
     return out;
   }
+  // [포크] screens 장면의 사진 칸을 표의 칸처럼 같은 틀로 맞춤(2026-11-27, Hive d-animator-override·Mini FTL d-three-decisions).
+  //   fitVisuals는 칸(.vis)마다 따로 크기를 정해 사진 비율이 다르면 틀 높이와 그 아래 글 줄이 칸마다 달라짐.
+  //   fitVisuals가 정한 틀 중 가장 넓은 폭·가장 높은 높이를 모든 칸에 씀(각 칸이 이미 들어간 크기라 넘치지 않음). 사진은 object-fit: contain으로 틀 가운데
+  function alignScreenCells(s) {
+    s.querySelectorAll('.scr-row').forEach((row) => {
+      const boxes = [...row.querySelectorAll(':scope > .fe-card > .vis > figure.vbox')];
+      const allImages = boxes.every((box) => box.dataset.kind === 'image');
+      if (boxes.length < 2 || allImages === false) return;
+      const medias = boxes.map((box) => box.querySelector(':scope > .vmedia'));
+      const frameWidth = Math.max(...medias.map((media) => parseFloat(media.style.width) || 0));
+      const frameHeight = Math.max(...medias.map((media) => parseFloat(media.style.height) || 0));
+      boxes.forEach((box, i) => {
+        box.style.width = `${frameWidth}px`;
+        Object.assign(medias[i].style, { width: `${frameWidth}px`, height: `${frameHeight}px` });
+      });
+    });
+  }
   //   codeChunk(v) = 그 코드의 이번 줄 범위 · tsplit = { v, rows: [a, b) } 행을 나누는 표 하나(다른 표는 그대로 둠)
   function fitSlide(sl, vis, sid, part, codeChunk, meta, tsplit = null, depth = 0) {
     const vs = vis.map((v) => vboxHtml(v, v.ref.kind === 'code' ? codeChunk(v) : v.ref.kind === 'table' && tsplit && tsplit.v === v ? tsplit.rows : null));
@@ -496,6 +513,7 @@
       PF.body(s).innerHTML = `<div class="pf-fill">${bodyHtml(sl, vs, v)}</div>`;
       if (meta.auto) s.querySelector('.pf-foot > span').insertAdjacentHTML('beforeend', '<span class="pf-autoband" data-pf-ui="note">예전 데이터로 자동 구성 — /portfolio-build를 다시 실행하면 슬라이드가 됩니다</span>');
       PF.fitVisuals(s);
+      alignScreenCells(s);   // [포크] 사진 칸 틀 맞춤
       s.querySelectorAll('.comparison-flow .vbox[data-kind="mermaid"]').forEach((box) => {
         const svg = box.querySelector('svg'), vb = svg.viewBox.baseVal;
         const fin = box.closest('table').closest('.fit-in');
@@ -568,7 +586,7 @@
       });
       const chs = chapterScene(c, ci, chId, slides, foot, auto, p.title);
       chapterScenes.push(chs, ...slides.flatMap((x) => x.scenes));
-      tocItems.push({ c, chId, n: slides.reduce((a, x) => a + x.scenes.length, 0) });
+      tocItems.push({ c, chId });
     });
     const retro = buildRetro(p.retro || {}, p, foot, auto);
     const end = endScene(p, foot, ext, auto);
@@ -623,6 +641,23 @@
   const ROOMY_MAX = 4;
   // 장면의 키워드(deck.slides[].keywords, 문자열 배열)를 장 표지 한 줄로 이음. 배열이 아니거나 비면 ''
   const keywordLine = (sl) => (Array.isArray(sl.keywords) ? sl.keywords.filter(Boolean).join(' · ') : '');
+  // 목차 장 줄의 키워드(이 포크, 2026-11-27: 예전 "장면 N장" 대신). 그 장 장면들의 keywords를
+  // 첫 낱말부터 장면 순서로 한 바퀴씩 모아(라운드 로빈) 중복을 빼고 최대 5개를 ' · '로 이음. 후보가 없으면 ''
+  //   tools/deck-checks.mjs의 chapterKeywords가 같은 규칙으로 기대값을 셈 — 한쪽을 바꾸면 둘 다 고침
+  const CHAPTER_KEYWORDS_MAX = 5;
+  function chapterKeywordLine(chapterSlides) {
+    const keywordLists = chapterSlides.map((sl) => (Array.isArray(sl.keywords) ? sl.keywords : []));
+    const longest = Math.max(0, ...keywordLists.map((list) => list.length));
+    const picked = [];
+    for (let round = 0; round < longest; round++) {
+      for (const list of keywordLists) {
+        const word = String(list[round] || '').replace(/\s+/g, ' ').trim();
+        const isNew = word !== '' && picked.includes(word) == false;
+        if (isNew && picked.length < CHAPTER_KEYWORDS_MAX) picked.push(word);
+      }
+    }
+    return picked.join(' · ');
+  }
   function chapterScene(c, ci, chId, slides, foot, auto, ptitle) {
     // rows = 목록 줄 [번호, 제목, 설명, 이동할 장면 id, 키워드 줄]
     const make = (mode, rows) => {
@@ -630,7 +665,7 @@
       const roomy = mode === 'roomy';
       const cols = mode === 'cols';
       const list = rows.map((r) => item(r[0], r[1], r[2], r[3], roomy ? r[4] : '')).join('');
-      PF.body(s).innerHTML = `<div class="toprow"><span class="pf-eyebrow long">${esc(ptitle)}</span><span class="rl">${esc(PF.t('deck.ch-count', { n: slides.length }))}</span></div>
+      PF.body(s).innerHTML = `<div class="toprow"><span class="pf-eyebrow long">${esc(ptitle)}</span></div>
         <div class="ch-mid${cols ? ' wide' : ''}"><div><p class="ch-no">${esc(PF.t('en.chapter'))} ${String(ci + 1).padStart(2, '0')}</p><h2 class="ch-t">${esc(c.title)}</h2>${DOT}</div>
         <div class="ch-list t-P2${mode === 'normal' ? '' : cols ? ' compact cols' : ' ' + mode}"><ol class="toc-list${roomy ? '' : ' sub'}"${cols ? ` style="grid-template-rows: repeat(${Math.ceil(rows.length / 2)}, auto)"` : ''}>${list}</ol></div></div>`;
       return band(s, auto);
@@ -664,13 +699,13 @@
       });
       const fewerLines = groups.length < slides.length;
       if (fewerLines == false) continue;
-      result.push(groups.map((g, i) => [String(i + 1), g.title, PF.t('deck.toc-count', { n: g.scenes }), g.ref, '']));
+      result.push(groups.map((g, i) => [String(i + 1), g.title, '', g.ref, '']));
     }
     return result;
   }
 
   function tocScene(p, foot, items, retro, auto) {
-    const rows = [...items.map((x, i) => [String(i + 1).padStart(2, '0'), x.c.title, PF.t('deck.toc-count', { n: x.n }), x.chId]),
+    const rows = [...items.map((x, i) => [String(i + 1).padStart(2, '0'), x.c.title, chapterKeywordLine(x.c.slides), x.chId]),
       retro.length && [String(items.length + 1).padStart(2, '0'), PF.t('deck.retro'), PF.t('deck.retro-desc'), retro[0].id],
       [String(items.length + (retro.length ? 2 : 1)).padStart(2, '0'), PF.t('deck.more'), PF.t('deck.more-desc'), 'end']].filter(Boolean);
     const make = (compact) => {

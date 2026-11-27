@@ -290,6 +290,10 @@ table.md-table img { max-height: 120px; max-width: 100%; height: auto; }   /* wi
 .flow.col .fstep .labelchip { justify-content: center; }
 .scr-row { display: grid; grid-template-columns: repeat(var(--n, 3), minmax(0, 1fr)); gap: 22px; }
 .pf-sizing .scr-row { align-items: stretch; }
+/* [포크] screens 칸의 FEATURE·제목·설명을 표의 행처럼 같은 높이에서 시작(사진 틀은 project-deck.js alignScreenCells가 맞춤) */
+.scr-row.has-text { grid-template-rows: minmax(0, 1fr) auto auto auto; column-gap: 22px; row-gap: 10px; }
+.scr-row.has-text > .fe-card { display: grid; grid-row: span 4; grid-template-rows: subgrid; row-gap: 10px; }
+.scr-row.has-text > .fe-card > .fe-k { justify-self: start; }
 /* [포크] 원문 시각 자료와 설명의 공통 행·열. 기존 layout 안의 선택 presentation. */
 .pf-scene:has(.dk-columns, .dk-pair, .comparison-table) .pf-fill { margin-block: 0; }
 .pf-sizing .pf-fill:has(> .dk-steps) { justify-content: center; }
