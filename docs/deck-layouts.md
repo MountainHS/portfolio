@@ -203,7 +203,8 @@
 ```
 - 조건: `layout: "code"`, V에 코드 1개 이상, 24줄 넘으면 이어지는 장면으로 나뉨. 카드마다 실행 줄을 대면 `codeEvidence: "all-points"`와 `view.highlights` 번호.
 - 배치(요점이 있을 때 고정, 2026-11-27 WGO `timing`): 코드 열은 왼쪽, 코드가 둘 이상이면 위·아래로 쌓음. 번호 카드 열은 오른쪽에 위·아래. 렌더러 `fitSlide`의 `codeSide`가 stack 변형을 빼고, `bodyHtml`이 코드 칸에 `data-arr="col"`을 달아 `PF.fitVisuals`가 코드를 가로로 놓지 못하게 합니다.
-  - 예외: 코드 줄이 넓어 왼쪽 칸에 하한 글자(12px)로도 안 들어가면 그때만 코드 위·카드 아래로 물러섭니다(장면에 `data-pf-code-stack="wide"`, 알림 `code-stack`). 지금 Hive `attack-hooks`·`factory`·`wave-start`.
+  - 넓은 코드: 일반 좌우 후보로 안 들어가면 코드 칸을 넓힌 좌우(코드:카드 = 2.8·3.2·3.8:1, 좁은 것부터)를 먼저 시도합니다. Hive `wave-start`(3.2)·`attack-hooks`(3.8)가 이렇게 좌우로 놓입니다.
+  - 예외: 그래도 하한 글자(12px)로 안 들어가면 그때만 코드 위·카드 아래로 물러섭니다(장면에 `data-pf-code-stack="wide"`, 알림 `code-stack`). 지금 Hive `factory` 하나(코드 칸을 5.2까지 넓혀야 들어가는데 그러면 카드 열이 약 200px, 카드 하나가 6줄이라 위·아래가 더 읽기 쉬움).
   - 요점이 없는 나뉜 뒤쪽 장면(`-2`)은 코드만 가로 전체입니다.
 - 검사: `every code explanation card has a matching execution-line highlight` · `code caption shows source location` · `code scene keeps code column left and cards column right`(넓은 코드 예외는 참고) · probe `code-stack`.
 - 예: `4-wgo/timing`(코드 둘), `5-hive-purge/attack-state`(코드 하나).

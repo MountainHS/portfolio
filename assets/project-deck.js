@@ -542,9 +542,13 @@
     for (const v of V) { const s = build(v); if (!PF.fitsM(s)) continue; const sc = PF.visScore(s); if (!best || sc > best.sc + 0.05) best = { s, sc }; }
     if (best) return [best.s];
     // [포크] 줄이 넓은 코드는 먼저 코드 칸을 더 넓힌 좌우(카드 열이 좁아짐)를 시도(2026-11-27 Hive attack-hooks·factory·wave-start)
+    //   좁은 폭부터 차례로 보고 처음 들어가는 폭에서 멈춤(카드 열을 될 수 있는 한 넓게 남김)
+    //   3.8이 끝: 카드 열 약 257px(한 줄 열몇 자). 4.6~5.2는 카드 열 약 200px로 카드 하나가 6줄이 되어 stack이 더 읽기 쉬움(Hive d-factory)
     if (codeSide) {
-      for (const v of [{ vw: 2.8 }, { vw: 2.8, tight: true }, { vw: 3.2 }, { vw: 3.2, tight: true }]) { const s = build(v); if (!PF.fitsM(s)) continue; const sc = PF.visScore(s); if (!best || sc > best.sc + 0.05) best = { s, sc }; }
-      if (best) return [best.s];
+      for (const vw of [2.8, 3.2, 3.8]) {
+        for (const v of [{ vw }, { vw, tight: true }]) { const s = build(v); if (!PF.fitsM(s)) continue; const sc = PF.visScore(s); if (!best || sc > best.sc + 0.05) best = { s, sc }; }
+        if (best) return [best.s];
+      }
     }
     // [포크] 그래도 하한 글자로 안 들어가면 그때만 코드 위·카드 아래(검사는 data-pf-code-stack이면 참고로만 봄)
     if (codeSide) {
