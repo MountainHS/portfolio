@@ -32,23 +32,6 @@
       ]
     },
     {
-      "name": "C# / .NET",
-      "evidence": [
-        {
-          "text": "인터페이스 · 추상 클래스 · 다형성",
-          "project": "5-hive-purge"
-        },
-        {
-          "text": "비동기 프로그래밍",
-          "project": "4-wgo"
-        },
-        {
-          "text": "스레드 동기화 · Channel",
-          "project": "4-wgo"
-        }
-      ]
-    },
-    {
       "name": "게임 시스템 설계",
       "evidence": [
         {
@@ -66,6 +49,14 @@
         {
           "text": "싱글톤 · 씬 생명주기",
           "project": "3-mini-ftl"
+        },
+        {
+          "text": "비동기 프로그래밍",
+          "project": "4-wgo"
+        },
+        {
+          "text": "스레드 동기화 · Channel",
+          "project": "4-wgo"
         }
       ]
     },

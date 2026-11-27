@@ -30,8 +30,8 @@ def check(data):
             problems.append(f"{name}: 카드 제목이 중복됩니다.")
         seen_names.add(name)
         evidence = skill.get("evidence")
-        if not isinstance(evidence, list) or not 2 <= len(evidence) <= 4:
-            problems.append(f"{name}: 기술 키워드는 2~4개여야 합니다.")
+        if not isinstance(evidence, list) or not 2 <= len(evidence) <= 6:
+            problems.append(f"{name}: 기술 키워드는 2~6개여야 합니다.")
             continue
         for item in evidence:
             keyword = item.get("text")
