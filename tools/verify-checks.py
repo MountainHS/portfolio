@@ -31,6 +31,9 @@ ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / "output" / "check" / "verify"
 PROJECTS = sorted(path.stem for path in (ROOT / "data" / "projects").glob("*.json"))
 PROBES = ["swapped-layout", "missing-highlight", "missing-code", "wrong-code-text", "wrong-retro-pair", "uneven-link-card", "uneven-screen-cell", "scene-count-toc"]
+# 경고 수준 변이: 종료 코드는 0이고, 아래 경고 이름이 모두 실패로 나와야 함
+WARNING_PROBES = {"diagram-card-overlap": ["diagram steps match explanation cards",
+    "explanation cards do not repeat diagram node text", "vertical diagram beside cards keeps node text on its written lines"]}
 PREVIEW_URL = "http://127.0.0.1:4600"
 RUN_TIMEOUT_SECONDS = 600
 
@@ -125,7 +128,7 @@ def check_deck_baseline():
 # ── C. 슬라이드 변이: 브라우저 안에서 망친 덱은 실패해야 함(미탐 확인) ──
 
 def check_deck_probes():
-    for probe in PROBES:
+    for probe in PROBES + list(WARNING_PROBES):
         tried = []
         for project_id in PROJECTS:
             code, stdout, stderr = run(["node", "tools/check-deck.mjs", project_id, "--probe", probe,
@@ -136,7 +139,13 @@ def check_deck_probes():
                 tried.append(project_id)
                 continue
             names = failing_names(read_json_output(stdout) or {})
-            passed = code == 1 and len(names) > 0
+            if probe in WARNING_PROBES:
+                summary = read_json_output(stdout) or {}
+                warned = {f["name"] for pr in summary.get("projects", []) for f in pr.get("findings", []) if f.get("pass") is False}
+                names = [name for name in WARNING_PROBES[probe] if name in warned]
+                passed = code == 0 and len(names) == len(WARNING_PROBES[probe])
+            else:
+                passed = code == 1 and len(names) > 0
             record(passed, f"C 변이 {probe}", f"{project_id} exit={code} 실패 {names or '-'}")
             break
         else:

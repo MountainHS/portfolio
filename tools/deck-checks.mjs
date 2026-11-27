@@ -46,6 +46,28 @@ export async function checkDeckPage(projectId, probe) {
     media.style.height = `${parseFloat(media.style.height) / 2}px`;
   }
 
+  if (probe === 'diagram-card-overlap') {
+    // 흐름도 + 카드 장면 하나에 세 가지 경고를 일부러 만듦: 카드 하나 더, 노드 글 반복, 노드 글 강제 줄바꿈
+    const svg = [...document.querySelectorAll('#deck .pf-scene .vis figure[data-kind="mermaid"] svg[aria-roledescription^="flowchart"]')]
+      .find((node) => node.closest('.pf-scene').querySelector('.cards .ncard') && node.closest('.dk-visual-notes, .dk-side-notes'));
+    if (!svg) throw new Error('The diagram-card-overlap probe requires a rendered visual-notes or side-notes flowchart with cards.');
+    const sceneNode = svg.closest('.pf-scene');
+    // 카드 수는 그대로(필수 배치 검사가 요점 수와 대조함). 노드를 카드 수 ± 1개(단계형 범위 3~6)로, 간선을 그 이하로 맞춰 단계 수를 어긋나게 함
+    const cardCount = sceneNode.querySelectorAll('.cards .ncard').length;
+    const target = cardCount + 1 <= 6 ? Math.max(3, cardCount + 1) : cardCount - 1;
+    const nodes = () => [...svg.querySelectorAll('g.node')];
+    while (nodes().length > target) nodes().at(-1).remove();
+    while (nodes().length < target) nodes()[0].parentElement.append(nodes()[0].cloneNode(true));
+    const links = [...svg.querySelectorAll('path.flowchart-link')];
+    links.slice(target).forEach((link) => link.remove());
+    const labels = [...svg.querySelectorAll('g.node .nodeLabel, g.node foreignObject div')];
+    const longest = labels.flatMap((label) => label.innerText.split('\n')).sort((a, b) => b.length - a.length)[0];
+    sceneNode.querySelector('.cards .ncard p').append(` ${longest}`);
+    const vb = svg.viewBox.baseVal;
+    if (vb.width >= vb.height) svg.setAttribute('viewBox', `${vb.x} ${vb.y} ${vb.width} ${vb.width * 1.5}`);
+    for (const div of svg.querySelectorAll('g.node foreignObject div')) Object.assign(div.style, { whiteSpace: 'normal', maxWidth: '2em', display: 'block' });
+  }
+
   add('screen deck is ready', report.ready === 'yes' && report.scenes > 0 && report.scenes === pages.size &&
     report.info.id === projectId && ['cover', 'toc', 'end'].every((id) => pages.has(id)),
   'Ready deck with unique scene IDs, cover, table of contents, and closing',
@@ -279,6 +301,50 @@ export async function checkDeckPage(projectId, probe) {
       const bracketed = (slide.points || []).map((point, i) => ({ i, wants: /\S\s*\([^()]+\)$/.test(point.text || '') }));
       const badBreaks = bracketed.filter(({ i, wants }) => wants && cards[i]?.querySelector('.ft-note')?.textContent.startsWith('(') !== true).map(({ i }) => i + 1);
       add('flow-table bracket note starts its own line', badBreaks.length === 0, 'Trailing (…) in a card is a separate line', { badBreaks }, id);
+    }
+    // [포크] 다이어그램 + 설명 카드 장면(경고만, 2026-11-27 WGO bridge-build): 단계 수·노드 글 반복·세로 그림 줄바꿈.
+    // 규칙: .claude/rules/deck-layouts.md 「다이어그램 + 카드 장면」. 노드와 짝이 정해진 배치(flow-table·steps 등)는 자체 검사가 있어 뺌
+    const pairedLayouts = ['flow-table', 'steps', 'cycle', 'columns', 'stage-table', 'comparison'];
+    for (const part of pairedLayouts.includes(slide.presentation) ? [] : parts) {
+      const flowSvg = part.querySelector('.vis figure[data-kind="mermaid"] svg[aria-roledescription^="flowchart"]');
+      const noteCards = all(part, '.cards .ncard');
+      if (!flowSvg || !noteCards.length) continue;
+      const nodeLabels = all(flowSvg, 'g.node').map((node) => node.querySelector('.nodeLabel, foreignObject div, text')).filter(Boolean);
+      const edges = all(flowSvg, 'path.flowchart-link').length || all(flowSvg, '.edgePaths > path').length;
+      // 단계형 흐름(노드 3~6개, 갈래가 거의 없음)을 카드 2개 이상으로 풀 때 수가 다르면 어느 카드가 어느 단계인지 흐려짐(요약 카드 1장은 뺌)
+      const stepFlow = nodeLabels.length >= 3 && nodeLabels.length <= 6 && edges <= nodeLabels.length && noteCards.length >= 2;
+      add('diagram steps match explanation cards', !stepFlow || nodeLabels.length === noteCards.length,
+        'A step diagram has one explanation card per node (or the cards name a different grouping on purpose)',
+        { nodes: nodeLabels.length, edges, cards: noteCards.length, presentation: slide.presentation || slide.layout }, part.id, 'warning');
+      // 카드 설명(이름표 말고 본문)이 노드 글 한 줄을 그대로 다시 씀. 클래스 이름 하나(MonsterController)를 부르는 것은 반복으로 보지 않음
+      const nodeLines = [...new Set(nodeLabels.flatMap((labelNode) => labelNode.innerText.split('\n'))
+        .map((line) => line.replace(/\s+/g, '')).filter((line) => line.length >= 6 && !/^[A-Za-z_][\w.]*(?:\(\))?$/.test(line)))];
+      const repeats = noteCards.map((card, i) => {
+        const body = (card.querySelector('p')?.textContent || '').replace(/\s+/g, '');
+        return { card: i + 1, lines: nodeLines.filter((line) => body.includes(line)) };
+      }).filter((item) => item.lines.length);
+      add('explanation cards do not repeat diagram node text', !repeats.length,
+        'Card bodies explain why or what changes; they do not restate a diagram node label', { repeats }, part.id, 'warning');
+      // 세로 흐름도가 옆 카드에 밀려 좁고, 노드 글이 원문 줄 수보다 더 꺾임 → 가로 배치(steps·flow-table·stack)를 먼저 검토
+      const box = (flowSvg.closest('figure') || flowSvg).getBoundingClientRect();
+      const cardBox = part.querySelector('.cards')?.getBoundingClientRect();
+      const viewBox = flowSvg.viewBox?.baseVal;
+      const vertical = Boolean(viewBox?.width && viewBox.height > viewBox.width);
+      const beside = Boolean(cardBox && (cardBox.left >= box.right - tol || cardBox.right <= box.left + tol));
+      const wrapped = nodeLabels.map((labelNode) => {
+        const range = document.createRange();
+        range.selectNodeContents(labelNode);
+        const tops = [];
+        for (const line of range.getClientRects()) {
+          if (line.width > 0 && !tops.some((top) => Math.abs(top - line.top) < line.height / 2)) tops.push(line.top);
+        }
+        const written = labelNode.innerText.split('\n').filter((line) => line.trim()).length;
+        return { text: normalize(labelNode.textContent), written, shown: tops.length };
+      }).filter((item) => item.shown > item.written);
+      const bodyWidth = (part.querySelector('.pf-body') || part).getBoundingClientRect().width;
+      add('vertical diagram beside cards keeps node text on its written lines', !(vertical && beside && wrapped.length),
+        'A top-to-bottom diagram squeezed beside cards does not wrap node labels; prefer a horizontal flow with cards below',
+        { vertical, beside, widthShare: Math.round(box.width / bodyWidth * 100) / 100, wrapped }, part.id, 'warning');
     }
     const body = rect(root.querySelector('.pf-body'));
     const fill = rect(root.querySelector('.pf-fill'));
