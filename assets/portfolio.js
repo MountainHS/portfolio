@@ -151,7 +151,14 @@
     const period = PF.metaValue(p, '기간');
     const m = /(\d{4})\.(\d{2}\.\d{2})\s*[—–-]\s*(?:\d{4}\.)?(\d{2}\.\d{2})/.exec(period);
     return [[t('page.card-year'), m ? m[1] : ''], [t('page.card-size'), p.team?.size || PF.metaValue(p, '인원')],
-      [t('page.card-period'), m ? `${m[2]}–${m[3]}` : period], [t('page.card-engine'), (p.tags || []).find((x) => /^unity/i.test(x)) || '']].filter(([, v]) => v);
+      [t('page.card-period'), m ? `${m[2]}–${m[3]}` : period], [t('page.card-engine'), (p.tags || []).find((x) => /^unity/i.test(x)) || engineFromMeta(p)]].filter(([, v]) => v);
+  }
+  // [포크] 태그에서 Unity를 뺀 프로젝트(2026-11-27)는 '환경' 메타에서 엔진을 읽음: 'Unity 6000.3.15f1' → 'Unity 6.3', 'Unity 2022.3.10f1' → 'Unity 2022.3'
+  function engineFromMeta(p) {
+    const m = /Unity\s*(\d+)\.(\d+)/i.exec(PF.metaValue(p, '환경') || '');
+    if (m === null) return '';
+    const major = m[1] === '6000' ? '6' : m[1];
+    return `Unity ${major}.${m[2]}`;
   }
 
   // 프로젝트 카드: 대표 화면 · 메타 2×2 · 제목 · 역할 · 장르 · 개발 의도 · 태그 4개 · View Project(상세 패널로)
@@ -260,8 +267,24 @@
                 pending: imgs.filter((i) => !i.complete).map((i) => i.getAttribute('src')) },
       deckLinks: [...document.querySelectorAll('.features a.pill')].map((a) => a.getAttribute('href')),
       overflowX: Math.max(0, document.documentElement.scrollWidth - document.documentElement.clientWidth),
+      cardTags: cardTagsReport(),
       errors: info.errors, strings: PF.stringsReport(),
     };
+  }
+  // [포크] 카드 태그 칸 정렬 점검(2026-11-27): 같은 행 카드끼리 태그 칸 첫 줄 높이가 2px 넘게 다르면 misaligned에 남김. rows = 카드별 태그 줄 수(3 이상이면 칸 높이를 넘김)
+  function cardTagsReport() {
+    const lists = [...document.querySelectorAll('.cards .card .tags')].map((ul) => {
+      const card = ul.closest('.card'), lis = [...ul.children];
+      return { title: card.querySelector('.title')?.textContent || '', cardTop: Math.round(card.getBoundingClientRect().top),
+               top: Math.round(lis[0]?.getBoundingClientRect().top ?? 0), rows: new Set(lis.map((li) => Math.round(li.getBoundingClientRect().top))).size };
+    });
+    const misaligned = [];
+    for (const row of new Set(lists.map((x) => x.cardTop))) {
+      const same = lists.filter((x) => x.cardTop === row);
+      const tops = same.map((x) => x.top);
+      if (Math.max(...tops) - Math.min(...tops) > 2) misaligned.push(same.map((x) => `${x.title}:${x.top}`).join(' · '));
+    }
+    return { rows: Object.fromEntries(lists.map((x) => [x.title, x.rows])), misaligned };
   }
   function writeAudit() {
     let pre = document.getElementById('pf-audit');

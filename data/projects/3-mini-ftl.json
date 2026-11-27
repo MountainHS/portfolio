@@ -29,12 +29,12 @@
     }
   ],
   "tags": [
-    "Unity 6.3",
-    "C#",
+    "초기화 순서 관리",
+    "책임 분리",
     "싱글톤",
     "DontDestroyOnLoad",
-    "ScriptableObject",
-    "책임 분리"
+    "Script Execution Order",
+    "ScriptableObject"
   ],
   "links": {
     "github": "https://github.com/KooHoo-Dev/3rd-2D-Project-MountainHS",

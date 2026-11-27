@@ -1277,6 +1277,29 @@
       "field": "intent",
       "value": "서로의 몸을 붙잡고 바닷속 자원을 모아 다리를 건설합니다. 물리적 조작에서 발생하는 불협화음을 극복하며 협동의 재미를 느끼도록 설계했습니다.",
       "from": "주제 선정 당시 팀원 모두 협동 게임을 선호했습니다. 그래서 기획 초기에는 협동 게임에서 제공하는 플레이어 간 상호작용, 경험에 집중했습니다."
+    },
+    {
+      "field": "tags",
+      "value": [
+        ".NET WebSocket 서버",
+        "호스트 권한형 동기화",
+        "스냅샷 동기화",
+        "System.Threading.Channels",
+        "UniTask",
+        "Interlocked",
+        "TSV 데이터 파이프라인"
+      ],
+      "from": ["Unity 6.3", "C#", ".NET WebSocket 서버", "호스트 권한형 동기화", "UniTask", "Interlocked", "TSV 데이터 파이프라인"]
+    }
+  ],
+  "deckText": [
+    {
+      "slide": "experience-map",
+      "field": "point",
+      "n": 1,
+      "value": "자원을 더 얻으려 위험을 감수할지, 지금 모은 자원으로 돌아갈지 고민하게 했습니다.",
+      "from": "자원을 더 얻으려 위험을 감수할지, 지금 모은 자원으로 돌아갈지 고민하게 했습니다. 낮과 밤에 따라 물고기 종류도 달라집니다.",
+      "sourceDigest": "6db964a0b02d"
     }
   ]
 }

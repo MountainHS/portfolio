@@ -88,6 +88,12 @@ code { font-family: var(--mono); font-size: .88em; background: var(--b-soft); pa
 .card .role { font-size: 12px; font-weight: 800; color: var(--b-accent); margin: 8px 0; }
 .card .genre { margin: .65em 0; }
 .card .intent { color: var(--b-muted); margin: .65em 0; }
+/* [포크] 카드 태그 칸은 카드 아래쪽에 붙이고 두 줄 높이를 늘 비워 둠 → 소개 글 길이·태그 줄 수가 달라도 같은 줄에서 시작(2026-11-27).
+   세 줄 이상 되면 어긋나므로 PFPage.report().cardTags.misaligned로 잡음 */
+.card .tags { --tag-h: calc(11px * 1.4 + 8px); margin: auto 0 14px; padding-top: 10px; min-height: calc(var(--tag-h) * 2 + 6px + 10px);
+              align-content: flex-start; }
+.card .tags li { line-height: 1.4; }
+.card .tags ~ .more { margin-top: 0; }
 .more { margin-top: auto; display: block; text-align: center; background: var(--b-accent); color: #fff; padding: 11px; border-radius: 4px;
         font-size: 12px; font-weight: 700; text-decoration: none; }
 .more:hover { background: #124e6f; }

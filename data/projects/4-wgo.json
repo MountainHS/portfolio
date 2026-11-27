@@ -29,10 +29,10 @@
     }
   ],
   "tags": [
-    "Unity 6.3",
-    "C#",
     ".NET WebSocket 서버",
     "호스트 권한형 동기화",
+    "스냅샷 동기화",
+    "System.Threading.Channels",
     "UniTask",
     "Interlocked",
     "TSV 데이터 파이프라인"
@@ -199,7 +199,7 @@
         "sectionPath": ["1. 개요", "1.3 핵심 플레이 경험"],
         "points": [
           {
-            "text": "자원을 더 얻으려 위험을 감수할지, 지금 모은 자원으로 돌아갈지 고민하게 했습니다. 낮과 밤에 따라 물고기 종류도 달라집니다.",
+            "text": "자원을 더 얻으려 위험을 감수할지, 지금 모은 자원으로 돌아갈지 고민하게 했습니다.",
             "verbatim": false,
             "label": "탐욕과 도전"
           }
@@ -2528,6 +2528,6 @@
         "visuals": []
       }
     ],
-    "applied": "5cb6bd555ec2a760"
+    "applied": "dee3f140e1ed12ac"
   }
 }

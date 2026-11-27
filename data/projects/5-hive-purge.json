@@ -29,13 +29,14 @@
     }
   ],
   "tags": [
-    "Unity 6.3",
-    "C#",
-    "URP",
     "NavMesh",
     "상태 머신",
+    "오브젝트 풀",
+    "Override Controller",
+    "팩토리 패턴",
     "템플릿 메서드",
-    "Override Controller"
+    "군중 이동",
+    "EditMode 테스트"
   ],
   "links": {
     "github": "https://github.com/KooHoo-Dev/3rd_3D_1-3D-Project-team_even",
