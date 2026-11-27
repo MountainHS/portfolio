@@ -41,6 +41,13 @@ export async function checkDeckPage(projectId, probe) {
     card.querySelector('.url')?.append(' changed-long-address-'.repeat(4));
   }
   if (probe === 'scene-count-toc') first('#toc .toc-list a .d').textContent = '장면 7장';
+  if (probe === 'uneven-paired-row') {
+    // 예전 렌더러처럼 두 패널이 행 틀을 따로 쓰게 하고, 첫 패널 제목 줄만 높임
+    const panels = [...first('.dk-paired').querySelectorAll(':scope > .paired-panel')];
+    for (const panel of panels) Object.assign(panel.style, { gridRow: 'auto', gridTemplateRows: 'none' });
+    for (const flow of first('.dk-paired').querySelectorAll('.paired-panel > .flow')) Object.assign(flow.style, { gridRow: 'auto', gridTemplateRows: 'none' });
+    panels[0].querySelector('.panel-header').style.paddingBottom = '40px';
+  }
   if (probe === 'uneven-screen-cell') {
     const media = first('.scr-row > .fe-card > .vis > figure.vbox[data-kind="image"] > .vmedia');
     media.style.height = `${parseFloat(media.style.height) / 2}px`;
@@ -400,6 +407,28 @@ export async function checkDeckPage(projectId, probe) {
         lead: normalize(panel.querySelector('.panel-lead')?.textContent || ''),
         labels: all(panel, '.ncard, .fstep').map((point) => normalize(point.querySelector('.lb, .labelchip')?.textContent || '')) }));
       add('paired panels preserve their own headings and point labels', json(actual) === json(expected), expected, actual, id);
+      // [포크] 두 패널의 본문(그림·카드·흐름 칸)이 같은 높이에서 시작하고 행마다 맞는지. 흐름 칸 수가 다르면 짧은 쪽이 세로 가운데
+      const bodyOf = (panel) => panel.querySelector(':scope > .vis, :scope > .cards, :scope > .flow');
+      const bodies = panelNodes.map((panel) => rect(bodyOf(panel)));
+      const cardGroups = panelNodes.map((panel) => rect(panel.querySelector(':scope > .cards')));
+      const stepRows = panelNodes.map((panel) => all(panel, ':scope > .flow > .fstep').map(rect));
+      const near = (a, b) => Math.abs(a - b) <= tol;
+      const hasVisual = Boolean(slide.visuals?.length);
+      const sameCount = stepRows[0].length === stepRows[1].length;
+      const bothBodies = bodies.every(isVisible);
+      let alignedBody = true;
+      let rule = 'No body in one panel';
+      if (bothBodies && hasVisual) {
+        rule = 'Tables start at one height and card groups start at one height';
+        alignedBody = near(bodies[0].top, bodies[1].top) && (!cardGroups.every(isVisible) || near(cardGroups[0].top, cardGroups[1].top));
+      } else if (bothBodies && sameCount) {
+        rule = 'Flow steps share each row: same top and same height';
+        alignedBody = stepRows[0].every((step, i) => near(step.top, stepRows[1][i].top) && near(step.height, stepRows[1][i].height));
+      } else if (bothBodies) {
+        rule = 'Shorter flow is vertically centered on the longer flow';
+        alignedBody = Math.abs((bodies[0].top + bodies[0].bottom - bodies[1].top - bodies[1].bottom) / 2) <= tol;
+      }
+      add('paired panel bodies align row by row', alignedBody, rule, { bodies, cardGroups, stepRows }, id);
     }
     if (slide.presentation === 'stage-table') {
       const rows = all(root, 'table.stage-table tr').map((row) => all(row, ':scope > th, :scope > td').map(rect));
