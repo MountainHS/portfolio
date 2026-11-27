@@ -82,6 +82,7 @@
 - `src/**`·`report/고민-분류/**`를 다룰 때만 자동으로 실립니다(`paths`). 직접 불러도 첫 인자가 `src/` 프로젝트 폴더가 아니면 실행하지 않습니다.
 - 이름이 `portfolio-`로 시작하지 않아 `/portfolio-update`의 교체 목록 밖입니다.
 - 고민 분류 파일(`report/고민-분류/*.md`)은 §1 상태표를 먼저 읽고, 필요한 고민은 `### <고민 ID>` 제목 줄을 Grep으로 찾아 그 절만 Read합니다. 파일 전체를 처음부터 읽지 않습니다.
+- 2026-11-27: 준비 모드(원천 소스 초안·재료집→맥락집·노트 대조)와 퇴고·피드백 모드, 빈 견본(`templates/`), `make_alias.py`·`gomin_status.py`를 더했습니다. 다른 사람에게 줄 이식 키트는 `python tools/make-tech-doc-kit.py`로 `output/tech-doc-kit.zip`에 묶습니다(사람용 `tools/kit-docs/README.md`, AI용 `tools/kit-docs/AI-GUIDE.md`).
 
 ## 지원서·자기소개서 (이 포크 전용)
 

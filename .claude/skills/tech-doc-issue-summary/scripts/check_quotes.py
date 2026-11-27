@@ -3,7 +3,9 @@
 사용: python check_quotes.py <결과.md> <별칭표.tsv>
 별칭표.tsv: 별칭<TAB>절대경로
 """
-import re, sys, unicodedata
+import os, re, sys, unicodedata
+
+sys.stdout.reconfigure(encoding="utf-8")
 
 def norm(s):
     s = unicodedata.normalize("NFC", s)
@@ -38,6 +40,8 @@ for no, row in enumerate(open(res_path, encoding="utf-8"), 1):
         for alias, a, b in locs:
             if alias not in aliases:
                 print(f"[별칭없음] 결과 {no}행: {alias}"); continue
+            if os.path.exists(aliases[alias]) == False:
+                print(f"[파일없음] 결과 {no}행: {alias} → {aliases[alias]}"); continue
             L = lines_of(alias)
             s, e = int(a), int(b or a)
             window = " ".join(L[max(0, s - 3): min(len(L), e + 2)])

@@ -1,7 +1,7 @@
 ---
 name: tech-doc-issue-summary
-description: 프로젝트 문서 원천 자료(회고·노트·Asana·발표·일지)에서 개발자의 고민·판단·시행착오를 찾아 L1·L2·L3로 분류하고, 수준별 형식 칸을 먼저 채운 초안을 report/고민-분류/에 쓴 뒤, 질문·답 반영·대화 세션(티키타카)으로 사용자와 구체화하고 마지막에 프로젝트 문서로 옮긴다. src/<폴더> 프로젝트 문서 소스 작업에서만 쓴다. 사용자가 /tech-doc-issue-summary을 입력하거나 "고민 분류해 줘", "고민점 정리", "고민 분류 답 반영해 줘", "Q-번호 티키타카 세션", "고민 분류를 프로젝트 문서에 반영해 줘"라고 할 때 사용.
-argument-hint: "<src 폴더> [시작|답 반영|대화 Q-번호|프로젝트 문서 반영]"
+description: 프로젝트 문서 원천 자료(회고·노트·Asana·발표·일지)에서 개발자의 고민·판단·시행착오를 찾아 L1·L2·L3로 분류하고, 수준별 형식 칸을 먼저 채운 초안을 report/고민-분류/에 쓴 뒤, 질문·답 반영·대화 세션(티키타카)으로 사용자와 구체화하고 마지막에 프로젝트 문서로 옮긴다. src/<폴더> 프로젝트 문서 소스 작업에서만 쓴다. 사용자가 /tech-doc-issue-summary을 입력하거나 "고민 분류해 줘", "고민점 정리", "고민 분류 답 반영해 줘", "Q-번호 티키타카 세션", "고민 분류를 프로젝트 문서에 반영해 줘", "원천 소스 초안 만들어 줘", "고민 노트랑 문서 대조해 줘", "피드백 반영 계획 세워 줘", "새 초안이랑 기존 문서 섞어 줘"라고 할 때 사용.
+argument-hint: "<src 폴더> [준비|시작|답 반영|대화 Q-번호|프로젝트 문서 반영|퇴고·피드백]"
 paths:
   - "src/**"
   - "report/고민-분류/**"
@@ -19,11 +19,17 @@ paths:
 
 | 파일 | 언제 읽나 |
 |---|---|
+| [references/before-classification.md](references/before-classification.md) | 준비 모드. 초안·원천 폴더가 아직 없을 때(원천 소스 초안, 재료집→맥락집, 노트↔문서 대조) |
+| [references/original-brief.md](references/original-brief.md) | 최초 작업 지시문 원문(2026-11-12). 규칙의 출처를 확인할 때만 |
 | [references/levels.md](references/levels.md) | 3단계 분류 전. Level 정의·형식 칸·발굴 기준 원문 |
 | [references/file-template.md](references/file-template.md) | 4단계 초안을 쓰기 전. 분류 파일 골격·고민 항목 템플릿·표기 |
-| [references/questions-and-dialogue.md](references/questions-and-dialogue.md) | 질문을 쓸 때, 5단계 답 반영, 6단계 대화 세션 |
+| [references/questions-and-dialogue.md](references/questions-and-dialogue.md) | 질문을 쓸 때, 5단계 답 반영, 6단계 대화 세션, 세션 운영 |
 | [references/to-tech-doc.md](references/to-tech-doc.md) | 7단계 프로젝트 문서 반영 |
+| [references/feedback-and-revision.md](references/feedback-and-revision.md) | 퇴고·피드백 모드. 새 초안 섞기, 흐름 손보기, 외부 피드백 반영 계획, `/portfolio-check` 루프 |
+| [templates/](templates/) | 빈 견본: 분류 파일·`INDEX.md`·별칭표·대화 파일·피드백 계획·답변 초안(O/X)·노트 대조표·원천 소스 프롬프트 |
 | [scripts/check_quotes.py](scripts/check_quotes.py) | 대응표를 쓰거나 고친 뒤 발췌 검사 |
+| [scripts/make_alias.py](scripts/make_alias.py) | 2단계 별칭표 초안 만들기(원천 폴더 → `별칭<TAB>경로`, md5 중복 알림) |
+| [scripts/gomin_status.py](scripts/gomin_status.py) | 4·5단계 끝. 남은 🟡·보류 ⏸·답 줄·ID 중복을 세고 §1↔본문 번호 불일치를 찾음 |
 
 함께 지키는 규칙: `.claude/rules/portfolio-writing.md`(규칙 6 AI 6단계 등), `.claude/CLAUDE.md` 「글쓰기 기본 지침」·「report 구조」. 프로젝트 문서 본문에는 정확한 일자·커밋 해시·원천 자료를 가리키는 `(§4.4)`·`회고.md:12` 같은 출처 표시를 쓰지 않습니다(근거는 분류 파일과 report에만). 문서 안 절 번호·`code/` 파일:줄 참조는 써도 됩니다.
 
@@ -37,10 +43,12 @@ paths:
 
 | 상태 | 모드 |
 |---|---|
+| 프로젝트 문서 초안도, 정해진 원천 폴더도 없음. 또는 "준비"·"원천 소스 초안"·"노트 대조" 요청 | 준비 ([references/before-classification.md](references/before-classification.md)) |
 | 분류 파일이 없음 | 시작(1~4단계) |
 | 분류 파일에 탭으로 들여쓴 답 줄이 있음 | 답 반영(5단계) |
 | 인자나 요청에 `Q-번호`와 "대화·티키타카" | 대화 세션(6단계) |
 | "프로젝트 문서에 반영" 요청 | 프로젝트 문서 반영(7단계) |
+| 반영 뒤 "퇴고"·"섞어 봐"·"흐름 계획"·외부 피드백 파일 | 퇴고·피드백 ([references/feedback-and-revision.md](references/feedback-and-revision.md)) |
 
 ## 1단계 — 원천 범위 확인 (시작 모드, 반드시 사용자 확인)
 
@@ -55,7 +63,7 @@ paths:
 - md5로 같은 파일을 찾아 한 번만 읽고, §8 단계 A에 중복을 적습니다.
 - **md 원천은 메인 세션이 직접 정독합니다.** 충실도가 핵심이라 위임하지 않습니다. 읽으면서 `별칭:L줄 + “원문 발췌”`를 바로 적습니다.
 - 큰 CSV·json·PDF는 Explore 하나에 맡깁니다. 브리프: "고민 단서마다 파일 + 위치(줄·gid·쪽) + 원문 그대로만 돌려줘. 해석·요약 금지. 못 읽은 범위와 키워드 거르기로 놓쳤을 수 있는 범위를 따로 적어." 돌아온 인용 줄은 메인 세션이 grep으로 다시 확인합니다.
-- 별칭표를 만듭니다: 본인 회고·메모는 `R1`…, Asana는 `CSV`, 발표는 `PDF발표`, 현재 프로젝트 문서는 `TD`. 위치는 `` `R2:L86-92` ``, PDF는 `PDF발표 p14`. 별칭 → 절대경로를 TSV로 저장합니다(검사 스크립트 입력).
+- 별칭표를 만듭니다: 본인 회고·메모는 `R1`…, Asana는 `CSV`, 발표는 `PDF발표`, 현재 프로젝트 문서는 `TD`. 위치는 `` `R2:L86-92` ``, PDF는 `PDF발표 p14`. 별칭 → 절대경로를 TSV로 저장합니다(검사 스크립트 입력). 초안은 `python scripts/make_alias.py <고른 원천 폴더> --td <프로젝트 문서> -o report/고민-분류/<접두어>-alias.tsv`로 만들고, 고르지 않은 파일 줄은 지웁니다.
 - 개인정보(팀원 이메일·ssh 키 등)는 옮기지 않습니다. 팀원 담당 작업은 정리 대상에서 빼고, 뺀 사실은 §7 커버리지에 적습니다.
 
 ## 3단계 — 발굴과 분류
@@ -77,7 +85,7 @@ paths:
 - 제약 조건 칸은 억지로 묻지 않습니다. 버그류는 트러블슈팅 꼴(증상·에러 화면 → 원인 → 해결), 원인을 모르는 버그는 추정 원인을 쓰지 않고 "이런 문제를 이렇게 예방했다" 꼴로 둡니다.
 - 질문은 별도 표로 모으지 않고 §1 고민 상자 안에 둡니다. 순서는 답이 필요한 고민(높음 → 보통) → 보류만 남음 → 끝남.
 - 질문 쓰는 법은 [references/questions-and-dialogue.md](references/questions-and-dialogue.md) §1: 볼 원천과 답할 내용을 구체적으로, 예시 선택지 붙이기, 이미 답한 것 다시 묻지 않기, Claude가 찾을 수 있는 것은 먼저 찾기.
-- 검사: `python .claude/skills/tech-doc-issue-summary/scripts/check_quotes.py <분류 파일> <별칭표.tsv>` 불일치 0(7단계로 프로젝트 문서를 고친 뒤에는 `TD` 줄 번호가 밀려 TD 행만 불일치가 나는 것이 정상), 본문 🟡·⏸ 번호와 §1 질문 번호 일치, 원천 md의 제목·목록 줄을 훑어 어느 ID에도 안 걸린 줄은 §7-1에 "누락"으로. **다 확인했다고 쓰지 않습니다.** 못 본 자료는 못 봤다고 씁니다.
+- 검사: `python .claude/skills/tech-doc-issue-summary/scripts/gomin_status.py <분류 파일>` 어긋남 0, `python .claude/skills/tech-doc-issue-summary/scripts/check_quotes.py <분류 파일> <별칭표.tsv>` 불일치 0(7단계로 프로젝트 문서를 고친 뒤에는 `TD` 줄 번호가 밀려 TD 행만 불일치가 나는 것이 정상), 본문 🟡·⏸ 번호와 §1 질문 번호 일치, 원천 md의 제목·목록 줄을 훑어 어느 ID에도 안 걸린 줄은 §7-1에 "누락"으로. **다 확인했다고 쓰지 않습니다.** 못 본 자료는 못 봤다고 씁니다.
 - `INDEX.md`를 갱신하고, 맺는 메시지에 우선순위 높은 질문과 Level이 애매한 고민을 먼저 보여 줍니다. 사용자는 파일의 질문 아래에 탭으로 들여써 답을 답니다.
 
 ## 5단계 — 답 반영 (차수별)
