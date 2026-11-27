@@ -1035,7 +1035,25 @@
             "label": "지연 측정 범위"
           }
         ],
-        "visuals": [],
+        "visuals": [
+          {
+            "kind": "image",
+            "src": "images/asana-e11-before-after.png",
+            "w": 2179,
+            "h": 878,
+            "caption": {"text": "Asana E11. 서버 Epic 일정(8월 20일~9월 14일): 작업 17개 중 15개 완료(88%), 빨간 빗금은 목표일을 넘긴 구간", "verbatim": true}
+          },
+          {
+            "kind": "image",
+            "src": "images/asana-task-completion.png",
+            "w": 1980,
+            "h": 1345,
+            "caption": {
+              "text": "Asana 리포트의 작업 완료 집계: 전체 작업 383개 중 324개 완료(85%), 완료한 작업 중 295/324개(91%)가 목표일 안에 완료, 팀원별 표에서 홍산 108개 중 104개 완료(96%)",
+              "verbatim": true
+            }
+          }
+        ],
         "edited": true
       },
       {
@@ -2569,6 +2587,6 @@
         "visuals": []
       }
     ],
-    "applied": "69369833ca03bb4e"
+    "applied": "ca51a6a92aa481e5"
   }
 }
